@@ -1,0 +1,17 @@
+﻿@model string
+
+@{
+    Layout = "_AdminLayout";
+    ViewBag.Title = "Create Role";
+}
+
+<div class="text-danger" asp-validation-summary="All"></div>
+
+<form asp-action="CreateRole" method="post">
+    <div class="form-group">
+        <label for="name"></label>
+        <input name="name" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Create</button>
+    <a asp-action="Roles" class="btn btn-danger">Cancel</a>
+</form>

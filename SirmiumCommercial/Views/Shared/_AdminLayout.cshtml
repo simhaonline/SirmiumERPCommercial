@@ -4,11 +4,18 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <link rel="stylesheet" href="~/stylesheet/css/bootstrap.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
     <title>@ViewBag.Title</title>
 </head>
 <body>
-    <div class="m-1 p-1">
-        @RenderBody()
+    <div class="bg-success m-1 p-1 text-white"><h4>@ViewBag.Title</h4></div>
+    <div class="row m-1 p-1">
+        <div class="col-2">
+            @await Component.InvokeAsync("AdminNavigation")
+        </div>
+        <div class="col-10">
+            @RenderBody()
+        </div>
     </div>
 </body>
 </html>

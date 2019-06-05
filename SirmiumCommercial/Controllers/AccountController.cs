@@ -16,12 +16,14 @@ namespace SirmiumCommercial.Controllers
     {
         private UserManager<AppUser> userManager;
         private SignInManager<AppUser> signInManager;
+        private RoleManager<IdentityRole> roleManager;
 
         public AccountController(UserManager<AppUser> userMgr,
-            SignInManager<AppUser> signinMgr)
+            SignInManager<AppUser> signinMgr, RoleManager<IdentityRole> roleMgr)
         {
             userManager = userMgr;
             signInManager = signinMgr;
+            roleManager = roleMgr;
         }
 
         [AllowAnonymous]
@@ -49,6 +51,11 @@ namespace SirmiumCommercial.Controllers
                                 user, detalis.Password, false, false);
                         if (result.Succeeded)
                         {
+                            //Redirect to AdminController, if user-role="Admin"
+                            if (await userManager.IsInRoleAsync(user, "Admin"))
+                            {
+                                return Redirect("/Admin/Index");
+                            }
                             return Redirect(returnUrl ?? "/");
                         }
                         else

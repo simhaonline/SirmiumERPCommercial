@@ -7,29 +7,38 @@ using Microsoft.AspNetCore.Identity;
 using SirmiumCommercial.Models;
 using System.Threading.Tasks;
 using SirmiumCommercial.Models.ViewModels;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SirmiumCommercial.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private UserManager<AppUser> userManager;
+        private RoleManager<IdentityRole> roleManager;
 
-        public AdminController(UserManager<AppUser> userMgr)
+        public AdminController(UserManager<AppUser> userMgr,
+            RoleManager<IdentityRole> roleMgr)
         {
             userManager = userMgr;
+            roleManager = roleMgr;
         }
 
+        [Authorize(Roles = "Admin")]
         public ViewResult Index()
         {
             return View(userManager.Users);
         }
 
+        [Authorize(Roles = "Admin")]
         public ViewResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CreateModel model)
         {
             if (ModelState.IsValid)
@@ -59,6 +68,7 @@ namespace SirmiumCommercial.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(string id)
         {
             AppUser user = await userManager.FindByIdAsync(id);
@@ -74,6 +84,7 @@ namespace SirmiumCommercial.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(string id, string status)
         {
             AppUser user = await userManager.FindByIdAsync(id);
@@ -98,6 +109,7 @@ namespace SirmiumCommercial.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string id)
         {
             AppUser user = await userManager.FindByIdAsync(id);
@@ -121,6 +133,7 @@ namespace SirmiumCommercial.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ChangeStatust(string id)
         {
             AppUser user = await userManager.FindByIdAsync(id);
@@ -154,6 +167,37 @@ namespace SirmiumCommercial.Controllers
                 ModelState.AddModelError("", "User Not Found");
             }
             return View("Index");
+        }
+
+        [Authorize(Roles = "Admin")]
+        public ViewResult Roles()
+        {
+            return View(roleManager.Roles);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult CreateRole()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateRole([Required]string name)
+        {
+            if (ModelState.IsValid)
+            {
+                IdentityResult result = await roleManager.CreateAsync(new IdentityRole(name));
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Roles");
+                }
+                else
+                {
+                    ResultError(result);
+                }
+            }
+            return View(name);
         }
 
         private void ResultError(IdentityResult result)

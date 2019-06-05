@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace SirmiumCommercial.Models.ViewModels
 {
@@ -28,6 +29,7 @@ namespace SirmiumCommercial.Models.ViewModels
         public string Status { get; set; }
 
     }
+
     public class LoginModel
     {
         [Required]
@@ -37,4 +39,6 @@ namespace SirmiumCommercial.Models.ViewModels
         [UIHint("password")]
         public string Password { get; set; }
     }
+
+    
 }
