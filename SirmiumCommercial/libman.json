@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "twitter-bootstrap@4.3.1",
+      "destination": "wwwroot/stylesheet",
+      "files": [ "css/bootstrap.min.css", "css/bootstrap.css" ]
+    },
+    {
+      "library": "jquery-validate@1.19.0",
+      "destination": "wwwroot/script",
+      "files": [ "jquery.validate.min.js" ]
+    },
+    {
+      "library": "jquery-validation-unobtrusive@3.2.11",
+      "destination": "wwwroot/script",
+      "files": [ "jquery.validate.unobtrusive.min.js" ]
+    },
+    {
+      "library": "jquery@3.4.1",
+      "destination": "wwwroot/script",
+      "files": ["jquery.min.js"]
+    }
+  ]
+}

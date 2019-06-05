@@ -1,0 +1,49 @@
+﻿body {
+    background-image: url('../thinkstockphotos-664599098-1024x677.jpg');
+    background-repeat: no-repeat;
+    background-size: 1440px, 720px;
+    width: 1440px;
+    height: 720px;
+}
+
+.content {
+    margin: auto;
+    margin-top: 120px;
+    width: 300px;
+    border-radius: 10px;
+    background-color: cadetblue;
+    position: static;
+    opacity: 0.8;
+}
+
+h3 {
+    padding-top: 40px;
+    margin-bottom: 40px;
+    color: aqua;
+    font-size: 50px;
+    padding-left: 15px;
+}
+
+.ucont {
+    margin-bottom: 20px;
+}
+
+    .ucont span {
+        background-color: aqua;
+        border-color: aqua;
+        box-sizing: border-box;
+    }
+
+
+#btnSub {
+    width: 150px;
+    height: 40px;
+    font-size: 20px;
+    border-radius: 10px;
+    margin-left: 55px;
+}
+
+.checkbox {
+    font-size: 18px;
+    color: aqua;
+}
