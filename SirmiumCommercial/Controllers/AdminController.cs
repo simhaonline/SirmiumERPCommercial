@@ -155,7 +155,7 @@ namespace SirmiumCommercial.Controllers
                 IdentityResult result = await userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Details");
                 }
                 else
                 {
@@ -166,7 +166,7 @@ namespace SirmiumCommercial.Controllers
             {
                 ModelState.AddModelError("", "User Not Found");
             }
-            return View("Index");
+            return View("Details");
         }
 
         [Authorize(Roles = "Admin")]
@@ -198,6 +198,57 @@ namespace SirmiumCommercial.Controllers
                 }
             }
             return View(name);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Details(string id)
+        {
+            AppUser user = await userManager.FindByIdAsync(id);
+            if (user != null)
+            {
+                return View(new AdminViewModel
+                {
+                    User = user,
+                    Roles = roleManager.Roles
+                });
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> EditRole(AdminViewModel admin)
+        {
+            AppUser user = await userManager.FindByIdAsync(admin.User.Id);
+            IdentityRole role = await roleManager.FindByIdAsync(admin.Role.Id);
+            if (user != null)
+            {
+                if (role != null)
+                {
+                    IdentityResult result = await userManager.AddToRoleAsync(user, role.Name);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("Details");
+                    }
+                    else
+                    {
+                        ResultError(result);
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "User Not Found");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Role Not Found");
+            }
+            return View("Details");
         }
 
         private void ResultError(IdentityResult result)

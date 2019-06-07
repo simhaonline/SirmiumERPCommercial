@@ -1,0 +1,114 @@
+﻿@model AdminViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewBag.Title = "User Details";
+}
+
+<div class="col-5" style="margin:auto">
+    <div class="bg-primary m-1 p-1">
+        <h4>@Model.User.UserName Details:</h4>
+    </div>
+
+    <table class="table table-sm table-bordered">
+        <tr>
+            <th>ID:</th>
+            <td>@Model.User.Id</td>
+        </tr>
+        <tr>
+            <th>Username:</th>
+            <td>@Model.User.UserName</td>
+        </tr>
+        <tr>
+            <th>First Name:</th>
+            <td>@Model.User.FirstName</td>
+        </tr>
+        <tr>
+            <th>Last Name:</th>
+            <td>@Model.User.LastName</td>
+        </tr>
+        <tr>
+            <th>Email:</th>
+            <td>@Model.User.Email</td>
+        </tr>
+        <tr>
+            <th>Company Name:</th>
+            <td>@Model.User.CompanyName</td>
+        </tr>
+        <tr>
+            <th>Phone Number:</th>
+            <td>@Model.User.PhoneNumber</td>
+        </tr>
+        <tr>
+            <th>Registration Date:</th>
+            <td>@Model.User.RegistrationDate</td>
+        </tr>
+        <tr>
+            <th>Status:</th>
+            <form asp-action="ChangeStatust" asp-route-id="@Model.User.Id" method="post">
+                @if (Model.User.Status == "Active")
+                {
+                    <td class="text-success">@Model.User.Status</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger" type="submit">
+                            Inactive
+                        </button>
+                    </td>
+                }
+                else
+                {
+                    <td class="text-danger">@Model.User.Status</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-success" type="submit">
+                            Active
+                        </button>
+                    </td>
+                }
+            </form>
+        </tr>
+        <tr>
+            <th>Role:</th>
+            <td user-role="@Model.User.Id"></td>
+            <td>
+                <button class="btn btn-sm btn-outline-danger" id="editBtn">
+                    Edit
+                </button>
+            </td>
+        </tr>
+    </table>
+    <a asp-action="Index" class="btn btn-outline-danger">Back</a>
+</div>
+
+<div id="roleForm" class="col-12" 
+     style="position:fixed; top:0; bottom:0; background-color:black; margin-left:0;
+        opacity:0.9" hidden>
+    <div class="col-2" style="margin-left:500px; margin-top:100px;
+            background-color:white; border: 3px solid #007bff; box-sizing:border-box;
+            opacity:1">
+        <div class="bg-primary m-1 p-1">
+            <h6>Edit role:</h6>
+        </div>
+        <form asp-action="EditRole" method="post">
+            <input asp-for="@Model.User.Id" type="hidden" />
+            <div class="form-group">
+                <label class="form-control">Role:</label>
+                <select asp-for="@Model.Role.Id" class="form-control">
+                    <option value="">Set</option>
+                    @foreach (IdentityRole role in Model.Roles)
+                    {
+                        <option value="@role.Id">@role.Name</option>
+                    }
+                </select>
+            </div>
+            <button class="btn btn-sm btn-success" type="submit">Save</button>
+            <a asp-action="Details" class="btn btn-sm btn-danger">Cancel</a>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var editBtn = document.getElementById("editBtn");
+    var roleForm = document.getElementById("roleForm");
+    editBtn.onclick = function () {
+        roleForm.hidden = false;
+    }
+</script>

@@ -27,7 +27,6 @@ namespace SirmiumCommercial.Models.ViewModels
         public DateTime RegistrationDate { get; set; } 
 
         public string Status { get; set; }
-
     }
 
     public class LoginModel
@@ -39,6 +38,4 @@ namespace SirmiumCommercial.Models.ViewModels
         [UIHint("password")]
         public string Password { get; set; }
     }
-
-    
 }

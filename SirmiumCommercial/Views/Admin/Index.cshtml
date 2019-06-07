@@ -14,10 +14,7 @@
         <th colspan="2">Full Name</th>
         <th>Email</th>
         <th>Company Name</th>
-        <th>Phone Number</th>
-        <th>Registration Date</th>
-        <th colspan="2" class="text-center">Status</th>
-        <th>Role</th>
+        <th></th>
     </tr>
     @if (Model.Count() == 0)
     {
@@ -33,35 +30,9 @@
             <td colspan="2">@user.FirstName @user.LastName</td>
             <td>@user.Email</td>
             <td>@user.CompanyName</td>
-            <td>@user.PhoneNumber</td>
-            <td>@user.RegistrationDate</td>
-            <td colspan="2">
-                <form asp-action="ChangeStatust" asp-route-id="@user.Id" method="post">
-                    @if (user.Status == "Active")
-                    {
-                        <span class="text-success">@user.Status</span>
-                        <button class="btn btn-sm btn-outline-danger" type="submit">
-                            Inactive
-                        </button>
-                    }
-                    else
-                    {
-                        <span class="text-danger">@user.Status</span>
-                        <button class="btn btn-sm btn-outline-success" type="submit">
-                            Active
-                        </button>
-                    }
-                </form>
-            </td>
-            <td></td>
             <td>
-                <form asp-action="Delete" asp-route-id="@user.Id" method="post">
-                    <a class="btn btn-sm btn-outline-success" asp-action="Edit"
-                        asp-route-id="@user.Id">Edit</a>
-                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                        Delete
-                    </button>
-                </form>
+                <a class="btn btn-sm btn-outline-info" asp-action="Details"
+                   asp-route-id="@user.Id">Details</a>
             </td>
         </tr>
         }
@@ -69,4 +40,3 @@
 </table>
 
 <a class="btn btn-success" asp-action="Create">Create</a>
-
