@@ -8,7 +8,15 @@
     <title>@ViewBag.Title</title>
 </head>
 <body>
-    <div class="bg-success m-1 p-1 text-white"><h4>@ViewBag.Title</h4></div>
+    <div class="bg-success m-1 p-1 text-white row">
+        <div class="col">
+            <h4>@ViewBag.Title</h4>
+        </div>
+        <div class="col-2">
+            <a asp-action="Logout" asp-controller="Account"
+                class="btn btn-sm btn-primary">Log Out</a>
+        </div>
+    </div>
     <div class="row m-1 p-1">
         <div class="col-2">
             @await Component.InvokeAsync("AdminNavigation")

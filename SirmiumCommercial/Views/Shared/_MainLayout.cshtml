@@ -3,9 +3,18 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="~/stylesheet/css/bootstrap.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/userstylesheet/MainLayoutStyleSheet.css" />
+    <script src="~/script/jquery.min.js"></script>
     <title>@ViewBag.Title</title>
 </head>
 <body>
+    <div class="bg-light p-1 row" id="top">
+        <div class="col">
+            <h2 style="font-family: 'Berlin Sans FB'; color:aqua; ">SirmiumCommercial</h2>
+        </div>
+    </div>
     <div>
         @RenderBody()
     </div>

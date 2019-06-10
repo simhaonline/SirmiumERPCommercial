@@ -1,0 +1,110 @@
+﻿@model AppUser
+
+<a asp-action="MyProfile" asp-controller="CompanyAdmin"
+   asp-route-id="@Model.Id"
+   class="btn btn-outline-info col navBtn"
+   style="margin-left:20px;" id="navBtn1">
+    <i class="fas fa-user navI" id="navI1"></i>
+    <p class="navP" id="navP1" hidden>My Profile</p>
+</a>
+
+<a asp-action="CompanyUsers" asp-controller="CompanyAdmin"
+    asp-route-id="@Model.Id"
+   class="btn btn-outline-info col navBtn" id="navBtn2">
+    <i class="fas fa-users navI"></i>
+    <p class="navP" id="navP2" hidden>Users</p>
+</a>
+
+<div class="btn btn-outline-info col navBtn" id="navBtn3">
+    <i class="fas fa-book-open navI"></i>
+    <p class="navP" id="navP3" hidden></p>
+</div>
+
+<div class="btn btn-outline-info col navBtn" id="navBtn4">
+    <i class="fas fa-chart-line navI"></i>
+    <p class="navP" id="navP4" hidden></p>
+</div>
+
+<a class="btn btn-outline-info col navBtn" asp-action="Logout" asp-controller="Account"
+   id="navBtn5" style="margin-right: 20px;">
+    <i class="fas fa-sign-out-alt navI"></i>
+    <p class="navP" id="navP5" hidden>Log Out</p>
+</a>
+
+<style type="text/css">
+
+    .navBtn {
+        height: 40px;
+        margin-left: 2px;
+        border-color: aqua;
+        color: cadetblue;
+        text-align: center;
+        vertical-align: central;
+        background-color: white;
+        opacity: 0.5;
+    }
+
+        .navBtn:hover {
+            border: none;
+        }
+
+    .navI {
+        display: inline;
+    }
+
+    .navP {
+        display: inline;
+    }
+</style>
+
+<script type="text/javascript">
+    var navBtn1 = document.getElementById("navBtn1");
+    var navP1 = document.getElementById("navP1");
+
+    navBtn1.onmouseenter = function () {
+        navP1.hidden = false;
+    }
+    navBtn1.onmouseleave = function () {
+        navP1.hidden = true;
+    }
+
+    var navBtn2 = document.getElementById("navBtn2");
+    var navP2 = document.getElementById("navP2");
+
+    navBtn2.onmouseenter = function () {
+        navP2.hidden = false;
+    }
+    navBtn2.onmouseleave = function () {
+        navP2.hidden = true;
+    }
+
+    var navBtn3 = document.getElementById("navBtn3");
+    var navP3 = document.getElementById("navP3");
+
+    navBtn3.onmouseenter = function () {
+        navP3.hidden = false;
+    }
+    navBtn3.onmouseleave = function () {
+        navP3.hidden = true;
+    }
+
+    var navBtn4 = document.getElementById("navBtn4");
+    var navP4 = document.getElementById("navP4");
+
+    navBtn4.onmouseenter = function () {
+        navP4.hidden = false;
+    }
+    navBtn4.onmouseleave = function () {
+        navP4.hidden = true;
+    }
+
+    var navBtn5 = document.getElementById("navBtn5");
+    var navP5 = document.getElementById("navP5");
+
+    navBtn5.onmouseenter = function () {
+        navP5.hidden = false;
+    }
+    navBtn5.onmouseleave = function () {
+        navP5.hidden = true;
+    }
+</script>

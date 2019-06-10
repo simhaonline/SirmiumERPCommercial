@@ -1,0 +1,13 @@
+﻿#top {
+    background: linear-gradient(to bottom, cadetblue 58%, #00ffff 126%);
+    margin-bottom: 0px;
+}
+
+#logoutBtn{
+    vertical-align: central;
+}
+
+.rightNav {
+    /*background-color: #b3ffff;*/
+    background-image: linear-gradient(aqua, cadetblue);
+}

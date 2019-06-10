@@ -56,7 +56,15 @@ namespace SirmiumCommercial.Controllers
                             {
                                 return Redirect("/Admin/Index");
                             }
-                            return Redirect(returnUrl ?? "/");
+                            //Redirect to CompanyAdminController, if user-role="CompanyAdmin"
+                            else if (await userManager.IsInRoleAsync(user, "Company Admin")) { 
+                            
+                                return RedirectToAction("Index", "CompanyAdmin", user );
+                            }
+                            else
+                            {
+                                return Redirect(returnUrl ?? "/");
+                            }
                         }
                         else
                         {
@@ -124,6 +132,12 @@ namespace SirmiumCommercial.Controllers
         public ViewResult SuccessSignUp()
         {
             return View();
+        }
+
+        public async Task<RedirectResult> Logout(string returnUrl = "/")
+        {
+            await signInManager.SignOutAsync();
+            return Redirect(returnUrl);
         }
     }
 }
