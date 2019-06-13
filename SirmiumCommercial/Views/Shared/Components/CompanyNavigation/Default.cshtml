@@ -1,9 +1,17 @@
 ﻿@model AppUser
 
-<a asp-action="MyProfile" asp-controller="CompanyAdmin"
+
+<a asp-action="Back" asp-controller="CompanyAdmin"
    asp-route-id="@Model.Id"
    class="btn btn-outline-info col navBtn"
-   style="margin-left:20px;" id="navBtn1">
+   style="margin-left:20px;" id="navBtn0">
+    <i class="fas fa-home" id="navI0"></i>
+    <p class="navP" id="navP0" hidden>Home</p>
+</a>
+
+<a asp-action="MyProfile" asp-controller="CompanyAdmin"
+   asp-route-id="@Model.Id"
+   class="btn btn-outline-info col navBtn" id="navBtn1">
     <i class="fas fa-user navI" id="navI1"></i>
     <p class="navP" id="navP1" hidden>My Profile</p>
 </a>
@@ -58,6 +66,16 @@
 </style>
 
 <script type="text/javascript">
+    var navBtn0 = document.getElementById("navBtn0");
+    var navP0 = document.getElementById("navP0");
+
+    navBtn0.onmouseenter = function () {
+        navP0.hidden = false;
+    }
+    navBtn0.onmouseleave = function () {
+        navP0.hidden = true;
+    }
+
     var navBtn1 = document.getElementById("navBtn1");
     var navP1 = document.getElementById("navP1");
 

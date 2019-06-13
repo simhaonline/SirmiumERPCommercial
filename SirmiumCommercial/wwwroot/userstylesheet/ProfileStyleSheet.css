@@ -1,0 +1,39 @@
+﻿#profileMain {
+    background-color: cadetblue;
+    opacity: 0.9;
+    border-radius: 30px;
+    box-sizing: border-box;
+}
+
+#profileImg {
+    width: 180px;
+    height: 180px;
+    border-radius: 90px;
+    box-sizing: border-box;
+    margin: auto;
+    margin-top: 20px;
+}
+
+.name {
+    margin: auto;
+    margin-top: 5px;
+    color: aqua;
+    text-decoration: none;
+}
+
+#editBtn {
+    width: 100px;
+    height: 30px;
+    font-size: 15px;
+    border-radius: 10px;
+    margin: auto;
+    margin-top: 5px;
+    background-color: white;
+    opacity: 0.5;
+}
+
+    #editBtn:hover {
+        background-color: #17a2b8;
+        color: white;
+        padding-top: 4px;
+    }

@@ -7,8 +7,9 @@ using SirmiumCommercial.Models;
 
 namespace SirmiumCommercial.Models.ViewModels
 {
-    public class CompanyUsersViewModel
+    public class CompanyAdminViewModel
     {
-        public IEnumerable<AppUser> Users { get; set; }
+        public IQueryable<AppUser> Users { get; set; }
+        public AppUser CurrentUser { get; set; }
     }
 }

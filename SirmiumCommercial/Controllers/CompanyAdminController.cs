@@ -70,10 +70,44 @@ namespace SirmiumCommercial.Controllers
             AppUser user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
-                return View(userManager.Users
-                    .Select(x => x)
-                    .Where(x => x.CompanyName == user.CompanyName)
-                    .OrderBy(x => x));
+                return View( new CompanyAdminViewModel
+                {
+                    Users = userManager.Users
+                        .Select(x => x)
+                        .Where(x => x.CompanyName == user.CompanyName)
+                        .OrderBy(x => x),
+                    CurrentUser = user
+                });
+            }
+            else
+            {
+                ModelState.AddModelError("", "User Not Found");
+            }
+            return View(ModelState);
+        }
+
+        [Authorize(Roles = "Company Admin")]
+        public async Task<IActionResult> EditMyProfile(string id)
+        {
+            AppUser user = await userManager.FindByIdAsync(id);
+            if (user != null)
+            {
+                return View(user);
+            }
+            else
+            {
+                ModelState.AddModelError("", "User Not Found");
+            }
+            return View(ModelState);
+        }
+
+        [Authorize(Roles = "Company Admin")]
+        public async Task<ViewResult> CapturePhoto(string id)
+        {
+            AppUser user = await userManager.FindByIdAsync(id);
+            if (user != null)
+            {
+                return View(user);
             }
             else
             {

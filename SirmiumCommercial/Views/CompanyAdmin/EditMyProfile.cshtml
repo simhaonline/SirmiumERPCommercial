@@ -1,0 +1,171 @@
+﻿@model AppUser
+
+@{ 
+    Layout = "_MainLayout";
+    ViewBag.Title = "Edit Profile";
+}
+
+<style type="text/css">
+    #editMain {
+        background-color: cadetblue;
+        opacity: 0.9;
+        border-radius: 30px;
+        box-sizing: border-box;
+    }
+    #editImg {
+        width: 180px;
+        height: 180px;
+        box-sizing: border-box;
+        margin-top: 20px;
+        margin-left: 20%;
+    }
+
+    .text-style{
+        color: aqua;
+    }
+
+    .user-btn {
+        width: 200px;
+        height: 30px;
+        font-size: 15px;
+        border-radius: 10px;
+        margin: auto;
+        margin-top: 5px;
+        background-color: white;
+        opacity: 0.5;
+        padding: initial;
+    }
+    
+        .user-btn:hover {
+            background-color: #17a2b8;
+            color: white;
+            padding-top: 4px;
+        }
+    
+    .userinfo{
+        width: 70%;
+        margin-top: 20px;
+        margin-bottom: 0px;
+    }
+
+</style>
+
+<div class="row rightNav">
+    @await Component.InvokeAsync("CompanyNavigation", Model)
+</div>
+
+<div class="row">
+    <div class="col-7" style="margin:auto; margin-top: 40px" id="editMain">
+        <div>
+            <img src="~/defaultAvatar.png" id="editImg" style="float:left" />
+            <label class="text-style" style="float:left; margin-top: 10%; margin-left: 20px;">
+                <h5>Change your profile picture:</h5>
+            </label>
+            <a asp-action="CapturePhoto" 
+               asp-route-id="@Model.Id"
+               class="btn user-btn" style="margin-left: 40px; float:left">
+                <i class="fas fa-camera"></i>
+                Take a Photo
+            </a>
+            <button class="btn user-btn" style="margin-left: 40px;">
+                <i class="fas fa-file-upload"></i>
+                Upload a Photo
+            </button>
+        </div>
+
+        <div class="input-group form-group userinfo" style="margin-left: 20%; margin-top: 30px; height: 30px">
+            <label class="text-style" style="margin-top: 0px; margin-left: 20px;">
+                <h4>Info:</h4>
+            </label>
+        </div>
+
+        <div class="input-group form-group userinfo" style="margin-left: 20%;">
+            <div class="input-group-prepend">
+                <span class="input-group-text"
+                      style="background-color: aqua; border-color: aqua; box-sizing:border-box;">
+                    <i class="fas fa-user"></i>&nbsp; Username:
+                </span>
+            </div>
+            <input asp-for="UserName" class="form-control" disabled />
+            <button class="btn user-btn" style="margin-left: 10px; width: 100px">
+                Edit
+            </button>
+        </div>
+
+        <div class="input-group form-group userinfo" style="margin-left: 20%">
+            <div class="input-group-prepend">
+                <span class="input-group-text"
+                      style="background-color: aqua; border-color: aqua; box-sizing:border-box;">
+                    <i class="fas fa-user-tie"></i>&nbsp; First Name:
+                </span>
+            </div>
+            <input asp-for="FirstName" class="form-control" disabled />
+            <button class="btn user-btn" style="margin-left: 10px; width: 100px">
+                Edit
+            </button>
+        </div>
+
+        <div class="input-group form-group userinfo" style="margin-left: 20%">
+            <div class="input-group-prepend">
+                <span class="input-group-text"
+                      style="background-color: aqua; border-color: aqua; box-sizing:border-box;">
+                    <i class="fas fa-user-tie"></i>&nbsp; Last Name:
+                </span>
+            </div>
+            <input asp-for="LastName" class="form-control" disabled />
+            <button class="btn user-btn" style="margin-left: 10px; width: 100px">
+                Edit
+            </button>
+        </div>
+
+        <div class="input-group form-group userinfo" style="margin-left: 20%">
+            <div class="input-group-prepend">
+                <span class="input-group-text"
+                      style="background-color: aqua; border-color: aqua; box-sizing:border-box;">
+                    <i class="fas fa-at"></i>&nbsp; E-mail:
+                </span>
+            </div>
+            <input asp-for="Email" class="form-control" disabled />
+            <button class="btn user-btn" style="margin-left: 10px; width: 100px">
+                Edit
+            </button>
+        </div>
+
+        <div class="input-group form-group userinfo" style="margin-left: 20%">
+            <div class="input-group-prepend">
+                <span class="input-group-text"
+                      style="background-color: aqua; border-color: aqua; box-sizing:border-box;">
+                    <i class="fas fa-phone"></i>&nbsp; Phone number:
+                </span>
+            </div>
+            <input asp-for="PhoneNumber" class="form-control" disabled />
+            <button class="btn user-btn" style="margin-left: 10px; width: 100px">
+                Edit
+            </button>
+        </div>
+
+        <div class="input-group form-group userinfo" style="margin-left: 20%">
+            <div class="input-group-prepend">
+                <span class="input-group-text"
+                      style="background-color: aqua; border-color: aqua; box-sizing:border-box;">
+                    <i class="fas fa-briefcase"></i>&nbsp; Company:
+                </span>
+            </div>
+            <input asp-for="CompanyName" class="form-control" disabled />
+        </div>
+
+        <div class="input-group form-group userinfo" style="margin-left: 20%; margin-top: 20px; height: 30px">
+            <label class="text-style" style="margin-top: 0px; margin-left: 20px;">
+                <h4>Security:</h4>
+            </label>
+        </div>
+
+        <div class="input-group form-group userinfo" style="margin-left: 30%;">
+            <button class="btn user-btn" style="margin-left: 10px; width: 300px">
+                <i class="fas fa-key"></i>&nbsp; Change password
+            </button>
+        </div>
+
+    </div>
+
+</div>
