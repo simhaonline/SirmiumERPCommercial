@@ -12,4 +12,10 @@ namespace SirmiumCommercial.Models.ViewModels
         public IQueryable<AppUser> Users { get; set; }
         public AppUser CurrentUser { get; set; }
     }
+    
+    public class Profile
+    {
+        public AppUser appUser { get; set; }
+        public UserProfile userProfile { get; set; }
+    }
 }

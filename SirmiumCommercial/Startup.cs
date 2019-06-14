@@ -24,6 +24,11 @@ namespace SirmiumCommercial
 
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(
+                    Configuration["Data:SirmiumCommercialUserData:ConnectionString"]));
+            services.AddTransient<IUserRepository, EFUserRepository>();
             services.AddDbContext<AppIdentityDbContext>(options =>
                 options.UseSqlServer(
                     Configuration["Data:SirmiumCommercialIdentity:ConnectionString"]));

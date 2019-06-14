@@ -1,4 +1,4 @@
-﻿@model AppUser
+﻿@model Profile
 
 @{ 
     Layout = "_MainLayout";
@@ -51,18 +51,25 @@
 </style>
 
 <div class="row rightNav">
-    @await Component.InvokeAsync("CompanyNavigation", Model)
+    @await Component.InvokeAsync("CompanyNavigation", Model.appUser)
 </div>
 
 <div class="row">
     <div class="col-7" style="margin:auto; margin-top: 40px" id="editMain">
         <div>
+            @if (Model.userProfile.ProfilePicture == null)
+            {
             <img src="~/defaultAvatar.png" id="editImg" style="float:left" />
+            }
+            else
+            {
+            <img src=@Model.userProfile.ProfilePicture id="editImg" style="float:left" />
+            }
             <label class="text-style" style="float:left; margin-top: 10%; margin-left: 20px;">
                 <h5>Change your profile picture:</h5>
             </label>
-            <a asp-action="CapturePhoto" 
-               asp-route-id="@Model.Id"
+            <a asp-action="CapturePhoto"
+               asp-route-id="@Model.appUser.Id"
                class="btn user-btn" style="margin-left: 40px; float:left">
                 <i class="fas fa-camera"></i>
                 Take a Photo
@@ -86,7 +93,7 @@
                     <i class="fas fa-user"></i>&nbsp; Username:
                 </span>
             </div>
-            <input asp-for="UserName" class="form-control" disabled />
+            <input asp-for="@Model.appUser.UserName" class="form-control" disabled />
             <button class="btn user-btn" style="margin-left: 10px; width: 100px">
                 Edit
             </button>
@@ -99,7 +106,7 @@
                     <i class="fas fa-user-tie"></i>&nbsp; First Name:
                 </span>
             </div>
-            <input asp-for="FirstName" class="form-control" disabled />
+            <input asp-for="@Model.appUser.FirstName" class="form-control" disabled />
             <button class="btn user-btn" style="margin-left: 10px; width: 100px">
                 Edit
             </button>
@@ -112,7 +119,7 @@
                     <i class="fas fa-user-tie"></i>&nbsp; Last Name:
                 </span>
             </div>
-            <input asp-for="LastName" class="form-control" disabled />
+            <input asp-for="@Model.appUser.LastName" class="form-control" disabled />
             <button class="btn user-btn" style="margin-left: 10px; width: 100px">
                 Edit
             </button>
@@ -125,7 +132,7 @@
                     <i class="fas fa-at"></i>&nbsp; E-mail:
                 </span>
             </div>
-            <input asp-for="Email" class="form-control" disabled />
+            <input asp-for="@Model.appUser.Email" class="form-control" disabled />
             <button class="btn user-btn" style="margin-left: 10px; width: 100px">
                 Edit
             </button>
@@ -138,7 +145,7 @@
                     <i class="fas fa-phone"></i>&nbsp; Phone number:
                 </span>
             </div>
-            <input asp-for="PhoneNumber" class="form-control" disabled />
+            <input asp-for="@Model.appUser.PhoneNumber" class="form-control" disabled />
             <button class="btn user-btn" style="margin-left: 10px; width: 100px">
                 Edit
             </button>
@@ -151,7 +158,7 @@
                     <i class="fas fa-briefcase"></i>&nbsp; Company:
                 </span>
             </div>
-            <input asp-for="CompanyName" class="form-control" disabled />
+            <input asp-for="@Model.appUser.CompanyName" class="form-control" disabled />
         </div>
 
         <div class="input-group form-group userinfo" style="margin-left: 20%; margin-top: 20px; height: 30px">

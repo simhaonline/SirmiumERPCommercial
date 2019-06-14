@@ -14,23 +14,25 @@ namespace SirmiumCommercial.Controllers
     public class CompanyAdminController : Controller
     {
         private UserManager<AppUser> userManager;
+        private IUserRepository userRepository;
 
-        public CompanyAdminController(UserManager<AppUser> userMgr)
+        public CompanyAdminController(UserManager<AppUser> userMgr, IUserRepository userRepo)
         {
             userManager = userMgr;
+            userRepository = userRepo;
         }
 
         [Authorize(Roles = "Company Admin")]
         public ViewResult Index(AppUser user)
         {
-                if (user != null)
-                {
-                    return View(user);
-                }
-                else
-                {
-                    ModelState.AddModelError("", "User Not Found");
-                }
+            if (user != null)
+            {
+                return View(user);
+            }
+            else
+            {
+                ModelState.AddModelError("", "User Not Found");
+            }
             return View(ModelState);
         }
 
@@ -55,7 +57,12 @@ namespace SirmiumCommercial.Controllers
             AppUser user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
-                return View(user);
+                return View(new Profile
+                {
+                    appUser = user,
+                    userProfile = userRepository.Users
+                        .FirstOrDefault(p => p.UserId == user.Id)
+                });
             }
             else
             {
@@ -92,7 +99,11 @@ namespace SirmiumCommercial.Controllers
             AppUser user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
-                return View(user);
+                return View(new Profile {
+                    appUser = user,
+                    userProfile = userRepository.Users
+                        .FirstOrDefault(p => p.UserId == user.Id)
+                });
             }
             else
             {
@@ -107,13 +118,42 @@ namespace SirmiumCommercial.Controllers
             AppUser user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
-                return View(user);
+                return View(userRepository.Users
+                        .FirstOrDefault(p => p.UserId == user.Id));
             }
             else
             {
                 ModelState.AddModelError("", "User Not Found");
             }
             return View(ModelState);
+        }
+
+        [Authorize(Roles = "Company Admin")]
+        [HttpPost]
+        public async Task<ActionResult> SaveProfilePicture(UserProfile user)
+        {
+            if (ModelState.IsValid)
+            {
+                userRepository.SaveProfilePicture(user);
+                AppUser usr = await userManager.FindByIdAsync(user.UserId);
+                if (usr != null)
+                {
+                    return RedirectToAction("MyProfile", usr);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "User Not Found");
+            }
+            return View();
+        }
+
+        private void ResultError(IdentityResult result)
+        {
+            foreach (IdentityError error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
         }
     }
 }

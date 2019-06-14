@@ -1,4 +1,4 @@
-﻿@model AppUser
+﻿@model UserProfile
 
 @{
     Layout = "_MainLayout";
@@ -87,9 +87,9 @@
     }
 </style>
 
-<div class="row rightNav">
+@*<div class="row rightNav">
     @await Component.InvokeAsync("CompanyNavigation", Model)
-</div>
+</div>*@
 
 <div class="row" style="background-color: none">
     <div class="contents" style="background: none">
@@ -98,11 +98,15 @@
             <div id="controls">
                 <div class="btnC">
                     <button id="capture"><i class="fas fa-camera"></i></button>
-                    <button class="btnSave" id="save"
-                            style="margin-left: 25%;" hidden>
-                        <i class="fas fa-save"></i>
-                        <span style="font-size:20px">Save</span>
-                    </button>
+                    <form asp-action="SaveProfilePicture" method="post">
+                        <input asp-for="@Model.UserId" hidden />
+                        <input asp-for="@Model.ProfilePicture" id="img" hidden />
+                        <button class="btnSave" id="save" type="submit"
+                                style="margin-left: 25%;" hidden>
+                            <i class="fas fa-save"></i>
+                            <span style="font-size:20px">Save</span>
+                        </button>
+                    </form>
                     <button class="btnSave" id="new" hidden>
                         <i class="fas fa-camera"></i>
                         <span style="font-size:20px">Try Again</span>
@@ -120,7 +124,7 @@
         const captureBtn = document.getElementById("capture");
         const saveBtn = document.getElementById("save");
         const newBtn = document.getElementById("new");
-        //const img = document.getElementById("img");
+        const img = document.getElementById("img");
 
         const constraints = {
             video: true,
@@ -164,7 +168,7 @@
 
         captureBtn.addEventListener("click", () => {
             context.drawImage(player, 0, 0, canvas.width, canvas.height);
-            //img.value = canvas.toDataURL();
+            img.value = canvas.toDataURL();
             canvas.hidden = false;
             player.hidden = true;
             captureBtn.hidden = true;

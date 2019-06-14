@@ -17,13 +17,16 @@ namespace SirmiumCommercial.Controllers
         private UserManager<AppUser> userManager;
         private SignInManager<AppUser> signInManager;
         private RoleManager<IdentityRole> roleManager;
+        private IUserRepository userRepository;
 
         public AccountController(UserManager<AppUser> userMgr,
-            SignInManager<AppUser> signinMgr, RoleManager<IdentityRole> roleMgr)
+            SignInManager<AppUser> signinMgr, RoleManager<IdentityRole> roleMgr,
+            IUserRepository userRepo)
         {
             userManager = userMgr;
             signInManager = signinMgr;
             roleManager = roleMgr;
+            userRepository = userRepo;
         }
 
         [AllowAnonymous]
@@ -115,6 +118,17 @@ namespace SirmiumCommercial.Controllers
                     = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    AppUser userTmp = await userManager.FindByNameAsync(user.UserName);
+                    UserProfile usr = new UserProfile
+                    {
+                        UserId = userTmp.Id,
+                        UserName = userTmp.UserName,
+                        FirstName = userTmp.FirstName,
+                        LastName = userTmp.LastName,
+                        CompanyName = userTmp.CompanyName,
+                        PhoneNumber = (userTmp.PhoneNumber != "") ? userTmp.PhoneNumber : "",
+                    };
+                    userRepository.SaveUser(usr);
                     return RedirectToAction("SuccessSignUp");
                 }
                 else

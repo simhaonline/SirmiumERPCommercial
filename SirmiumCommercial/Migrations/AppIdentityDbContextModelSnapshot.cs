@@ -27,9 +27,6 @@ namespace SirmiumCommercial.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
-
                     b.Property<string>("Name")
                         .HasMaxLength(256);
 
@@ -44,8 +41,6 @@ namespace SirmiumCommercial.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityRole");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -171,6 +166,8 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
+                    b.Property<string>("ProfilePicture");
+
                     b.Property<DateTime>("RegistrationDate");
 
                     b.Property<string>("SecurityStamp");
@@ -193,16 +190,6 @@ namespace SirmiumCommercial.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
-                });
-
-            modelBuilder.Entity("SirmiumCommercial.Models.AppRoles", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRole");
-
-
-                    b.ToTable("AppRoles");
-
-                    b.HasDiscriminator().HasValue("AppRoles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

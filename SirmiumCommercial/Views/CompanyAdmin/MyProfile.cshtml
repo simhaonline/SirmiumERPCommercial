@@ -1,4 +1,4 @@
-﻿@model AppUser
+﻿@model Profile
 
 @{
     Layout = "_MainLayout";
@@ -6,7 +6,7 @@
 }
 
 <div class="row rightNav">
-    @await Component.InvokeAsync("CompanyNavigation", Model)
+    @await Component.InvokeAsync("CompanyNavigation", Model.appUser)
 </div>
 
 <div class="row">
@@ -14,33 +14,40 @@
     <div class="col-10" style="margin:auto; margin-top: 40px" id="profileMain">
 
         <div class="row">
+            @if (Model.userProfile.ProfilePicture == null)
+            {
             <img src="~/defaultAvatar.png" id="profileImg" />
+            }
+            else
+            {
+            <img src=@Model.userProfile.ProfilePicture id="profileImg" />
+            }
         </div>
 
         <div class="row">
-            <h3 class="name">@Model.FirstName @Model.LastName</h3>
+            <h3 class="name">@Model.appUser.FirstName @Model.appUser.LastName</h3>
         </div>
 
         <div class="row">
-            <h5 class="name"><i class="fas fa-user"></i> @Model.UserName</h5>
+            <h5 class="name"><i class="fas fa-user"></i> @Model.appUser.UserName</h5>
         </div>
 
         <div class="row">
-            <h4 class="name"><i class="fas fa-briefcase"></i> @Model.CompanyName</h4>
+            <h4 class="name"><i class="fas fa-briefcase"></i> @Model.appUser.CompanyName</h4>
         </div>
 
         <div class="row">
-            <h6 class="name"><i class="fas fa-at"></i> @Model.Email</h6>
+            <h6 class="name"><i class="fas fa-at"></i> @Model.appUser.Email</h6>
         </div>
 
         <div class="row">
-            <h6 class="name"><i class="fas fa-phone"></i> @Model.PhoneNumber</h6>
+            <h6 class="name"><i class="fas fa-phone"></i> @Model.appUser.PhoneNumber</h6>
         </div>
 
         <div class="row">
             <a asp-action="EditMyProfile"
                asp-controller="CompanyAdmin"
-               asp-route-id="@Model.Id"
+               asp-route-id="@Model.appUser.Id"
                id="editBtn" class="btn btn-outline-info">Edit</a>
         </div>
     </div>
