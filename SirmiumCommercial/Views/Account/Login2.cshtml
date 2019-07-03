@@ -1,0 +1,59 @@
+﻿<!--<!DOCTYPE html>
+<html>-->
+@model LoginModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "User-Login";
+}
+<!--
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="~/stylesheet/css/bootstrap.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="../userstylesheet/UserLoginStyleSheet.css" />
+    <script src="~/script/jquery.min.js"></script>
+    <script src="~/script/jquery.validate.min.js"></script>
+    <script src="~/script/jquery.validate.unobtrusive.min.js"></script>
+</head>
+-->
+<body>
+    <div class="col-md-6 content" style="height:auto">
+        <h3>User Login</h3>
+
+        <div class="text-danger" asp-validation-summary="All"></div>
+
+        <form asp-action="Login" method="post">
+            <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
+            <div class="input-group form-group ucont">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                </div>
+                <input asp-for="UserName" class="form-control" placeholder="Username" required />
+            </div>
+            <div class="input-group form-group ucont">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-key"></i></span>
+                </div>
+                <input asp-for="Password" class="form-control" placeholder="Password" required />
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn-outline-info" value="Login" id="btnSub" />
+            </div>
+            <div class="form-group checkbox" style="margin-bottom:0px">
+                <input type="checkbox" value="remember" id="remMe" />
+                <label for="remMe">Remember Me</label>
+            </div>
+            <div class="form-group">
+                <span style="font-size:18px; margin-left:10px">
+                    Don't have an account?
+                    <a asp-controller="Account" asp-action="SignUp" style="color:darkblue">
+                        Sign Up
+                    </a>
+                </span>
+            </div>
+        </form>
+    </div>
+</body>
+<!--
+</html>-->

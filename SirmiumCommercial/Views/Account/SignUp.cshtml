@@ -1,74 +1,84 @@
-﻿<!DOCTYPE html>
+﻿@using System.Collections.Generic
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Authentication
 @model CreateModel
+@inject SignInManager<AppUser> SignInManager
+
 @{
-    Layout = null;
-    ViewBag.Title = "Sign Up";
+    ViewData["Title"] = "Sign Up";
 }
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <link rel="stylesheet" href="~/stylesheet/css/bootstrap.css" />
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
-    <title>@ViewBag.Title</title>
-    <link rel="stylesheet" href="../userstylesheet/UserLoginStyleSheet.css" />
-    <script src="~/script/jquery.min.js"></script>
-    <script src="~/script/jquery.validate.min.js"></script>
-    <script src="~/script/jquery.validate.unobtrusive.min.js"></script>
-</head>
-<body>
-    <div class="col-md-10 content" style="height:auto; width:400px">
-        <h3>Welcome</h3>
-        <div class="text-danger" asp-validation-summary="All"></div>
-        <form asp-action="SignUp" method="post">
-            <div class="input-group form-group userinput">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                </div>
-                <input asp-for="UserName" class="form-control" placeholder="Username*" />
-            </div>
-            <div class="input-group form-group userinput">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-key"></i></span>
-                </div>
-                <input asp-for="Password" class="form-control" placeholder="Password* at least 6 characters" />
-            </div>
-            <div class="input-group form-group userinput">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
-                </div>
-                <input asp-for="FirstName" class="form-control" placeholder="First Name*" />
-            </div>
-            <div class="input-group form-group userinput">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
-                </div>
-                <input asp-for="LastName" class="form-control" placeholder="Last Name*" />
-            </div>
-            <div class="input-group form-group userinput">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-at"></i></span>
-                </div>
-                <input asp-for="Email" class="form-control" placeholder="e-mail*" />
-            </div>
-            <div class="input-group form-group userinput">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-building"></i></span>
-                </div>
-                <input asp-for="CompanyName" class="form-control" placeholder="Company Name*" />
-            </div>
-            <div class="input-group form-group userinput">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                </div>
-                <input asp-for="PhoneNumber" class="form-control" placeholder="Phone Number" />
-            </div>
-            <div class="form-group">
-                <span style="margin-left:60px">Fields marked with an * are required</span>
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary id="btnSub" style="margin-left:110px">Create</button>
-            </div>
-        </form>
+
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/LoginLocal.css" />
+    </environment>
+}
+
+
+<div id="main">
+    <h2 class="title-center"><strong>@ViewData["Title"]</strong></h2>
+    <div class="row">
+        <div class="col-md-8 input">
+            <section>
+                <form asp-action="SignUp" asp-route-returnurl="@ViewData["RetunUrl"]"
+                      method="post" class="form-horizontal">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group row">
+                        <div class="userInput col-sm-10">
+                            <input asp-for="UserName" placeholder="&#xf007; Username*" class="form-control" />
+                            <span asp-validation-for="UserName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-10 userInput">
+                            <input asp-for="Password" placeholder="&#xf084; Password* at least 6 characters" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-10 userInput">
+                            <input asp-for="FirstName" placeholder="&#xf007; First Name*" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-10 userInput">
+                            <input asp-for="LastName" placeholder="&#xf007; Last Name*" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-10 userInput">
+                            <input asp-for="Email" placeholder="&#xf1fa; e-mail*" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-10 userInput">
+                            <input asp-for="CompanyName" placeholder="&#xf275; Company Name*" class="form-control" />
+                            <span asp-validation-for="CompanyName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-10 userInput">
+                            <input asp-for="PhoneNumber" placeholder="&#xf095; Phone Number" class="form-control" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <p class="text-danger">
+                            Fields marked with an * are required
+                        </p>
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-outline btn-info">Create</button>
+                    </div>
+                </form>
+            </section>
+        </div>
     </div>
-</body>
-</html>
+</div>
+
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SirmiumERPCommercial</title>
+
+    <!-- Add local styles-->
+    @if (IsSectionDefined("Styles"))
+    {@RenderSection("Styles", required: false)}
+
+    <environment names="Development">
+        <link rel="stylesheet" href="~/homer/lib_local/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/homer/lib/fontawesome/css/font-awesome.css" />
+        <link rel="stylesheet" href="~/homer/lib/animate.css/animate.css" />
+        <link rel="stylesheet" href="~/homer/Icons/pe-icon-7-stroke/css/pe-icon-7-stroke.css" />
+        <link rel="stylesheet" href="~/homer/lib_local/metisMenu/dist/metisMenu.css" />
+        <link rel="stylesheet" href="~/homer/css/style.css" asp-append-version="true" />
+    </environment>
+    <environment names="Staging, Production">
+        <link rel="stylesheet" href="~/homer/lib_local/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/homer/lib/fontawesome/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="~/homer/lib/animate.css/animate.min.css" />
+        <link rel="stylesheet" href="~/homer/Icons/pe-icon-7-stroke/css/pe-icon-7-stroke.css" />
+        <link rel="stylesheet" href="~/homer/lib_local/metisMenu/dist/metisMenu.min.css" />
+        <link rel="stylesheet" href="~/homer/css/style.css" asp-append-version="true" />
+    </environment>
+
+    @Html.ApplicationInsightsJavaScript(TelemetryConfiguration)
+</head>
+<body class="@Html.PageClass()">
+    <div class="splash">
+        <div class="color-line"></div>
+        <div class="title">
+            <h1>SirmiumCommercial</h1>
+            <div class="spinner">
+                <div class="rect2"></div>
+                <div class="rect3"></div>
+                <div class="rect4"></div>
+                <div class="rect5"></div>
+            </div>
+        </div>
+    </div>
+    <!--[if lt IE 7]>
+        <p class="alert alert-danger">You are using an <strong>outdated</strong> browser.
+            Please <a href="https://browsehappy.com/">upgrade your browser</a>
+            to improve your experience.
+        </p>
+    <![endif]-->
+    <!-- Header -->
+    <div id="header">
+        @Html.Partial("_HomeHeader")
+    </div>
+
+    <!-- Navigation -->
+    <div id="menu">
+        @Html.Partial("_HomeNavigation")
+    </div>
+
+    <!-- Main view -->
+    <div id="wrapper">
+        @RenderBody()
+
+        <!-- Right sidebar-->
+        @Html.Partial("_HomeRightSidebar")
+        <!-- Footer -->
+        @Html.Partial("_Footer")
+    </div>
+
+    <environment names="Development">
+        <script src="~/homer/lib_local/jquery/dist/jquery.js"></script>
+        <script src="~/homer/lib/slimScroll/jquery.slimscroll.js"></script>
+        <script src="~/homer/lib_local/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/homer/lib/iCheck/icheck.js"></script>
+        <script src="~/homer/lib_local/metisMenu/dist/metisMenu.js"></script>
+        <script src="~/homer/lib_local/sparkline/index.js"></script>
+        <script src="~/homer/js/homer.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="~/homer/lib_local/jquery/dist/jquery.min.js"></script>
+        <script src="~/homer/lib/slimScroll/jquery.slimscroll.min.js"></script>
+        <script src="~/homer/lib_local/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="~/homer/lib/iCheck/icheck.min.js"></script>
+        <script src="~/homer/lib_local/metisMenu/dist/metisMenu.min.js"></script>
+        <script src="~/homer/lib_local/sparkline/index.js"></script>
+        <script src="~/homer/js/homer.min.js"></script>
+    </environment>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

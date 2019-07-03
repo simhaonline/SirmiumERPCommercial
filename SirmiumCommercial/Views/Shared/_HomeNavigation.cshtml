@@ -1,0 +1,60 @@
+﻿@model LoginModel
+
+<div id="navigation">
+
+    <ul class="nav metismenu" id="side-menu">
+        <li class="@Html.IsSelected(controller: "Home")">
+            <a href="@Url.Action("Index", "Home")">
+                <span class="fa fa-home"></span>
+                <span class="nav-label">Home</span>
+            </a>
+        </li>
+        <li class="@Html.IsSelected(controller: "Home")">
+            <a href="@Url.Action("AboutUs", "Home")">
+                <span class="fa fa-address-card"></span>
+                <span class="nav-label">About Us</span>
+            </a>
+        </li>
+        <li class="@Html.IsSelected(controller: "Home")">
+            <a href="@Url.Action("Payment", "Home")">
+                <span class="fa fa-credit-card"></span>
+                <span class="nav-label">Payment</span>
+            </a>
+        </li>
+        <li class="@Html.IsSelected(controller: "Account")">
+            <a href="@Url.Action("Login", "Account")">
+                <span class="fa fa-user"></span> <span class="nav-label">My Profile</span>
+                <span class="fa arrow"></span>
+            </a>
+            <ul class="nav nav-second-level">
+                <li class="@Html.IsSelected(action: "Login")">
+                    <a href="@Url.Action("Login", "Account")">Login</a>
+                </li>
+                <li class="@Html.IsSelected(action: "SignUp")">
+                    <a href="@Url.Action("SignUp", "Account")">Create New Account</a>
+                </li>
+                <li class="@Html.IsSelected(action: "FreeTrial")">
+                    <a href="@Url.Action("FreeTrial", "Account")">
+                        Try Us For Free
+                        <span class="label label-warning pull-right">NEW</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="@Html.IsSelected(controller: "Home")">
+            <a href="#">
+                <span class="fa fa-phone"></span>
+                <span class="nav-label">Contact Us</span>
+                <span class="fa arrow"></span>
+            </a>
+            <ul class="nav nav-second-level">
+                <li class="@Html.IsSelected(action: "SendEmail")">
+                    <a href="@Url.Action("SendEmail", "Home")">Send E-mail</a>
+                </li>
+                <li class="@Html.IsSelected(action: "Contact")">
+                    <a href="@Url.Action("Contact", "Home")">Contact</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>

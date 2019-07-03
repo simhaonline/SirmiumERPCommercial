@@ -1,57 +1,70 @@
-﻿<!DOCTYPE html>
-<html>
+﻿@using System.Collections.Generic
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Authentication
 @model LoginModel
+@inject SignInManager<AppUser> SignInManager
+
 @{
-    Layout = null;
-    ViewBag.Title = "User-Login";
+    ViewData["Title"] = "Login";
 }
 
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <link rel="stylesheet" href="~/stylesheet/css/bootstrap.css" />
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
-    <title>@ViewBag.Title</title>
-    <link rel="stylesheet" href="../userstylesheet/UserLoginStyleSheet.css" />
-    <script src="~/script/jquery.min.js"></script>
-    <script src="~/script/jquery.validate.min.js"></script>
-    <script src="~/script/jquery.validate.unobtrusive.min.js"></script>
-</head>
-<body>
-    <div class="col-md-6 content" style="height:auto">
-        <h3>User Login</h3>
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/LoginLocal.css" />
+    </environment>
+}
 
-        <div class="text-danger" asp-validation-summary="All"></div>
 
-        <form asp-action="Login" method="post">
-            <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
-            <div class="input-group form-group ucont">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                </div>
-                <input asp-for="UserName" class="form-control" placeholder="Username" required/>
-            </div>
-            <div class="input-group form-group ucont">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-key"></i></span>
-                </div>
-                <input asp-for="Password" class="form-control" placeholder="Password" required/>
-            </div>
-            <div class="form-group">
-                <input type="submit" class="btn-outline-info" value="Login" id="btnSub" />
-            </div>
-            <div class="form-group checkbox" style="margin-bottom:0px">
-                <input type="checkbox" value="remember" id="remMe" />
-                <label for="remMe">Remember Me</label>
-            </div>
-            <div class="form-group">
-                <span style="font-size:18px; margin-left:10px">
-                    Don't have an account?
-                    <a asp-controller="Account" asp-action="SignUp" style="color:darkblue">
-                        Sign Up
-                    </a>
-                </span>
-            </div>
-        </form>
+<div id="main">
+    <h2 class="title-center"><strong>@ViewData["Title"]</strong></h2>
+    <div class="row">
+        <div class="col-md-8 input">
+            <section>
+                <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["RetunUrl"]"
+                      method="post" class="form-horizontal">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group row">
+                        <div class="userInput col-sm-10">
+                            <input asp-for="UserName" placeholder="&#xf007; Username" class="form-control" />
+                            <span asp-validation-for="UserName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-10 userInput">
+                            <input asp-for="Password" placeholder="&#xf084; Password" class="form-control" type="password" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <div class="checkbox col-sm-6">
+                                <label asp-for="RememberMe" class="userFont">
+                                    <input asp-for="RememberMe" />
+                                    @Html.DisplayNameFor(m => m.RememberMe)
+                                </label>
+                            </div>
+                            <div class="col-sm-6">
+                                <button type="submit" class="btn btn-outline btn-info">Log in</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                    </div>
+                    <p>
+                        <a asp-action="SignUp" asp-route-returnturl="@ViewData["ReturnUrl"]" class="pull-left userFont">
+                            Register as a new user?
+                        </a>
+                        <a asp-action="ForgotPassword" class="pull-right userFont">Forgot your password?</a>
+                    </p>
+                    <p>
+                        
+                    </p>
+                </form>
+            </section>
+        </div>
     </div>
-</body>
-</html>
+</div>
+
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

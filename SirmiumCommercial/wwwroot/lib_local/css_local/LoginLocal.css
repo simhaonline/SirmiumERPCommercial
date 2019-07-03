@@ -1,0 +1,26 @@
+﻿#main{
+    width: 50%;
+    padding: 15px;
+    margin-left: 25%;
+}
+
+.title-center{
+    margin-left: 25%;
+    color: cadetblue;
+}
+
+.userInput {
+    font-family: Arial, FontAwesome;
+    margin-left: 10%;
+    border-bottom: 1px solid aqua;
+    box-sizing: border-box;
+}
+
+.btnSub{
+    border: 1px solid aqua;
+    background-color: white;
+}
+
+.userFont{
+    color: cadetblue;
+}

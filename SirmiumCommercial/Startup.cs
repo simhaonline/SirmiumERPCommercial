@@ -40,6 +40,7 @@ namespace SirmiumCommercial
                 options.Password.RequireDigit = false;
                 }).AddEntityFrameworkStores<AppIdentityDbContext>()
                 .AddDefaultTokenProviders();
+            services.AddApplicationInsightsTelemetry(Configuration);
             services.AddMvc();
         }
 
@@ -50,6 +51,9 @@ namespace SirmiumCommercial
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseMvc(routes => {
+                routes.MapRoute(
+                    name: null,
+                    template: "{Controller=Home}/{Action=Index}/{id?}");
                 routes.MapRoute(
                     name: null,
                     template: "{Controller=Main}/{Action=Index}/{id?}");

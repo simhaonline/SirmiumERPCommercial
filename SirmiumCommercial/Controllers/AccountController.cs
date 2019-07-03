@@ -139,7 +139,7 @@ namespace SirmiumCommercial.Controllers
                     }
                 }
             }
-            return View(model);
+            return View();
         }
 
         [AllowAnonymous]
@@ -152,6 +152,18 @@ namespace SirmiumCommercial.Controllers
         {
             await signInManager.SignOutAsync();
             return Redirect(returnUrl);
+        }
+
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
+        public IActionResult FreeTrial()
+        {
+            return View();
         }
     }
 }
