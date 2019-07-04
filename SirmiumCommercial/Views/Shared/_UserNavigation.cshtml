@@ -1,0 +1,73 @@
+﻿<div id="navigation">
+
+    <ul class="nav metismenu" id="side-menu">
+        <li class="@Html.IsSelected(controller: "User")">
+            <a href="@Url.Action("Index", "User")">
+                <span class="fa fa-home"></span>
+                <span class="nav-label">Home</span>
+            </a>
+        </li>
+        <li class="@Html.IsSelected(controller: "Groups")">
+            <a href="@Url.Action("Groups", "Groups")">
+                <span class="fa fa-users"></span>
+                <span class="nav-label">Groups</span>
+            </a>
+        </li>
+        <li class="@Html.IsSelected(controller: "Company")">
+            <a href="@Url.Action("AllUsers", "Company")">
+                <span class="fa fa-industry"></span>
+                <span class="nav-label">My Company</span>
+            </a>
+        </li>
+        <li class="@Html.IsSelected(controller: "Courses")">
+            <a href="@Url.Action("Courses", "User")">
+                <span class="fa fa-book"></span> <span class="nav-label">Courses</span>
+                <span class="fa arrow"></span>
+            </a>
+            <ul class="nav nav-second-level">
+                <li class="@Html.IsSelected(action: "NewCourses")">
+                    <a href="@Url.Action("NewCourses", "Courses")">New Courses</a>
+                </li>
+                <li class="@Html.IsSelected(action: "MyCourses")">
+                    <a href="@Url.Action("MyCourses", "Courses")">My Courses</a>
+                </li>
+                <li class="@Html.IsSelected(action: "AllCourses")">
+                    <a href="@Url.Action("AllCourses", "Courses")">All Courses</a>
+                </li>
+            </ul>
+        </li>
+        <li class="@Html.IsSelected(controller: "Files")">
+            <a href="#">
+                <span class="fa fa-files-o"></span>
+                <span class="nav-label">Files</span>
+                <span class="fa arrow"></span>
+            </a>
+            <ul class="nav nav-second-level">
+                <li class="@Html.IsSelected(action: "MyFiles")">
+                    <a href="@Url.Action("MyFiles", "Files")">My Files</a>
+                </li>
+                <li class="@Html.IsSelected(action: "SharedFiles")">
+                    <a href="@Url.Action("SharedFiles", "Files")">Shared Files</a>
+                </li>
+            </ul>
+        </li>
+        <li class="@Html.IsSelected(controller: "Reporting")">
+            <a href="@Url.Action("Index", "Reporting")">
+                <span class="fa fa-bar-chart"></span>
+                <span class="nav-label">Reporting</span>
+            </a>
+        </li>
+        <li class="@Html.IsSelected(controller: "Manage")">
+            <a href="@Url.Action("Index", "Manage")">
+                <span class="fa fa-cogs"></span>
+                <span class="nav-label">Manage</span>
+            </a>
+        </li>
+        <li class="@Html.IsSelected(controller: "Admin")">
+            <a href="@Url.Action("Index", "Admin")">
+                <span class="fa fa-sliders"></span>
+                <span class="nav-label">Admin</span>
+            </a>
+        </li>
+    </ul>
+</div>
