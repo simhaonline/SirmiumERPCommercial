@@ -1,9 +1,37 @@
 ﻿@model IEnumerable<IdentityRole>
 
 @{
-    Layout = "_AdminLayout";
-    ViewBag.Title = "Roles";
+    Layout = "_UserLayout";
+    ViewData["Title"] = "Roles";
 }
+
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+    </environment>
+}
+
+<div id="adminTopNav" class="text-center">
+    @Html.Partial("AdminNavigation")
+</div>
+
+
+<div class="row">
+    <h2 class="col-sm-2">@ViewData["Title"]</h2>
+    <div class="col-sm-2">
+        <a class="btn btn-success btn-outline m-t-sm" asp-action="CreateRole">
+            <span class="fa fa-plus"></span>  New Role
+        </a>
+    </div>
+    <form action="#" class="navbar-form-custom" method="post">
+        <div class="form-inline text-center" style="margin-top: 10px">
+            <label class="control-label">Sort by:&nbsp;</label>
+            <select class="form-search">
+                <option>Role Name</option>
+            </select>
+        </div>
+    </form>
+</div>
 
 <div class="text-danger" asp-validation-summary="ModelOnly"></div>
 
@@ -31,5 +59,3 @@
         }
     }
 </table>
-
-<a asp-action="CreateRole" class="btn btn-success">Create</a>

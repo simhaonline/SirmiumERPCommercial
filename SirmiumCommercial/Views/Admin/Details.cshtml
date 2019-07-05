@@ -1,12 +1,32 @@
 ﻿@model AdminViewModel
 @{
-    Layout = "_AdminLayout";
+    Layout = "_UserLayout";
     ViewBag.Title = "User Details";
 }
 
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+    </environment>
+}
+
+<div id="adminTopNav" class="text-center">
+    @Html.Partial("AdminNavigation")
+</div>
+
+<div class="row">
+    <h2 class="col-sm-10"><span class="text-info">&#64;@Model.User.UserName</span> Details:</h2>
+    <div class="col-sm-2">
+        <a class="btn btn-danger btn-outline m-t-sm" asp-action="Delete"
+           asp-controller="Admin" asp-route-id="@Model.User.Id">
+            <span class="fa fa-minus"></span>  Delete User
+        </a>
+    </div>
+</div>
+
 <div class="col-5" style="margin:auto">
     <div class="bg-primary m-1 p-1">
-        <h4>@Model.User.UserName Details:</h4>
+        <h4></h4>
     </div>
 
     <table class="table table-sm table-bordered">
@@ -49,7 +69,7 @@
                 {
                     <td class="text-success">@Model.User.Status</td>
                     <td>
-                        <button class="btn btn-sm btn-outline-danger" type="submit">
+                        <button class="btn btn-sm btn-outline btn-danger" type="submit">
                             Inactive
                         </button>
                     </td>
@@ -58,7 +78,7 @@
                 {
                     <td class="text-danger">@Model.User.Status</td>
                     <td>
-                        <button class="btn btn-sm btn-outline-success" type="submit">
+                        <button class="btn btn-sm btn-outline btn-success" type="submit">
                             Active
                         </button>
                     </td>
@@ -69,16 +89,15 @@
             <th>Role:</th>
             <td user-role="@Model.User.Id"></td>
             <td>
-                <button class="btn btn-sm btn-outline-danger" id="editBtn">
+                <button class="btn btn-sm btn-outline btn-info" id="editBtn">
                     Edit
                 </button>
             </td>
         </tr>
     </table>
-    <a asp-action="Index" class="btn btn-outline-danger">Back</a>
 </div>
 
-<div id="roleForm" class="col-12" 
+<div id="roleForm" class="col-12"
      style="position:fixed; top:0; bottom:0; background-color:black; margin-left:0;
         opacity:0.9" hidden>
     <div class="col-2" style="margin-left:500px; margin-top:100px;

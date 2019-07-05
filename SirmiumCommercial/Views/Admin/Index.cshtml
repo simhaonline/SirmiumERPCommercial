@@ -1,11 +1,40 @@
 ﻿@model IEnumerable<AppUser>
 
-@{ 
-    Layout = "_AdminLayout";
-    ViewBag.Title = "User Accounts";
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = "Users";
 }
 
-<div class="text-danger" asp-validation-summary="ModelOnly"></div>
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+    </environment>
+}
+
+<div id="adminTopNav" class="text-center">
+    @Html.Partial("AdminNavigation")
+</div>
+
+<div class="row">
+    <h2 class="col-sm-2">@ViewData["Title"]</h2>
+    <div class="col-sm-2">
+        <a class="btn btn-success btn-outline m-t-sm" asp-action="Create">
+            <span class="fa fa-user-plus"></span>  New User
+        </a>
+    </div>
+    <form action="#" class="navbar-form-custom" method="post">
+        <div class="form-inline text-center" style="margin-top: 10px">
+            <label class="control-label">Sort by:&nbsp;</label>
+            <select class="form-search">
+                <option>Date Added</option>
+                <option>Id</option>
+                <option>User Name</option>
+                <option>Full Name</option>
+                <option>Company</option>
+            </select>
+        </div>
+    </form>
+</div>
 
 <table class="table table-sm table-bordered">
     <tr>
@@ -24,19 +53,18 @@
     {
         foreach (AppUser user in Model)
         {
-        <tr>
-            <td>@user.Id</td>
-            <td>@user.UserName</td>
-            <td colspan="2">@user.FirstName @user.LastName</td>
-            <td>@user.Email</td>
-            <td>@user.CompanyName</td>
-            <td>
-                <a class="btn btn-sm btn-outline-info" asp-action="Details"
-                   asp-route-id="@user.Id">Details</a>
-            </td>
-        </tr>
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.UserName</td>
+                <td colspan="2">@user.FirstName @user.LastName</td>
+                <td>@user.Email</td>
+                <td>@user.CompanyName</td>
+                <td>
+                    <a class="btn btn-sm btn-info btn-outline" asp-action="Details"
+                       asp-route-id="@user.Id">Details</a>
+                </td>
+            </tr>
         }
     }
 </table>
 
-<a class="btn btn-success" asp-action="Create">Create</a>

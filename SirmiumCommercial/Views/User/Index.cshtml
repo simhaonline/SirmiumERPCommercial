@@ -3,3 +3,44 @@
     ViewData["Title"] = "Home";
 }
 
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+    </environment>
+}
+
+<div id=mainWrapper">
+
+    <div id="topNav" class="nav navbar">
+        <div class="smalltitle pull-left">
+            <h3><strong>Activity Feed</strong></h3>
+        </div>
+
+        <form action="#" class="navbar-form-custom" method="post">
+            <div class="form-inline text-center" style="margin-top: 10px">
+                <label class="control-label">Sort by:&nbsp;</label>
+                <select class="form-search">
+                    <option>End Date</option>
+                </select>
+            </div>
+        </form>
+        <div class="inline navbar-right">
+            <h3 class="pull-left m-r"><a><span class="text-muted">All |</span></a></h3>
+            <h3 class="pull-left m-r"><a><span class="text-muted">Spotcheck |</span></a></h3>
+            <h3 class="pull-left m-r"><a><span class="text-muted">Certification |</span></a></h3>
+            <h3 class="pull-left m-r"><a><span class="text-muted">Benchmark |</span></a></h3>
+            <h3 class="pull-left m-r"><a><span class="text-muted">Watch respond |</span></a></h3>
+        </div>
+    </div>
+
+    <!--Main-->
+    <div>
+        @Html.Partial("Activity")
+    </div>
+</div>
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+        <script src="../lib_local/script_local/User_Local.js"></script>
+    </environment>
+}
