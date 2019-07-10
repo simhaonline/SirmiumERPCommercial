@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using SirmiumCommercial.Models.ViewModels;
 using SirmiumCommercial.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Session;
 
 namespace SirmiumCommercial.Controllers
 {
@@ -57,7 +59,7 @@ namespace SirmiumCommercial.Controllers
                             //Redirect to AdminController, if user-role="Admin"
                             if (await userManager.IsInRoleAsync(user, "Admin"))
                             {
-                                return Redirect("/Admin/Index");
+                                return RedirectToAction("Index", "Admin", user);
                             }
                             //Redirect to CompanyAdminController, if user-role="CompanyAdmin"
                             else if (await userManager.IsInRoleAsync(user, "Company Admin")) { 

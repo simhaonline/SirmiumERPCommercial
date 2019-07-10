@@ -40,4 +40,10 @@ namespace SirmiumCommercial.Models.ViewModels
 
         public bool RememberMe { get; set; }
     }
+
+    public class ProfileModel
+    {
+        public AppUser appUser { get; set; }
+        public UserProfile userProfile { get; set; }
+    }
 }

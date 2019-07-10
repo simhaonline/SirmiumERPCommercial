@@ -1,4 +1,102 @@
-﻿@{
+﻿@model ProfileModel
+
+@{
     Layout = "_UserLayout";
     ViewData["Title"] = "My Profile";
 }
+
+<style type="text/css">
+    #profileMain{
+        background-color: #ccffff;
+        border-radius: 20px;
+        box-sizing: border-box;
+        padding-top: 30px;
+    }
+</style>
+<div class="row m-r-sm m-l-sm">
+
+    <div class="col-lg-12 text-center" id="profileMain">
+
+        <div class="profile-picture">
+            @*if (Model.userProfile.ProfilePicture == null)
+        {
+            <img src="~/defaultAvatar.png" id="profileImg" />
+        }
+        else
+        {
+            <img src=@Model.userProfile.ProfilePicture id="profileImg" />
+        }*@
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                    <img src="~/defaultAvatar.png" class="img-circle m-b" alt="logo"/>
+                </a>
+                <div class="dropdown-menu hdropdown bigmenu animated flipInY">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <a>
+                                        <i class="pe pe-7s-camera text-info"></i>
+                                        <h3>Take a Photo</h3>
+                                    </a>
+                                </td>
+                            </tr>
+                                <td>
+                                    <a>
+                                        <i class="pe pe-7s-cloud-upload text-success"></i>
+                                        <h3>Upload a Photo</h3>
+                                    </a>
+                                </td>
+                                <td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+
+        @if (Model.appUser.FirstName != null || Model.appUser.LastName != null)
+        {
+            <div class="row">
+                <h2 class="name">@Model.appUser.FirstName @Model.appUser.LastName</h2>
+            </div>
+
+        }
+
+        @if (Model.appUser.UserName != null)
+        {
+            <div class="row">
+                <h3 class="text-info">&#64;@Model.appUser.UserName</h3>
+            </div>
+        }
+
+        @if (Model.appUser.CompanyName != null)
+        {
+            <div class="row">
+                <h4 class="text-info"><i class="fa fa-briefcase"></i> @Model.appUser.CompanyName</h4>
+            </div>
+        }
+
+        @if (Model.appUser.Email != null)
+        {
+            <div class="row">
+                <h6 class="text-info"><i class="fa fa-at"></i> @Model.appUser.Email</h6>
+            </div>
+        }
+
+        @if (Model.appUser.PhoneNumber != null)
+        {
+            <div class="row">
+                <h6 class="text-info"><i class="fa fa-phone"></i> @Model.appUser.PhoneNumber</h6>
+            </div>
+        }
+
+        <div class="row">
+            <a href="@Url.Action("EditProfile", "User", new { id = Model.appUser.Id })"
+               class="btn btn-info btn-outline">
+                <i class="fa fa-edit"></i> Edit
+            </a>
+        </div>
+    </div>
+</div>

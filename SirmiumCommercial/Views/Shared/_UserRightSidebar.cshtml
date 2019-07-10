@@ -4,9 +4,8 @@
         <button id="sidebar-close" class="right-sidebar-toggle sidebar-button btn btn-default m-b-md">
             <i class="pe pe-7s-close"></i>
         </button>
-
         <div class="profile-picture">
-            <a href="@Url.Action("MyProfile", "User")">
+            <a href="@Url.Action("MyProfile", "User", new { id = ViewData["Id"] })">
                 <img src="~/defaultAvatar.png" class="img-circle m-b" alt="logo">
             </a>
 
@@ -28,7 +27,7 @@
 
             <ul class="nav metismenu" id="side-menu">
                 <li class="@Html.IsSelected(controller: "User")">
-                    <a href="@Url.Action("MyProfile", "User")">
+                    <a href="@Url.Action("MyProfile", "User", new { id = ViewData["Id"] })">
                         <span class="fa fa-user"></span>
                         <span class="nav-label">Profile</span>
                     </a>

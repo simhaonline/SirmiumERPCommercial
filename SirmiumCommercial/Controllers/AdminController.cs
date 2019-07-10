@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using SirmiumCommercial.Models;
 using System.Threading.Tasks;
 using SirmiumCommercial.Models.ViewModels;
+using SirmiumCommercial.Models;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 
@@ -26,8 +27,9 @@ namespace SirmiumCommercial.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public ViewResult Index()
+        public ViewResult Index(AppUser admin)
         {
+            ViewData["Id"] = admin.Id;
             return View(userManager.Users);
         }
 

@@ -87,8 +87,24 @@
         </tr>
         <tr>
             <th>Role:</th>
-            <td user-role="@Model.User.Id"></td>
-            <td>
+            <td user-role="@Model.User.Id" id="roleTd"></td>
+            <td colspan="2" id="roleForm" class="row" hidden>
+                <form asp-action="EditRole" method="post">
+                    <input asp-for="@Model.User.Id" type="hidden" />
+                    <div class="form-group col-sm-8">
+                        <select asp-for="@Model.Role.Id" class="form-control">
+                            <option value="">Set</option>
+                            @foreach (IdentityRole role in Model.Roles)
+                            {
+                                <option value="@role.Id">@role.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <button class="btn btn-sm btn-success btn-outline" type="submit">Save</button>
+                    <a asp-action="Details" class="btn btn-sm btn-danger btn-outline">Cancel</a>
+                </form>
+            </td>
+            <td id="editBtnTd">
                 <button class="btn btn-sm btn-outline btn-info" id="editBtn">
                     Edit
                 </button>
@@ -96,7 +112,7 @@
         </tr>
     </table>
 </div>
-
+@*
 <div id="roleForm" class="col-12"
      style="position:fixed; top:0; bottom:0; background-color:black; margin-left:0;
         opacity:0.9" hidden>
@@ -122,12 +138,16 @@
             <a asp-action="Details" class="btn btn-sm btn-danger">Cancel</a>
         </form>
     </div>
-</div>
-
+</div>*@
 <script type="text/javascript">
     var editBtn = document.getElementById("editBtn");
+    var editBtnTd = document.getElementById("editBtnTd");
+    var roleTd = document.getElementById("roleTd");
     var roleForm = document.getElementById("roleForm");
+
     editBtn.onclick = function () {
+        roleTd.hidden = true;
+        editBtnTd.hidden = true;
         roleForm.hidden = false;
     }
 </script>

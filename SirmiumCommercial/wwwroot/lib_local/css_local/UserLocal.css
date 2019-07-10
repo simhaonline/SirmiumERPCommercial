@@ -110,3 +110,12 @@
         border-bottom: 1px solid #62cb31;
         color: #62cb31;
     }
+
+#profileMain {
+    margin-right: 0px;
+    background-color: #ccffff;
+    border-bottom-left-radius: 15px;
+    border-top-left-radius: 15px;
+    box-sizing: border-box;
+    padding-top: 30px;
+}
