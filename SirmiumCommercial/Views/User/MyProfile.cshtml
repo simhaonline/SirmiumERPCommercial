@@ -5,30 +5,28 @@
     ViewData["Title"] = "My Profile";
 }
 
-<style type="text/css">
-    #profileMain{
-        background-color: #ccffff;
-        border-radius: 20px;
-        box-sizing: border-box;
-        padding-top: 30px;
-    }
-</style>
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+    </environment>
+}
+
 <div class="row m-r-sm m-l-sm">
 
     <div class="col-lg-12 text-center" id="profileMain">
 
         <div class="profile-picture">
             @*if (Model.userProfile.ProfilePicture == null)
-        {
-            <img src="~/defaultAvatar.png" id="profileImg" />
-        }
-        else
-        {
-            <img src=@Model.userProfile.ProfilePicture id="profileImg" />
-        }*@
+                {
+                    <img src="~/defaultAvatar.png" id="profileImg" />
+                }
+                else
+                {
+                    <img src=@Model.userProfile.ProfilePicture id="profileImg" />
+                }*@
             <div class="dropdown">
                 <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-                    <img src="~/defaultAvatar.png" class="img-circle m-b" alt="logo"/>
+                    <img src="~/defaultAvatar.png" class="img-circle m-b" alt="logo" />
                 </a>
                 <div class="dropdown-menu hdropdown bigmenu animated flipInY">
                     <table>
@@ -41,19 +39,19 @@
                                     </a>
                                 </td>
                             </tr>
-                                <td>
-                                    <a>
-                                        <i class="pe pe-7s-cloud-upload text-success"></i>
-                                        <h3>Upload a Photo</h3>
-                                    </a>
-                                </td>
-                                <td>
+                        <td>
+                            <a>
+                                <i class="pe pe-7s-cloud-upload text-success"></i>
+                                <h3>Upload a Photo</h3>
+                            </a>
+                        </td>
+                        <td>
                             </tr>
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
             </div>
-            
+
         </div>
 
         @if (Model.appUser.FirstName != null || Model.appUser.LastName != null)

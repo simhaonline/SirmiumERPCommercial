@@ -26,11 +26,6 @@ namespace SirmiumCommercial.Controllers
             return View();
         }
 
-        /*public IActionResult MyProfile()
-        {
-            return View();
-        }*/
-
         public IActionResult Notifications()
         {
             return View();
@@ -41,9 +36,24 @@ namespace SirmiumCommercial.Controllers
             return View();
         }
 
-        public IActionResult EditProfile()
+        public async Task<IActionResult> EditProfile(string id)
         {
-            return View();
+            AppUser user = await userManager.FindByIdAsync(id);
+            if(user != null)
+            {
+                ViewData["Id"] = user.Id;
+                return View(new ProfileModel
+                {
+                    appUser = user,
+                    userProfile = userRepository.Users
+                        .FirstOrDefault(u => u.UserId == user.Id)
+                }); ;
+            }
+            else
+            {
+                ModelState.AddModelError("", "User Not Found");
+            }
+            return View(ModelState);
         }
 
         public IActionResult Settings()

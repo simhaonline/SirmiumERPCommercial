@@ -1,0 +1,58 @@
+﻿@model AppUser
+
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = "Photo";
+}
+
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+    </environment>
+}
+
+<div class="row" style="background-color: none">
+    <div class="contents" style="background: none">
+        <div id="video-div">
+            <div class="row m-l-lg">
+                <div class="col-lg-3"></div>
+                <video id="player" class="videoCapturePhoto col-lg-5"></video>
+            </div>
+            <div class="row text-center" id="captureDiv">
+                <button id="capture" class="btn btn-outline">
+                    <i class="fa fa-camera text-big text-info"></i>
+                    <h4>Take a Photo</h4>
+                </button>
+            </div>
+            <div class="col-lg-12">
+                <div class="col-lg-12">
+                    <div class="col-lg-3"></div>
+                    <canvas id="canvas" class="videoCapturePhoto col-lg-6" hidden></canvas>
+                </div>
+                <div class="col-lg-12 text-center" id="saveDiv" hidden>
+                    <form asp-action="SaveProfilePicture" method="post">
+                        <input asp-for="@Model.Id" hidden />
+                        @*<input asp-for="@Model.ProfilePicture" id="img" hidden />*@
+                        <input id="img" class="video col-lg-5" hidden />
+                        <button id="save" class="btn btn-outline" type="submit" hidden>
+                            <i class="fa fa-save text-success text-big"></i>
+                            <span style="font-size:20px">Save</span>
+                        </button>
+                        <a asp-action="CapturePhoto" asp-controller="Recorder"
+                           asp-route-id="@Model.Id"
+                           id="new" class="btn btn-outline" hidden>
+                            <i class="fa fa-camera text-info text-big"></i>
+                            <span style="font-size:20px">Try Again</span>
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+        <script src="~/lib_local/script_local/CapturePhoto_local.js"></script>
+    </environment>
+}

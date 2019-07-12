@@ -112,10 +112,13 @@
     }
 
 #profileMain {
-    margin-right: 0px;
     background-color: #ccffff;
-    border-bottom-left-radius: 15px;
-    border-top-left-radius: 15px;
+    border-radius: 20px;
     box-sizing: border-box;
     padding-top: 30px;
+}
+
+.videoCapturePhoto {
+    border-radius: 30px;
+    box-sizing: border-box;
 }

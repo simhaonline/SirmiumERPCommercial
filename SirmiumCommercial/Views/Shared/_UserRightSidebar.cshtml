@@ -33,7 +33,7 @@
                     </a>
                 </li>
                 <li class="@Html.IsSelected(controller: "User")">
-                    <a href="@Url.Action("EditProfile", "User")">
+                    <a href="@Url.Action("EditProfile", "User", new { id = ViewData["Id"] })">
                         <span class="fa fa-edit"></span>
                         <span class="nav-label">Edit</span>
                     </a>
