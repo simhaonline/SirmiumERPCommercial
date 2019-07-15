@@ -32,7 +32,7 @@
                     <a href="@Url.Action("MyCourses", "Courses")">My Courses</a>
                 </li>
                 <li class="@Html.IsSelected(action: "AllCourses")">
-                    <a href="@Url.Action("AllCourses", "Courses")">All Courses</a>
+                    <a asp-action="AllCourses" asp-controller="Courses" asp-route-id="@ViewData["Id"]">All Courses</a>
                 </li>
             </ul>
         </li>

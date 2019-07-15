@@ -1,4 +1,20 @@
-﻿@{
+﻿@model UserCourse
+
+@{
     Layout = "_UserLayout";
     ViewData["Title"] = "All Courses";
 }
+
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Date Added</th>
+    </tr>
+    @foreach (Course course in Model.Courses)
+    {
+        <tr>
+            <td>@course.Title</td>
+            <td>@course.DateAdded</td>
+        </tr>
+    }
+</table>

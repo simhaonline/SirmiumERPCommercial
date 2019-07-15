@@ -46,4 +46,11 @@ namespace SirmiumCommercial.Models.ViewModels
         public AppUser appUser { get; set; }
         public UserProfile userProfile { get; set; }
     }
+
+    public class UserCourse
+    {
+        public AppUser User { get; set; }
+        public IQueryable<Course> Courses { get; set; }
+
+    }
 }
