@@ -21,9 +21,10 @@ namespace SirmiumCommercial.Controllers
             repository = repo;
         }
 
-        public IActionResult MyCourses()
+        public IActionResult MyCourses(string id)
         {
-            return View();
+            ViewData["Id"] = id;
+            return View(repository.Courses);
         }
 
         public async Task<IActionResult> AllCourses(string id)
@@ -41,9 +42,16 @@ namespace SirmiumCommercial.Controllers
             return View();
         }
 
-        public IActionResult NewCourses()
+        public IActionResult CourseDetails(string id, string courseId)
         {
-            return View();
+            ViewData["Id"] = id;
+            int cId = Convert.ToInt32(courseId);
+            return View(
+                new CourseDetails
+                {
+                    Course = repository.Courses
+                        .FirstOrDefault(c => c.CourseId == cId)
+                });   
         }
     }
 }

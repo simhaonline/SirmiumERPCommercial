@@ -5,16 +5,112 @@
     ViewData["Title"] = "All Courses";
 }
 
-<table>
-    <tr>
-        <th>Title</th>
-        <th>Date Added</th>
-    </tr>
-    @foreach (Course course in Model.Courses)
-    {
-        <tr>
-            <td>@course.Title</td>
-            <td>@course.DateAdded</td>
-        </tr>
+<style type="text/css">
+    .courseCardEndDate{
+        background-color: #ccffff;
+        border-bottom-left-radius: 15px;
+        border-top-left-radius: 15px;
+        box-sizing: border-box;
+        padding-top: 30px;
     }
-</table>
+
+    #topNav {
+        border-bottom: 2px solid cadetblue;
+        box-sizing: border-box;
+    }
+</style>
+
+<div id="topNav" class="nav navbar">
+    <div class="smalltitle pull-left">
+        <h3><strong>@ViewData["Title"]</strong></h3>
+    </div>
+
+    <form action="#" class=" pull-right" method="post">
+        <div class="form-inline text-center" style="margin-top: 10px">
+            <label class="control-label">Sort by:&nbsp;</label>
+            <select class="form-control">
+                <option>Course Name</option>
+                <option>End Date</option>
+                <option>Date Added</option>
+            </select>
+        </div>
+    </form>
+</div>
+
+@foreach (Course course in Model.Courses)
+{
+    <div class="col-md-12 m-b-md m-r-md">
+        <div class="col-md-2 p-xxs text-center courseCardEndDate">
+            <h1><span class="fa fa-calendar"></span></h1>
+            <h3>@Model.DateDifference(DateTime.Now, course.DateAdded)</h3>
+            <h5>
+                <span class="fa fa-clock-o"></span>
+                @if (course.EndDate != DateTime.MinValue)
+                {
+                    <span class="text-warning">
+                        @Model.DateDifference(course.EndDate, DateTime.Now)
+                    </span>
+                }
+                <span class="text-success">
+                    NO END DATE
+                </span>
+            </h5>
+        </div>
+        <div class="col-md-10">
+            <div class="col-md-4">
+                <h2>@course.Title</h2>
+                <h4>
+                    by:
+                    @if (course.CreatedBy != null)
+                    {
+                        <span class="text-info">
+                            &#64;@course.CreatedBy.UserName
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="text-info"> &#64;SirmiumCommercial</span>
+                    }
+                </h4>
+                <h5>
+                    @if (course.Users != null)
+                    {
+                        @course.Users.Count()
+                        <span> participants</span>
+                    }
+                    else
+                    {
+                        <span>0 participants</span>
+                    }
+                </h5>
+            </div>
+            <div class="col-md-3 text-center"></div>
+            <div class="col-md-3 text-center">
+                @if (course.Users != null)
+                {
+                    if (course.Users.Select(u => u.Id).Any() == ViewBag["Id"])
+                    {
+                        <span class="badge badge-primary">My course</span>
+                    }
+                }
+                else
+                {
+                    <a asp-action="ParticipateCours"
+                       asp-controller="Courses"
+                       asp-route-id="@Model.User.Id"
+                       class="btn btn-primary">
+                        <span class="fa fa-plus"></span>
+                        Participate
+                    </a>
+                }
+                <a asp-action="CourseDetails"
+                   asp-controller="Courses"
+                   asp-route-id="@Model.User.Id"
+                   asp-route-courseId="@course.CourseId"
+                   class="btn btn-outline btn-info">
+                    Details
+                </a>
+            </div>
+        </div>
+    </div>
+}

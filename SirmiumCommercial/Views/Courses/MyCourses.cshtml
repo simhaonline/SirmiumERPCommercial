@@ -1,4 +1,13 @@
-﻿@{
+﻿@model IQueryable<Course>
+
+@{
     Layout = "_UserLayout";
     ViewData["Title"] = "My Courses";
 }
+
+
+<div class="col-lg-12 navbar bg-info">
+    <span class="navbar-brand text-danger">
+        No Courses
+    </span>
+</div>

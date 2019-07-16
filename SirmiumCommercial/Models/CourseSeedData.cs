@@ -21,19 +21,19 @@ namespace SirmiumCommercial.Models
                 context.Courses.AddRange(
                     new Course
                     {
-                        Title = "Cours1",
+                        Title = "Course1",
                         DateAdded = DateTime.Now,
                         DateModified = DateTime.Now
                     },
                     new Course
                     {
-                        Title = "Cours2",
+                        Title = "Course2",
                         DateAdded = DateTime.Now,
                         DateModified = DateTime.Now
                     },
                     new Course
                     {
-                        Title = "Cours3",
+                        Title = "Course3",
                         DateAdded = DateTime.Now,
                         DateModified = DateTime.Now
                     }

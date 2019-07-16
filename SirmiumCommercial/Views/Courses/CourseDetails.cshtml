@@ -1,0 +1,82 @@
+﻿@model CourseDetails
+
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = Model.Course.Title;
+}
+
+<div class="col-lg-12">
+    <div class="col-lg-2 text-center p-lg">
+        <h1>
+            <span class="fa fa-trophy text-big"></span>
+        </h1>
+    </div>
+    <div class="col-lg-3">
+        <h2>
+            @Model.Course.Title
+        </h2>
+        <h4>
+            by:
+            @if (Model.Course.CreatedBy != null)
+            {
+                <span class="text-info">
+                    &#64;@Model.Course.CreatedBy.UserName
+                </span>
+            }
+            else
+            {
+                <span class="text-info"> &#64;SirmiumCommercial</span>
+            }
+        </h4>
+        <h5><span class="fa fa-plus-circle"></span> Added: @Model.Course.DateAdded.ToString()</h5>
+        <h5><span class="fa fa-pencil-square-o"></span> Date modified: @Model.Course.DateAdded.ToString()</h5>
+    </div>
+    <div class="col-lg-2">
+        @if (Model.Course.Presentations != null)
+        {
+            <h4>Parts: <span class="text-warning">@Model.Course.Presentations.Count()</span>   </h4>
+        }
+        else
+        {
+            <h4>Parts: <span class="text-danger">0</span></h4>
+        }
+        <h5>
+            <span class="fa fa-clock-o"></span>
+            @if (Model.Course.EndDate != DateTime.MinValue)
+            {
+                <span class="text-warning">
+                    @Model.DateDifference(Model.Course.EndDate, DateTime.Now)
+                </span>
+            }
+            <span class="text-success">
+                NO END DATE
+            </span>
+        </h5>
+    </div>
+    <div class="col-lg-2 text-center">
+        @if (Model.Course.Users != null)
+        {
+            if (Model.Course.Users.Select(u => u.Id).Any() == ViewBag["Id"])
+            {
+                <span class="badge badge-primary">My course</span>
+            }
+        }
+        else
+        {
+            <a asp-action="ParticipateCours"
+               asp-controller="Courses"
+               asp-route-id="@ViewData["Id"]"
+               class="btn btn-primary">
+                <span class="fa fa-plus"></span>
+                Participate
+            </a>
+        }
+    </div>
+</div>
+
+@if (Model.Course.Presentations == null)
+{
+    <div class="col-lg-12 navbar bg-info">
+        <span class="navbar-brand">No Presentation</span>
+    </div>
+}

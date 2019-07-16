@@ -25,14 +25,13 @@
                 <span class="fa arrow"></span>
             </a>
             <ul class="nav nav-second-level">
-                <li class="@Html.IsSelected(action: "NewCourses")">
-                    <a href="@Url.Action("NewCourses", "Courses")">New Courses</a>
-                </li>
                 <li class="@Html.IsSelected(action: "MyCourses")">
-                    <a href="@Url.Action("MyCourses", "Courses")">My Courses</a>
+                    <a asp-action="MyCourses" asp-controller="Courses"
+                       asp-route-id="@ViewData["Id"]">My Courses</a>
                 </li>
                 <li class="@Html.IsSelected(action: "AllCourses")">
-                    <a asp-action="AllCourses" asp-controller="Courses" asp-route-id="@ViewData["Id"]">All Courses</a>
+                    <a asp-action="AllCourses" asp-controller="Courses" 
+                       asp-route-id="@ViewData["Id"]">All Courses</a>
                 </li>
             </ul>
         </li>
