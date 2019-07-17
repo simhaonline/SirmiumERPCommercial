@@ -16,6 +16,5 @@ namespace SirmiumCommercial.Models
         public DbSet<Course> Courses { get; set; }
         public DbSet<Presentation> Presentations { get; set; }
         public DbSet<Representation> Representations { get; set; }
-
     }
 }

@@ -33,6 +33,7 @@ namespace SirmiumCommercial.Models
         public IQueryable<Presentation> Presentations { get; set; }
         //Users on the Courses
         public IQueryable<AppUser> Users { get; set; }
+        public string AwardIcon { get; set; }
     }
 
     public class Presentation

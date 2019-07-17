@@ -122,3 +122,16 @@
     border-radius: 30px;
     box-sizing: border-box;
 }
+
+.courseCardEndDate {
+    background-color: #ccffff;
+    border-bottom-left-radius: 15px;
+    border-top-left-radius: 15px;
+    box-sizing: border-box;
+    padding-top: 30px;
+}
+
+.coursCardManage {
+    border-bottom: 2px solid #ccffff;
+    box-sizing: border-box;
+}

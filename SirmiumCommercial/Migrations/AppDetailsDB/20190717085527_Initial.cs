@@ -18,7 +18,8 @@ namespace SirmiumCommercial.Migrations.AppDetailsDB
                     CreatedById = table.Column<string>(nullable: true),
                     DateAdded = table.Column<DateTime>(nullable: false),
                     DateModified = table.Column<DateTime>(nullable: false),
-                    EndDate = table.Column<DateTime>(nullable: false)
+                    EndDate = table.Column<DateTime>(nullable: false),
+                    AwardIcon = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

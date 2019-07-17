@@ -1,0 +1,77 @@
+﻿@model Course
+
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = "Create Course";
+}
+
+<style type="text/css">
+    #topNav {
+        border-bottom: 2px solid cadetblue;
+        box-sizing: border-box;
+    }
+</style>
+
+<div id="topNav" class="nav navbar">
+    <div class="smalltitle col-md-3">
+        <h3><strong>@ViewData["Title"]</strong></h3>
+    </div>
+</div>
+
+<form>
+    <div class="form-inline navbar bg-info">
+        <label>Title:</label>
+        <input asp-for="Title" class="form-control" />
+    </div>
+</form>
+
+<div class="row">
+    <table class="row m-l-md m-r-md">
+        <tr>
+            <td rowspan="4" class="col-md-2"><h5>Choose Award Icon:</h5></td>
+            <td class="col-md-1"><h3><span class="fa fa-fire-alt"></span></h3></td>
+            <td class="col-md-1"><h3><span class="fa fa-shield"></span></h3></td>
+            <td class="col-md-1"><h3><span class="fa fa-star"></span></h3></td>
+            <td class="col-md-1"><h3><span class="fa fa-star-o"></span></h3></td>
+            <td class="col-md-1"><h3><span class="fa fa-star-half-alt"></span></h3></td>
+            <td class="col-md-1"><h3><span class="pe pe-7s-star"></span></h3></td>
+            <td rowspan="4" class="col-md-4">
+                <h4>Choose Award Color:</h4>
+                <h3>
+                    <span class="fa fa-square-full text-error"></span>
+                    <span class="fa fa-square-full text-primary"></span>
+                    <span class="fa fa-square-full text-primary-2"></span>
+                    <span class="fa fa-square-full text-info"></span>
+                    <br />
+                    <span class="fa fa-square-full text-success"></span>
+                    <span class="fa fa-square-full text-warning"></span>
+                    <span class="fa fa-square-full text-danger"></span>
+                </h3>
+            </td>
+        </tr>
+        <tr>
+            <td class="col-md-1"><h3><span class="fa fa-award"></span></h3></td>
+            <td class="col-md-1"><h3><span class="fa fa-medal"></span></h3></td>
+            <td class="col-md-1"><h3><span class="pe pe-7s-medal"></span></h3></td>
+            <td class="col-md-1"><h3><span class="fa fa-trophy"></span></h3></td>
+            <td class="col-md-1"><h3><span class="pe pe-7s-cup"></span></h3></td>
+            <td class="col-md-1"><h3><span class="fa fa-crown"></span></h3></td>
+        </tr>
+        <tr>
+            <td class="col-md-1"><h3><span class="fa fa-chess-rook"></span></h3></td>
+            <td class="col-md-1"><h3><span class="fa fa-chess-queen"></span></h3></td>
+            <td class="col-md-1"><h3><span class="fa fa-chess-pawn"></span></h3></td>
+            <td class="col-md-1"><h3><span class="fa fa-chess-king"></span></h3></td>
+            <td class="col-md-1"><h3><span class="fa fa-chess-bishop"></span></h3></td>
+            <td class="col-md-1"><h3><span class="fa fa-chess"></span></h3></td>
+        </tr>
+        <tr>
+            <td class="col-md-1"><h3><span class="fa fa-graduation-cap"></span></h3></td>
+            <td class="col-md-1"><h3><span class="fas fa-heart"></span></h3></td>
+            <td class="col-md-1"><h3><span class="fa fa-atom"></span></h3></td>
+            <td class="col-md-1"><h3><span class="pe pe-7s-light"></span></h3></td>
+            <td class="col-md-1"><h3><span class="pe pe-7s-gleam"></span></h3></td>
+            <td class="col-md-1"><h3><span class="pe pe-7s-sun"></span></h3></td>
+        </tr>
+    </table>
+</div>

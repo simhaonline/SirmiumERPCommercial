@@ -10,7 +10,7 @@ using SirmiumCommercial.Models;
 namespace SirmiumCommercial.Migrations.AppDetailsDB
 {
     [DbContext(typeof(AppDetailsDBContext))]
-    [Migration("20190715111224_Initial")]
+    [Migration("20190717085527_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -82,6 +82,8 @@ namespace SirmiumCommercial.Migrations.AppDetailsDB
                     b.Property<int>("CourseId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AwardIcon");
 
                     b.Property<string>("CreatedById");
 

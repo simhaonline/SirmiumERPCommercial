@@ -1,5 +1,100 @@
-﻿@{
+﻿@model IQueryable<Course>
+
+@{
     Layout = "_UserLayout";
     ViewData["Title"] = "Manage";
 }
 
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+    </environment>
+}
+
+<div id="topNav" class="nav navbar">
+    <div class="smalltitle col-md-3">
+        <h3><strong>@ViewData["Title"] - Courses</strong></h3>
+    </div>
+    <div class="col-md-5"></div>
+
+    <form action="#" class="col-md-3 text-center pull-right" method="post">
+        <div class="form-inline text-center" style="margin-top: 10px">
+            <label class="control-label">Sort by:&nbsp;</label>
+            <select class="form-control">
+                <option>Course Name</option>
+                <option>End Date</option>
+                <option>Date Added</option>
+            </select>
+        </div>
+    </form>
+
+    <div class="col-md-1 text-center">
+        <a href="@Url.Action("NewCourse", "Manage", new { id = ViewData["Id"] })"
+           class="btn btn-success btn-outline pull-right">
+            <span class="fa fa-plus"></span>
+            Add Course
+        </a>
+    </div>
+</div>
+
+@foreach (Course c in Model)
+{
+    <div class="col-lg-12 m-b-sm coursCardManage">
+        <div class="col-lg-1 text-center">
+            <h1><span class="text-big @c.AwardIcon"></span></h1>
+        </div>
+        <div class="col-lg-3">
+            <h1>@c.Title</h1>
+            <h4>
+                by:
+                @if (c.CreatedBy != null)
+                {
+                    <span class="text-info">
+                        &#64;@c.CreatedBy.UserName
+                    </span>
+                }
+                else
+                {
+                    <span class="text-info"> &#64;SirmiumCommercial</span>
+                }
+            </h4>
+        </div>
+        <div class="col-lg-3">
+            <h4>
+                <span class="fa fa-plus-circle"></span>
+                Added:
+                <span class="text-info">
+                    @c.DateAdded.Date.ToShortDateString()
+                </span>
+            </h4>
+            <h4>
+                <span class="fa fa-pencil-square-o"></span>
+                Date modified:
+                <span class="text-warning">
+                    @c.DateModified.Date.ToShortDateString()
+                </span>
+            </h4>
+            <h4>
+                <span class="fa fa-clock-o"></span>
+                End Date:
+                @if (c.EndDate == DateTime.MinValue)
+                {
+                    <span class="text-success">NO END DATE</span>
+                }
+                else
+                {
+                    <span class="text-danger">@c.EndDate.Date.ToShortDateString()</span>
+                }
+            </h4>
+        </div>
+        <div class="col-lg-1">
+        </div>
+        <div class="col-lg-3">
+            <a href="@Url.Action("CourseManage", "Manage",
+                    new { id = ViewData["Id"], courseId = c.CourseId })"
+               class="btn btn-info btn-outline">
+                Details
+            </a>
+        </div>
+    </div>
+}

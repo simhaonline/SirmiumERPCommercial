@@ -23,19 +23,22 @@ namespace SirmiumCommercial.Models
                     {
                         Title = "Course1",
                         DateAdded = DateTime.Now,
-                        DateModified = DateTime.Now
+                        DateModified = DateTime.Now,
+                        AwardIcon = "fa fa-trophy text-danger"
                     },
                     new Course
                     {
                         Title = "Course2",
                         DateAdded = DateTime.Now,
-                        DateModified = DateTime.Now
+                        DateModified = DateTime.Now,
+                        AwardIcon = "pe-7s-medal text-warning"
                     },
                     new Course
                     {
                         Title = "Course3",
                         DateAdded = DateTime.Now,
-                        DateModified = DateTime.Now
+                        DateModified = DateTime.Now,
+                        AwardIcon = "pe pe-7s-cup text-info"
                     }
                 );
                 context.SaveChanges();

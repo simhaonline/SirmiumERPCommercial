@@ -1,0 +1,68 @@
+﻿@model Course
+
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = "Manage -" + Model.Title;
+}
+
+
+<div class="col-lg-12">
+    <div class="col-lg-2 text-center p-lg">
+        <h5 class="text-muted">Award</h5>
+        <h1>
+            <span class="@Model.AwardIcon text-big"></span>
+        </h1>
+    </div>
+    <div class="col-lg-3">
+        <h2>
+            @Model.Title
+        </h2>
+        <h4>
+            by:
+            @if (Model.CreatedBy != null)
+            {
+                <span class="text-info">
+                    &#64;@Model.CreatedBy.UserName
+                </span>
+            }
+            else
+            {
+                <span class="text-info"> &#64;SirmiumCommercial</span>
+            }
+        </h4>
+        <h5><span class="fa fa-plus-circle"></span> Added: @Model.DateAdded.ToString()</h5>
+        <h5><span class="fa fa-pencil-square-o"></span> Date modified: @Model.DateAdded.ToString()</h5>
+    </div>
+    <div class="col-lg-2">
+        @if (Model.Presentations != null)
+        {
+            <h4>Parts: <span class="text-warning">@Model.Presentations.Count()</span>   </h4>
+        }
+        else
+        {
+            <h4>Parts: <span class="text-danger">0</span></h4>
+        }
+        <h5>
+            <span class="fa fa-clock-o"></span>
+            @if (Model.EndDate != DateTime.MinValue)
+            {
+                <span class="text-warning">
+                    @Model.EndDate.ToShortDateString()
+                </span>
+            }
+            <span class="text-success">
+                NO END DATE
+            </span>
+        </h5>
+    </div>
+    <div class="col-lg-2 text-center">
+        
+    </div>
+</div>
+
+@if (Model.Presentations == null)
+{
+    <div class="col-lg-12 navbar bg-info">
+        <span class="navbar-brand">No Presentation</span>
+    </div>
+}

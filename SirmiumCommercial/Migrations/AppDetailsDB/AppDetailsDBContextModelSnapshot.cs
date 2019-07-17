@@ -81,6 +81,8 @@ namespace SirmiumCommercial.Migrations.AppDetailsDB
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("AwardIcon");
+
                     b.Property<string>("CreatedById");
 
                     b.Property<DateTime>("DateAdded");

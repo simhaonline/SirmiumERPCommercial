@@ -5,20 +5,11 @@
     ViewData["Title"] = "All Courses";
 }
 
-<style type="text/css">
-    .courseCardEndDate{
-        background-color: #ccffff;
-        border-bottom-left-radius: 15px;
-        border-top-left-radius: 15px;
-        box-sizing: border-box;
-        padding-top: 30px;
-    }
-
-    #topNav {
-        border-bottom: 2px solid cadetblue;
-        box-sizing: border-box;
-    }
-</style>
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+    </environment>
+}
 
 <div id="topNav" class="nav navbar">
     <div class="smalltitle pull-left">
@@ -57,6 +48,9 @@
             </h5>
         </div>
         <div class="col-md-10">
+            <div class="col-md-1 text-center">
+                <h1><span class="icon @course.AwardIcon"></span></h1>
+            </div>
             <div class="col-md-4">
                 <h2>@course.Title</h2>
                 <h4>

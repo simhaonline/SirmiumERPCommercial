@@ -26,12 +26,12 @@
             </a>
             <ul class="nav nav-second-level">
                 <li class="@Html.IsSelected(action: "MyCourses")">
-                    <a asp-action="MyCourses" asp-controller="Courses"
-                       asp-route-id="@ViewData["Id"]">My Courses</a>
+                    <a href="@Url.Action("MyCourses", "Courses", 
+                            new { id = ViewData["Id"] })">My Courses</a>
                 </li>
                 <li class="@Html.IsSelected(action: "AllCourses")">
-                    <a asp-action="AllCourses" asp-controller="Courses" 
-                       asp-route-id="@ViewData["Id"]">All Courses</a>
+                    <a href="@Url.Action("AllCourses", "Courses", 
+                            new { id = ViewData["Id"] })">All Courses</a>
                 </li>
             </ul>
         </li>
@@ -57,7 +57,7 @@
             </a>
         </li>
         <li class="@Html.IsSelected(controller: "Manage")">
-            <a href="@Url.Action("Index", "Manage")">
+            <a href="@Url.Action("Index", "Manage", new { id = ViewData["Id"] })">
                 <span class="fa fa-cogs"></span>
                 <span class="nav-label">Manage</span>
             </a>
