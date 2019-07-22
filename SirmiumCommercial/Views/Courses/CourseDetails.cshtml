@@ -45,13 +45,18 @@
             <span class="fa fa-clock-o"></span>
             @if (Model.Course.EndDate != DateTime.MinValue)
             {
-                <span class="text-warning">
-                    @Model.DateDifference(Model.Course.EndDate, DateTime.Now)
+                <span class="text-danger">
+                    End in
+                    @Model.DateDifference(Model.Course.EndDate, DateTime.Now).Replace("ago", "")
                 </span>
             }
-            <span class="text-success">
-                NO END DATE
-            </span>
+            else
+            {
+                <span class="text-success">
+                    NO END DATE
+                </span>
+
+            }
         </h5>
     </div>
     <div class="col-lg-2 text-center">

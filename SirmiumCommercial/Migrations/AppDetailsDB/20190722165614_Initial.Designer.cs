@@ -10,7 +10,7 @@ using SirmiumCommercial.Models;
 namespace SirmiumCommercial.Migrations.AppDetailsDB
 {
     [DbContext(typeof(AppDetailsDBContext))]
-    [Migration("20190717085527_Initial")]
+    [Migration("20190722165614_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -91,7 +91,11 @@ namespace SirmiumCommercial.Migrations.AppDetailsDB
 
                     b.Property<DateTime>("DateModified");
 
+                    b.Property<string>("Description");
+
                     b.Property<DateTime>("EndDate");
+
+                    b.Property<string>("Status");
 
                     b.Property<string>("Title");
 

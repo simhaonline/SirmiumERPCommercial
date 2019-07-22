@@ -47,9 +47,8 @@ namespace SirmiumCommercial.Models.ViewModels
         public UserProfile userProfile { get; set; }
     }
 
-    public class UserCourse
+    public class AllCourse
     {
-        public AppUser User { get; set; }
         public IQueryable<Course> Courses { get; set; }
 
         public string DateDifference (DateTime date1, DateTime date2)
@@ -141,5 +140,11 @@ namespace SirmiumCommercial.Models.ViewModels
             return val;
         }
 
+    }
+
+    public class EditCourse
+    {
+        public AppUser User { get; set; }
+        public Course Course { get; set; }
     }
 }

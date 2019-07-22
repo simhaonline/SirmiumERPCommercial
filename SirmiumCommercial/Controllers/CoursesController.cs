@@ -33,9 +33,8 @@ namespace SirmiumCommercial.Controllers
             if(user != null)
             {
                 ViewData["Id"] = user.Id;
-                return View(new UserCourse
+                return View(new AllCourse
                 {
-                    User = user,
                     Courses = repository.Courses
                 });
             }

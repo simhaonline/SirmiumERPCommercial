@@ -19,7 +19,8 @@
 <div class="row">
     <h2 class="col-sm-2">@ViewData["Title"]</h2>
     <div class="col-sm-2">
-        <a class="btn btn-success btn-outline m-t-sm" asp-action="CreateRole">
+        <a class="btn btn-success btn-outline m-t-sm" asp-action="CreateRole"
+           asp-route-id="@ViewData["Id"]" >
             <span class="fa fa-plus"></span>  New Role
         </a>
     </div>

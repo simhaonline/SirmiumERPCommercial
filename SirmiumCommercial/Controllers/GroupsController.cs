@@ -9,8 +9,9 @@ namespace SirmiumCommercial.Controllers
     public class GroupsController : Controller
     {
 
-        public IActionResult Groups()
+        public IActionResult Groups(string id)
         {
+            ViewData["Id"] = id;
             return View();
         }
     }

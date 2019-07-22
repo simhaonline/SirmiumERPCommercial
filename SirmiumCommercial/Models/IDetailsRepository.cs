@@ -16,5 +16,13 @@ namespace SirmiumCommercial.Models
         IQueryable<Presentation> Presentations { get; }
 
         IQueryable<Representation> Representations { get; }
+
+        void SaveCourse(Course course);
+
+        Course DeleteCourse(int courseId);
+
+        void SavePresentation(Presentation presentation);
+
+        Presentation DeletePresentation(int presentationId);
     }
 }

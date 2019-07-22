@@ -2,19 +2,19 @@
 
     <ul class="nav metismenu" id="side-menu">
         <li class="@Html.IsSelected(controller: "User")">
-            <a href="@Url.Action("Index", "User")">
+            <a href="@Url.Action("Index", "User", new { id = ViewData["Id"] })">
                 <span class="fa fa-home"></span>
                 <span class="nav-label">Home</span>
             </a>
         </li>
         <li class="@Html.IsSelected(controller: "Groups")">
-            <a href="@Url.Action("Groups", "Groups")">
+            <a href="@Url.Action("Groups", "Groups", new { id = ViewData["Id"] })">
                 <span class="fa fa-users"></span>
                 <span class="nav-label">Groups</span>
             </a>
         </li>
         <li class="@Html.IsSelected(controller: "Company")">
-            <a href="@Url.Action("AllUsers", "Company")">
+            <a href="@Url.Action("AllUsers", "Company", new { id = ViewData["Id"] })">
                 <span class="fa fa-industry"></span>
                 <span class="nav-label">My Company</span>
             </a>
@@ -43,15 +43,15 @@
             </a>
             <ul class="nav nav-second-level">
                 <li class="@Html.IsSelected(action: "MyFiles")">
-                    <a href="@Url.Action("MyFiles", "Files")">My Files</a>
+                    <a href="@Url.Action("MyFiles", "Files", new { id = ViewData["Id"] })">My Files</a>
                 </li>
                 <li class="@Html.IsSelected(action: "SharedFiles")">
-                    <a href="@Url.Action("SharedFiles", "Files")">Shared Files</a>
+                    <a href="@Url.Action("SharedFiles", "Files", new { id = ViewData["Id"] })">Shared Files</a>
                 </li>
             </ul>
         </li>
         <li class="@Html.IsSelected(controller: "Reporting")">
-            <a href="@Url.Action("Index", "Reporting")">
+            <a href="@Url.Action("Index", "Reporting", new { id = ViewData["Id"] })">
                 <span class="fa fa-bar-chart"></span>
                 <span class="nav-label">Reporting</span>
             </a>
@@ -63,7 +63,7 @@
             </a>
         </li>
         <li class="@Html.IsSelected(controller: "Admin")">
-            <a href="@Url.Action("Index", "Admin")">
+            <a href="@Url.Action("Index", "Admin", new { id = ViewData["Id"] })">
                 <span class="fa fa-sliders"></span>
                 <span class="nav-label">Admin</span>
             </a>

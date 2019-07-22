@@ -21,8 +21,9 @@ namespace SirmiumCommercial.Controllers
             userRepository = userRepo;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string id)
         {
+            ViewData["Id"] = id;
             return View();
         }
 

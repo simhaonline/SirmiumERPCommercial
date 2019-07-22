@@ -34,6 +34,8 @@ namespace SirmiumCommercial.Models
         //Users on the Courses
         public IQueryable<AppUser> Users { get; set; }
         public string AwardIcon { get; set; }
+        public string Status { get; set; } //public or private
+        public string Description { get; set; }
     }
 
     public class Presentation

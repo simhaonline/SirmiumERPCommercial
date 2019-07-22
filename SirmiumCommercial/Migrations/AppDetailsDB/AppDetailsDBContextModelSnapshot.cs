@@ -89,7 +89,11 @@ namespace SirmiumCommercial.Migrations.AppDetailsDB
 
                     b.Property<DateTime>("DateModified");
 
+                    b.Property<string>("Description");
+
                     b.Property<DateTime>("EndDate");
+
+                    b.Property<string>("Status");
 
                     b.Property<string>("Title");
 

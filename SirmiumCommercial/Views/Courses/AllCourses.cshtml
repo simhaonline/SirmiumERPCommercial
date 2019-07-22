@@ -1,4 +1,4 @@
-﻿@model UserCourse
+﻿@model AllCourse
 
 @{
     Layout = "_UserLayout";
@@ -38,13 +38,18 @@
                 <span class="fa fa-clock-o"></span>
                 @if (course.EndDate != DateTime.MinValue)
                 {
-                    <span class="text-warning">
-                        @Model.DateDifference(course.EndDate, DateTime.Now)
+                    <span class="text-danger">
+                        End in
+                        @Model.DateDifference(course.EndDate, DateTime.Now).Replace("ago", "")
                     </span>
                 }
-                <span class="text-success">
-                    NO END DATE
-                </span>
+                else
+                {
+                    <span class="text-success">
+                        NO END DATE
+                    </span>
+
+                }
             </h5>
         </div>
         <div class="col-md-10">
@@ -91,7 +96,7 @@
                 {
                     <a asp-action="ParticipateCours"
                        asp-controller="Courses"
-                       asp-route-id="@Model.User.Id"
+                       asp-route-id="@ViewData["Id"]"
                        class="btn btn-primary">
                         <span class="fa fa-plus"></span>
                         Participate
@@ -99,7 +104,7 @@
                 }
                 <a asp-action="CourseDetails"
                    asp-controller="Courses"
-                   asp-route-id="@Model.User.Id"
+                   asp-route-id="@ViewData["Id"]"
                    asp-route-courseId="@course.CourseId"
                    class="btn btn-outline btn-info">
                     Details

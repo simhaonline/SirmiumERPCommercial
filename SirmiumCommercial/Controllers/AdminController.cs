@@ -34,15 +34,17 @@ namespace SirmiumCommercial.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public ViewResult Create()
+        public ViewResult Create(string id)
         {
+            ViewData["Id"] = id;
             return View();
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(CreateModel model)
+        public async Task<IActionResult> Create(string id, CreateModel model)
         {
+            ViewData["Id"] = id;
             if (ModelState.IsValid)
             {
                 AppUser user = new AppUser
@@ -60,7 +62,7 @@ namespace SirmiumCommercial.Controllers
                     = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", id);
                 }
                 else
                 {
@@ -112,15 +114,16 @@ namespace SirmiumCommercial.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(string id, string deleteId)
         {
-            AppUser user = await userManager.FindByIdAsync(id);
+            ViewData["Id"] = id;
+            AppUser user = await userManager.FindByIdAsync(deleteId);
             if (user != null)
             {
                 IdentityResult result = await userManager.DeleteAsync(user);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", id);
                 }
                 else
                 {
@@ -136,9 +139,10 @@ namespace SirmiumCommercial.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> ChangeStatust(string id)
+        public async Task<IActionResult> ChangeStatust(string id, string changeId)
         {
-            AppUser user = await userManager.FindByIdAsync(id);
+            ViewData["Id"] = id;
+            AppUser user = await userManager.FindByIdAsync(changeId);
             if (user != null)
             {
                 switch (user.Status)
@@ -157,7 +161,7 @@ namespace SirmiumCommercial.Controllers
                 IdentityResult result = await userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Details");
+                    return RedirectToAction("Details", new { userId = id, detailsId = changeId });
                 }
                 else
                 {
@@ -168,31 +172,34 @@ namespace SirmiumCommercial.Controllers
             {
                 ModelState.AddModelError("", "User Not Found");
             }
-            return View("Details");
+            return View("Details", id);
         }
 
         [Authorize(Roles = "Admin")]
-        public ViewResult Roles()
+        public ViewResult Roles(string id)
         {
+            ViewData["Id"] = id;
             return View(roleManager.Roles);
         }
 
         [Authorize(Roles = "Admin")]
-        public IActionResult CreateRole()
+        public IActionResult CreateRole(string id)
         {
+            ViewData["Id"] = id;
             return View();
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateRole([Required]string name)
+        public async Task<IActionResult> CreateRole(string id, [Required]string name)
         {
+            ViewData["Id"] = id;
             if (ModelState.IsValid)
             {
                 IdentityResult result = await roleManager.CreateAsync(new IdentityRole(name));
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Roles");
+                    return RedirectToAction("Roles", id);
                 }
                 else
                 {
@@ -203,9 +210,10 @@ namespace SirmiumCommercial.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(string id, string detailsId)
         {
-            AppUser user = await userManager.FindByIdAsync(id);
+            ViewData["Id"] = id;
+            AppUser user = await userManager.FindByIdAsync(detailsId);
             if (user != null)
             {
                 return View(new AdminViewModel
@@ -216,7 +224,7 @@ namespace SirmiumCommercial.Controllers
             }
             else
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", id);
             }
 
         }

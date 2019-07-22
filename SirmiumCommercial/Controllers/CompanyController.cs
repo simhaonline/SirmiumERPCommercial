@@ -8,8 +8,9 @@ namespace SirmiumCommercial.Controllers
 {
     public class CompanyController : Controller
     {
-        public IActionResult AllUsers()
+        public IActionResult AllUsers(string id)
         {
+            ViewData["Id"] = id;
             return View();
         }
     }

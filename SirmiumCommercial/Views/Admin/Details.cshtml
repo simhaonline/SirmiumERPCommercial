@@ -18,7 +18,8 @@
     <h2 class="col-sm-10"><span class="text-info">&#64;@Model.User.UserName</span> Details:</h2>
     <div class="col-sm-2">
         <a class="btn btn-danger btn-outline m-t-sm" asp-action="Delete"
-           asp-controller="Admin" asp-route-id="@Model.User.Id">
+           asp-controller="Admin" asp-route-deleteId="@Model.User.Id"
+           asp-route-id="@ViewData["Id"]" >
             <span class="fa fa-minus"></span>  Delete User
         </a>
     </div>
@@ -64,7 +65,8 @@
         </tr>
         <tr>
             <th>Status:</th>
-            <form asp-action="ChangeStatust" asp-route-id="@Model.User.Id" method="post">
+            <form asp-action="ChangeStatust" asp-route-id="@ViewData["Id"]"
+                  asp-route-changeId="@Model.User.Id" method="post">
                 @if (Model.User.Status == "Active")
                 {
                     <td class="text-success">@Model.User.Status</td>

@@ -5,12 +5,11 @@
     ViewData["Title"] = "Create Course";
 }
 
-<style type="text/css">
-    #topNav {
-        border-bottom: 2px solid cadetblue;
-        box-sizing: border-box;
-    }
-</style>
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+    </environment>
+}
 
 <div id="topNav" class="nav navbar">
     <div class="smalltitle col-md-3">
@@ -18,60 +17,140 @@
     </div>
 </div>
 
-<form>
-    <div class="form-inline navbar bg-info">
-        <label>Title:</label>
-        <input asp-for="Title" class="form-control" />
+<form asp-action="NewCourse" asp-route-id="@ViewData["Id"]" method="post">
+    <div asp-validation-summary="All"></div>
+    <div class="row m-l-md m-b-md">
+        <label class="col-sm-1 text-right">Title: </label>
+        <input asp-for="Title" class="form-input col-sm-5" />
+    </div>
+    <div class="row m-l-md m-b-md">
+        <label class="col-sm-1 text-right">End Date: </label>
+        <input asp-for="EndDate" class="form-input col-sm-5" type="date" />
+    </div>
+    <div class="row m-l-md m-b-md">
+        <label class="col-sm-1 text-right">Description: </label>
+        <textarea asp-for="Description" class="form-input col-sm-5"
+                  placeholder="Add Course Description..."></textarea>
+    </div>
+    <div class="row m-l-md m-b-md">
+        <input asp-for="AwardIcon" id="awardInput" hidden />
+        <table class="row m-l-md m-r-md">
+            <tr>
+                <th colspan="6" class="text-center">Choose Award Icon:</th>
+                <th rowspan="2" class="text-center">
+                    Icon Preview:
+                    <h1><span class="" id="iconPreview"></span></h1>
+                </th>
+            </tr>
+            <tr>
+                <td class="col-md-1 awardTd text-center" id="award11">
+                    <h3><span class="fa fa-fire-alt"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award12">
+                    <h3><span class="fa fa-shield"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award13">
+                    <h3><span class="fa fa-star"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award14">
+                    <h3><span class="fa fa-star-o"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award15">
+                    <h3><span class="fa fa-star-half-alt"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award16">
+                    <h3><span class="pe pe-7s-star"></span></h3>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-1 awardTd text-center" id="award21">
+                    <h3><span class="fa fa-award"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award22">
+                    <h3><span class="fa fa-medal"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award23">
+                    <h3><span class="pe pe-7s-medal"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award24">
+                    <h3><span class="fa fa-trophy"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award25">
+                    <h3><span class="pe pe-7s-cup"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award26">
+                    <h3><span class="fa fa-crown"></span></h3>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-1 awardTd text-center" id="award31">
+                    <h3><span class="fa fa-chess-rook"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award32">
+                    <h3><span class="fa fa-chess-queen"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award33">
+                    <h3><span class="fa fa-chess-pawn"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award34">
+                    <h3><span class="fa fa-chess-king"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award35">
+                    <h3><span class="fa fa-chess-bishop"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award36">
+                    <h3><span class="fa fa-chess"></span></h3>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-1 awardTd text-center" id="award41">
+                    <h3><span class="fa fa-graduation-cap"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award42">
+                    <h3><span class="fas fa-heart"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award43">
+                    <h3><span class="fa fa-atom"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award44">
+                    <h3><span class="pe pe-7s-light"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award45">
+                    <h3><span class="pe pe-7s-gleam"></span></h3>
+                </td>
+                <td class="col-md-1 awardTd text-center" id="award46">
+                    <h3><span class="pe pe-7s-sun"></span></h3>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="6" class="text-center">
+                    Choose Award Color:
+                </th>
+            </tr>
+            <tr>
+                <td colspan="6" class="text-center">
+                    <h3>
+                        <span class="fa fa-square-full text-error awardTd" id="awardError"></span>
+                        <span class="fa fa-square-full text-primary awardTd" id="awardPrimary"></span>
+                        <span class="fa fa-square-full text-primary-2 awardTd" id="awardPrimary2"></span>
+                        <span class="fa fa-square-full text-info awardTd" id="awardInfo"></span>
+                        <span class="fa fa-square-full text-success awardTd" id="awardSuccess"></span>
+                        <span class="fa fa-square-full text-warning awardTd" id="awardWarning"></span>
+                        <span class="fa fa-square-full text-danger awardTd" id="awardDanger"></span>
+                    </h3>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-md-8 text-center">
+        <button type="submit" class="btn btn-info btn-outline">
+            Create </span>
+        </button>
     </div>
 </form>
 
-<div class="row">
-    <table class="row m-l-md m-r-md">
-        <tr>
-            <td rowspan="4" class="col-md-2"><h5>Choose Award Icon:</h5></td>
-            <td class="col-md-1"><h3><span class="fa fa-fire-alt"></span></h3></td>
-            <td class="col-md-1"><h3><span class="fa fa-shield"></span></h3></td>
-            <td class="col-md-1"><h3><span class="fa fa-star"></span></h3></td>
-            <td class="col-md-1"><h3><span class="fa fa-star-o"></span></h3></td>
-            <td class="col-md-1"><h3><span class="fa fa-star-half-alt"></span></h3></td>
-            <td class="col-md-1"><h3><span class="pe pe-7s-star"></span></h3></td>
-            <td rowspan="4" class="col-md-4">
-                <h4>Choose Award Color:</h4>
-                <h3>
-                    <span class="fa fa-square-full text-error"></span>
-                    <span class="fa fa-square-full text-primary"></span>
-                    <span class="fa fa-square-full text-primary-2"></span>
-                    <span class="fa fa-square-full text-info"></span>
-                    <br />
-                    <span class="fa fa-square-full text-success"></span>
-                    <span class="fa fa-square-full text-warning"></span>
-                    <span class="fa fa-square-full text-danger"></span>
-                </h3>
-            </td>
-        </tr>
-        <tr>
-            <td class="col-md-1"><h3><span class="fa fa-award"></span></h3></td>
-            <td class="col-md-1"><h3><span class="fa fa-medal"></span></h3></td>
-            <td class="col-md-1"><h3><span class="pe pe-7s-medal"></span></h3></td>
-            <td class="col-md-1"><h3><span class="fa fa-trophy"></span></h3></td>
-            <td class="col-md-1"><h3><span class="pe pe-7s-cup"></span></h3></td>
-            <td class="col-md-1"><h3><span class="fa fa-crown"></span></h3></td>
-        </tr>
-        <tr>
-            <td class="col-md-1"><h3><span class="fa fa-chess-rook"></span></h3></td>
-            <td class="col-md-1"><h3><span class="fa fa-chess-queen"></span></h3></td>
-            <td class="col-md-1"><h3><span class="fa fa-chess-pawn"></span></h3></td>
-            <td class="col-md-1"><h3><span class="fa fa-chess-king"></span></h3></td>
-            <td class="col-md-1"><h3><span class="fa fa-chess-bishop"></span></h3></td>
-            <td class="col-md-1"><h3><span class="fa fa-chess"></span></h3></td>
-        </tr>
-        <tr>
-            <td class="col-md-1"><h3><span class="fa fa-graduation-cap"></span></h3></td>
-            <td class="col-md-1"><h3><span class="fas fa-heart"></span></h3></td>
-            <td class="col-md-1"><h3><span class="fa fa-atom"></span></h3></td>
-            <td class="col-md-1"><h3><span class="pe pe-7s-light"></span></h3></td>
-            <td class="col-md-1"><h3><span class="pe pe-7s-gleam"></span></h3></td>
-            <td class="col-md-1"><h3><span class="pe pe-7s-sun"></span></h3></td>
-        </tr>
-    </table>
-</div>
+@section Scripts {
+    <environment names="Development,Staging,Production">
+        <script src="~/lib_local/script_local/AwardIconSelector.js"></script>
+    </environment>
+}

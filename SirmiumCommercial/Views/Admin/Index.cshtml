@@ -18,7 +18,8 @@
 <div class="row">
     <h2 class="col-sm-2">@ViewData["Title"]</h2>
     <div class="col-sm-2">
-        <a class="btn btn-success btn-outline m-t-sm" asp-action="Create">
+        <a class="btn btn-success btn-outline m-t-sm" asp-action="Create"
+           asp-route-id="@ViewData["Id"]">
             <span class="fa fa-user-plus"></span>  New User
         </a>
     </div>
@@ -61,7 +62,9 @@
                 <td>@user.CompanyName</td>
                 <td>
                     <a class="btn btn-sm btn-info btn-outline" asp-action="Details"
-                       asp-route-id="@user.Id">Details</a>
+                       asp-route-id="@ViewData["Id"]" asp-route-detailsId="@user.Id">
+                        Details
+                    </a>
                 </td>
             </tr>
         }

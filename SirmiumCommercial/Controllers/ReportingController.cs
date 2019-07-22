@@ -9,8 +9,9 @@ namespace SirmiumCommercial.Controllers
     public class ReportingController : Controller
     {
 
-        public IActionResult Index()
+        public IActionResult Index(string id)
         {
+            ViewData["Id"] = id;
             return View();
         }
     }

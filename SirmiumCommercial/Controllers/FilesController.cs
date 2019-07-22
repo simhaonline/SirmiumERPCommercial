@@ -8,13 +8,15 @@ namespace SirmiumCommercial.Controllers
 {
     public class FilesController : Controller
     {
-        public IActionResult MyFiles()
+        public IActionResult MyFiles(string id)
         {
+            ViewData["Id"] = id;
             return View();
         }
 
-        public IActionResult SharedFiles()
+        public IActionResult SharedFiles(string id)
         {
+            ViewData["Id"] = id;
             return View();
         }
     }
