@@ -21,10 +21,64 @@ namespace SirmiumCommercial.Controllers
             repository = repo;
         }
 
-        public IActionResult Index(string id)
+        public IActionResult Index(string id, string status, string sort, string order)
         {
             ViewData["Id"] = id;
-            return View(repository.Courses);
+            ViewData["Status"] = status;
+            ViewData["Sort"] = sort;
+            ViewData["Order"] = order;
+            if (status == null)
+            {
+                ViewData["Status"] = "Public";
+                ViewData["Sort"] = "Title";
+                ViewData["Order"] = "asc";
+                return View(repository.Courses.Where(c => c.Status == "Public")
+                        .OrderBy(c => c.Title));
+            }
+            else if (status == "All")
+            {
+                switch (sort)
+                {
+                    case "End Date":
+                        return View((order == "asc") ?
+                                repository.Courses.OrderBy(c => c.EndDate) :
+                                repository.Courses.OrderByDescending(c => c.EndDate));
+                    case "Date Added":
+                        return View((order == "asc") ?
+                                repository.Courses.OrderBy(c => c.DateAdded) :
+                                repository.Courses.OrderByDescending(c => c.DateAdded));
+                    default:
+                        return View((order == "asc") ?
+                                repository.Courses.OrderBy(c => c.Title) :
+                                repository.Courses.OrderByDescending(c => c.Title));
+                }
+            }
+            else
+            {
+                switch (sort)
+                {
+                    case "End Date":
+                        return View((order == "asc") ?
+                                repository.Courses.Where(c => c.Status == status)
+                                    .OrderBy(c => c.EndDate) :
+                                repository.Courses.Where(c => c.Status == status)
+                                    .OrderByDescending(c => c.EndDate));
+                    case "Date Added":
+                            return View((order == "asc") ?
+                                repository.Courses.Where(c => c.Status == status)
+                                    .OrderBy(c => c.DateAdded) :
+                                repository.Courses.Where(c => c.Status == status)
+                                    .OrderByDescending(c => c.DateAdded));
+                    default:
+                        return View((order == "asc") ?
+                                repository.Courses.Where(c => c.Status == status)
+                                    .OrderBy(c => c.Title) :
+                                repository.Courses.Where(c => c.Status == status)
+                                    .OrderByDescending(c => c.Title));
+                }
+            }
+            //TODO: if status == private
+            //      select only course where course.createdBy.id == asp-route-id    
         }
 
         public async Task<IActionResult> NewCourse(string id)
@@ -49,12 +103,14 @@ namespace SirmiumCommercial.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    model.Status = "private";
+                    model.Status = "Private";
                     model.CreatedBy = user;
                     model.DateAdded = DateTime.Now;
                     model.DateModified = DateTime.Now;
+                    model.Status = "Private";
                     repository.SaveCourse(model);
-                    return RedirectToAction("Index", id);
+                    return RedirectToAction("Index", new { id, status = "Private",
+                                                            sort = "Title", order = "asc"});
                 }
             }
             return View();
@@ -63,9 +119,25 @@ namespace SirmiumCommercial.Controllers
         public IActionResult CourseManage(string id, int courseId)
         {
             ViewData["Id"] = id;
-            return View(repository.Courses
-                .FirstOrDefault(c => c.CourseId == courseId));
+            return View(new CourseViewModel {
+                Course = repository.Courses
+                        .FirstOrDefault(c => c.CourseId == courseId),
+                User = repository.Courses.Where(c => c.CreatedBy != null
+                    && c.CourseId == courseId).Select(u => u.CreatedBy)
+                    .FirstOrDefault()
+            });
         }
         
+        public IActionResult DeleteCourse(string id, int courseId)
+        {
+            ViewData["Id"] = id;
+            Course deletedCourse = repository.DeleteCourse(courseId);
+            if (deletedCourse != null)
+            {
+                TempData["message"] = $"Course: '{deletedCourse.Title}' was deleted!";
+            }
+            return RedirectToAction("Index", new{id, status = "Private",
+                                                sort = "Title", order = "asc"});
+        }
     }
 }

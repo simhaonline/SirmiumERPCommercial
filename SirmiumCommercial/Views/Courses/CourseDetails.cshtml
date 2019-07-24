@@ -42,12 +42,11 @@
             <h4>Parts: <span class="text-danger">0</span></h4>
         }
         <h5>
-            <span class="fa fa-clock-o"></span>
+            <span class="fa fa-clock-o"></span>End Date:
             @if (Model.Course.EndDate != DateTime.MinValue)
             {
                 <span class="text-danger">
-                    End in
-                    @Model.DateDifference(Model.Course.EndDate, DateTime.Now).Replace("ago", "")
+                    @Model.Course.EndDate.ToShortDateString()
                 </span>
             }
             else
@@ -55,9 +54,17 @@
                 <span class="text-success">
                     NO END DATE
                 </span>
-
             }
         </h5>
+        @if ((DateTime.Now > Model.Course.EndDate) &&
+         (Model.Course.EndDate != DateTime.MinValue))
+        {
+            <h4>
+                <span class="badge badge-danger text-warning" style="font-size:16px">
+                    <b>FINISHED</b>
+                </span>
+            </h4>
+        }
     </div>
     <div class="col-lg-2 text-center">
         @if (Model.Course.Users != null)
@@ -69,13 +76,24 @@
         }
         else
         {
-            <a asp-action="ParticipateCours"
-               asp-controller="Courses"
-               asp-route-id="@ViewData["Id"]"
-               class="btn btn-primary">
-                <span class="fa fa-plus"></span>
-                Participate
-            </a>
+            if ((DateTime.Now > Model.Course.EndDate) &&
+                (Model.Course.EndDate != DateTime.MinValue))
+            {
+                <button class="btn btn-primary" disabled>
+                    <span class="fa fa-plus"></span>
+                    Participate
+                </button>
+            }
+            else
+            {
+                <a asp-action="ParticipateCours"
+                   asp-controller="Courses"
+                   asp-route-id="@ViewData["Id"]"
+                   class="btn btn-primary">
+                    <span class="fa fa-plus"></span>
+                    Participate
+                </a>
+            }
         }
     </div>
 </div>

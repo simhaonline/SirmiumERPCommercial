@@ -164,3 +164,9 @@
 .awardTd:hover {
     cursor: pointer;
 }
+
+.borderDashed {
+    border: 1px dashed #3498db;
+    border-radius: 10px;
+    box-sizing: border-box;
+}

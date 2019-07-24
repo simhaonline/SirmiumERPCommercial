@@ -22,6 +22,7 @@ namespace SirmiumCommercial.Models
 
         public void SaveCourse(Course course)
         {
+            context.Attach(course.CreatedBy);
             if (course.CourseId == 0)
             {
                 context.Courses.Add(course);

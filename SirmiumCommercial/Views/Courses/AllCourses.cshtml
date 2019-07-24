@@ -38,10 +38,20 @@
                 <span class="fa fa-clock-o"></span>
                 @if (course.EndDate != DateTime.MinValue)
                 {
-                    <span class="text-danger">
-                        End in
-                        @Model.DateDifference(course.EndDate, DateTime.Now).Replace("ago", "")
-                    </span>
+                    @if (DateTime.Now > course.EndDate)
+                    {
+                        <span class="text-danger">
+                            FINISHED
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">
+                            End in
+                            @Model.DateDifference(course.EndDate, 
+                                    DateTime.Now).Replace("ago", "")
+                        </span>
+                    }
                 }
                 else
                 {
@@ -94,13 +104,24 @@
                 }
                 else
                 {
-                    <a asp-action="ParticipateCours"
-                       asp-controller="Courses"
-                       asp-route-id="@ViewData["Id"]"
-                       class="btn btn-primary">
-                        <span class="fa fa-plus"></span>
-                        Participate
-                    </a>
+                    if ((DateTime.Now > course.EndDate) &&
+                        (course.EndDate != DateTime.MinValue))
+                    {
+                        <button class="btn btn-primary" disabled>
+                            <span class="fa fa-plus"></span>
+                            Participate
+                        </button>
+                    }
+                    else
+                    {
+                        <a asp-action="ParticipateCours"
+                           asp-controller="Courses"
+                           asp-route-id="@ViewData["Id"]"
+                           class="btn btn-primary">
+                            <span class="fa fa-plus"></span>
+                            Participate
+                        </a>
+                    }
                 }
                 <a asp-action="CourseDetails"
                    asp-controller="Courses"

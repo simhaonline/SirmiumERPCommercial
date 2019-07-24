@@ -1,28 +1,33 @@
-﻿@model Course
+﻿@model CourseViewModel
 
 @{
     Layout = "_UserLayout";
-    ViewData["Title"] = "Manage -" + Model.Title;
+    ViewData["Title"] = "Manage -" + Model.Course.Title;
 }
 
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+    </environment>
+}
 
 <div class="col-lg-12">
     <div class="col-lg-2 text-center p-lg">
         <h5 class="text-muted">Award</h5>
         <h1>
-            <span class="@Model.AwardIcon text-big"></span>
+            <span class="@Model.Course.AwardIcon text-big"></span>
         </h1>
     </div>
     <div class="col-lg-3">
         <h2>
-            @Model.Title
+            @Model.Course.Title
         </h2>
         <h4>
             by:
-            @if (Model.CreatedBy != null)
+            @if (Model.User != null)
             {
                 <span class="text-info">
-                    &#64;@Model.CreatedBy.UserName
+                    &#64;@Model.User.UserName
                 </span>
             }
             else
@@ -30,39 +35,134 @@
                 <span class="text-info"> &#64;SirmiumCommercial</span>
             }
         </h4>
-        <h5><span class="fa fa-plus-circle"></span> Added: @Model.DateAdded.ToString()</h5>
-        <h5><span class="fa fa-pencil-square-o"></span> Date modified: @Model.DateAdded.ToString()</h5>
+        <h5><span class="fa fa-plus-circle"></span> Added: @Model.Course.DateAdded.ToString()</h5>
+        <h5><span class="fa fa-pencil-square-o"></span> Date modified: @Model.Course.DateAdded.ToString()</h5>
     </div>
     <div class="col-lg-2">
-        @if (Model.Presentations != null)
+        @if (Model.Course.Presentations != null)
         {
-            <h4>Parts: <span class="text-warning">@Model.Presentations.Count()</span>   </h4>
+            <h4>Parts: <span class="text-warning">@Model.Course.Presentations.Count()</span>   </h4>
         }
         else
         {
             <h4>Parts: <span class="text-danger">0</span></h4>
         }
         <h5>
-            <span class="fa fa-clock-o"></span>
-            @if (Model.EndDate != DateTime.MinValue)
+            <span class="fa fa-clock-o"></span>End Date:
+            @if (Model.Course.EndDate != DateTime.MinValue)
             {
-                <span class="text-warning">
-                    @Model.EndDate.ToShortDateString()
+                <span class="text-danger">
+                    @Model.Course.EndDate.ToShortDateString()
                 </span>
             }
-            <span class="text-success">
-                NO END DATE
-            </span>
+            else
+            {
+                <span class="text-success">
+                    NO END DATE
+                </span>
+            }
         </h5>
+        @if ((DateTime.Now > Model.Course.EndDate) &&
+      (Model.Course.EndDate != DateTime.MinValue))
+        {
+            <h4>
+                <span class="badge badge-danger text-warning" style="font-size:16px">
+                    <b>FINISHED</b>
+                </span>
+            </h4>
+        }
     </div>
-    <div class="col-lg-2 text-center">
-        
+    <div class="col-md-1"></div>
+    <div class="col-md-2 text-center">
+        @if (Model.User != null &&
+         Model.User.Id == ViewData["Id"].ToString())
+        {
+            <div class="dropdown">
+                <a class="dropdown-toggle btn btn-info" href="#" data-toggle="dropdown">
+                    Settings <i class="fa fa-cog"></i>
+                </a>
+                <div class="dropdown-menu hdropdown bigmenu animated flipInX">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <a asp-action="DeleteCourse"
+                                       id="deleteCourse"
+                                       asp-route-id="@ViewData["Id"]"
+                                       asp-route-courseId="@Model.Course.CourseId"
+                                       class="btn btn-outline btn-danger2">
+                                        Delete <br /> <i class="far fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a asp-action="EditCourse"
+                                       asp-route-id="@ViewData["Id"]"
+                                       asp-route-courseId="@Model.Course.CourseId"
+                                       class="btn btn-outline btn-warning2 m-t-md">
+                                        Edit <br /> <i class="far fa-edit"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a asp-action="AddPresentation"
+                                       asp-route-id="@ViewData["Id"]"
+                                       asp-route-courseId="@Model.Course.CourseId"
+                                       class="btn btn-outline btn-success m-t-md">
+                                        Add Presentation <br /> <i class="fas fa-plus"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br />
+            @if (Model.Course.Status == "Private")
+            {
+                <a asp-action="ChangeCourseStatus"
+                   asp-route-id="@ViewData["Id"]"
+                   asp-route-courseId="@Model.Course.CourseId"
+                   class="btn btn-primary2">
+                    Share <i class="fas fa-share"></i>
+                </a>
+            }
+        }
     </div>
 </div>
 
-@if (Model.Presentations == null)
+@if (Model.Course.Description != null)
 {
-    <div class="col-lg-12 navbar bg-info">
-        <span class="navbar-brand">No Presentation</span>
+    <div class="row m-sm">
+        <div class="col-md-1"></div>
+        <div class="col-md-10 borderDashed" style="">
+            <h4>Description:</h4>
+            <p>@Model.Course.Description</p>
+        </div>
     </div>
 }
+
+@if (Model.Course.Presentations == null)
+{
+    <div class="col-lg-12 navbar bg-info">
+
+        <span class="navbar-brand">No Presentation</span>
+
+        @if (Model.User != null &&
+     Model.User.Id == ViewData["Id"].ToString())
+        {
+            <a asp-action="AddPresentation"
+               asp-route-id="@ViewData["Id"]"
+               asp-route-courseId="@Model.Course.CourseId"
+               class="btn btn-outline btn-success pull-right m-t-sm">
+                Add Presentation <i class="fas fa-plus"></i>
+            </a>
+        }
+    </div>
+}
+
+<script type="text/javascript">
+    var deleteCourse = document.getElementById("deleteCourse");
+
+    deleteCourse.addEventListener("click", () => {
+        window.confirm("Warning! \nThe course will be deleted!");
+    });
+</script>
