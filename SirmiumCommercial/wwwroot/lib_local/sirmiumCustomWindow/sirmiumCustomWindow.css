@@ -1,0 +1,321 @@
+﻿.dlg-container {
+    font-family: 'Arial Rounded MT';
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 400px;
+    background: #fff;
+    padding: 10px;
+    border: 1px solid rgba(0, 0, 0, .4);
+    opacity: 1;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, .6);
+    transition: all 0.3s linear 0s;
+    z-index: 2;
+}
+
+.dlg-warning-header {
+    font-size: 100px;
+    font-weight: bold;
+    text-align: center;
+    color: #ffaa00;
+}
+
+#warningTxt {
+    color: #ffaa00;
+    font-weight: bold;
+    margin-top: -40px;
+    text-align: center;
+    vertical-align: central;
+}
+
+.dlg-body {
+    padding: 10px;
+    line-height: 30px;
+    text-align: center;
+}
+
+.dlg-footer {
+    text-align: center;
+    padding: 3px 0;
+}
+
+    .dlg-footer a {
+        display: inline-block;
+        width: 100px;
+        padding: 5px 0;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+        .dlg-footer a:active {
+            box-shadow: inset 2px 2px 4px 0 rgba(0, 0, 0, .5);
+            color: rgba(0, 0, 0, .5);
+        }
+
+        .dlg-footer a:hover {
+            border: 1px solid rgba(0, 0, 0, .5);
+            color: #696969;
+            box-sizing: border-box;
+        }
+
+.freeze-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, .3);
+    z-index: 1;
+}
+
+.dlg-success-header {
+    text-align: center;
+}
+
+#successTxt {
+    color: #62cb31;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: central;
+}
+
+#successIcon {
+    font-size: 100px;
+    color: #62cb31;
+    padding: 10px;
+    border-radius: 50%;
+    border: 6px solid;
+    animation-name: rotation, flash_border;
+    animation-duration: 2s;
+    -webkit-animation-name: rotation, flash_border;
+    -webkit-animation-duration: 2s;
+    -moz-animation-name: rotation, flash_border;
+    -moz-animation-duration: 2s;
+    -o-animation-name: rotation, flash_border;
+    -o-animation-duration: 2s;
+}
+
+@keyframes rotation {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(359deg);
+    }
+}
+
+@-webkit-keyframes rotation {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(359deg);
+    }
+}
+
+@-moz-keyframes rotation {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(359deg);
+    }
+}
+
+@-o-keyframes rotation {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(359deg);
+    }
+}
+
+@keyframes flash_border {
+    0% {
+        border-color: #ffffff;
+    }
+
+    10% {
+        border-color: #e0f5d6;
+    }
+
+    20% {
+        border-color: #d0f0c1;
+    }
+
+    30% {
+        border-color: #c1ebad;
+    }
+
+    40% {
+        border-color: #b1e698;
+    }
+
+    50% {
+        border-color: #a1e184;
+    }
+
+    60% {
+        border-color: #92dc6f;
+    }
+
+    70% {
+        border-color: #82d75b;
+    }
+
+    80% {
+        border-color: #73d246;
+    }
+
+    90% {
+        border-color: #63cd32;
+    }
+
+    100% {
+        border-color: #62cb31;
+    }
+}
+
+@-webkit-keyframes flash_border {
+    0% {
+        border-color: #ffffff;
+    }
+
+    10% {
+        border-color: #e0f5d6;
+    }
+
+    20% {
+        border-color: #d0f0c1;
+    }
+
+    30% {
+        border-color: #c1ebad;
+    }
+
+    40% {
+        border-color: #b1e698;
+    }
+
+    50% {
+        border-color: #a1e184;
+    }
+
+    60% {
+        border-color: #92dc6f;
+    }
+
+    70% {
+        border-color: #82d75b;
+    }
+
+    80% {
+        border-color: #73d246;
+    }
+
+    90% {
+        border-color: #63cd32;
+    }
+
+    100% {
+        border-color: #62cb31;
+    }
+}
+
+@-moz-keyframes flash_border {
+    0% {
+        border-color: #ffffff;
+    }
+
+    10% {
+        border-color: #e0f5d6;
+    }
+
+    20% {
+        border-color: #d0f0c1;
+    }
+
+    30% {
+        border-color: #c1ebad;
+    }
+
+    40% {
+        border-color: #b1e698;
+    }
+
+    50% {
+        border-color: #a1e184;
+    }
+
+    60% {
+        border-color: #92dc6f;
+    }
+
+    70% {
+        border-color: #82d75b;
+    }
+
+    80% {
+        border-color: #73d246;
+    }
+
+    90% {
+        border-color: #63cd32;
+    }
+
+    100% {
+        border-color: #62cb31;
+    }
+}
+
+@-o-keyframes flash_border {
+    0% {
+        border-color: #ffffff;
+    }
+
+    10% {
+        border-color: #e0f5d6;
+    }
+
+    20% {
+        border-color: #d0f0c1;
+    }
+
+    30% {
+        border-color: #c1ebad;
+    }
+
+    40% {
+        border-color: #b1e698;
+    }
+
+    50% {
+        border-color: #a1e184;
+    }
+
+    60% {
+        border-color: #92dc6f;
+    }
+
+    70% {
+        border-color: #82d75b;
+    }
+
+    80% {
+        border-color: #73d246;
+    }
+
+    90% {
+        border-color: #63cd32;
+    }
+
+    100% {
+        border-color: #62cb31;
+    }
+}

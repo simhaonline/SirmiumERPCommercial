@@ -11,6 +11,9 @@
     </environment>
 }
 
+
+<div id="customSuccessWindow"></div>
+
 <div id="topNav" class="nav navbar">
     <div class="navbar-left m-l">
         <ul class="nav navbar-nav no-borders">
@@ -68,19 +71,19 @@
                     <span class="text-primary"> Sort by: </span>
                     <span>
                         @ViewData["Sort"]
-                    @if (ViewData["order"].ToString() == "asc")
-                    {
-                        <i class="fas fa-sort-alpha-down"></i>
-                    }
-                    else
-                    {
-                        <i class="fas fa-sort-alpha-down-alt"></i>
-                    }
-                    <span class="fa fa-caret-down"></span>
-            </a>
-            <ul class="dropdown-menu hdropdown animated flipInX">
-                <li>
-                    <a href="@Url.Action("Index", "Manage",
+                        @if (ViewData["order"].ToString() == "asc")
+                        {
+                            <i class="fas fa-sort-alpha-down"></i>
+                        }
+                        else
+                        {
+                            <i class="fas fa-sort-alpha-down-alt"></i>
+                        }
+                        <span class="fa fa-caret-down"></span>
+                </a>
+                <ul class="dropdown-menu hdropdown animated flipInX">
+                    <li>
+                        <a href="@Url.Action("Index", "Manage",
                                 new
                                 {
                                     userId = ViewData["Id"],
@@ -88,11 +91,11 @@
                                     sort = "Title",
                                     order = "asc"
                                 })">
-                        <strong>Title Asc</strong>
-                    </a>
-                </li>
-                <li>
-                    <a href="@Url.Action("Index", "Manage",
+                            <strong>Title Asc</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "Manage",
                                 new
                                 {
                                     userId = ViewData["Id"],
@@ -100,11 +103,11 @@
                                     sort = "Title",
                                     order = "desc"
                                 })">
-                        <strong>Title Desc</strong>
-                    </a>
-                </li>
-                <li>
-                    <a href="@Url.Action("Index", "Manage",
+                            <strong>Title Desc</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "Manage",
                                 new
                                 {
                                     userId = ViewData["Id"],
@@ -112,11 +115,11 @@
                                     sort = "End Date",
                                     order = "asc"
                                 })">
-                        <strong>End Date Asc</strong>
-                    </a>
-                </li>
-                <li>
-                    <a href="@Url.Action("Index", "Manage",
+                            <strong>End Date Asc</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "Manage",
                                 new
                                 {
                                     userId = ViewData["Id"],
@@ -124,11 +127,11 @@
                                     sort = "End Date",
                                     order = "desc"
                                 })">
-                        <strong>End Date Desc</strong>
-                    </a>
-                </li>
-                <li>
-                    <a href="@Url.Action("Index", "Manage",
+                            <strong>End Date Desc</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "Manage",
                                 new
                                 {
                                     userId = ViewData["Id"],
@@ -136,11 +139,11 @@
                                     sort = "Date Added",
                                     order = "asc"
                                 })">
-                        <strong>Date Added Asc</strong>
-                    </a>
-                </li>
-                <li>
-                    <a href="@Url.Action("Index", "Manage",
+                            <strong>Date Added Asc</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "Manage",
                                 new
                                 {
                                     userId = ViewData["Id"],
@@ -148,30 +151,37 @@
                                     sort = "Date Added",
                                     order = "desc"
                                 })">
-                        <strong>Date Added Desc</strong>
-                    </a>
-                </li>
-            </ul>
-        </li>
-    </ul>
-</div>
+                            <strong>Date Added Desc</strong>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
 
-<div class="text-center pull-right m-r-sm m-t-sm">
-    <a href="@Url.Action("NewCourse", "Manage", new { id = ViewData["Id"] })"
-       class="btn btn-success btn-outline pull-right">
-        <span class="fa fa-plus"></span>
-        Add Course
-    </a>
-</div>
+    <div class="text-center pull-right m-r-sm m-t-sm">
+        <a href="@Url.Action("NewCourse", "Manage", new { id = ViewData["Id"] })"
+           class="btn btn-success btn-outline pull-right">
+            <span class="fa fa-plus"></span>
+            Add Course
+        </a>
+    </div>
 </div>
 
 @if (TempData["message"] != null)
 {
-    <div class="row text-center">
-        <h4 class="bg-info text-danger">
-            <i class="fas fa-info-circle"></i> @TempData["message"]
-        </h4>
-    </div>
+    <input value="@TempData["message"].ToString()" id="msgText" hidden/>
+    <script>
+        var msg = document.getElementById('msgText').value;
+        window.onload = function() {
+            CustomSuccessWindow.show(msg);
+        };
+    </script>
+    @*<div class="row text-center">
+            <h4 class="bg-info text-danger">
+                <i class="fas fa-info-circle"></i> @TempData["message"]
+            </h4>
+        </div>*@
 }
 
 @foreach (Course c in Model)
@@ -185,7 +195,7 @@
             <h4>
                 by:
                 @if (Model.Where(co => co.CreatedBy != null
-                      && co.CourseId == c.CourseId).Any())
+                   && co.CourseId == c.CourseId).Any())
                 {
                     var user = Model.Where(co => co.CreatedBy != null
                         && co.CourseId == c.CourseId).Select(u => u.CreatedBy)
