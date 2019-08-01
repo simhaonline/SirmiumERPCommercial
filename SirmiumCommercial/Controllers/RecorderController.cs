@@ -12,12 +12,10 @@ namespace SirmiumCommercial.Controllers
     public class RecorderController : Controller
     {
         private UserManager<AppUser> userManager;
-        private IUserRepository userRepository;
 
-        public RecorderController(UserManager<AppUser> userMgr, IUserRepository userRepo)
+        public RecorderController(UserManager<AppUser> userMgr)
         {
             userManager = userMgr;
-            userRepository = userRepo;
         }
 
         public async Task<IActionResult> CapturePhoto(string id)

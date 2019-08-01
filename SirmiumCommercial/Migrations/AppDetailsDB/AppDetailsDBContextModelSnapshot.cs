@@ -6,10 +6,10 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SirmiumCommercial.Models;
 
-namespace SirmiumCommercial.Migrations.AppDetailsDB
+namespace SirmiumCommercial.Migrations.AppDetailsDb
 {
-    [DbContext(typeof(AppDetailsDBContext))]
-    partial class AppDetailsDBContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(AppDetailsDbContext))]
+    partial class AppDetailsDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -97,6 +97,8 @@ namespace SirmiumCommercial.Migrations.AppDetailsDB
 
                     b.Property<string>("Title");
 
+                    b.Property<string>("VideoURL");
+
                     b.HasKey("CourseId");
 
                     b.HasIndex("CreatedById");
@@ -139,11 +141,13 @@ namespace SirmiumCommercial.Migrations.AppDetailsDB
 
                     b.Property<string>("Description");
 
-                    b.Property<DateTime>("EndDate");
+                    b.Property<int>("Part");
 
                     b.Property<string>("Status");
 
                     b.Property<string>("Title");
+
+                    b.Property<string>("VideoURL");
 
                     b.HasKey("PresentationId");
 
@@ -166,11 +170,11 @@ namespace SirmiumCommercial.Migrations.AppDetailsDB
 
                     b.Property<int?>("PresentationId");
 
-                    b.Property<double>("Score");
-
                     b.Property<string>("Status");
 
                     b.Property<string>("Title");
+
+                    b.Property<string>("VideoURL");
 
                     b.HasKey("RepresentationId");
 
@@ -187,7 +191,7 @@ namespace SirmiumCommercial.Migrations.AppDetailsDB
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("ProfilePhoto");
+                    b.Property<string>("ProfilePhotoURL");
 
                     b.Property<string>("UserId");
 

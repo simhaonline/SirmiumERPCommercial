@@ -13,12 +13,10 @@ namespace SirmiumCommercial.Controllers
     public class UserController : Controller
     {
         private UserManager<AppUser> userManager;
-        private IUserRepository userRepository;
 
-        public UserController(UserManager<AppUser> userMgr, IUserRepository userRepo)
+        public UserController(UserManager<AppUser> userMgr)
         {
             userManager = userMgr;
-            userRepository = userRepo;
         }
 
         public IActionResult Index(string id)
@@ -45,9 +43,7 @@ namespace SirmiumCommercial.Controllers
                 ViewData["Id"] = user.Id;
                 return View(new ProfileModel
                 {
-                    appUser = user,
-                    userProfile = userRepository.Users
-                        .FirstOrDefault(u => u.UserId == user.Id)
+                    appUser = user
                 }); ;
             }
             else
@@ -69,9 +65,7 @@ namespace SirmiumCommercial.Controllers
             {
                 return View(new ProfileModel
                 {
-                    appUser = user,
-                    userProfile = userRepository.Users
-                        .FirstOrDefault(p => p.UserId == user.Id)
+                    appUser = user
                 });
             }
             else

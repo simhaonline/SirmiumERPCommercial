@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace SirmiumCommercial.Models
@@ -30,7 +31,18 @@ namespace SirmiumCommercial.Models
                 };
                 await userManager.CreateAsync(user, adminPassword);
                 await userManager.AddToRoleAsync(user, "Admin");
+                AppDetailsDbContext context = app.ApplicationServices
+               .GetRequiredService<AppDetailsDbContext>();
+                context.Database.Migrate();
+                if (!context.UsersDetails.Any())
+                {
+                    context.UsersDetails.Add(new UserDetails
+                    {
+                        User = user
+                    });
+                    context.SaveChanges();
+                }
             }
         }
-    }
+    }  
 }

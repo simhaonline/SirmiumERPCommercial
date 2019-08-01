@@ -14,12 +14,10 @@ namespace SirmiumCommercial.Controllers
     public class CompanyAdminController : Controller
     {
         private UserManager<AppUser> userManager;
-        private IUserRepository userRepository;
 
-        public CompanyAdminController(UserManager<AppUser> userMgr, IUserRepository userRepo)
+        public CompanyAdminController(UserManager<AppUser> userMgr)
         {
             userManager = userMgr;
-            userRepository = userRepo;
         }
 
         [Authorize(Roles = "Company Admin")]
@@ -35,7 +33,7 @@ namespace SirmiumCommercial.Controllers
             }
             return View(ModelState);
         }
-
+        /*
         [Authorize(Roles = "Company Admin")]
         public async Task<IActionResult> Back(string id)
         {
@@ -154,6 +152,6 @@ namespace SirmiumCommercial.Controllers
             {
                 ModelState.AddModelError("", error.Description);
             }
-        }
+        }*/
     }
 }

@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace SirmiumCommercial.Migrations.AppDetailsDB
+namespace SirmiumCommercial.Migrations.AppDetailsDb
 {
-    public partial class Initial : Migration
+    public partial class Initial1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -21,7 +21,8 @@ namespace SirmiumCommercial.Migrations.AppDetailsDB
                     EndDate = table.Column<DateTime>(nullable: false),
                     AwardIcon = table.Column<string>(nullable: true),
                     Status = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true)
+                    Description = table.Column<string>(nullable: true),
+                    VideoURL = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -94,12 +95,13 @@ namespace SirmiumCommercial.Migrations.AppDetailsDB
                     PresentationId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Title = table.Column<string>(nullable: true),
+                    Part = table.Column<int>(nullable: false),
                     Description = table.Column<string>(nullable: true),
                     CreatedById = table.Column<string>(nullable: true),
                     DateAdded = table.Column<DateTime>(nullable: false),
                     DateModified = table.Column<DateTime>(nullable: false),
-                    EndDate = table.Column<DateTime>(nullable: false),
                     Status = table.Column<string>(nullable: true),
+                    VideoURL = table.Column<string>(nullable: true),
                     CourseId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -126,7 +128,7 @@ namespace SirmiumCommercial.Migrations.AppDetailsDB
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<string>(nullable: true),
-                    ProfilePhoto = table.Column<string>(nullable: true)
+                    ProfilePhotoURL = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -149,7 +151,7 @@ namespace SirmiumCommercial.Migrations.AppDetailsDB
                     CreatedById = table.Column<string>(nullable: true),
                     DateAdded = table.Column<DateTime>(nullable: false),
                     Status = table.Column<string>(nullable: true),
-                    Score = table.Column<double>(nullable: false),
+                    VideoURL = table.Column<string>(nullable: true),
                     PresentationId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>

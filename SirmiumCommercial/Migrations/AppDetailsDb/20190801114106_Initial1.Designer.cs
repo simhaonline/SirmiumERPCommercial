@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SirmiumCommercial.Models;
 
-namespace SirmiumCommercial.Migrations.AppDetailsDB
+namespace SirmiumCommercial.Migrations.AppDetailsDb
 {
-    [DbContext(typeof(AppDetailsDBContext))]
-    [Migration("20190722165614_Initial")]
-    partial class Initial
+    [DbContext(typeof(AppDetailsDbContext))]
+    [Migration("20190801114106_Initial1")]
+    partial class Initial1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -99,6 +99,8 @@ namespace SirmiumCommercial.Migrations.AppDetailsDB
 
                     b.Property<string>("Title");
 
+                    b.Property<string>("VideoURL");
+
                     b.HasKey("CourseId");
 
                     b.HasIndex("CreatedById");
@@ -141,11 +143,13 @@ namespace SirmiumCommercial.Migrations.AppDetailsDB
 
                     b.Property<string>("Description");
 
-                    b.Property<DateTime>("EndDate");
+                    b.Property<int>("Part");
 
                     b.Property<string>("Status");
 
                     b.Property<string>("Title");
+
+                    b.Property<string>("VideoURL");
 
                     b.HasKey("PresentationId");
 
@@ -168,11 +172,11 @@ namespace SirmiumCommercial.Migrations.AppDetailsDB
 
                     b.Property<int?>("PresentationId");
 
-                    b.Property<double>("Score");
-
                     b.Property<string>("Status");
 
                     b.Property<string>("Title");
+
+                    b.Property<string>("VideoURL");
 
                     b.HasKey("RepresentationId");
 
@@ -189,7 +193,7 @@ namespace SirmiumCommercial.Migrations.AppDetailsDB
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("ProfilePhoto");
+                    b.Property<string>("ProfilePhotoURL");
 
                     b.Property<string>("UserId");
 

@@ -27,8 +27,9 @@
     </div>
 </div>
 
-<form asp-action="NewCourse" asp-route-id="@ViewData["Id"]" method="post">
+<form asp-action="EditCourse" asp-route-id="@ViewData["Id"]" method="post">
     <div asp-validation-summary="All"></div>
+    <input asp-for="Course.CourseId" hidden/>
     <div class="row m-l-md m-b-md">
         <label class="col-sm-1 text-right">Title: </label>
         <input asp-for="Course.Title" class="form-input col-sm-5" />
@@ -158,8 +159,13 @@
         </table>
     </div>
     <div class="col-md-8 text-center">
-        <button type="submit" class="btn btn-info btn-outline">
-             Create
+        <a href="@Url.Action("CourseManage", "Manage",
+                    new { id = ViewData["Id"], courseId = Model.Course.CourseId })"
+           class="btn btn-danger btn-outline">
+            Cancel
+        </a>
+        <button type="submit" class="btn btn-success">
+            Save
         </button>
     </div>
 </form>

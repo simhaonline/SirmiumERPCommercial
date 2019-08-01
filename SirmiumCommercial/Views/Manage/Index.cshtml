@@ -170,18 +170,13 @@
 
 @if (TempData["message"] != null)
 {
-    <input value="@TempData["message"].ToString()" id="msgText" hidden/>
+    <input value="@TempData["message"].ToString()" id="msgText" hidden />
     <script>
         var msg = document.getElementById('msgText').value;
-        window.onload = function() {
+        window.onload = function () {
             CustomSuccessWindow.show(msg);
         };
     </script>
-    @*<div class="row text-center">
-            <h4 class="bg-info text-danger">
-                <i class="fas fa-info-circle"></i> @TempData["message"]
-            </h4>
-        </div>*@
 }
 
 @foreach (Course c in Model)
@@ -195,7 +190,7 @@
             <h4>
                 by:
                 @if (Model.Where(co => co.CreatedBy != null
-                   && co.CourseId == c.CourseId).Any())
+                  && co.CourseId == c.CourseId).Any())
                 {
                     var user = Model.Where(co => co.CreatedBy != null
                         && co.CourseId == c.CourseId).Select(u => u.CreatedBy)

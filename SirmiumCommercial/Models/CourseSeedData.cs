@@ -13,8 +13,8 @@ namespace SirmiumCommercial.Models
     {
         public static async void EnsurePopulated(IApplicationBuilder app)
         {
-            AppDetailsDBContext context = app.ApplicationServices
-                .GetRequiredService<AppDetailsDBContext>();
+            AppDetailsDbContext context = app.ApplicationServices
+                .GetRequiredService<AppDetailsDbContext>();
             context.Database.Migrate();
             if (!context.Courses.Any())
             {

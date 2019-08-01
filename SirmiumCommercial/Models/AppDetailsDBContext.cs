@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace SirmiumCommercial.Models
 {
-    public class AppDetailsDBContext : DbContext
+    public class AppDetailsDbContext : DbContext
     {
-        public AppDetailsDBContext(DbContextOptions<AppDetailsDBContext> options)
+        public AppDetailsDbContext(DbContextOptions<AppDetailsDbContext> options)
             : base(options) { }
 
         public DbSet<UserDetails> UsersDetails { get; set; }

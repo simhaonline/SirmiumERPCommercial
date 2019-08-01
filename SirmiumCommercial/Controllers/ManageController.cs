@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SirmiumCommercial.Models;
 using SirmiumCommercial.Models.ViewModels;
 
@@ -19,11 +20,6 @@ namespace SirmiumCommercial.Controllers
         {
             userManager = userMgr;
             repository = repo;
-        }
-
-        public ViewResult Index2()
-        {
-            return View();
         }
 
         public IActionResult Index(string id, string status, string sort, string order)
@@ -89,31 +85,40 @@ namespace SirmiumCommercial.Controllers
         public async Task<IActionResult> NewCourse(string id)
         {
             ViewData["Id"] = id;
+            ViewData["Title"] = "Create Course";
             AppUser user = await userManager.FindByIdAsync(id);
 
             if (user != null)
             {
-                return View(new Course());
+                return View(new NewEditCourse {
+                    Course = new Course(),
+                    NoEndDate = false
+                });
             }
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> NewCourse(string id, Course model)
+        public async Task<IActionResult> NewCourse(string id, NewEditCourse model)
         {
             ViewData["Id"] = id;
+            ViewData["Title"] = "Create Course";
             AppUser user = await userManager.FindByIdAsync(id);
 
             if (user != null)
             {
                 if (ModelState.IsValid)
                 {
-                    model.Status = "Private";
-                    model.CreatedBy = user;
-                    model.DateAdded = DateTime.Now;
-                    model.DateModified = DateTime.Now;
-                    model.Status = "Private";
-                    repository.SaveCourse(model);
+                    model.Course.Status = "Private";
+                    model.Course.CreatedBy = user;
+                    model.Course.DateAdded = DateTime.Now;
+                    model.Course.DateModified = DateTime.Now;
+                    model.Course.Status = "Private";
+                    if (model.NoEndDate)
+                    {
+                        model.Course.EndDate = DateTime.MinValue;
+                    }
+                    repository.SaveCourse(model.Course);
                     return RedirectToAction("Index", new { id, status = "Private",
                                                             sort = "Title", order = "asc"});
                 }
@@ -143,6 +148,108 @@ namespace SirmiumCommercial.Controllers
             }
             return RedirectToAction("Index", new{id, status = "Private",
                                                 sort = "Title", order = "asc"});
+        }
+
+        public ViewResult EditCourse(string id, int courseId)
+        {
+            ViewData["Id"] = id;
+            ViewData["Title"] = "Edit Course";
+            return View(new NewEditCourse
+            {
+                    Course = repository.Courses.Where(c => c.CourseId == courseId)
+                                        .FirstOrDefault(),
+                    NoEndDate = false
+            });
+        }
+
+        [HttpPost]
+        public IActionResult EditCourse(string id, NewEditCourse model)
+        {
+            ViewData["Id"] = id;
+            ViewData["Title"] = "Edit Course";
+            if (ModelState.IsValid)
+            {
+                Course course = repository.Courses
+                    .Where(c => c.CourseId == model.Course.CourseId)
+                    .FirstOrDefault();
+                course.AwardIcon = model.Course.AwardIcon;
+                course.Description = model.Course.Description;
+                course.EndDate = model.Course.EndDate;
+                course.Title = model.Course.Title;
+                course.DateModified = DateTime.Now;
+                if (model.NoEndDate)
+                {
+                    course.EndDate = DateTime.MinValue;
+                }
+                repository.SaveCourse(course);
+                TempData["message"] = "'" + course.Title + " 'has been saved!";
+                return RedirectToAction("CourseManage", new
+                {
+                    id,
+                    model.Course.CourseId
+                });
+            }
+            return View();
+        }
+
+        public IActionResult ChangeCourseStatus(string id, int courseId)
+        {
+            ViewData["Id"] = id;
+            Course course = repository.Courses.Where(c => c.CourseId == courseId)
+                                       .FirstOrDefault();
+            switch (course.Status)
+            {
+                case "Private":
+                    course.Status = "Public";
+                    course.DateAdded = DateTime.Now;
+                    course.DateModified = DateTime.Now;
+                    repository.SaveCourse(course);
+                    return RedirectToAction("Index", new
+                    {
+                        id,
+                        status = "Public",
+                        sort = "Date Added",
+                        order = "asc"
+                    });
+                default:
+                    course.Status = "Private";
+                    course.DateModified = DateTime.Now;
+                    repository.SaveCourse(course);
+                    return RedirectToAction("CourseManage", new { id, courseId });
+            }
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> NewPresentation(string id, NewEditPresentation model)
+        {
+            ViewData["Id"] = id;
+            AppUser user = await userManager.FindByIdAsync(id);
+
+            if (user != null)
+            {
+                if (ModelState.IsValid)
+                {
+                    Course course = repository.Courses
+                        .Where(c => c.CourseId == model.CourseId)
+                        .FirstOrDefault();
+                    Presentation presentation = model.Presentation;
+                    presentation.CreatedBy = user;
+                    presentation.DateAdded = DateTime.Now;
+                    presentation.DateModified = DateTime.Now;
+                    course.Presentations.Add(presentation);
+                    repository.SaveCourse(course);
+                    return RedirectToAction("CourseManage", new
+                    {
+                        id,
+                        courseId = model.CourseId
+                    });
+                }
+            }
+            return RedirectToAction("CourseManage", new
+            {
+                id,
+                courseId = model.CourseId
+            });
         }
     }
 }

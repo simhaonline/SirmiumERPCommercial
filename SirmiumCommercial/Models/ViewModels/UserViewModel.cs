@@ -44,7 +44,6 @@ namespace SirmiumCommercial.Models.ViewModels
     public class ProfileModel
     {
         public AppUser appUser { get; set; }
-        public UserProfile userProfile { get; set; }
     }
 
     public class AllCourse

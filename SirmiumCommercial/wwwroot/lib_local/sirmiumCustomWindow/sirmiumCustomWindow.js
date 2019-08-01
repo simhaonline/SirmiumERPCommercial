@@ -51,7 +51,7 @@ var CustomSuccessWindow = new function () {
 
 //warning dialog
 
-/*    <button onclick = "CustomWarningWindow.show('msg', '@Url.Action(" action", "controler")')">
+/*    <button onclick = "CustomWarningWindow.show('msg', 'btnMsg', '@Url.Action(" action", "controler")')">
         btnName
       </button >
      <div id="customWarningDialog"></div>*/
@@ -68,22 +68,24 @@ if (customWarningDialog != null) {
         <div class="dlg-body">
             <h2 id="warningTxt">Warning!</h2>
             <h4>
-                Are you sure you want to delete '<span id="dialogText"></span>'?
+                <span id="dialogText"></span>
             </h4>
         </div>
         <div class="dlg-footer">
             <a onclick="CustomWarningWindow.close()" class="">Cancel</a>
-            <a id="positive" onclick="CustomWarningWindow.yes()" style="background: #D30000; color: #fff">Yes, delete it!</a>
+            <a id="positive" onclick="CustomWarningWindow.yes()" style="background: #D30000; color: #fff"><span id="positiveTxt"></span></a>
         </div>
     `;
 }
 var warningWindow = document.getElementById('warningWindowCont');
 var freezeLayer = document.getElementById('freezeLayer');
+var positiveBtn = document.getElementById('positiveTxt');
 
 var CustomWarningWindow = new function () {
-    this.show = function (msg, link) {
+    this.show = function (msg, btnMsg, link) {
         var dialogText = document.getElementById('dialogText');
         dialogText.textContent = msg;
+        positiveBtn.textContent = btnMsg;
         warningWindow.style.display = '';
         this.link = link;
         freezeLayer.style.display = '';
