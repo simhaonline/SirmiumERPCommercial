@@ -119,8 +119,12 @@ namespace SirmiumCommercial.Controllers
                         model.Course.EndDate = DateTime.MinValue;
                     }
                     repository.SaveCourse(model.Course);
-                    return RedirectToAction("Index", new { id, status = "Private",
-                                                            sort = "Title", order = "asc"});
+                    TempData["messageCM"] = "'" + model.Course.Title + " 'has been saved!";
+                    return RedirectToAction("CourseManage", new
+                    {
+                        id,
+                        model.Course.CourseId
+                    });
                 }
             }
             return View();
@@ -141,10 +145,20 @@ namespace SirmiumCommercial.Controllers
         public IActionResult DeleteCourse(string id, int courseId)
         {
             ViewData["Id"] = id;
+
+            //deleting all presentations
+            Course course = repository.Courses
+                .FirstOrDefault(c => c.CourseId == courseId);
+            while(course.Presentations.Count() > 0)
+            {
+                Presentation p = course.Presentations.FirstOrDefault();
+                Presentation deletedP = repository.DeletePresentation(p.PresentationId);
+            }
+
             Course deletedCourse = repository.DeleteCourse(courseId);
             if (deletedCourse != null)
             {
-                TempData["message"] = $"Course: '{deletedCourse.Title}' was deleted!";
+                TempData["messageIn"] = $"Course: '{deletedCourse.Title}' has been deleted!";
             }
             return RedirectToAction("Index", new{id, status = "Private",
                                                 sort = "Title", order = "asc"});
@@ -182,7 +196,7 @@ namespace SirmiumCommercial.Controllers
                     course.EndDate = DateTime.MinValue;
                 }
                 repository.SaveCourse(course);
-                TempData["message"] = "'" + course.Title + " 'has been saved!";
+                TempData["messageCM"] = "'" + course.Title + " 'has been saved!";
                 return RedirectToAction("CourseManage", new
                 {
                     id,
@@ -218,7 +232,7 @@ namespace SirmiumCommercial.Controllers
                     return RedirectToAction("CourseManage", new { id, courseId });
             }
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> NewPresentation(string id, NewEditPresentation model)
         {
@@ -238,11 +252,11 @@ namespace SirmiumCommercial.Controllers
                     presentation.DateModified = DateTime.Now;
                     course.Presentations.Add(presentation);
                     repository.SaveCourse(course);
-                    return RedirectToAction("CourseManage", new
-                    {
-                        id,
-                        courseId = model.CourseId
-                    });
+                    TempData["succMsgCM"] = "'" + presentation.Title + " 'has been saved!";
+                }
+                else
+                {
+                    TempData["errMsgCM"] = "Sorry, something went wrong!";
                 }
             }
             return RedirectToAction("CourseManage", new
@@ -250,6 +264,46 @@ namespace SirmiumCommercial.Controllers
                 id,
                 courseId = model.CourseId
             });
+        }
+
+        public IActionResult EditPresentation(string id, NewEditPresentation model)
+        {
+            ViewData["Id"] = id;
+
+            if (ModelState.IsValid)
+            {
+                Presentation presentation = repository.Presentations
+                .FirstOrDefault(p => p.PresentationId == model.Presentation.PresentationId);
+                presentation.Title = model.Presentation.Title;
+                presentation.Part = model.Presentation.Part;
+                presentation.Description = model.Presentation.Description;
+                presentation.DateModified = DateTime.Now;
+                repository.SavePresentation(presentation);
+                TempData["succMsgCM"] = "The changes have been saved.";
+            }
+            else
+            {
+                TempData["errMsgCM"] = "Sorry, something went wrong!";
+            }
+            return RedirectToAction("CourseManage",
+                new { id, courseId = model.CourseId });
+        }
+
+        public IActionResult DeletePresentation(string id, int courseId, int presentationId)
+        {
+            ViewData["Id"] = id;
+            Presentation deletedPre = repository.DeletePresentation(presentationId);
+            if (deletedPre != null)
+            {
+                TempData["messageCM"] = $"Presentation: '{deletedPre.Title}' has been deleted!";
+            }
+            else
+            {
+                TempData["errMsgCM"] = "Sorry, something went wrong!";
+
+            }
+            return RedirectToAction("CourseManage",
+                new { id, courseId});
         }
     }
 }

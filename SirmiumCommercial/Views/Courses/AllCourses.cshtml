@@ -12,20 +12,98 @@
 }
 
 <div id="topNav" class="nav navbar">
-    <div class="smalltitle pull-left">
-        <h3><strong>@ViewData["Title"]</strong></h3>
+    <div class="navbar-left m-l">
+        <ul class="nav navbar-nav no-borders">
+            <li>
+                <h2><strong>@ViewData["Title"]</strong></h2>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav no-borders">
+            <li class="dropdown">
+                <a class="dropdown-toggle label-menu-corner" href="#" data-toggle="dropdown">
+                    <span class="text-primary"> Sort by: </span>
+                    @ViewData["Sort"]
+                    @if (ViewData["order"].ToString() == "asc")
+                    {
+                        <i class="fas fa-sort-alpha-down"></i>
+                    }
+                    else
+                    {
+                        <i class="fas fa-sort-alpha-down-alt"></i>
+                    }
+                    <span class="fa fa-caret-down"></span>
+                </a>
+                <ul class="dropdown-menu hdropdown animated flipInX">
+                    <li>
+                        <a href="@Url.Action("AllCourses", "Courses",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "Title",
+                                    order = "asc"
+                                })">
+                            <strong>Title Asc</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("AllCourses", "Courses",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "Title",
+                                    order = "desc"
+                                })">
+                            <strong>Title Desc</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("AllCourses", "Courses",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "End Date",
+                                    order = "asc"
+                                })">
+                            <strong>End Date Asc</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("AllCourses", "Courses",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "End Date",
+                                    order = "desc"
+                                })">
+                            <strong>End Date Desc</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("AllCourses", "Courses",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "Date Added",
+                                    order = "asc"
+                                })">
+                            <strong>Date Added Asc</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("AllCourses", "Courses",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "Date Added",
+                                    order = "desc"
+                                })">
+                            <strong>Date Added Desc</strong>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
     </div>
-
-    <form action="#" class=" pull-right" method="post">
-        <div class="form-inline text-center" style="margin-top: 10px">
-            <label class="control-label">Sort by:&nbsp;</label>
-            <select class="form-control">
-                <option>Course Name</option>
-                <option>End Date</option>
-                <option>Date Added</option>
-            </select>
-        </div>
-    </form>
 </div>
 
 @foreach (Course course in Model.Courses)
@@ -64,7 +142,7 @@
         </div>
         <div class="col-md-10">
             <div class="col-md-1 text-center">
-                <h1><span class="icon @course.AwardIcon"></span></h1>
+                <h1><span class="text-big icon @course.AwardIcon"></span></h1>
             </div>
             <div class="col-md-4">
                 <h2>@course.Title</h2>
@@ -97,31 +175,28 @@
             <div class="col-md-3 text-center">
                 @if (course.Users != null)
                 {
-                    if (course.Users.Select(u => u.Id).Any() == ViewBag["Id"])
+                    if (course.Users.Select(u => u.Id == ViewData["Id"]).Any())
                     {
                         <span class="badge badge-primary">My course</span>
                     }
                 }
+                @if ((DateTime.Now > course.EndDate) &&
+                  (course.EndDate != DateTime.MinValue))
+                {
+                    <button class="btn btn-primary" disabled>
+                        <span class="fa fa-plus"></span>
+                        Participate
+                    </button>
+                }
                 else
                 {
-                    if ((DateTime.Now > course.EndDate) &&
-                        (course.EndDate != DateTime.MinValue))
-                    {
-                        <button class="btn btn-primary" disabled>
-                            <span class="fa fa-plus"></span>
-                            Participate
-                        </button>
-                    }
-                    else
-                    {
-                        <a asp-action="ParticipateCours"
-                           asp-controller="Courses"
-                           asp-route-id="@ViewData["Id"]"
-                           class="btn btn-primary">
-                            <span class="fa fa-plus"></span>
-                            Participate
-                        </a>
-                    }
+                    <a asp-action="ParticipateCours"
+                       asp-controller="Courses"
+                       asp-route-id="@ViewData["Id"]"
+                       class="btn btn-primary">
+                        <span class="fa fa-plus"></span>
+                        Participate
+                    </a>
                 }
                 <a asp-action="CourseDetails"
                    asp-controller="Courses"

@@ -8,24 +8,39 @@
 @section Styles {
     <environment names="Development,Staging,Production">
         <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+        <link rel="stylesheet" href="~/lib_local/presentationForms/presentationForm.css" />
     </environment>
 }
 
 <div id="customSuccessWindow"></div>
-@if (TempData["message"] != null)
+@if (TempData["messageCM"] != null)
 {
-    <input value="@TempData["message"].ToString()" id="msgText" hidden />
+    <input value="@TempData["messageCM"].ToString()" id="msgText" hidden />
     <script>
         var msg = document.getElementById('msgText').value;
         window.onload = function () {
             CustomSuccessWindow.show(msg);
         };
 
-/**/</script>
+        /**/</script>
 }
 
 <!--Warning Window-->
 <div id="customWarningDialog"></div>
+
+<!--Msg window-->
+@if (TempData["succMsgCM"] != null)
+{
+    <div id="msgWindowSuccess">
+        <input value="@TempData["succMsgCM"]" id="windowMsg" hidden />
+    </div>
+}
+@if (TempData["errMsgCM"] != null)
+{
+    <div id="msgWindowError">
+        <input value="@TempData["errMsgCM"]" id="windowMsg" hidden />
+    </div>
+}
 
 <!--New Presentation Form-->
 <div>
@@ -33,7 +48,7 @@
     {
         CourseId = Model.Course.CourseId,
         Presentation = new Presentation()
-    });
+    })
 </div>
 
 <div class="col-lg-12">
@@ -64,7 +79,7 @@
         <h5><span class="fa fa-pencil-square-o"></span> Date modified: @Model.Course.DateAdded.ToString()</h5>
     </div>
     <div class="col-lg-2">
-        @if (Model.Course.Presentations != null)
+        @if (Model.Course.Presentations.Count() > 0)
         {
             <h4>Parts: <span class="text-warning">@Model.Course.Presentations.Count()</span>   </h4>
         }
@@ -88,7 +103,7 @@
             }
         </h5>
         @if ((DateTime.Now > Model.Course.EndDate) &&
- (Model.Course.EndDate != DateTime.MinValue))
+(Model.Course.EndDate != DateTime.MinValue))
         {
             <h4>
                 <span class="badge badge-danger text-warning" style="font-size:16px">
@@ -100,7 +115,7 @@
     <div class="col-md-1"></div>
     <div class="col-md-2 text-center">
         @if (Model.User != null &&
-  Model.User.Id == ViewData["Id"].ToString())
+Model.User.Id == ViewData["Id"].ToString())
         {
             <div class="dropdown">
                 <a class="dropdown-toggle btn btn-info" href="#" data-toggle="dropdown">
@@ -122,6 +137,14 @@
                                     </a>
                                 </td>
                                 <td>
+                                    <a onclick="NewPresentation.show()"
+                                       class="btn btn-outline btn-success m-t-md">
+                                        Add Presentation <br /> <i class="fas fa-plus"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
                                     <a href="@Url.Action("EditCourse", "Manage",
                                            new { id = ViewData["Id"], courseId = Model.Course.CourseId })"
                                        class="btn btn-outline btn-warning2 m-t-md">
@@ -129,15 +152,9 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <!--<a asp-action="AddPresentation"
-                                       asp-route-id="@ViewData["Id"]"
-                                       asp-route-courseId="@Model.Course.CourseId"
-                                       class="btn btn-outline btn-success m-t-md">
-                                        Add Presentation <br /> <i class="fas fa-plus"></i>
-                                    </a>-->
                                     <a onclick="NewPresentation.show()"
-                                       class="btn btn-outline btn-success m-t-md">
-                                        Add Presentation <br /> <i class="fas fa-plus"></i>
+                                       class="btn btn-outline btn-primary m-t-md">
+                                        Add User <br /> <i class="fas fa-user-plus"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -185,63 +202,25 @@
     </div>
 }
 
-@if (Model.Course.Presentations.Count() == 0)
-{
-    <div class="col-lg-12 navbar bg-info">
-
-        <span class="navbar-brand">No Presentation</span>
-
-        @if (Model.User != null &&
-Model.User.Id == ViewData["Id"].ToString())
-        {
-            <!--<a asp-action="AddPresentation"
-               asp-route-id="@ViewData["Id"]"
-               asp-route-courseId="@Model.Course.CourseId"
-               class="btn btn-outline btn-success pull-right m-t-sm">
-                Add Presentation <i class="fas fa-plus"></i>
-            </a>-->
-            <a onclick="NewPresentation.show()"
-               class="btn btn-outline btn-success pull-right m-t-sm">
-                Add Presentation <i class="fas fa-plus"></i>
-            </a>
-        }
+<!--Show presentation or users on course-->
+<div id="topNav" class="row m-b-sm">
+    <div class="col-lg-3 navBtn" id="showPresentationsBtn">
+        <h2 class="m-l-sm"><strong>Presentations</strong></h2>
     </div>
+    <div class="col-lg-3 navBtn" id="showUsersBtn">
+        <h2 class="m-l-sm"><strong>Users</strong></h2>
+    </div>
+</div>
+<div id="showPresentations" style="">
+    @Html.Partial("AllPresentations", Model);
+</div>
+<div id="showUsers" style="display: none">
+    @Html.Partial("AllUsers", Model)
+</div>
+
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+        <script src="~/lib_local/presentationForms/presentationForm.js"></script>
+    </environment>
 }
-else
-{
-    foreach (Presentation p in Model.Course.Presentations)
-    {
-        <div class="col-lg-12 navbar bg-info">
-
-            <span class="navbar-brand">@p.Title</span>
-
-            @if (Model.User != null &&
-       Model.User.Id == ViewData["Id"].ToString())
-            {
-                <a asp-action="PresentationDetails"
-                   asp-route-id="@ViewData["Id"]"
-                   asp-route-courseId="@Model.Course.CourseId"
-                   asp-route-presentationId="@p.PresentationId"
-                   class="btn btn-outline btn-info pull-right m-t-sm">
-                    Details
-                </a>
-            }
-        </div>
-    }
-}
-
-<script>
-    var presentationFormWindow = document.getElementById('presentationFormContent');
-    var freezeLayer = document.getElementById('freezeLayer');
-
-    var NewPresentation = new function () {
-        this.show = function () {
-            presentationFormWindow.style.display = '';
-            freezeLayer.style.display = '';
-        };
-        this.close = function () {
-            presentationFormWindow.style.display = 'none';
-            freezeLayer.style.display = 'none';
-        }
-    }
-</script>

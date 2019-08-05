@@ -104,6 +104,111 @@ var CustomWarningWindow = new function () {
     };
 }
 
+//Success msg
+var msgWindowSuccess = document.getElementById('msgWindowSuccess');
+
+if (msgWindowSuccess != null) {
+    msgWindowSuccess.innerHTML += `
+        <div id="infoWindow" class="infoWindow-container window-success"
+                style="display: none">
+            <div class="infoWindow-header">
+                <button onclick="infoWindowFunction.close()">
+                    <span class="fa fa-close"></span>
+                </button>
+            </div>
+            <div>
+                <span class="fa fa-check" style="font-size: 28px"></span>
+                <span id="msg"></span>
+            </div>
+        </div>`;
+    var infoWindow = document.getElementById('infoWindow');
+    var windowMsg = document.getElementById('windowMsg').value;
+    var msg = document.getElementById('msg');
+    msg.innerHTML = windowMsg;
+    setTimeout(function () {
+        infoWindow.style.display = '';
+    }, 200);
+    setTimeout(function () {
+        infoWindow.style.display = 'none';
+    }, 5000);
+    var infoWindowFunction = new function () {
+
+        this.close = function () {
+            infoWindow.style.display = 'none';
+        };
+    }
+}
+
+//Error msg
+var msgWindowError = document.getElementById('msgWindowError');
+
+if (msgWindowError != null) {
+    msgWindowError.innerHTML += `
+        <div id="infoWindow" class="infoWindow-container window-error"
+                style="display: none">
+            <div class="infoWindow-header">
+                <button onclick="infoWindowFunction.close()">
+                    <span class="fa fa-close"></span>
+                </button>
+            </div>
+            <div>
+                <span class="fa fa-close" style="font-size: 28px"></span>
+                <span id="msg"></span>
+            </div>
+        </div>`;
+    var infoWindow = document.getElementById('infoWindow');
+    var windowMsg = document.getElementById('windowMsg').value;
+    var msg = document.getElementById('msg');
+    msg.innerHTML = windowMsg;
+    setTimeout(function () {
+        infoWindow.style.display = '';
+    }, 200);
+    setTimeout(function () {
+        infoWindow.style.display = 'none';
+    }, 5000);
+    var infoWindowFunction = new function () {
+
+        this.close = function () {
+            infoWindow.style.display = 'none';
+        };
+    }
+}
+
+//Warning msg
+var msgWindowWarning = document.getElementById('msgWindowWarning');
+
+if (msgWindowWarning != null) {
+    msgWindowWarning.innerHTML += `
+        <div id="infoWindow" class="infoWindow-container window-warning"
+                style="display: none">
+            <div class="infoWindow-header">
+                <button onclick="infoWindowFunction.close()">
+                    <span class="fas fa-exclamation-triangle"></span>
+                </button>
+            </div>
+            <div>
+                <span class="fa fa-close" style="font-size: 28px"></span>
+                <span id="msg"></span>
+            </div>
+        </div>`;
+    var infoWindow = document.getElementById('infoWindow');
+    var windowMsg = document.getElementById('windowMsg').value;
+    var msg = document.getElementById('msg');
+    msg.innerHTML = windowMsg;
+    setTimeout(function () {
+        infoWindow.style.display = '';
+    }, 200);
+    setTimeout(function () {
+        infoWindow.style.display = 'none';
+    }, 5000);
+    var infoWindowFunction = new function () {
+
+        this.close = function () {
+            infoWindow.style.display = 'none';
+        };
+    }
+}
+
 //blinking text
 function blinker() {
     if ($('.blinking') != null) {

@@ -319,3 +319,42 @@
         border-color: #62cb31;
     }
 }
+
+.infoWindow-container {
+    font-family: 'Arial Rounded MT';
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 400px;
+    color: #fff;
+    padding: 10px;
+    border: 1px solid rgba(0, 0, 0, .4);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, .4);
+    transition: all 0.3s linear 0s;
+    opacity: 0.9;
+    z-index: 2;
+}
+
+/*Msg Window*/
+.infoWindow-header button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: none;
+    border: none;
+    color: rgba(30, 62, 15, .6);
+    font-size: 15px;
+}
+
+.window-success {
+    background: #62cb31;
+}
+
+.window-warning {
+    background: #e67e22;
+}
+
+.window-danger {
+    background: #c0392b;
+}

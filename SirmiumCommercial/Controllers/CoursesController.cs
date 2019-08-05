@@ -27,30 +27,71 @@ namespace SirmiumCommercial.Controllers
             return View(repository.Courses);
         }
 
-        public async Task<IActionResult> AllCourses(string id)
+        public async Task<IActionResult> AllCourses(string id, string sort, string order)
         {
+            ViewData["Id"] = id;
+            ViewData["Sort"] = sort;
+            ViewData["Order"] = order;
             AppUser user = await userManager.FindByIdAsync(id);
-            if(user != null)
+            if (user != null)
             {
-                ViewData["Id"] = user.Id;
-                return View(new AllCourse
+                switch (sort)
                 {
-                    Courses = repository.Courses
-                });
+                    case "End Date":
+                        return View(new AllCourse
+                        {
+                            Courses = (order == "asc") ?
+                            repository.Courses.Where(c => c.Status == "Public"
+                            && (c.CreatedBy.CompanyName == ""
+                            || c.CreatedBy.CompanyName == user.CompanyName))
+                            .OrderBy(c => c.EndDate) :
+                            repository.Courses.Where(c => c.Status == "Public"
+                            && (c.CreatedBy.CompanyName == ""
+                            || c.CreatedBy.CompanyName == user.CompanyName))
+                            .OrderByDescending(c => c.EndDate)
+                        });
+                    case "Date Added":
+                        return View(new AllCourse
+                        {
+                            Courses = (order == "asc") ?
+                            repository.Courses.Where(c => c.Status == "Public"
+                            && (c.CreatedBy.CompanyName == ""
+                            || c.CreatedBy.CompanyName == user.CompanyName))
+                            .OrderBy(c => c.DateAdded) :
+                            repository.Courses.Where(c => c.Status == "Public"
+                            && (c.CreatedBy.CompanyName == ""
+                            || c.CreatedBy.CompanyName == user.CompanyName))
+                            .OrderByDescending(c => c.DateAdded)
+                        });
+                    default:
+                        return View(new AllCourse
+                        {
+                            Courses = (order == "asc") ?
+                            repository.Courses.Where(c => c.Status == "Public"
+                            && (c.CreatedBy.CompanyName == ""
+                            || c.CreatedBy.CompanyName == user.CompanyName))
+                            .OrderBy(c => c.Title) :
+                            repository.Courses.Where(c => c.Status == "Public"
+                            && (c.CreatedBy.CompanyName == ""
+                            || c.CreatedBy.CompanyName == user.CompanyName))
+                            .OrderByDescending(c => c.Title)
+                        });
+                }
             }
             return View();
         }
 
-        public IActionResult CourseDetails(string id, string courseId)
+        public IActionResult CourseDetails(string id, int courseId)
         {
             ViewData["Id"] = id;
-            int cId = Convert.ToInt32(courseId);
-            return View(
-                new CourseDetails
-                {
-                    Course = repository.Courses
-                        .FirstOrDefault(c => c.CourseId == cId)
-                });   
+            return View(new CourseViewModel
+            {
+                Course = repository.Courses
+                        .FirstOrDefault(c => c.CourseId == courseId),
+                User = repository.Courses.Where(c => c.CreatedBy != null
+                    && c.CourseId == courseId).Select(u => u.CreatedBy)
+                    .FirstOrDefault()
+            });
         }
     }
 }

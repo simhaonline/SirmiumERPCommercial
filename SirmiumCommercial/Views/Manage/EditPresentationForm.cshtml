@@ -1,11 +1,17 @@
 ﻿@model NewEditPresentation
 
 <div id="freezeLayer" class="freeze-layer" style="display: none"></div>
-<div id="presentationFormContent" class="form-container" style="display: none">
+<div class="form-container @Model.Presentation.PresentationId" style="display: none">
     <div class="form-header">
-        <span>New Presentation</span>
+        <span>Edit: @Model.Presentation.Title</span>
+        <a href="@Url.Action("DeletePresentation", "Manage",
+                new { id = ViewData["Id"], courseId = Model.CourseId,
+                      presentationId = Model.Presentation.PresentationId})"
+           class="btn btn-outline btn-danger2 pull-right m-t-sm m-r-sm">
+            Delete <span class="pe pe-7s-trash"></span>
+        </a>
     </div>
-    <form asp-action="NewPresentation" asp-route-id="@ViewData["Id"]" method="post">
+    <form asp-action="EditPresentation" asp-route-id="@ViewData["Id"]" method="post">
         <div asp-validation-summary="All"></div>
         <input asp-for="CourseId" hidden />
         <input asp-for="Presentation.PresentationId" hidden />
@@ -23,7 +29,7 @@
                       placeholder="Add Course Description..."></textarea>
         </div>
         <div class="row text-center presentationForm">
-            <a class="m-r-md" onclick="NewPresentation.close()">
+            <a class="m-r-md" onclick="EditPresentation.close(@Model.Presentation.PresentationId)">
                 Cancel
             </a>
             <button type="submit">

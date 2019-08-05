@@ -30,8 +30,9 @@
                             new { id = ViewData["Id"] })">My Courses</a>
                 </li>
                 <li class="@Html.IsSelected(action: "AllCourses")">
-                    <a href="@Url.Action("AllCourses", "Courses", 
-                            new { id = ViewData["Id"] })">All Courses</a>
+                    <a href="@Url.Action("AllCourses", "Courses",
+                            new { id = ViewData["Id"], sort = "Date Added",
+                                order = "desc"})">All Courses</a>
                 </li>
             </ul>
         </li>

@@ -69,7 +69,6 @@
             <li class="dropdown">
                 <a class="dropdown-toggle label-menu-corner" href="#" data-toggle="dropdown">
                     <span class="text-primary"> Sort by: </span>
-                    <span>
                         @ViewData["Sort"]
                         @if (ViewData["order"].ToString() == "asc")
                         {
@@ -168,9 +167,9 @@
     </div>
 </div>
 
-@if (TempData["message"] != null)
+@if (TempData["messageIn"] != null)
 {
-    <input value="@TempData["message"].ToString()" id="msgText" hidden />
+    <input value="@TempData["messageIn"].ToString()" id="msgText" hidden />
     <script>
         var msg = document.getElementById('msgText').value;
         window.onload = function () {

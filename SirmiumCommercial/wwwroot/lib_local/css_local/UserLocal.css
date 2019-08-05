@@ -170,3 +170,27 @@
     border-radius: 10px;
     box-sizing: border-box;
 }
+
+.navBtn {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+    .navBtn:active {
+        box-shadow: inset 2px 2px 4px 0 rgba(0, 0, 0, .5);
+    }
+
+    .navBtn:hover {
+        cursor: pointer;
+        background-color: #afcecf;
+    }
+
+
+.big-checkbox {
+    /* Double-sized Checkboxes */
+    -ms-transform: scale(2); /* IE */
+    -moz-transform: scale(2); /* FF */
+    -webkit-transform: scale(2); /* Safari and Chrome */
+    -o-transform: scale(2); /* Opera */
+    padding: 10px;
+}
