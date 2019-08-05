@@ -18,31 +18,19 @@ namespace SirmiumCommercial.Models
             IdentityRole role = await roleManager.FindByNameAsync("Admin");
             if (role == null)
             {
-                role = new IdentityRole
-                {
-                    Name = "Admin"
-                };
-                await roleManager.CreateAsync(role);
+                await roleManager.CreateAsync(new IdentityRole("Admin"));
             }
 
-            role = await roleManager.FindByNameAsync("Company Admin");
+            role = await roleManager.FindByNameAsync("Manager");
             if (role == null)
             {
-                role = new IdentityRole
-                {
-                    Name = "Company Admin"
-                };
-                await roleManager.CreateAsync(role);
+                await roleManager.CreateAsync(new IdentityRole("Manager"));
             }
 
             role = await roleManager.FindByNameAsync("User");
             if (role == null)
             {
-                role = new IdentityRole
-                {
-                    Name = "User"
-                };
-                await roleManager.CreateAsync(role);
+                await roleManager.CreateAsync(new IdentityRole("User"));
             }
         }
     }

@@ -29,8 +29,8 @@ namespace SirmiumCommercial.Models
                     RegistrationDate = DateTime.Now,
                     Status = status
                 };
-                await userManager.CreateAsync(user, adminPassword);
-                await userManager.AddToRoleAsync(user, "Admin");
+                _ = await userManager.CreateAsync(user, adminPassword);
+                _ = await userManager.AddToRoleAsync(user, "Admin");
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
