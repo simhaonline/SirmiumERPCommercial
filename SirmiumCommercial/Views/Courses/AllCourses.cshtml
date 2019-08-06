@@ -148,10 +148,14 @@
                 <h2>@course.Title</h2>
                 <h4>
                     by:
-                    @if (course.CreatedBy != null)
+                    @if (Model.Courses.Where(c => c.CreatedBy != null
+                            && c.CourseId == course.CourseId).Any())
                     {
+                        var user = Model.Courses.Where(c => c.CreatedBy != null
+                            && c.CourseId == course.CourseId).Select(c => c.CreatedBy)
+                            .FirstOrDefault();
                         <span class="text-info">
-                            &#64;@course.CreatedBy.UserName
+                            &#64;@user.UserName
                         </span>
                     }
                     else

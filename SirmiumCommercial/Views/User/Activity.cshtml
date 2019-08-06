@@ -1,26 +1,79 @@
-﻿<!--
-    foreach
--->
-<div id="leftActivity" class="pull-left text-center">
-    <h1><span class="fa fa-calendar"></span></h1>
-    <h3>1 day ago</h3>
-    <h5><span class="fa fa-clock-o"></span> NO END DATE</h5>
-</div>
-<div id="rightActivity" class="pull-right">
-    <div id="videoImgActivity">
-        <img src="~/imgAlt.jpg" alt="video" class="m-l-lg" />
-        <div id="videoImgPlayActivity" class="text-center" hidden>
-            <button class="btn btn-sm btn-info"><span class="fa fa-play"></span></button>
+﻿@model HomeContent
+
+
+@foreach (HomeViewModel content in Model.Content.OrderByDescending(m => m.DateModified))
+{
+    <div class="row  m-b-md m-r-md">
+        <div id="leftActivity" class="pull-left text-center">
+            <h1><span class="text-big @content.AwardIcon"></span></h1>
+            <h3>@Model.DateDifference(DateTime.Now, content.DateAdded)</h3>
+            <h4>
+                <span class="fa fa-clock-o"></span>
+                @if (content.EndDate != DateTime.MinValue)
+                {
+                    @if (DateTime.Now > content.EndDate)
+                    {
+                        <span class="text-danger">
+                            FINISHED
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">
+                            End in
+                            @Model.DateDifference(content.EndDate,
+                                    DateTime.Now).Replace("ago", "")
+                        </span>
+                    }
+                }
+                else
+                {
+                    <span class="text-success">
+                        NO END DATE
+                    </span>
+
+                }
+            </h4>
+        </div>
+        <div id="rightActivity" class="pull-right">
+            <div id="videoImgActivity">
+                <img src="~/imgAlt.jpg" alt="video" class="m-l-lg" />
+                <div id="videoImgPlayActivity" class="text-center" hidden>
+                    <button class="btn btn-sm btn-info"><span class="fa fa-play"></span></button>
+                </div>
+            </div>
+            <div id="videoTextActivity">
+                <h2>@content.Title</h2>
+                <h4 class="text-muted">
+                    by:
+                    <span class="text-info">&#64;@content.CreatedBy</span>
+                </h4>
+                <h5>
+                    <span class="far fa-edit"></span>
+                    Date Modified:
+                    <span class="text-success">
+                        @Model.DateDifference(DateTime.Now, content.DateModified)
+                    </span>
+                </h5>
+                <h5><span class="fa fa-eye"></span> 0 Wiew</h5>
+            </div>
+            @switch (content.ContentType)
+            {
+                case "course":
+                    <a href="@Url.Action("CourseDetails", "Courses",
+                            new { id = ViewData["Id"], courseId = content.ContentId })"
+                       class="btn btn-outline btn-primary2">
+                        @content.ContentType
+                    </a>
+                    break;
+                case "presentation":
+                    <a href="@Url.Action("CourseDetails", "Courses",
+                            new { id = ViewData["Id"], courseId = content.ContentId })"
+                       class="btn btn-outline btn-primary2">
+                        @content.ContentType
+                    </a>
+                    break;
+            }
         </div>
     </div>
-    <div id="videoTextActivity">
-        <h2>Welcome!</h2>
-        <h5>Description:</h5>
-        <h4 class="text-muted">by <span class="text-info">&#64;Admin</span></h4>
-        <h5><span class="fa fa-plus-square"></span> Start date: 1 day ago</h5>
-        <h5><span class="fa fa-eye"></span> 0 Wiew</h5>
-    </div>
-    <div id="videoCategoryActivity" class="pull-right text-center">
-        <h3><a>Category</a></h3>
-    </div>
-</div>
+}

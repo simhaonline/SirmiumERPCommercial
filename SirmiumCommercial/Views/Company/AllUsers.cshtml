@@ -1,5 +1,67 @@
-﻿@{
+﻿@model IEnumerable<AppUser>
+
+@{
     Layout = "_UserLayout";
     ViewData["Title"] = "All Users";
+    var borderTop = new List<String>{"hviolet", "hred", "hgreen", "hyellow",
+            "hblue", "hnavyblue", "horange", "hreddeep"};
+    var i = 0;
 }
 
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+    </environment>
+}
+
+<div id="topNav" class="nav navbar">
+    <div class="navbar-left m-l">
+        <ul class="nav navbar-nav no-borders">
+            <li>
+                <h2><strong>@ViewData["Title"]</strong></h2>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="content">
+    <div class="row">
+        @foreach (AppUser user in Model)
+        {
+
+            <div class="col-lg-3">
+                <div class="hpanel contact-panel @borderTop[i]">
+                    <div class="panel-body">
+                        @if ((DateTime.Now - user.RegistrationDate).TotalDays < 30)
+                        {
+                            <span class="label label-success pull-right">NEW</span>
+                        }
+                        <img alt="profilePhoto" class="img-circle m-b" src="~/defaultAvatar.png">
+
+                        <h3>@user.FirstName <br /> @user.LastName</h3>
+                        <a href="@Url.Action("UserProfile", "User",
+                            new { id = ViewData["Id"], userId = user.Id })">
+                            <span class="text-muted font-bold m-b-xs text-info">
+                                &#64;@user.UserName
+                            </span>
+                        </a><br />
+                        <div class="row">
+                            <a href=""
+                               class="btn btn-primary pull-right m-r-sm">
+                                Message <span class="pe pe-7s-chat"></span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="panel-footer contact-footer">
+                        <div class="row">
+                            <div class="col-md-4 border-right"> <div class="contact-stat"><span>Awards: </span> <strong>0</strong></div> </div>
+                            <div class="col-md-4 border-right"> <div class="contact-stat"><span>Practices </span> <strong>0</strong></div> </div>
+                            <div class="col-md-4"> <div class="contact-stat"><span>Views: </span> <strong>0</strong></div> </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            if (i == 7) { i = 0; } else { i++; }
+        }
+    </div>
+</div>

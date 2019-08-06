@@ -31,6 +31,9 @@
     <Content Update="Views\User\Messages.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\User\UserProfile.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\User\MyProfile.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

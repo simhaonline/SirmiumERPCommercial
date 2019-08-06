@@ -1,4 +1,6 @@
-﻿@{
+﻿@model HomeContent
+
+@{
     Layout = "_UserLayout";
     ViewData["Title"] = "Home";
 }
@@ -35,7 +37,7 @@
 
     <!--Main-->
     <div>
-        @Html.Partial("Activity")
+        @Html.Partial("Activity", Model)
     </div>
 </div>
 

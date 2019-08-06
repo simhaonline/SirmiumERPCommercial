@@ -11,12 +11,83 @@ namespace SirmiumCommercial.Models
 {
     public class AppSeedData
     {
+        private const string adminUserName = "SirmiumERPCommercial";
+        private const string adminPassword = "Admin123";
+        private const string status = "Active";
+
         public static async void EnsurePopulated(IApplicationBuilder app)
         {
+            //Add roles
+            RoleManager<IdentityRole> roleManager = app.ApplicationServices
+                .GetRequiredService<RoleManager<IdentityRole>>();
+
+            IdentityRole role = await roleManager.FindByNameAsync("Admin");
+            if (role == null)
+            {
+                await roleManager.CreateAsync(new IdentityRole("Admin"));
+            }
+
+            role = await roleManager.FindByNameAsync("Manager");
+            if (role == null)
+            {
+                await roleManager.CreateAsync(new IdentityRole("Manager"));
+            }
+
+            role = await roleManager.FindByNameAsync("User");
+            if (role == null)
+            {
+                await roleManager.CreateAsync(new IdentityRole("User"));
+            }
+
             UserManager<AppUser> userManager = app.ApplicationServices
                 .GetRequiredService<UserManager<AppUser>>();
 
-            AppUser user = await userManager.FindByNameAsync("marko123");
+            //Head admin & SirmiumCommercial Info Courses
+            AppUser user = await userManager.FindByNameAsync(adminUserName);
+            if (user == null)
+            {
+                user = new AppUser
+                {
+                    UserName = adminUserName,
+                    RegistrationDate = DateTime.Now,
+                    Status = status
+                };
+                _ = await userManager.CreateAsync(user, adminPassword);
+                _ = await userManager.AddToRoleAsync(user, "Admin");
+                AppDetailsDbContext context = app.ApplicationServices
+               .GetRequiredService<AppDetailsDbContext>();
+                context.Database.Migrate();
+                context.UsersDetails.Add(new UserDetails
+                {
+                    User = user
+                });
+                context.SaveChanges();
+                context.Database.Migrate();
+                //SirmiumCommercial default courses
+                context.Courses.AddRange(
+                    new Course
+                    {
+                        Title = "Welcome to SirmiumERPComercial!",
+                        DateAdded = DateTime.Now,
+                        DateModified = DateTime.Now,
+                        AwardIcon = "fa fa-smile-o text-warning",
+                        Status = "Public",
+                        CreatedBy = user
+                    },
+                    new Course
+                    {
+                        Title = "How to Watch, Participate, Respond",
+                        DateAdded = DateTime.Now,
+                        DateModified = DateTime.Now,
+                        AwardIcon = "pe-7s-film text-info",
+                        Status = "Public",
+                        CreatedBy = user
+                    }
+                );
+                context.SaveChanges();
+            }
+
+            user = await userManager.FindByNameAsync("marko123");
             if (user == null)
             {
                 user = new AppUser
@@ -35,14 +106,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("darko");
@@ -64,14 +132,37 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
+                    User = user
+                });
+                context.SaveChanges();
+                context.Database.Migrate();
+                context.Courses.AddRange(
+                    new Course
                     {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                        Title = "1. kurs",
+                        DateAdded = DateTime.Now,
+                        DateModified = DateTime.Now,
+                        EndDate = DateTime.Now.AddDays(60),
+                        AwardIcon = "fa fa-crown text-warning",
+                        Status = "Public",
+                        CreatedBy = user,
+                        Description = "Prvi kurs, prve kompanije..."
+                    },
+                    new Course
+                    {
+                        Title = "2. kurs",
+                        DateAdded = DateTime.Now,
+                        DateModified = DateTime.Now,
+                        EndDate = DateTime.Now.AddDays(350),
+                        AwardIcon = "pe pe-7s-gleam text-danger",
+                        Status = "Public",
+                        CreatedBy = user,
+                        Description = "Drugi kurs, prve kompanije..."
+                    }
+                );
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("AlexJ");
@@ -93,14 +184,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Nenad");
@@ -122,14 +210,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Admin2Co1");
@@ -153,14 +238,36 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
+                    User = user
+                });
+                context.SaveChanges();
+                context.Database.Migrate();
+                context.Courses.AddRange(
+                    new Course
                     {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                        Title = "3. kurs",
+                        DateAdded = DateTime.Now,
+                        DateModified = DateTime.Now,
+                        AwardIcon = "fa fa-medal text-success",
+                        Status = "Public",
+                        CreatedBy = user,
+                        Description = "Treci kurs, prve kompanije..."
+                    },
+                    new Course
+                    {
+                        Title = "4. kurs",
+                        DateAdded = DateTime.Now,
+                        DateModified = DateTime.Now,
+                        EndDate = DateTime.Now.AddDays(20),
+                        AwardIcon = "fa fa-trophy text-primary-2",
+                        Status = "Public",
+                        CreatedBy = user,
+                        Description = "Cetvrti kurs, prve kompanije..."
+                    }
+                );
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Dejan");
@@ -182,14 +289,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Jovana45");
@@ -211,14 +315,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("stefanDjordjevic");
@@ -240,14 +341,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Aleksandar99");
@@ -269,14 +367,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Uros111");
@@ -298,14 +393,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Dejan2");
@@ -327,14 +419,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Ivana321");
@@ -356,14 +445,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("NemanjaNikolic");
@@ -385,14 +471,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Teodora987");
@@ -414,15 +497,13 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
+
             user = await userManager.FindByNameAsync("TamaraN");
             if (user == null)
             {
@@ -442,15 +523,13 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
+           
             //2nd company
             user = await userManager.FindByNameAsync("Admin1Co2");
             if (user == null)
@@ -473,14 +552,36 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
+                    User = user
+                });
+                context.SaveChanges();
+                context.Database.Migrate();
+                context.Courses.AddRange(
+                    new Course
                     {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                        Title = "1. kurs",
+                        DateAdded = DateTime.Now,
+                        DateModified = DateTime.Now,
+                        AwardIcon = "pe pe-7s-light text-warning",
+                        Status = "Public",
+                        CreatedBy = user,
+                        Description = "Prvi kurs, druge kompanije..."
+                    },
+                    new Course
+                    {
+                        Title = "2. kurs",
+                        DateAdded = DateTime.Now,
+                        DateModified = DateTime.Now,
+                        EndDate = DateTime.Now.AddDays(150),
+                        AwardIcon = "fa fa-atom text-info",
+                        Status = "Public",
+                        CreatedBy = user,
+                        Description = "Drugi kurs, druge kompanije..."
+                    }
+                );
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Goran34");
@@ -502,14 +603,36 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
+                    User = user
+                });
+                context.SaveChanges();
+                context.Database.Migrate();
+                context.Courses.AddRange(
+                    new Course
                     {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                        Title = "3. kurs",
+                        DateAdded = DateTime.Now,
+                        DateModified = DateTime.Now,
+                        AwardIcon = "fa fa-chess-pawn text-primary-2",
+                        Status = "Public",
+                        CreatedBy = user,
+                        Description = "Treci kurs, druge kompanije..."
+                    },
+                    new Course
+                    {
+                        Title = "4. kurs",
+                        DateAdded = DateTime.Now,
+                        DateModified = DateTime.Now,
+                        EndDate = DateTime.Now.AddDays(150),
+                        AwardIcon = "fa fa-graduation-cap text-error",
+                        Status = "Public",
+                        CreatedBy = user,
+                        Description = "Cetvrti kurs, druge kompanije..."
+                    }
+                );
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Jovan34");
@@ -531,14 +654,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("NikolaJ7");
@@ -560,15 +680,13 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
+
             user = await userManager.FindByNameAsync("Zeljka1510");
             if (user == null)
             {
@@ -588,15 +706,13 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
+
             user = await userManager.FindByNameAsync("Dusan949");
             if (user == null)
             {
@@ -616,15 +732,13 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
+
             user = await userManager.FindByNameAsync("Jovic8");
             if (user == null)
             {
@@ -644,14 +758,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("PesicJanko");
@@ -673,14 +784,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
 
             //3rd company
@@ -706,15 +814,37 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
+                    User = user
+                });
+                context.SaveChanges();
+                context.Database.Migrate();
+                context.Courses.AddRange(
+                    new Course
                     {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                        Title = "1. kurs",
+                        DateAdded = DateTime.Now,
+                        DateModified = DateTime.Now,
+                        AwardIcon = "fas fa-heart text-danger",
+                        Status = "Public",
+                        CreatedBy = user,
+                        Description = "Prvi kurs, Trece kompanije..."
+                    },
+                    new Course
+                    {
+                        Title = "2. kurs",
+                        DateAdded = DateTime.Now,
+                        DateModified = DateTime.Now,
+                        AwardIcon = "fa fa-medal text-warning",
+                        Status = "Public",
+                        CreatedBy = user,
+                        Description = "Drugi kurs, trece kompanije..."
+                    }
+                );
+                context.SaveChanges();
             }
+
             user = await userManager.FindByNameAsync("Milan23");
             if (user == null)
             {
@@ -734,14 +864,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("IvanTosic");
@@ -763,14 +890,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Majaaa55");
@@ -792,14 +916,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("JovanRistic");
@@ -821,14 +942,11 @@ namespace SirmiumCommercial.Models
                 AppDetailsDbContext context = app.ApplicationServices
                .GetRequiredService<AppDetailsDbContext>();
                 context.Database.Migrate();
-                if (!context.UsersDetails.Any())
+                context.UsersDetails.Add(new UserDetails
                 {
-                    context.UsersDetails.Add(new UserDetails
-                    {
-                        User = user
-                    });
-                    context.SaveChanges();
-                }
+                    User = user
+                });
+                context.SaveChanges();
             }
         }
     }

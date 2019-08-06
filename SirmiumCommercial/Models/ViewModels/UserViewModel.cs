@@ -141,7 +141,7 @@ namespace SirmiumCommercial.Models.ViewModels
 
     }
 
-    public class EditCourse
+    public class MyCompanyUsers
     {
         public AppUser User { get; set; }
         public Course Course { get; set; }

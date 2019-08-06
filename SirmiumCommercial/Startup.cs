@@ -64,9 +64,6 @@ namespace SirmiumCommercial
                     name: null,
                     template: "{Controller}/{Action}/{id?}");
             });
-            RolesSeedData.EnsurePopulated(app);
-            AdminSeedData.EnsurePopulated(app);
-            CourseSeedData.EnsurePopulated(app);
             AppSeedData.EnsurePopulated(app);
         }
     }

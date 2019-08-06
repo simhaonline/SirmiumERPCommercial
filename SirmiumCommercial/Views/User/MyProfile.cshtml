@@ -17,13 +17,13 @@
 
         <div class="profile-picture">
             @*if (Model.userProfile.ProfilePicture == null)
-                {
-                    <img src="~/defaultAvatar.png" id="profileImg" />
-                }
-                else
-                {
-                    <img src=@Model.userProfile.ProfilePicture id="profileImg" />
-                }*@
+            {
+                <img src="~/defaultAvatar.png" id="profileImg" />
+            }
+            else
+            {
+                <img src=@Model.userProfile.ProfilePicture id="profileImg" />
+            }*@
             <div class="dropdown">
                 <a class="dropdown-toggle" href="#" data-toggle="dropdown">
                     <img src="~/defaultAvatar.png" class="img-circle m-b" alt="logo" />
@@ -63,28 +63,23 @@
         @if (Model.appUser.UserName != null)
         {
             <div class="row">
-                <h3 class="text-info">&#64;@Model.appUser.UserName</h3>
-            </div>
-        }
-
-        @if (Model.appUser.CompanyName != null)
-        {
-            <div class="row">
-                <h4 class="text-info"><i class="fa fa-briefcase"></i> @Model.appUser.CompanyName</h4>
+                <h3 class="text-info font-bold text-muted m-n">
+                    &#64;@Model.appUser.UserName
+                </h3>
             </div>
         }
 
         @if (Model.appUser.Email != null)
         {
             <div class="row">
-                <h6 class="text-info"><i class="fa fa-at"></i> @Model.appUser.Email</h6>
+                <h5><i class="pe pe-7s-mail"></i> @Model.appUser.Email</h5>
             </div>
         }
 
         @if (Model.appUser.PhoneNumber != null)
         {
             <div class="row">
-                <h6 class="text-info"><i class="fa fa-phone"></i> @Model.appUser.PhoneNumber</h6>
+                <h5><i class="fa fa-phone"></i> @Model.appUser.PhoneNumber</h5>
             </div>
         }
 

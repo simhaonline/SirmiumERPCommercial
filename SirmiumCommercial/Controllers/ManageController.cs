@@ -33,7 +33,8 @@ namespace SirmiumCommercial.Controllers
                 ViewData["Status"] = "Public";
                 ViewData["Sort"] = "Title";
                 ViewData["Order"] = "asc";
-                return View(repository.Courses.Where(c => c.Status == "Public")
+                return View(repository.Courses.Where(c => c.Status == "Public"
+                        && c.CreatedBy.Id == id)
                         .OrderBy(c => c.Title));
             }
             else if (status == "All")
@@ -42,16 +43,22 @@ namespace SirmiumCommercial.Controllers
                 {
                     case "End Date":
                         return View((order == "asc") ?
-                                repository.Courses.OrderBy(c => c.EndDate) :
-                                repository.Courses.OrderByDescending(c => c.EndDate));
+                                repository.Courses.Where(c => c.CreatedBy.Id == id)
+                                .OrderBy(c => c.EndDate) :
+                                repository.Courses.Where(c => c.CreatedBy.Id == id)
+                                .OrderByDescending(c => c.EndDate));
                     case "Date Added":
                         return View((order == "asc") ?
-                                repository.Courses.OrderBy(c => c.DateAdded) :
-                                repository.Courses.OrderByDescending(c => c.DateAdded));
+                                repository.Courses.Where(c => c.CreatedBy.Id == id)
+                                .OrderBy(c => c.DateAdded) :
+                                repository.Courses.Where(c => c.CreatedBy.Id == id)
+                                .OrderByDescending(c => c.DateAdded));
                     default:
                         return View((order == "asc") ?
-                                repository.Courses.OrderBy(c => c.Title) :
-                                repository.Courses.OrderByDescending(c => c.Title));
+                                repository.Courses.Where(c => c.CreatedBy.Id == id)
+                                .OrderBy(c => c.Title) :
+                                repository.Courses.Where(c => c.CreatedBy.Id == id)
+                                .OrderByDescending(c => c.Title));
                 }
             }
             else
@@ -60,26 +67,30 @@ namespace SirmiumCommercial.Controllers
                 {
                     case "End Date":
                         return View((order == "asc") ?
-                                repository.Courses.Where(c => c.Status == status)
+                                repository.Courses.Where(c => c.Status == status
+                                    && c.CreatedBy.Id == id)
                                     .OrderBy(c => c.EndDate) :
-                                repository.Courses.Where(c => c.Status == status)
+                                repository.Courses.Where(c => c.Status == status
+                                    && c.CreatedBy.Id == id)
                                     .OrderByDescending(c => c.EndDate));
                     case "Date Added":
                             return View((order == "asc") ?
-                                repository.Courses.Where(c => c.Status == status)
+                                repository.Courses.Where(c => c.Status == status
+                                    && c.CreatedBy.Id == id)
                                     .OrderBy(c => c.DateAdded) :
-                                repository.Courses.Where(c => c.Status == status)
+                                repository.Courses.Where(c => c.Status == status
+                                    && c.CreatedBy.Id == id)
                                     .OrderByDescending(c => c.DateAdded));
                     default:
                         return View((order == "asc") ?
-                                repository.Courses.Where(c => c.Status == status)
+                                repository.Courses.Where(c => c.Status == status
+                                    && c.CreatedBy.Id == id)
                                     .OrderBy(c => c.Title) :
-                                repository.Courses.Where(c => c.Status == status)
+                                repository.Courses.Where(c => c.Status == status
+                                    && c.CreatedBy.Id == id)
                                     .OrderByDescending(c => c.Title));
                 }
-            }
-            //TODO: if status == private
-            //      select only course where course.createdBy.id == asp-route-id    
+            }   
         }
 
         public async Task<IActionResult> NewCourse(string id)

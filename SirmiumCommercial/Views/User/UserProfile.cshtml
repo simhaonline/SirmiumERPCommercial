@@ -1,0 +1,68 @@
+﻿@model AppUser
+
+@{
+    Layout = "_UserLayout";
+}
+
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+    </environment>
+}
+
+<div class="row m-r-sm m-l-sm">
+
+    <div class="col-lg-12 text-center" id="profileMain">
+
+        <div class="profile-picture">
+            @*if (Model.userProfile.ProfilePicture == null)
+                {
+                    <img src="~/defaultAvatar.png" id="profileImg" />
+                }
+                else
+                {
+                    <img src=@Model.userProfile.ProfilePicture id="profileImg" />
+                }*@
+            <div>
+                <img src="~/defaultAvatar.png" class="img-circle m-b" alt="logo" />
+            </div>
+
+        </div>
+
+        @if (Model.FirstName != null || Model.LastName != null)
+        {
+            <div class="row">
+                <h2 class="name">@Model.FirstName @Model.LastName</h2>
+            </div>
+
+        }
+
+        @if (Model.UserName != null)
+        {
+            <div class="row">
+                <h3 class="text-info font-bold text-muted m-n">
+                    &#64;@Model.UserName
+                </h3>
+            </div>
+        }
+
+        @if (Model.Email != null)
+        {
+            <div class="row">
+                <h5><i class="pe pe-7s-mail"></i> @Model.Email</h5>
+            </div>
+        }
+
+        @if (Model.PhoneNumber != null)
+        {
+            <div class="row">
+                <h5><i class="fa fa-phone"></i> @Model.PhoneNumber</h5>
+            </div>
+        }
+
+        <a href=""
+           class="btn btn-primary">
+            Message <span class="pe pe-7s-chat"></span>
+        </a>
+    </div>
+</div>

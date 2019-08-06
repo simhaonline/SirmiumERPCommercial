@@ -42,11 +42,11 @@ namespace SirmiumCommercial.Controllers
                         {
                             Courses = (order == "asc") ?
                             repository.Courses.Where(c => c.Status == "Public"
-                            && (c.CreatedBy.CompanyName == ""
+                            && (c.CreatedBy.CompanyName == null
                             || c.CreatedBy.CompanyName == user.CompanyName))
                             .OrderBy(c => c.EndDate) :
                             repository.Courses.Where(c => c.Status == "Public"
-                            && (c.CreatedBy.CompanyName == ""
+                            && (c.CreatedBy.CompanyName == null
                             || c.CreatedBy.CompanyName == user.CompanyName))
                             .OrderByDescending(c => c.EndDate)
                         });
@@ -55,11 +55,11 @@ namespace SirmiumCommercial.Controllers
                         {
                             Courses = (order == "asc") ?
                             repository.Courses.Where(c => c.Status == "Public"
-                            && (c.CreatedBy.CompanyName == ""
+                            && (c.CreatedBy.CompanyName == null
                             || c.CreatedBy.CompanyName == user.CompanyName))
                             .OrderBy(c => c.DateAdded) :
                             repository.Courses.Where(c => c.Status == "Public"
-                            && (c.CreatedBy.CompanyName == ""
+                            && (c.CreatedBy.CompanyName == null
                             || c.CreatedBy.CompanyName == user.CompanyName))
                             .OrderByDescending(c => c.DateAdded)
                         });
@@ -68,11 +68,11 @@ namespace SirmiumCommercial.Controllers
                         {
                             Courses = (order == "asc") ?
                             repository.Courses.Where(c => c.Status == "Public"
-                            && (c.CreatedBy.CompanyName == ""
+                            && (c.CreatedBy.CompanyName == null
                             || c.CreatedBy.CompanyName == user.CompanyName))
                             .OrderBy(c => c.Title) :
                             repository.Courses.Where(c => c.Status == "Public"
-                            && (c.CreatedBy.CompanyName == ""
+                            && (c.CreatedBy.CompanyName == null
                             || c.CreatedBy.CompanyName == user.CompanyName))
                             .OrderByDescending(c => c.Title)
                         });
