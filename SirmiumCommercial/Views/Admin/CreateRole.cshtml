@@ -13,5 +13,7 @@
         <input name="name" class="form-control" />
     </div>
     <button type="submit" class="btn btn-success">Create</button>
-    <a asp-action="Roles" class="btn btn-danger">Cancel</a>
+    <a href="@Url.Action("Roles", "Admin",
+                    new { id = ViewData["Id"] })" 
+       class="btn btn-danger">Cancel</a>
 </form>

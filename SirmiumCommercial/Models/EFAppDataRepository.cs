@@ -2,55 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace SirmiumCommercial.Models
 {
-    public class EFDetailsRepository : IDetailsRepository
+    public class EFAppDataRepository : IAppDataRepository
     {
-        private AppDetailsDbContext context;
+        private AppDbContext context;
+        private UserManager<AppUser> userManager;
 
-        public EFDetailsRepository(AppDetailsDbContext ctx)
+        public EFAppDataRepository (AppDbContext ctx, UserManager<AppUser> userMgr) 
         {
             context = ctx;
+            userManager = userMgr;
         }
 
-        public IQueryable<UserDetails> UserDetails => context.UsersDetails;
         public IQueryable<Group> Groups => context.Groups;
         public IQueryable<Course> Courses => context.Courses.Include(p => p.Presentations);
         public IQueryable<Presentation> Presentations => context.Presentations;
         public IQueryable<Representation> Representations => context.Representations;
-
-        public void SaveUser (UserDetails user)
-        {
-            if(user.Id == 0)
-            {
-                context.Attach(user.User);
-                context.UsersDetails.Add(user);
-            }
-            else
-            {
-                UserDetails dbEntry = context.UsersDetails
-                    .FirstOrDefault(u => u.Id == user.Id);
-                if (dbEntry != null)
-                {
-                    dbEntry.ProfilePhotoURL = user.ProfilePhotoURL;
-                }
-            }
-            context.SaveChanges();
-        }
-
-        public UserDetails DeleteUser(int userId)
-        {
-            UserDetails dbEntry = context.UsersDetails
-                .FirstOrDefault(u => u.Id == userId);
-            if (dbEntry != null)
-            {
-                context.UsersDetails.Remove(dbEntry);
-                context.SaveChanges();
-            }
-            return dbEntry;
-        }
+        public IQueryable<CourseUsers> CourseUsers => context.CourseUsers;
+        public IQueryable<GroupUsers> GroupUsers => context.GroupUsers;
 
         public void SaveCourse(Course course)
         {
@@ -89,7 +62,7 @@ namespace SirmiumCommercial.Models
             {
                 foreach (Presentation presentation in dbEntry.Presentations)
                 {
-                   Presentation p = DeletePresentation(presentation.PresentationId);
+                    Presentation p = DeletePresentation(presentation.PresentationId);
                 }
                 context.Courses.Remove(dbEntry);
                 context.SaveChanges();
@@ -136,7 +109,7 @@ namespace SirmiumCommercial.Models
             return dbEntry;
         }
 
-        public void AddPresentation (ICollection<Presentation> presentations, Course course)
+        public void AddPresentation(ICollection<Presentation> presentations, Course course)
         {
             foreach (Presentation p in presentations)
             {
@@ -147,6 +120,18 @@ namespace SirmiumCommercial.Models
                     SavePresentation(p);
                 }
             }
+        }
+
+        public void AddUserToCourse(string userId, int courseId)
+        {
+            CourseUsers courseUsers = new CourseUsers
+            {
+                CourseId = courseId,
+                AppUserId = userId
+            };
+
+            context.CourseUsers.Add(courseUsers);
+            context.SaveChanges();
         }
     }
 }

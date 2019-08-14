@@ -10,6 +10,7 @@ using SirmiumCommercial.Models.ViewModels;
 using SirmiumCommercial.Models;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace SirmiumCommercial.Controllers
 {
@@ -27,10 +28,24 @@ namespace SirmiumCommercial.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public ViewResult Index(AppUser admin)
+        public async Task<ViewResult> Index(string id)
         {
-            ViewData["Id"] = admin.Id;
-            return View(userManager.Users);
+            ViewData["Id"] = id;
+            AppUser admin = await userManager.FindByIdAsync(id);
+            if (admin != null)
+            {
+                ViewData["AdminCompany"] = admin.CompanyName;
+                if (admin.CompanyName == null)
+                {
+                    return View(userManager.Users);
+                }
+                else
+                {
+                    return View("Index2", userManager.Users
+                        .Where(u => u.CompanyName == admin.CompanyName));
+                }
+            }
+            return View();
         }
 
         [Authorize(Roles = "Admin")]
@@ -176,10 +191,25 @@ namespace SirmiumCommercial.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public ViewResult Roles(string id)
+        public async Task<IActionResult> Roles(string id)
         {
             ViewData["Id"] = id;
-            return View(roleManager.Roles);
+            AppUser admin = await userManager.FindByIdAsync(id);
+            if(admin != null)
+            {
+                if (HttpContext.User.Identity.Name == admin.UserName)
+                {
+                    if (admin.CompanyName == null)
+                    {
+                        return View(roleManager.Roles);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("Logout", "Account", new { returnUrl = "Login" });
+                }
+            }
+            return RedirectToAction("Index", new { id });
         }
 
         [Authorize(Roles = "Admin")]

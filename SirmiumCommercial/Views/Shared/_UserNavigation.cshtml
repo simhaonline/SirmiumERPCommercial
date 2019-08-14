@@ -2,71 +2,98 @@
 
     <ul class="nav metismenu" id="side-menu">
         <li class="@Html.IsSelected(controller: "User")">
-            <a href="@Url.Action("Index", "User", new { id = ViewData["Id"] })">
-                <span class="fa fa-home"></span>
-                <span class="nav-label">Home</span>
+            <a href="@Url.Action("Index", "User", 
+                    new { id = ViewData["Id"], sort = "Date Modified",
+                                order = "desc"})">
+                <span class="fa fa-home @Html.IsSelected(controller: "User", 
+                                       action: "Index")"></span>
+                <span class="nav-label @Html.IsSelected(controller: "User", 
+                                       action: "Index")">Home</span>
             </a>
         </li>
         <li class="@Html.IsSelected(controller: "Groups")">
             <a href="@Url.Action("Groups", "Groups", new { id = ViewData["Id"] })">
-                <span class="fa fa-users"></span>
-                <span class="nav-label">Groups</span>
+                <span class="fa fa-users @Html.IsSelected(controller: "Groups", 
+                                       action: "Groups")"></span>
+                <span class="nav-label @Html.IsSelected(controller: "Groups", 
+                                       action: "Groups")">Groups</span>
             </a>
         </li>
         <li class="@Html.IsSelected(controller: "Company")">
             <a href="@Url.Action("AllUsers", "Company", new { id = ViewData["Id"] })">
-                <span class="fa fa-industry"></span>
-                <span class="nav-label">My Company</span>
+                <span class="fa fa-industry @Html.IsSelected(controller: "Company", 
+                                       action: "AllUsers")"></span>
+                <span class="nav-label @Html.IsSelected(controller: "Company", 
+                                       action: "AllUsers")">My Company</span>
             </a>
         </li>
         <li class="@Html.IsSelected(controller: "Courses")">
             <a href="@Url.Action("Courses", "User")">
-                <span class="fa fa-book"></span> <span class="nav-label">Courses</span>
-                <span class="fa arrow"></span>
+                <span class="fa fa-book @Html.IsSelected(controller: "Courses")"></span> 
+                <span class="nav-label @Html.IsSelected(controller: "Courses")">Courses</span>
+                <span class="fa arrow @Html.IsSelected(controller: "Courses")"></span>
             </a>
             <ul class="nav nav-second-level">
                 <li class="@Html.IsSelected(action: "MyCourses")">
                     <a href="@Url.Action("MyCourses", "Courses", 
-                            new { id = ViewData["Id"] })">My Courses</a>
+                            new { id = ViewData["Id"] })">
+                        <span class="@Html.IsSelected(action: "MyCourses")">
+                            My Courses</span>
+                    </a>
                 </li>
                 <li class="@Html.IsSelected(action: "AllCourses")">
                     <a href="@Url.Action("AllCourses", "Courses",
                             new { id = ViewData["Id"], sort = "Date Added",
-                                order = "desc"})">All Courses</a>
+                                order = "desc"})">
+                        <span class="@Html.IsSelected(action: "AllCourses")">
+                            All Courses</span>
+                    </a>
                 </li>
             </ul>
         </li>
         <li class="@Html.IsSelected(controller: "Files")">
             <a href="#">
-                <span class="fa fa-files-o"></span>
-                <span class="nav-label">Files</span>
-                <span class="fa arrow"></span>
+                <span class="fa fa-files-o @Html.IsSelected(controller: "Files")"></span>
+                <span class="nav-label @Html.IsSelected(controller: "Files")">Files</span>
+                <span class="fa arrow @Html.IsSelected(controller: "Files")"></span>
             </a>
             <ul class="nav nav-second-level">
                 <li class="@Html.IsSelected(action: "MyFiles")">
-                    <a href="@Url.Action("MyFiles", "Files", new { id = ViewData["Id"] })">My Files</a>
+                    <a href="@Url.Action("MyFiles", "Files", new { id = ViewData["Id"] })">
+                        <span class="@Html.IsSelected(action: "MyFiles")">
+                            My Files</span>
+                    </a>
                 </li>
                 <li class="@Html.IsSelected(action: "SharedFiles")">
-                    <a href="@Url.Action("SharedFiles", "Files", new { id = ViewData["Id"] })">Shared Files</a>
+                    <a href="@Url.Action("SharedFiles", "Files", new { id = ViewData["Id"] })">
+                        <span class="@Html.IsSelected(action: "SharedFiles")">
+                            Shared Files</span>
+                    </a>
                 </li>
             </ul>
         </li>
         <li class="@Html.IsSelected(controller: "Reporting")">
             <a href="@Url.Action("Index", "Reporting", new { id = ViewData["Id"] })">
-                <span class="fa fa-bar-chart"></span>
-                <span class="nav-label">Reporting</span>
+                <span class="fa fa-bar-chart @Html.IsSelected(controller: "Reporting", 
+                                       action: "Index")"></span>
+                <span class="nav-label @Html.IsSelected(controller: "Reporting", 
+                                       action: "Index")">Reporting</span>
             </a>
         </li>
         <li class="@Html.IsSelected(controller: "Manage")">
             <a href="@Url.Action("Index", "Manage", new { id = ViewData["Id"] })">
-                <span class="fa fa-cogs"></span>
-                <span class="nav-label">Manage</span>
+                <span class="fa fa-cogs @Html.IsSelected(controller: "Manage", 
+                                       action: "Index")"></span>
+                <span class="nav-label @Html.IsSelected(controller: "Manage", 
+                                       action: "Index")">Manage</span>
             </a>
         </li>
         <li class="@Html.IsSelected(controller: "Admin")">
             <a href="@Url.Action("Index", "Admin", new { id = ViewData["Id"] })">
-                <span class="fa fa-sliders"></span>
-                <span class="nav-label">Admin</span>
+                <span class="fa fa-sliders @Html.IsSelected(controller: "Admin", 
+                                       action: "Index")"></span>
+                <span class="nav-label @Html.IsSelected(controller: "Admin", 
+                                       action: "Index")">Admin</span>
             </a>
         </li>
     </ul>

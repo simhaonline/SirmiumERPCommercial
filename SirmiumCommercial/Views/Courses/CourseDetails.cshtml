@@ -8,8 +8,22 @@
 @section Styles {
     <environment names="Development,Staging,Production">
         <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
-        <link rel="stylesheet" href="~/lib_local/presentationForms/presentationForm.css" />
+        <link rel="stylesheet" href="~/lib_local/courseDetails/courseDetails.css" />
     </environment>
+}
+
+<!--Msg window-->
+@if (TempData["sccMsgCourse"] != null)
+{
+    <div id="msgWindowSuccess">
+        <input value="@TempData["sccMsgCourse"]" id="windowMsg" hidden />
+    </div>
+}
+@if (TempData["errMsgCourse"] != null)
+{
+    <div id="msgWindowError">
+        <input value="@TempData["errMsgCM"]" id="windowMsg" hidden />
+    </div>
 }
 
 <div class="col-lg-12">
@@ -77,7 +91,7 @@
     <div class="col-md-2 text-center">
         @if (Model.Course.Users != null)
         {
-            if (Model.Course.Users.Select(u => u.Id == ViewData["Id"]).Any())
+            if (Model.Course.Users.Select(u => u.AppUserId == ViewData["Id"]).Any())
             {
                 <span class="badge badge-primary">My course</span>
             }
@@ -93,12 +107,12 @@
                 }
                 else
                 {
-                    <a asp-action="ParticipateCours"
-                       asp-controller="Courses"
-                       asp-route-id="@ViewData["Id"]"
+                    <a href="@Url.Action("Participate", "Courses",
+                                new { id = ViewData["Id"],
+                                    courseId = Model.Course.CourseId,
+                                    returnUrl = ViewContext.HttpContext.Request.PathAndQuery() })"
                        class="btn btn-primary">
-                        <span class="fa fa-plus"></span>
-                        Participate
+                        <span class="fa fa-plus"></span>Participate
                     </a>
                 }
             }
@@ -125,20 +139,25 @@
     <div class="col-lg-3 navBtn" id="showPresentationsBtn">
         <h2 class="m-l-sm"><strong>Presentations</strong></h2>
     </div>
+    <div class="col-lg-3 navBtn" id="showRepresentationsBtn">
+        <h2 class="m-l-sm"><strong>Representations</strong></h2>
+    </div>
     <div class="col-lg-3 navBtn" id="showUsersBtn">
         <h2 class="m-l-sm"><strong>Users</strong></h2>
     </div>
 </div>
 <div id="showPresentations" style="">
-    @Html.Partial("AllPresentations", Model);
+    @Html.Partial("AllPresentations", Model)
+</div>
+<div id="showRepresentations" style="display: none">
+    @Html.Partial("AllRepresentations", Model)
 </div>
 <div id="showUsers" style="display: none">
-    @Html.Partial("AllUsers", Model)
-</div>
+    @await Component.InvokeAsync("CourseAllUsers", new { courseId = Model.Course.CourseId })
 </div>
 
 @section Scripts {
     <environment names="Development,Staging,Production">
-        <script src="~/lib_local/presentationForms/presentationForm.js"></script>
+        <script src="~/lib_local/courseDetails/courseDetails.js"></script>
     </environment>
 }

@@ -49,7 +49,7 @@ namespace SirmiumCommercial.Models.ViewModels
     public class AllCourse
     {
         public IQueryable<Course> Courses { get; set; }
-
+        public IQueryable<CourseUsers> Users { get; set; }
         public string DateDifference (DateTime date1, DateTime date2)
         {
             var dateDiff = date1 - date2;

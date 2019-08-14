@@ -56,12 +56,18 @@ namespace SirmiumCommercial.Controllers
                             //Redirect to AdminController, if user-role="Admin"
                             if (await userManager.IsInRoleAsync(user, "Admin"))
                             {
-                                return RedirectToAction("Index", "Admin", user);
+                                return RedirectToAction("Index", "Admin", new { id = user.Id });
                             }
-                            //Redirect to CompanyAdminController, if user-role="CompanyAdmin"
-                            else if (await userManager.IsInRoleAsync(user, "Company Admin")) { 
+                            //Redirect to CompanyAdminController, if user-role="Manager"
+                            else if (await userManager.IsInRoleAsync(user, "Manager")) { 
                             
-                                return RedirectToAction("Index", "CompanyAdmin", user );
+                                return RedirectToAction("Index", "Manager", new { id = user.Id });
+                            }
+                            //Redirect to CompanyAdminController, if user-role="User"
+                            else if (await userManager.IsInRoleAsync(user, "User"))
+                            {
+
+                                return RedirectToAction("Index", "User", new { id = user.Id });
                             }
                             else
                             {

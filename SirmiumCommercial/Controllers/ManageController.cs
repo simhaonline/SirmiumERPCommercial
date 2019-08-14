@@ -13,10 +13,10 @@ namespace SirmiumCommercial.Controllers
     public class ManageController : Controller
     {
         private UserManager<AppUser> userManager;
-        private IDetailsRepository repository;
+        private IAppDataRepository repository;
 
         public ManageController(UserManager<AppUser> userMgr,
-            IDetailsRepository repo)
+            IAppDataRepository repo)
         {
             userManager = userMgr;
             repository = repo;

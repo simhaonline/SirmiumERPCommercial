@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace SirmiumCommercial.Models
 {
-    public interface IDetailsRepository
+    public interface IAppDataRepository
     {
-        IQueryable<UserDetails> UserDetails { get; }
-
         IQueryable<Group> Groups { get; }
 
         IQueryable<Course> Courses { get; }
@@ -17,6 +15,10 @@ namespace SirmiumCommercial.Models
 
         IQueryable<Representation> Representations { get; }
 
+        IQueryable<CourseUsers> CourseUsers { get; }
+
+        IQueryable<GroupUsers> GroupUsers { get; }
+
         void SaveCourse(Course course);
 
         Course DeleteCourse(int courseId);
@@ -24,5 +26,7 @@ namespace SirmiumCommercial.Models
         void SavePresentation(Presentation presentation);
 
         Presentation DeletePresentation(int presentationId);
+
+        void AddUserToCourse(string userId, int courseId);
     }
 }

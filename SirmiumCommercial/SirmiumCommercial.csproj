@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="FontAwesome" Version="4.7.0" />
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.40.3.1671" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />
     <PackageReference Include="RestSharp" Version="106.6.10" />
@@ -13,6 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="client_secret.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Views\Admin\Index2.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Courses\AllPresentations.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

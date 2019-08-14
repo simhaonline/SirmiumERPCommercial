@@ -12,10 +12,10 @@ namespace SirmiumCommercial.Controllers
     public class CoursesController : Controller
     {
         private UserManager<AppUser> userManager;
-        private IDetailsRepository repository;
+        private IAppDataRepository repository;
 
-        public CoursesController(UserManager<AppUser> userMgr, 
-            IDetailsRepository repo)
+        public CoursesController(UserManager<AppUser> userMgr,
+            IAppDataRepository repo)
         {
             userManager = userMgr;
             repository = repo;
@@ -48,7 +48,8 @@ namespace SirmiumCommercial.Controllers
                             repository.Courses.Where(c => c.Status == "Public"
                             && (c.CreatedBy.CompanyName == null
                             || c.CreatedBy.CompanyName == user.CompanyName))
-                            .OrderByDescending(c => c.EndDate)
+                            .OrderByDescending(c => c.EndDate),
+                            Users = repository.CourseUsers
                         });
                     case "Date Added":
                         return View(new AllCourse
@@ -61,7 +62,8 @@ namespace SirmiumCommercial.Controllers
                             repository.Courses.Where(c => c.Status == "Public"
                             && (c.CreatedBy.CompanyName == null
                             || c.CreatedBy.CompanyName == user.CompanyName))
-                            .OrderByDescending(c => c.DateAdded)
+                            .OrderByDescending(c => c.DateAdded),
+                            Users = repository.CourseUsers
                         });
                     default:
                         return View(new AllCourse
@@ -74,7 +76,8 @@ namespace SirmiumCommercial.Controllers
                             repository.Courses.Where(c => c.Status == "Public"
                             && (c.CreatedBy.CompanyName == null
                             || c.CreatedBy.CompanyName == user.CompanyName))
-                            .OrderByDescending(c => c.Title)
+                            .OrderByDescending(c => c.Title),
+                            Users = repository.CourseUsers
                         });
                 }
             }
@@ -92,6 +95,41 @@ namespace SirmiumCommercial.Controllers
                     && c.CourseId == courseId).Select(u => u.CreatedBy)
                     .FirstOrDefault()
             });
+        }
+
+        public async Task<IActionResult> Participate(string id, int courseId, 
+            string returnUrl, string userId = null)
+        {
+            ViewData["Id"] = id;
+
+            if (userId == null)
+            {
+                userId = id;
+            }
+
+            AppUser user = await userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                Course course = repository.Courses
+                    .FirstOrDefault(c => c.CourseId == courseId);
+                
+                if(course != null)
+                {
+                    repository.AddUserToCourse(userId, courseId);
+                    TempData["sccMsgCourse"] = "You have successfully joined this course.";
+                    return Redirect(returnUrl ?? "/" + id);
+                }
+                else
+                {
+                    TempData["errMsgCourse"] = "Sorry, something went wrong!";
+                    return Redirect(returnUrl ?? "/" + id);
+                }
+            }
+            else
+            {
+                TempData["errMsgCourse"] = "Sorry, something went wrong!";
+                return Redirect(returnUrl ?? "/" + id);
+            }
         }
     }
 }

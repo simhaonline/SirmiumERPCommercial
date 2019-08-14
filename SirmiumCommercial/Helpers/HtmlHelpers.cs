@@ -20,7 +20,44 @@ namespace SirmiumCommercial.Helpers
         {
             if (String.IsNullOrEmpty(cssClass))
             {
-                cssClass = "active";
+                cssClass = "active text-info";
+            }
+
+            string currentAction = (string)html.ViewContext.RouteData.Values["action"];
+            string currentController = (string)html.ViewContext.RouteData.Values["controller"];
+
+            if (String.IsNullOrEmpty(controller))
+            {
+                controller = currentController;
+            }
+            if (String.IsNullOrEmpty(action))
+            {
+                action = currentAction;
+            }
+
+            return controller == currentController && action == currentAction ?
+                cssClass : String.Empty;
+        }
+
+        public static string IsSelectedContentType(this IHtmlHelper html, string contentType = "All",
+            string cssClass = null)
+        {
+            if (String.IsNullOrEmpty(cssClass))
+            {
+                cssClass = " text-bold text-primary";
+            }
+            string currentContentType = (string)html.ViewContext.ViewData["ContentType"];
+
+
+            return contentType == currentContentType ? cssClass : String.Empty;
+        }
+
+        public static string IsSelectedAdmin(this IHtmlHelper html, string controller = null,
+            string action = null, string cssClass = null)
+        {
+            if (String.IsNullOrEmpty(cssClass))
+            {
+                cssClass = " text-bold text-primary";
             }
 
             string currentAction = (string)html.ViewContext.RouteData.Values["action"];

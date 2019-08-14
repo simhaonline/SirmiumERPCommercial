@@ -54,14 +54,8 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, adminPassword);
                 _ = await userManager.AddToRoleAsync(user, "Admin");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
+                AppDbContext context = app.ApplicationServices
+               .GetRequiredService<AppDbContext>();
                 context.Database.Migrate();
                 //SirmiumCommercial default courses
                 context.Courses.AddRange(
@@ -103,14 +97,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "marko123");
                 _ = await userManager.AddToRoleAsync(user, "Admin");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("darko");
@@ -129,14 +115,8 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "darko123");
                 _ = await userManager.AddToRoleAsync(user, "Manager");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
+                AppDbContext context = app.ApplicationServices
+               .GetRequiredService<AppDbContext>();
                 context.Database.Migrate();
                 context.Courses.AddRange(
                     new Course
@@ -181,14 +161,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "AlexJ123");
                 _ = await userManager.AddToRoleAsync(user, "Manager");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Nenad");
@@ -207,14 +179,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "nenad123");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Admin2Co1");
@@ -235,14 +199,8 @@ namespace SirmiumCommercial.Models
                 _ = await userManager.AddToRoleAsync(user, "Admin");
                 await userManager.AddToRoleAsync(user, "User");
                 await userManager.AddToRoleAsync(user, "Manager");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
+                AppDbContext context = app.ApplicationServices
+               .GetRequiredService<AppDbContext>();
                 context.Database.Migrate();
                 context.Courses.AddRange(
                     new Course
@@ -286,14 +244,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "dejan123");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Jovana45");
@@ -312,14 +262,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "Jovana45");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("stefanDjordjevic");
@@ -338,14 +280,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "stefanDjordjevic");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Aleksandar99");
@@ -364,14 +298,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "Aleksandar99");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Uros111");
@@ -390,14 +316,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "Uros111");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Dejan2");
@@ -416,14 +334,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "dejan123");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Ivana321");
@@ -442,14 +352,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "Ivana321");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("NemanjaNikolic");
@@ -468,14 +370,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "NemanjaNikolic");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Teodora987");
@@ -494,14 +388,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "Teodora987");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("TamaraN");
@@ -520,14 +406,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "TamaraN");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
            
             //2nd company
@@ -549,14 +427,8 @@ namespace SirmiumCommercial.Models
                 _ = await userManager.AddToRoleAsync(user, "Admin");
                 _ = await userManager.AddToRoleAsync(user, "User");
                 _ = await userManager.AddToRoleAsync(user, "Manager");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
+                AppDbContext context = app.ApplicationServices
+               .GetRequiredService<AppDbContext>();
                 context.Database.Migrate();
                 context.Courses.AddRange(
                     new Course
@@ -600,14 +472,8 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "Goran34");
                 _ = await userManager.AddToRoleAsync(user, "Manager");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
+                AppDbContext context = app.ApplicationServices
+               .GetRequiredService<AppDbContext>();
                 context.Database.Migrate();
                 context.Courses.AddRange(
                     new Course
@@ -651,14 +517,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "Jovan123");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("NikolaJ7");
@@ -677,14 +535,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "NikolaJ7");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Zeljka1510");
@@ -703,14 +553,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "Zeljka1510");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Dusan949");
@@ -729,14 +571,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "Dusan949");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Jovic8");
@@ -755,14 +589,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "Jovic8123");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("PesicJanko");
@@ -781,14 +607,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "PesicJanko");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             //3rd company
@@ -811,14 +629,8 @@ namespace SirmiumCommercial.Models
                 _ = await userManager.AddToRoleAsync(user, "Admin");
                 _ = await userManager.AddToRoleAsync(user, "User");
                 _ = await userManager.AddToRoleAsync(user, "Manager");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
+                AppDbContext context = app.ApplicationServices
+               .GetRequiredService<AppDbContext>();
                 context.Database.Migrate();
                 context.Courses.AddRange(
                     new Course
@@ -861,14 +673,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "Milan23");
                 _ = await userManager.AddToRoleAsync(user, "Manager");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("IvanTosic");
@@ -887,14 +691,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "IvanTosic");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("Majaaa55");
@@ -913,14 +709,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "Majaaa55");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
 
             user = await userManager.FindByNameAsync("JovanRistic");
@@ -939,14 +727,6 @@ namespace SirmiumCommercial.Models
                 };
                 _ = await userManager.CreateAsync(user, "JovanRistic");
                 _ = await userManager.AddToRoleAsync(user, "User");
-                AppDetailsDbContext context = app.ApplicationServices
-               .GetRequiredService<AppDetailsDbContext>();
-                context.Database.Migrate();
-                context.UsersDetails.Add(new UserDetails
-                {
-                    User = user
-                });
-                context.SaveChanges();
             }
         }
     }

@@ -13,25 +13,30 @@ namespace SirmiumCommercial.Controllers
     public class UserController : Controller
     {
         private UserManager<AppUser> userManager;
-        private IDetailsRepository repository;
+        private IAppDataRepository repository;
 
         public UserController(UserManager<AppUser> userMgr,
-                IDetailsRepository repo)
+                IAppDataRepository repo)
         {
             userManager = userMgr;
             repository = repo;
         }
 
-        public async Task<IActionResult> Index(string id)
+        public async Task<IActionResult> Index(string id, string sort = "Date Modified",
+            string order = "desc", string contentType = "All")
         {
             ViewData["Id"] = id;
+            ViewData["Sort"] = sort;
+            ViewData["Order"] = order;
+            ViewData["ContentType"] = contentType;
+
             AppUser user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
                 List<HomeViewModel> models = new List<HomeViewModel>();
                 foreach (Course course in repository.Courses
-                    .Where(c => c.CreatedBy.CompanyName == user.CompanyName
-                    || c.CreatedBy.CompanyName == null))
+                    .Where(c => (c.CreatedBy.CompanyName == user.CompanyName
+                    || c.CreatedBy.CompanyName == null) && c.Status == "Public"))
                 {
                     HomeViewModel content = new HomeViewModel
                     {
@@ -39,6 +44,9 @@ namespace SirmiumCommercial.Controllers
                         CreatedBy = repository.Courses
                             .Where(c => c.CourseId == course.CourseId)
                             .Select(u => u.CreatedBy.UserName).FirstOrDefault(),
+                        CreatedById = repository.Courses
+                            .Where(c => c.CourseId == course.CourseId)
+                            .Select(u => u.CreatedBy.Id).FirstOrDefault(),
                         Title = course.Title,
                         DateAdded = course.DateAdded,
                         DateModified = course.DateModified,
@@ -54,8 +62,11 @@ namespace SirmiumCommercial.Controllers
                         {
                             ContentId = course.CourseId,
                             CreatedBy = repository.Courses
-                            .Where(c => c.CourseId == course.CourseId)
-                            .Select(u => u.CreatedBy.UserName).FirstOrDefault(),
+                                .Where(c => c.CourseId == course.CourseId)
+                                .Select(u => u.CreatedBy.UserName).FirstOrDefault(),
+                            CreatedById = repository.Courses
+                                .Where(c => c.CourseId == course.CourseId)
+                                .Select(u => u.CreatedBy.Id).FirstOrDefault(),
                             Title = presentation.Title,
                             DateAdded = presentation.DateAdded,
                             DateModified = presentation.DateModified,
@@ -67,10 +78,91 @@ namespace SirmiumCommercial.Controllers
                         models.Add(content);
                     }
                 }
-                return View(new HomeContent
+
+                if (contentType == "All")
                 {
-                    Content = models.AsQueryable()
-                });
+                    switch (sort)
+                    {
+                        case "End Date":
+                            return View(new HomeContent
+                            {
+                                Content = (order == "asc") ?
+                                models.AsQueryable().OrderBy(c => c.EndDate) :
+                                models.AsQueryable().OrderByDescending(c => c.EndDate)
+                            });
+                        case "Date Added":
+                            return View(new HomeContent
+                            {
+                                Content = (order == "asc") ?
+                                models.AsQueryable().OrderBy(c => c.DateAdded) :
+                                models.AsQueryable().OrderByDescending(c => c.DateAdded)
+                            });
+                        case "Title":
+                            return View(new HomeContent
+                            {
+                                Content = (order == "asc") ?
+                                models.AsQueryable().OrderBy(c => c.Title) :
+                                models.AsQueryable().OrderByDescending(c => c.Title)
+                            });
+                        default:
+                            return View(new HomeContent
+                            {
+                                Content = (order == "asc") ?
+                                models.AsQueryable().OrderBy(c => c.DateModified) :
+                                models.AsQueryable().OrderByDescending(c => c.DateModified)
+                            });
+                    }
+                }
+                else
+                {
+                    switch (sort)
+                    {
+                        case "End Date":
+                            return View(new HomeContent
+                            {
+                                Content = (order == "asc") ?
+                                models.AsQueryable().
+                                Where(c => c.ContentType == contentType).
+                                OrderBy(c => c.EndDate) :
+                                models.AsQueryable().
+                                Where(c => c.ContentType == contentType).
+                                OrderByDescending(c => c.EndDate)
+                            });
+                        case "Date Added":
+                            return View(new HomeContent
+                            {
+                                Content = (order == "asc") ?
+                                models.AsQueryable().
+                                Where(c => c.ContentType == contentType).
+                                OrderBy(c => c.DateAdded) :
+                                models.AsQueryable().
+                                Where(c => c.ContentType == contentType).
+                                OrderByDescending(c => c.DateAdded)
+                            });
+                        case "Title":
+                            return View(new HomeContent
+                            {
+                                Content = (order == "asc") ?
+                                models.AsQueryable().
+                                Where(c => c.ContentType == contentType).
+                                OrderBy(c => c.Title) :
+                                models.AsQueryable().
+                                Where(c => c.ContentType == contentType).
+                                OrderByDescending(c => c.Title)
+                            });
+                        default:
+                            return View(new HomeContent
+                            {
+                                Content = (order == "asc") ?
+                                models.AsQueryable().
+                                Where(c => c.ContentType == contentType).
+                                OrderBy(c => c.DateModified) :
+                                models.AsQueryable().
+                                Where(c => c.ContentType == contentType).
+                                OrderByDescending(c => c.DateModified)
+                            });
+                    }
+                }
             }
             return View();
         }
@@ -131,7 +223,7 @@ namespace SirmiumCommercial.Controllers
         {
             ViewData["Id"] = id;
 
-            if(userId == id)
+            if (userId == id)
             {
                 return RedirectToAction("MyProfile", new { id });
             }
@@ -139,6 +231,7 @@ namespace SirmiumCommercial.Controllers
             AppUser user = await userManager.FindByIdAsync(userId);
             if (user != null)
             {
+
                 ViewData["Title"] = user.FirstName + " " +
                     user.LastName + " Profile";
                 return View(user);

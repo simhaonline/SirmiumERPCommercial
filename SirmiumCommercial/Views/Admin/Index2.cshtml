@@ -1,8 +1,8 @@
-﻿@model HomeContent
+﻿@model IEnumerable<AppUser>
 
 @{
     Layout = "_UserLayout";
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Users";
 }
 
 @section Styles {
@@ -18,12 +18,18 @@
                 <h2><strong>@ViewData["Title"]</strong></h2>
             </li>
         </ul>
-
+        <ul class="nav navbar-nav no-borders m-l-sm">
+                <a href="@Url.Action("Create", "Admin",
+                    new { id = ViewData["Id"] })" 
+                   class="btn btn-success btn-outline m-t-sm">
+                    <span class="fa fa-user-plus"></span>  New User
+                </a>
+        </ul>
         <ul class="nav navbar-nav no-borders">
             <li class="dropdown">
                 <a class="dropdown-toggle label-menu-corner" href="#" data-toggle="dropdown">
                     <span> Sort by: </span>
-                    @ViewData["Sort"]
+                    @*ViewData["Sort"]
                     @if (ViewData["Order"].ToString() == "asc")
                     {
                         <i class="fas fa-sort-alpha-down"></i>
@@ -31,7 +37,7 @@
                     else
                     {
                         <i class="fas fa-sort-alpha-down-alt"></i>
-                    }
+                    }*@
                     <span class="fa fa-caret-down"></span>
                 </a>
                 <ul class="dropdown-menu hdropdown animated flipInX">
@@ -135,50 +141,43 @@
             </li>
         </ul>
     </div>
-    <div class="inline navbar-right">
-        <h3 class="pull-left m-r">
-            <a href="@Url.Action("Index", "User",
-                    new { id = ViewData["Id"], contentType = "All"})">
-                <span class="text-muted 
-                      @Html.IsSelectedContentType(contentType: "All")">
-                    All 
-                </span>
-            </a>
-            |
-        </h3>
-        <h3 class="pull-left m-r">
-            <a href="@Url.Action("Index", "User",
-                    new { id = ViewData["Id"], contentType = "course"})">
-                <span class="text-muted 
-                      @Html.IsSelectedContentType(contentType: "course")">
-                    Courses 
-                </span>
-            </a>
-            |
-        </h3>
-        <h3 class="pull-left m-r">
-            <a href="@Url.Action("Index", "User",
-                    new { id = ViewData["Id"], contentType = "presentation"})">
-                <span class="text-muted 
-                      @Html.IsSelectedContentType(contentType: "presentation")">
-                    Presentations 
-                </span>
-            </a>
-            |
-        </h3>
-        <h3 class="pull-left m-r">
-            <a href="@Url.Action("Index", "User",
-                    new { id = ViewData["Id"], contentType = "representation"})">
-                <span class="text-muted
-                      @Html.IsSelectedContentType(contentType: "representation")">
-                    Respond 
-                </span>
-            </a>
-            |
-        </h3>
-    </div>
 </div>
-<!--Main-->
-<div>
-    @Html.Partial("Activity", Model)
-</div>
+
+<table class="table table-sm table-bordered">
+    <tr>
+        <th>Username</th>
+        <th colspan="2">Full Name</th>
+        <th>Email</th>
+        <th>User Status</th>
+        <th>Details</th>
+    </tr>
+    @if (Model.Count() == 0)
+    {
+        <tr><td colspan="9" class="text-center">No User Accounts</td></tr>
+    }
+    else
+    {
+        foreach (AppUser user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td colspan="2">@user.FirstName @user.LastName</td>
+                <td>@user.Email</td>
+                @if (user.Status == "Active")
+                {
+                    <td class="text-success">@user.Status</td>
+                }
+                else
+                {
+                    <td class="text-danger">@user.Status</td>
+                }
+                <td>
+                    <a class="btn btn-sm btn-info" asp-action="Details"
+                       asp-route-id="@ViewData["Id"]" asp-route-detailsId="@user.Id">
+                        <span class="fa fa-info" style="font-size: 15px"></span>
+                    </a>
+                </td>
+            </tr>
+        }
+    }
+</table>

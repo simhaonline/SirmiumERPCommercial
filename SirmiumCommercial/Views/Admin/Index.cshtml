@@ -11,30 +11,158 @@
     </environment>
 }
 
-<div id="adminTopNav" class="text-center">
-    @Html.Partial("AdminNavigation")
-</div>
-
-<div class="row">
-    <h2 class="col-sm-2">@ViewData["Title"]</h2>
-    <div class="col-sm-2">
-        <a class="btn btn-success btn-outline m-t-sm" asp-action="Create"
-           asp-route-id="@ViewData["Id"]">
-            <span class="fa fa-user-plus"></span>  New User
-        </a>
+<div id="topNav" class="nav navbar">
+    <div class="navbar-left m-l">
+        <ul class="nav navbar-nav no-borders">
+            <li>
+                <h2><strong>@ViewData["Title"]</strong></h2>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav no-borders m-l-sm">
+                <a href="@Url.Action("Create", "Admin",
+                    new { id = ViewData["Id"] })" 
+                   class="btn btn-success btn-outline m-t-sm">
+                    <span class="fa fa-user-plus"></span>  New User
+                </a>
+        </ul>
+        <ul class="nav navbar-nav no-borders">
+            <li class="dropdown">
+                <a class="dropdown-toggle label-menu-corner" href="#" data-toggle="dropdown">
+                    <span> Sort by: </span>
+                    @*ViewData["Sort"]
+                    @if (ViewData["Order"].ToString() == "asc")
+                    {
+                        <i class="fas fa-sort-alpha-down"></i>
+                    }
+                    else
+                    {
+                        <i class="fas fa-sort-alpha-down-alt"></i>
+                    }*@
+                    <span class="fa fa-caret-down"></span>
+                </a>
+                <ul class="dropdown-menu hdropdown animated flipInX">
+                    <li>
+                        <a href="@Url.Action("Index", "User",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "Title",
+                                    order = "asc",
+                                    contentType = ViewData["ContentType"]
+                                })">
+                            <strong>Title Asc</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "User",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "Title",
+                                    order = "desc",
+                                    contentType = ViewData["ContentType"]
+                                })">
+                            <strong>Title Desc</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "User",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "End Date",
+                                    order = "asc",
+                                    contentType = ViewData["ContentType"]
+                                })">
+                            <strong>End Date Asc</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "User",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "End Date",
+                                    order = "desc",
+                                    contentType = ViewData["ContentType"]
+                                })">
+                            <strong>End Date Desc</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "User",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "Date Added",
+                                    order = "asc",
+                                    contentType = ViewData["ContentType"]
+                                })">
+                            <strong>Date Added Asc</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "User",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "Date Added",
+                                    order = "desc",
+                                    contentType = ViewData["ContentType"]
+                                })">
+                            <strong>Date Added Desc</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "User",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "Date Modified",
+                                    order = "asc",
+                                    contentType = ViewData["ContentType"]
+                                })">
+                            <strong>Date Modified Asc</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "User",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "Date Modified",
+                                    order = "desc",
+                                    contentType = ViewData["ContentType"]
+                                })">
+                            <strong>Date Modified Desc</strong>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
     </div>
-    <form action="#" class="navbar-form-custom" method="post">
-        <div class="form-inline text-center" style="margin-top: 10px">
-            <label class="control-label">Sort by:&nbsp;</label>
-            <select class="form-search">
-                <option>Date Added</option>
-                <option>Id</option>
-                <option>User Name</option>
-                <option>Full Name</option>
-                <option>Company</option>
-            </select>
-        </div>
-    </form>
+    <div class="inline navbar-right">
+        <h3 class="pull-left m-r">
+            <a href="@Url.Action("Index", "Admin",
+                    new { id = ViewData["Id"] })">
+                <span class="text-muted
+                      @Html.IsSelectedAdmin(controller: "Admin", action: "Index")">
+                    All Users
+                </span>
+            </a>
+            |
+        </h3>
+        <h3 class="pull-left m-r">
+            <a href="@Url.Action("Roles", "Admin",
+                    new { id = ViewData["Id"] })">
+                <span class="text-muted
+                      @Html.IsSelectedAdmin(controller: "Admin", action: "Roles")">
+                    Roles
+                </span>
+            </a>
+            |
+        </h3>
+    </div>
 </div>
 
 <table class="table table-sm table-bordered">
@@ -44,7 +172,8 @@
         <th colspan="2">Full Name</th>
         <th>Email</th>
         <th>Company Name</th>
-        <th></th>
+        <th>User Status</th>
+        <th>Details</th>
     </tr>
     @if (Model.Count() == 0)
     {
@@ -60,10 +189,18 @@
                 <td colspan="2">@user.FirstName @user.LastName</td>
                 <td>@user.Email</td>
                 <td>@user.CompanyName</td>
+                @if (user.Status == "Active")
+                {
+                    <td class="text-success">@user.Status</td>
+                }
+                else
+                {
+                    <td class="text-danger">@user.Status</td>
+                }
                 <td>
                     <a class="btn btn-sm btn-info btn-outline" asp-action="Details"
                        asp-route-id="@ViewData["Id"]" asp-route-detailsId="@user.Id">
-                        Details
+                        <span class="fa fa-info" style="font-size: 15px"></span>
                     </a>
                 </td>
             </tr>

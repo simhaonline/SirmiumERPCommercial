@@ -1,16 +1,31 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace SirmiumCommercial.Models
 {
-    //user details
-    public class UserDetails
+    public class AppUser : IdentityUser
     {
-        public int Id { get; set; }
-        public AppUser User { get; set; }
-        public string ProfilePhotoURL { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string CompanyName { get; set; }
+        public DateTime RegistrationDate { get; set; }
+
+        //Status Active or Inactive
+        public string Status { get; set; }
+
+        //Profile Photo
+        public string ProfilePhotoUrl { get; set; }
+
+        //User Courses
+        public ICollection<CourseUsers> Courses { get; set; }
+            = new List<CourseUsers>();
+
+        //User Groups
+        public ICollection<GroupUsers> Groups { get; set; }
+            = new List<GroupUsers>();
     }
 
     public class Group
@@ -19,8 +34,8 @@ namespace SirmiumCommercial.Models
         public string Name { get; set; }
         public AppUser CreatedBy { get; set; }
         public string CompanyName { get; set; }
-        public ICollection<AppUser> Users { get; set; }
-            = new List<AppUser>();
+        public ICollection<GroupUsers> Users { get; set; }
+            = new List<GroupUsers>();
     }
 
     public class Course
@@ -33,9 +48,11 @@ namespace SirmiumCommercial.Models
         public DateTime EndDate { get; set; }
         public ICollection<Presentation> Presentations { get; set; }
             = new List<Presentation>();
+
         //Users on the Courses
-        public ICollection<AppUser> Users { get; set; }
-            = new List<AppUser>();
+        public ICollection<CourseUsers> Users { get; set; }
+            = new List<CourseUsers>();
+
         public string AwardIcon { get; set; }
 
         //Public -- all users can see
@@ -79,5 +96,19 @@ namespace SirmiumCommercial.Models
         public string Status { get; set; } = "Private";
 
         public string VideoURL { get; set; }
+    }
+
+    public class CourseUsers
+    {
+        public int Id { get; set; }
+        public int CourseId { get; set; }
+        public string AppUserId { get; set; }
+    }
+
+    public class GroupUsers
+    {
+        public int Id { get; set; }
+        public int GroupId { get; set; }
+        public string AppUserId { get; set; }
     }
 }

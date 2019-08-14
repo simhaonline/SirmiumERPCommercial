@@ -24,21 +24,18 @@ namespace SirmiumCommercial
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDetailsDbContext>(options =>
+            services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(
                     Configuration["Data:SirmiumCommercialData:ConnectionString"]));
-            services.AddTransient<IDetailsRepository, EFDetailsRepository>();
+            services.AddTransient<IAppDataRepository, EFAppDataRepository>();
 
-            services.AddDbContext<AppIdentityDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration["Data:SirmiumCommercialIdentity:ConnectionString"]));
             services.AddIdentity<AppUser, IdentityRole>(options => {
                 options.Password.RequiredLength = 6;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireDigit = false;
-                }).AddEntityFrameworkStores<AppIdentityDbContext>()
+                }).AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
             services.AddApplicationInsightsTelemetry(Configuration);
             services.AddMvc();

@@ -10,6 +10,7 @@ namespace SirmiumCommercial.Models.ViewModels
         public int ContentId { get; set; }
         public string Title { get; set; }
         public string CreatedBy { get; set; }
+        public string CreatedById { get; set; }
         public DateTime DateAdded { get; set; }
         public DateTime DateModified { get; set; }
         public DateTime EndDate { get; set; }

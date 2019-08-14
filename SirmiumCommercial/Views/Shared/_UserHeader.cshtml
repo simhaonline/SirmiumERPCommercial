@@ -1,14 +1,18 @@
 ﻿<div class="color-line">
 </div>
 <div id="logo" class="light-version">
-    <span>
-        SirmiumERPCommercial
-    </span>
+    <a href="@Url.Action("Index", "User", new { id = ViewData["Id"] })">
+        <span>
+            SirmiumERPCommercial
+        </span>
+    </a>
 </div>
 <nav role="navigation">
     <div class="header-link hide-menu"><i class="fa fa-bars"></i></div>
     <div class="small-logo">
-        <span class="text-primary">SirmiumERPCommercial</span>
+        <a href="@Url.Action("Index", "User", new { id = ViewData["Id"] })">
+            <span class="text-primary">SirmiumERPCommercial</span>
+        </a>
     </div>
     <form role="search" class="navbar-form-custom" method="post" action="#">
         <div class="form-group">
