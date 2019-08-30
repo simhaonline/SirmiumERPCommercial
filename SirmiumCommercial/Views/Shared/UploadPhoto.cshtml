@@ -1,0 +1,29 @@
+﻿@model UploadPhoto
+
+
+<div id="freezeLayer" class="freeze-layer" style="display: none"></div>
+<div id="uploadPhoto" class="form-container" style="display: none">
+    <div class="form-header">
+        <span>Upload a Photo</span>
+        <a onclick="UploadPhoto.close()"
+           class="pull-right text-muted fa fa-close"
+           id="closePhotoWindow"></a>
+    </div>
+    <form asp-action="UploadProfilePhoto" asp-controller="Recorder"
+          enctype="multipart/form-data"
+          asp-route-id="@Model.UserId" id="profilePhotoForm" method="post">
+        <div class="text-center">
+            <img id="output" style="width: 80%; height: auto;
+            border-radius: unset" />
+        </div>
+        <div class="m-t-sm m-b-sm text-center col-md-12">
+            <input asp-for="ProfilePhoto" class="form-control" id="photo"
+                   onchange="loadFile(event)">
+        </div>
+        <div class="text-center col-md-12">
+            <button class="btn btn-outline btn-success" type="submit">
+                Save
+            </button>
+        </div>
+    </form>
+</div>

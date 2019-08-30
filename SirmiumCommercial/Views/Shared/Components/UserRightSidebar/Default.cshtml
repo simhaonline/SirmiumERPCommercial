@@ -1,0 +1,25 @@
+﻿@model AppUser
+
+<style type="text/css">
+    img{
+        width: 200px;
+        height: 200px;
+    }
+</style>
+
+<a href="@Url.Action("MyProfile", "User", new { id = ViewData["Id"] })">
+    @if (Model.ProfilePhotoUrl == null)
+    {
+        <img src="~/defaultAvatar.png" class="img-circle m-b"
+             alt="logo" />
+    }
+    else
+    {
+        <img src="~/UsersData/@Model.ProfilePhotoUrl" class="img-circle m-b" alt="logo" />
+    }
+</a>
+
+<div class="stats-label text-color">
+    <h4 class="font-extra-bold font-uppercase text-info">@Model.FirstName @Model.LastName</h4>
+    <h6 class="font-extra-bold font-uppercase text-info">&#64; @Model.UserName</h6>
+</div>

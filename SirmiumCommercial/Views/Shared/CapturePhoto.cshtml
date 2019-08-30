@@ -1,0 +1,56 @@
+﻿@model ChangeProfilePhoto
+
+
+<div id="freezeLayer" class="freeze-layer" style="display: none"></div>
+<div id="capturePhoto" class="form-container" style="display: none">
+    <div class="form-header">
+        <span>Camera</span>
+        <a href="@ViewData["ReturnUrl"]"
+              class="pull-right text-muted fa fa-close"
+              id="closePhotoWindow"></a>
+    </div>
+    <div class="" style="background-color: none">
+            <div class="contents" style="background: none">
+                <div id="video-div">
+                    <div>
+                        <video id="player" class="videoCapturePhoto"></video>
+                    </div>
+                    <div class="row text-center" id="captureDiv">
+                        <button id="capture" class="btn btn-outline">
+                            <i class="fa fa-camera text-big text-info"></i>
+                            <h4>Take a Photo</h4>
+                        </button>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="col-lg-12">
+                            <div class="col-lg-3"></div>
+                            <canvas id="canvas" class="videoCapturePhoto" hidden></canvas>
+                        </div>
+                        <div class="col-lg-12 text-center" id="saveDiv" hidden>
+                            <form asp-controller="Recorder"
+                                  asp-action="SaveProfilePhoto" method="post">
+                                <input asp-for="@Model.userId" id="userId" hidden />
+                                <input asp-for="@Model.photoUrl" id="photo" hidden />
+                                <input id="img" class="video col-lg-5" hidden />
+                                <button type="submit"
+                                        id="save" class="btn btn-outline" hidden>
+                                    <i class="fa fa-save text-success text-big"></i>
+                                    <span style="font-size:20px">Save</span>
+                                </button>
+                                <a id="new" class="btn btn-outline" hidden>
+                                    <i class="fa fa-camera text-info text-big"></i>
+                                    <span style="font-size:20px">Try Again</span>
+                                </a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+        <script src="~/lib_local/script_local/CapturePhoto_local.js"></script>
+    </environment>
+}

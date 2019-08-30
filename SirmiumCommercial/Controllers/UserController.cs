@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
 using SirmiumCommercial.Models;
 using SirmiumCommercial.Models.ViewModels;
+using System.IO;
 
 namespace SirmiumCommercial.Controllers
 {
@@ -14,12 +17,14 @@ namespace SirmiumCommercial.Controllers
     {
         private UserManager<AppUser> userManager;
         private IAppDataRepository repository;
+        private IHostingEnvironment hostingEnvironment;
 
         public UserController(UserManager<AppUser> userMgr,
-                IAppDataRepository repo)
+                IAppDataRepository repo, IHostingEnvironment hosting)
         {
             userManager = userMgr;
             repository = repo;
+            hostingEnvironment = hosting;
         }
 
         public async Task<IActionResult> Index(string id, string sort = "Date Modified",
@@ -52,7 +57,7 @@ namespace SirmiumCommercial.Controllers
                         DateModified = course.DateModified,
                         EndDate = course.EndDate,
                         AwardIcon = course.AwardIcon,
-                        VideoURL = course.VideoURL,
+                       // VideoURL = course.VideoURL,
                         ContentType = "course"
                     };
                     models.Add(content);
@@ -72,7 +77,7 @@ namespace SirmiumCommercial.Controllers
                             DateModified = presentation.DateModified,
                             EndDate = course.EndDate,
                             AwardIcon = "text-primary-2 fa fa-puzzle-piece",
-                            VideoURL = presentation.VideoURL,
+                           // VideoURL = presentation.VideoURL,
                             ContentType = "presentation"
                         };
                         models.Add(content);
@@ -181,7 +186,7 @@ namespace SirmiumCommercial.Controllers
         {
             ViewData["Id"] = id;
             AppUser user = await userManager.FindByIdAsync(id);
-            if(user != null)
+            if (user != null)
             {
                 ViewData["Id"] = user.Id;
                 return View(new ProfileModel

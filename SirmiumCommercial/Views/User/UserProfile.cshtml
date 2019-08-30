@@ -8,6 +8,14 @@
     <environment names="Development,Staging,Production">
         <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
     </environment>
+
+    <style type="text/css">
+        img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+        }
+    </style>
 }
 
 <div class="row m-r-sm m-l-sm">
@@ -15,18 +23,15 @@
     <div class="col-lg-12 text-center" id="profileMain">
 
         <div class="profile-picture">
-            @*if (Model.userProfile.ProfilePicture == null)
-                {
-                    <img src="~/defaultAvatar.png" id="profileImg" />
-                }
-                else
-                {
-                    <img src=@Model.userProfile.ProfilePicture id="profileImg" />
-                }*@
-            <div>
-                <img src="~/defaultAvatar.png" class="img-circle m-b" alt="logo" />
-            </div>
-
+            @if (Model.ProfilePhotoUrl == null)
+            {
+                <img src="~/defaultAvatar.png" class="img-circle m-b"
+                     alt="logo" />
+            }
+            else
+            {
+                <img src="~/UsersData/@Model.ProfilePhotoUrl" class="img-circle m-b" alt="logo" />
+            }
         </div>
 
         @if (Model.FirstName != null || Model.LastName != null)

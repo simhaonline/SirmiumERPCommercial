@@ -9,6 +9,7 @@
     <PackageReference Include="Google.Apis.Drive.v3" Version="1.40.3.1671" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.9" />
     <PackageReference Include="RestSharp" Version="106.6.10" />
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.0" />
   </ItemGroup>
@@ -29,6 +30,9 @@
     <Content Update="Views\Manage\EditCourse.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Shared\UploadPhoto.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Shared\_UserRightSidebar.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -44,6 +48,14 @@
     <Content Update="Views\User\MyProfile.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\UsersData\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\UsersData\b6a0435b-8716-4479-8086-01f902b29097\profilePhoto.jpeg" />
   </ItemGroup>
 
 </Project>

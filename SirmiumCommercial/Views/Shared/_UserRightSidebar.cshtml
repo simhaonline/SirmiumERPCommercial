@@ -5,25 +5,7 @@
             <i class="pe pe-7s-close"></i>
         </button>
         <div class="profile-picture">
-            <a href="@Url.Action("MyProfile", "User", new { id = ViewData["Id"] })">
-                <img src="~/defaultAvatar.png" class="img-circle m-b" alt="logo">
-            </a>
-
-            <div class="stats-label text-color">
-                <div class="dropdown">
-                    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-                        <h6 class="text-muted"> Change Profile Picture<b class="caret"></b></h6>
-                    </a>
-                    <ul class="dropdown-menu animated flipInX m-t-xs">
-                        <li><a href="#">Take a Photo</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#">Upload a Photo</a></li>
-                    </ul>
-                </div>
-                <br />
-                <h4 class="font-extra-bold font-uppercase text-info">Full Name</h4>
-                <h6 class="font-extra-bold font-uppercase text-info">&#64;User name</h6>
-            </div>
+            @await Component.InvokeAsync("UserRightSidebar", new { userId = ViewData["Id"] })
 
             <ul class="nav metismenu" id="side-menu">
                 <li class="@Html.IsSelected(controller: "User")">

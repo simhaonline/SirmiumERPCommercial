@@ -61,7 +61,7 @@ namespace SirmiumCommercial.Models
         public string Status { get; set; } = "Private";
 
         public string Description { get; set; }
-        public string VideoURL { get; set; }
+        public int VideoId { get; set; }
     }
 
     public class Presentation
@@ -81,7 +81,7 @@ namespace SirmiumCommercial.Models
         public ICollection<Representation> Representations { get; set; }
             = new List<Representation>();
 
-        public string VideoURL { get; set; }
+        public int VideoId { get; set; }
     }
 
     public class Representation
@@ -95,7 +95,7 @@ namespace SirmiumCommercial.Models
         //Private -- Default value, only creator can see
         public string Status { get; set; } = "Private";
 
-        public string VideoURL { get; set; }
+        public int VideoId { get; set; }
     }
 
     public class CourseUsers
@@ -110,5 +110,23 @@ namespace SirmiumCommercial.Models
         public int Id { get; set; }
         public int GroupId { get; set; }
         public string AppUserId { get; set; }
+    }
+
+    public class Video
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
+        //User Id
+        public string CreatedBy { get; set; }
+        //Course, Presentation, Representation or Practice
+        public string For { get; set; }
+        //CourseId, PresentationId, RepresentationId or PracticeId
+        public int ForId { get; set; }
+        //Public or Private
+        public string Status { get; set; }
+        public DateTime DateAdded { get; set; }
+        public int Views { get; set; }
+        //video path
+        public string VideoPath { get; set; }
     }
 }

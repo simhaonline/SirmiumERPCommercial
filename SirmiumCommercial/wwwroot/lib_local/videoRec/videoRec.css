@@ -1,0 +1,36 @@
+﻿.video-container {
+    font-family: 'Arial Rounded MT';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    background: #fff;
+    padding: 10px;
+    border: 1px solid rgba(0, 0, 0, .4);
+    opacity: 1;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, .6);
+    transition: all 0.3s linear 0s;
+    z-index: 2;
+}
+
+.video-header {
+    font-size: 35px;
+    font-weight: bold;
+    text-align: left;
+    color: #6a6c6f;
+}
+
+.video-freeze-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, .3);
+    z-index: 1;
+}
+
+#closeVideoWindow:hover {
+    cursor: pointer;
+    color: #34495e;
+}

@@ -1,0 +1,84 @@
+﻿.form-container {
+    font-family: 'Arial Rounded MT';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    background: #fff;
+    padding: 10px;
+    border: 1px solid rgba(0, 0, 0, .4);
+    opacity: 1;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, .6);
+    transition: all 0.3s linear 0s;
+    z-index: 2;
+}
+
+.form-header {
+    font-size: 35px;
+    font-weight: bold;
+    text-align: left;
+    color: #6a6c6f;
+}
+
+.presentationForm-footer {
+    text-align: center;
+    padding: 3px 0;
+}
+
+.presentationForm a {
+    display: inline-block;
+    width: 100px;
+    padding: 5px 0;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+    .presentationForm a:active {
+        box-shadow: inset 2px 2px 4px 0 rgba(0, 0, 0, .5);
+        color: rgba(0, 0, 0, .5);
+    }
+
+    .presentationForm a:hover {
+        border: 1px solid rgba(0, 0, 0, .5);
+        color: #696969;
+        box-sizing: border-box;
+    }
+
+.presentationForm button {
+    display: inline-block;
+    width: 100px;
+    padding: 5px 0;
+    background: #fff;
+    color: #80ff00;
+    border: 1px solid #80ff00;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+    .presentationForm button:active {
+        box-shadow: inset 2px 2px 4px 0 rgba(0, 0, 0, .5);
+        background: rgb(128, 255, 0);
+        border: 1px solid rgb(191, 255, 128);
+        color: rgba(0, 0, 0, .5);
+    }
+
+    .presentationForm button:hover {
+        background: #80ff00;
+        color: #fff;
+        box-sizing: border-box;
+    }
+
+.freeze-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, .3);
+    z-index: 1;
+}
+
+#closePhotoWindow:hover {
+    cursor: pointer;
+    color: #34495e;
+}

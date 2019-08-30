@@ -89,32 +89,30 @@
     </div>
     <div class="col-md-1"></div>
     <div class="col-md-2 text-center">
-        @if (Model.Course.Users != null)
+        @if (Model.UsersOnCourse.FirstOrDefault(u => u.Id == ViewData["Id"].ToString())
+             != null)
         {
-            if (Model.Course.Users.Select(u => u.AppUserId == ViewData["Id"]).Any())
+            <span class="badge badge-primary">My course</span>
+        }
+        else
+        {
+            if ((DateTime.Now > Model.Course.EndDate) &&
+                (Model.Course.EndDate != DateTime.MinValue))
             {
-                <span class="badge badge-primary">My course</span>
+                <button class="btn btn-primary" disabled>
+                    <span class="fa fa-plus"></span>
+                    Participate
+                </button>
             }
             else
             {
-                if ((DateTime.Now > Model.Course.EndDate) &&
-                    (Model.Course.EndDate != DateTime.MinValue))
-                {
-                    <button class="btn btn-primary" disabled>
-                        <span class="fa fa-plus"></span>
-                        Participate
-                    </button>
-                }
-                else
-                {
-                    <a href="@Url.Action("Participate", "Courses",
+                <a href="@Url.Action("Participate", "Courses",
                                 new { id = ViewData["Id"],
                                     courseId = Model.Course.CourseId,
                                     returnUrl = ViewContext.HttpContext.Request.PathAndQuery() })"
-                       class="btn btn-primary">
-                        <span class="fa fa-plus"></span>Participate
-                    </a>
-                }
+                   class="btn btn-primary">
+                    <span class="fa fa-plus"></span>Participate
+                </a>
             }
         }
     </div>

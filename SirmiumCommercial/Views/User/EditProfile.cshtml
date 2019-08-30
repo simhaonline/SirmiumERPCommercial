@@ -3,56 +3,72 @@
 @{
     Layout = "_UserLayout";
     ViewData["Title"] = "Edit Profile";
+    ViewData["ReturnUrl"] = ViewContext.HttpContext.Request.PathAndQuery();
 }
 
 @section Styles {
     <environment names="Development,Staging,Production">
         <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+        <link rel="stylesheet" href="~/lib_local/profilePhoto/profilePhoto.css" />
     </environment>
+    <style type="text/css">
+        img {
+            width: 300px;
+            height: 200px;
+        }
+    </style>
 }
+
+<!--Capture Photo-->
+<div>
+    @Html.Partial("CapturePhoto", new ChangeProfilePhoto
+    {
+        userId = ViewData["Id"].ToString()
+    })
+</div>
+
+<!--Upload Photo-->
+<div>
+    @Html.Partial("UploadPhoto", new UploadPhoto
+    {
+        UserId = ViewData["Id"].ToString()
+    })
+</div>
 
 <div class="row m-r-sm m-l-sm">
     <div class="col-lg-12" id="profileMain">
         <div class="row">
-            @*if (Model.userProfile.ProfilePicture == null)
-            {
-                <img src="~/defaultAvatar.png" id="editImg" style="float:left" />
-            }
-            else
-            {
-                <img src=@Model.userProfile.ProfilePicture id="editImg" style="float:left" />
-            }*@
-            <div class="col-lg-3"></div>
-            <div class="col-lg-2">
-                <img src="~/defaultAvatar.png" class="profile-picture" />
+            <div class="col-lg-2"></div>
+            <div class="col-lg-3">
+                @if (Model.appUser.ProfilePhotoUrl == null)
+                {
+                    <img src="~/defaultAvatar.png" class="profile-picture" />
+                }
+                else
+                {
+                    <img src="~/UsersData/@Model.appUser.ProfilePhotoUrl" class="profile-picture" />
+                }
             </div>
             <div class="col-lg-4 m-l-md m-t-lg text-center">
                 <div class="row m-b-sm">
                     <h4>Change your profile picture:</h4>
                 </div>
                 <div class="row m-b-sm">
-                    <a asp-action="CapturePhoto" asp-controller="Recorder"
-                       asp-route-id="@Model.appUser.Id"
+                    <a onclick="NewPhoto.show(); Camera.active()"
                        class="btn btn-outline btn-info">
                         <i class="fa fa-camera"></i>
                         Take a Photo
                     </a>
                 </div>
                 <div class="row">
-                    <button class="btn btn-outline btn-info" type="button" 
-                            onclick="uploadPhoto();">
+                    <button class="btn btn-outline btn-info" type="button"
+                             onclick="UploadPhoto.show()">
                         <i class="fa fa-cloud-upload"></i>
                         Upload a Photo
                     </button>
-                    <form method="post" hidden>
-                        <input type="file" name="profilePhoto" 
-                               id="inputProfilePhoto"/>
-                    </form>
                 </div>
             </div>
         </div>
-
-
 
         <div class="text-center">
             <div class="col-lg-12"><h2 class="col-lg-5 m-l-md">Info:</h2></div>
@@ -135,8 +151,8 @@
                                 <span class="fa fa-at"></span>&nbsp; E-mail:
                             </h4>
                         </div>
-                        <input asp-for="@Model.appUser.Email" class="form-control col-lg-5" 
-                              id="inputEmail" disabled />
+                        <input asp-for="@Model.appUser.Email" class="form-control col-lg-5"
+                               id="inputEmail" disabled />
                         <button class="btn col-lg-2 m-l-lg btn-outline btn-info"
                                 id="editEmail" type="button">
                             Edit
@@ -175,29 +191,42 @@
                     </div>
                 </form>
             </div>
-        <div class="form-inline col-lg-12  m-b-sm">
-            <div class="col-lg-2"></div>
-            <div class="col-lg-2">
-                <h4 class="text-info">
-                    <span class="fa fa-industry"></span>&nbsp; Company:
-                </h4>
-            </div>
-            <div class="col-lg-2">
-                <h4>
-                    @Model.appUser.CompanyName
-                </h4>
+            <div class="form-inline col-lg-12  m-b-sm">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-2">
+                    <h4 class="text-info">
+                        <span class="fa fa-industry"></span>&nbsp; Company:
+                    </h4>
+                </div>
+                <div class="col-lg-2">
+                    <h4>
+                        @Model.appUser.CompanyName
+                    </h4>
+                </div>
             </div>
         </div>
     </div>
-    </div>
 </div>
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+        <script src="~/lib_local/script_local/CapturePhoto_local.js"></script>
+        <script src="~/lib_local/profilePhoto/profilePhoto.js"></script>
+    </environment>
 
 <script type="text/javascript">
     //****** Upload profile photo ******
-    var inputProfilePhoto = document.getElementById("inputProfilePhoto");
-    function uploadPhoto() {
-        inputProfilePhoto.click();
-   }
+    var inputProfilePhoto = document.getElementById("inputProfilePhoto"); //TODO: Remove
+    var profilePhotoForm = document.getElementById("profilePhotoForm");
+    var uploadPhoto = new function () {
+        //inputProfilePhoto.click();
+        this.show = function () {
+            profilePhotoForm.hidden = false;
+        };
+        this.close = function () {
+            profilePhotoForm.hidden = true;
+        };
+    }
 
     //****** PROFILE EDIT ******
     //** edit user name
@@ -214,7 +243,7 @@
         inputUName.disabled = false;
 
         //get input new val
-        inputUName.addEventListener("focusout", () => { 
+        inputUName.addEventListener("focusout", () => {
             userNameNew = inputUName.value;
 
             if (userNameOld != userNameNew) {
@@ -251,7 +280,7 @@
         inputFName.disabled = false;
 
         //get input new val
-        inputFName.addEventListener("focusout", () => { 
+        inputFName.addEventListener("focusout", () => {
             firstNameNew = inputFName.value;
 
             if (firstNameOld != firstNameNew) {
@@ -287,7 +316,7 @@
         inputLName.disabled = false;
 
         //get input new val
-        inputLName.addEventListener("focusout", () => { 
+        inputLName.addEventListener("focusout", () => {
             lastNameNew = inputLName.value;
 
             if (lastNameOld != lastNameNew) {
@@ -324,7 +353,7 @@
         inputEmail.disabled = false;
 
         //get input new val
-        inputEmail.addEventListener("focusout", () => { 
+        inputEmail.addEventListener("focusout", () => {
             emailNew = inputEmail.value;
 
             if (emailOld != emailNew) {
@@ -361,7 +390,7 @@
         inputPhoneNumber.disabled = false;
 
         //get input new val
-        inputPhoneNumber.addEventListener("focusout", () => { 
+        inputPhoneNumber.addEventListener("focusout", () => {
             phoneNumberNew = inputPhoneNumber.value;
 
             if (phoneNumberOld != phoneNumberNew) {
@@ -383,3 +412,4 @@
         });
     });
 </script>
+}

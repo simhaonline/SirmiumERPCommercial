@@ -59,6 +59,8 @@
 }
 
 .videoCapturePhoto {
+    width: 640px;
+    height: 480px;
     border-radius: 30px;
     box-sizing: border-box;
 }

@@ -3,49 +3,76 @@
 @{
     Layout = "_UserLayout";
     ViewData["Title"] = "My Profile";
+    ViewData["ReturnUrl"] = ViewContext.HttpContext.Request.PathAndQuery();
 }
 
 @section Styles {
     <environment names="Development,Staging,Production">
         <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+        <link rel="stylesheet" href="~/lib_local/profilePhoto/profilePhoto.css" />
     </environment>
+    <style type="text/css">
+        img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+        }
+    </style>
 }
+
+<!--Capture Photo-->
+<div>
+    @Html.Partial("CapturePhoto", new ChangeProfilePhoto
+    {
+        userId = ViewData["Id"].ToString()
+    })
+</div>
+
+<!--Upload Photo-->
+<div>
+    @Html.Partial("UploadPhoto", new UploadPhoto
+    {
+        UserId = ViewData["Id"].ToString()
+    })
+</div>
 
 <div class="row m-r-sm m-l-sm">
 
     <div class="col-lg-12 text-center" id="profileMain">
 
         <div class="profile-picture">
-            @*if (Model.userProfile.ProfilePicture == null)
-            {
-                <img src="~/defaultAvatar.png" id="profileImg" />
-            }
-            else
-            {
-                <img src=@Model.userProfile.ProfilePicture id="profileImg" />
-            }*@
+
             <div class="dropdown">
                 <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-                    <img src="~/defaultAvatar.png" class="img-circle m-b" alt="logo" />
+                    @if (Model.appUser.ProfilePhotoUrl == null)
+                    {
+                        <img src="~/defaultAvatar.png" class="img-circle m-b"
+                             alt="logo" />
+                    }
+                    else
+                    {
+                        <img src="~/UsersData/@Model.appUser.ProfilePhotoUrl" class="img-circle m-b" alt="logo" />
+                    }
                 </a>
                 <div class="dropdown-menu hdropdown bigmenu animated flipInY">
                     <table>
                         <tbody>
                             <tr>
                                 <td>
-                                    <a>
+                                    <a onclick="NewPhoto.show(); Camera.active()">
                                         <i class="pe pe-7s-camera text-info"></i>
                                         <h3>Take a Photo</h3>
                                     </a>
                                 </td>
                             </tr>
-                        <td>
-                            <a>
-                                <i class="pe pe-7s-cloud-upload text-success"></i>
-                                <h3>Upload a Photo</h3>
-                            </a>
-                        </td>
-                        <td>
+                            <tr>
+                                <td>
+                                    <a onclick="UploadPhoto.show()">
+                                        <i class="pe pe-7s-cloud-upload text-success"></i>
+                                        <h3>Upload a Photo</h3>
+                                    </a>
+                                </td>
+                            </tr>
                     </table>
                 </div>
             </div>
@@ -91,3 +118,10 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+        <script src="~/lib_local/script_local/CapturePhoto_local.js"></script>
+        <script src="~/lib_local/profilePhoto/profilePhoto.js"></script>
+    </environment>
+}

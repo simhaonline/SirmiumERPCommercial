@@ -1,0 +1,31 @@
+﻿<div id="videoFreezeLayer" class="video-freeze-layer" style="display: none"></div>
+
+<div id="player" class="video-container" style="display: none">
+    <div class="video-header">
+        <span>Player</span>
+        <a onclick="videoPlay.close();"
+           class="pull-right text-muted fa fa-close"
+           id="closeVideoWindow"></a>
+    </div>
+    <div class="contents text-center">
+        <div class="video">
+            <video id="videoSrc"
+                   class="text-center" controls></video>
+        </div>
+    </div>
+    <div class="video-footer row" style="font-size:20px;">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-2">
+            <a class="far fa-thumbs-up"></a>
+            0
+        </div>
+        <div class="col-sm-2">
+            <a class="far fa-thumbs-down"></a>
+            0
+        </div>
+        <div class="col-sm-2">
+            <a class="text-error far fa-eye"></a>
+            0
+        </div>
+    </div>
+</div>

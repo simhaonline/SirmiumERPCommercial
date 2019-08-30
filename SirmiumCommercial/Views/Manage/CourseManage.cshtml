@@ -3,12 +3,14 @@
 @{
     Layout = "_UserLayout";
     ViewData["Title"] = "Manage -" + Model.Course.Title;
+    ViewData["ReturnUrl"] = ViewContext.HttpContext.Request.PathAndQuery();
 }
 
 @section Styles {
     <environment names="Development,Staging,Production">
         <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
         <link rel="stylesheet" href="~/lib_local/presentationForms/presentationForm.css" />
+        <link rel="stylesheet" href="~/lib_local/videoRec/videoRec.css" />
     </environment>
 }
 
@@ -50,6 +52,16 @@
         Presentation = new Presentation()
     })
 </div>
+
+<!--Create a Video form-->
+<div>
+    @Html.Partial("CaptureVideo", new VideoModel
+    {
+        UserId = ViewData["Id"].ToString(),
+        For = "Course",
+        ForId = Model.Course.CourseId
+    })
+</div>    
 
 <div class="col-lg-12">
     <div class="col-lg-2 text-center p-lg">
@@ -115,7 +127,7 @@
     <div class="col-md-1"></div>
     <div class="col-md-2 text-center">
         @if (Model.User != null &&
-Model.User.Id == ViewData["Id"].ToString())
+            Model.User.Id == ViewData["Id"].ToString())
         {
             <div class="dropdown">
                 <a class="dropdown-toggle btn btn-info" href="#" data-toggle="dropdown">
@@ -185,6 +197,14 @@ Model.User.Id == ViewData["Id"].ToString())
                     Hide <i class="far fa-eye-slash"></i>
                 </a>
             }
+            <br />
+            <br />
+            @if (Model.Course.VideoId == 0)
+            {
+                <a class="btn btn-primary" onclick="NewVideo.show(); Camera.active()" >
+                    Create a Video <span class="far fa-dot-circle-o text-danger"></span>
+                </a>
+            }
         }
     </div>
 </div>
@@ -203,7 +223,7 @@ Model.User.Id == ViewData["Id"].ToString())
 }
 
 <!--Show presentation or users on course-->
-<div id="topNav" class="row m-b-sm">
+<div id="topNav" class="row m-b-sm m-l-sm m-r-sm">
     <div class="col-lg-3 navBtn" id="showPresentationsBtn">
         <h2 class="m-l-sm"><strong>Presentations</strong></h2>
     </div>
@@ -222,5 +242,6 @@ Model.User.Id == ViewData["Id"].ToString())
 @section Scripts {
     <environment names="Development,Staging,Production">
         <script src="~/lib_local/presentationForms/presentationForm.js"></script>
+        <script src="~/lib_local/videoRec/videoRec.js"></script>
     </environment>
 }

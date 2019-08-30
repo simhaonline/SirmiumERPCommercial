@@ -167,6 +167,7 @@
 
 <table class="table table-sm table-bordered">
     <tr>
+        <th></th>
         <th>ID</th>
         <th>Username</th>
         <th colspan="2">Full Name</th>
@@ -184,6 +185,19 @@
         foreach (AppUser user in Model)
         {
             <tr>
+                <td>
+                    <a href="@Url.Action("UserProfile", "User",
+                            new { id = ViewData["Id"], userId = user.Id })">
+                        @if (user.ProfilePhotoUrl == null)
+                        {
+                            <img src="~/defaultAvatar.png" class="img-circle img-small" />
+                        }
+                        else
+                        {
+                            <img src="~/UsersData/@user.ProfilePhotoUrl" class="img-circle img-small" />
+                        }
+                    </a>
+                </td>
                 <td>@user.Id</td>
                 <td>@user.UserName</td>
                 <td colspan="2">@user.FirstName @user.LastName</td>

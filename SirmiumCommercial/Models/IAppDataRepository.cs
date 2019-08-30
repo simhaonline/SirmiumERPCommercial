@@ -19,6 +19,8 @@ namespace SirmiumCommercial.Models
 
         IQueryable<GroupUsers> GroupUsers { get; }
 
+        IQueryable<Video> Videos { get; }
+
         void SaveCourse(Course course);
 
         Course DeleteCourse(int courseId);
@@ -28,5 +30,20 @@ namespace SirmiumCommercial.Models
         Presentation DeletePresentation(int presentationId);
 
         void AddUserToCourse(string userId, int courseId);
+
+        void DeleteAllFromCourseUsers(int courseId);
+
+        void DeleteUserFromCourse(string userId, int courseId);
+
+        void SaveRepresentation(Representation representation);
+
+        Representation DeleteRepresentation(int representationId);
+
+        void AddRepresentation(ICollection<Representation> representations,
+            Presentation presentation);
+
+        void SaveVideo(Video video);
+
+        Video DeleteVideo(int videoId);
     }
 }

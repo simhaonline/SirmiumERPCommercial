@@ -36,7 +36,15 @@
                         {
                             <span class="label label-success pull-right">NEW</span>
                         }
-                        <img alt="profilePhoto" class="img-circle m-b" src="~/defaultAvatar.png">
+                        @if (user.ProfilePhotoUrl == null)
+                        {
+                            <img src="~/defaultAvatar.png" class="img-circle m-b"
+                                 alt="logo" />
+                        }
+                        else
+                        {
+                            <img src="~/UsersData/@user.ProfilePhotoUrl" class="img-circle m-b" alt="logo" />
+                        }
 
                         <h3>@user.FirstName <br /> @user.LastName</h3>
                         <a href="@Url.Action("UserProfile", "User",

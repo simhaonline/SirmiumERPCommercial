@@ -207,7 +207,7 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<string>("Title");
 
-                    b.Property<string>("VideoURL");
+                    b.Property<int>("VideoId");
 
                     b.HasKey("CourseId");
 
@@ -295,7 +295,7 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<string>("Title");
 
-                    b.Property<string>("VideoURL");
+                    b.Property<int>("VideoId");
 
                     b.HasKey("PresentationId");
 
@@ -322,7 +322,7 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<string>("Title");
 
-                    b.Property<string>("VideoURL");
+                    b.Property<int>("VideoId");
 
                     b.HasKey("RepresentationId");
 
@@ -331,6 +331,33 @@ namespace SirmiumCommercial.Migrations
                     b.HasIndex("PresentationId");
 
                     b.ToTable("Representations");
+                });
+
+            modelBuilder.Entity("SirmiumCommercial.Models.Video", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("DateAdded");
+
+                    b.Property<string>("For");
+
+                    b.Property<int>("ForId");
+
+                    b.Property<string>("Status");
+
+                    b.Property<string>("Title");
+
+                    b.Property<string>("VideoPath");
+
+                    b.Property<int>("Views");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Videos");
                 });
 
             modelBuilder.Entity("SirmiumCommercial.Models.AppUser", b =>

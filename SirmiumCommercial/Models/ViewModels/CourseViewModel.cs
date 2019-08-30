@@ -9,6 +9,7 @@ namespace SirmiumCommercial.Models.ViewModels
     {
         public Course Course { get; set; }
         public AppUser User { get; set; }
+        public IQueryable<AppUser> UsersOnCourse { get; set; }
     }
 
     public class NewEditCourse

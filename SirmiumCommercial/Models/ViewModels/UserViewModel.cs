@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
 
 namespace SirmiumCommercial.Models.ViewModels
 {
@@ -44,12 +45,14 @@ namespace SirmiumCommercial.Models.ViewModels
     public class ProfileModel
     {
         public AppUser appUser { get; set; }
+        public IFormFile ProfilePhoto { get; set; }
     }
 
     public class AllCourse
     {
         public IQueryable<Course> Courses { get; set; }
         public IQueryable<CourseUsers> Users { get; set; }
+        public IQueryable<Video> Videos { get; set; }
         public string DateDifference (DateTime date1, DateTime date2)
         {
             var dateDiff = date1 - date2;
@@ -145,5 +148,29 @@ namespace SirmiumCommercial.Models.ViewModels
     {
         public AppUser User { get; set; }
         public Course Course { get; set; }
+    }
+
+    public class ChangeProfilePhoto
+    {
+        public string userId { get; set; }
+        public string photoUrl { get; set; }
+    }
+
+    public class UploadPhoto
+    {
+        public string UserId { get; set; }
+        public IFormFile ProfilePhoto { get; set; }
+    }
+
+    public class VideoModel
+    {
+        public int Id { get; set; }
+
+        //Course, Presentation, Representation
+        public string For { get; set; }
+        public int ForId { get; set; }
+        public string UserId { get; set; }
+        public string videoUrl { get; set; }
+        public string returnUrl { get; set; }
     }
 }
