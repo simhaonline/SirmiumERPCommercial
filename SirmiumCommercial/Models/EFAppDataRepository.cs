@@ -26,6 +26,7 @@ namespace SirmiumCommercial.Models
         public IQueryable<CourseUsers> CourseUsers => context.CourseUsers;
         public IQueryable<GroupUsers> GroupUsers => context.GroupUsers;
         public IQueryable<Video> Videos => context.Videos;
+        public IQueryable<Comment> Comments => context.Comments;
 
         public void SaveCourse(Course course)
         {
@@ -76,6 +77,13 @@ namespace SirmiumCommercial.Models
                 //delete all users from course
                 DeleteAllFromCourseUsers(dbEntry.CourseId);
 
+                //delete all comments
+                foreach (Comment comment in context.Comments
+                    .Where(c => c.ForId == dbEntry.CourseId && c.For == "Course"))
+                {
+                    _ = DeleteComment(comment.Id);
+                }
+
                 context.Courses.Remove(dbEntry);
                 context.SaveChanges();
             }
@@ -125,6 +133,13 @@ namespace SirmiumCommercial.Models
                 foreach (Representation representation in dbEntry.Representations)
                 {
                     _ = DeleteRepresentation(representation.RepresentationId);
+                }
+
+                //delete all comments
+                foreach (Comment comment in context.Comments
+                    .Where(c => c.ForId == dbEntry.PresentationId && c.For == "Presentation"))
+                {
+                    _ = DeleteComment(comment.Id);
                 }
 
                 context.Presentations.Remove(dbEntry);
@@ -225,6 +240,13 @@ namespace SirmiumCommercial.Models
                     .FirstOrDefault(v => v.Id == dbEntry.VideoId);
                 _ = DeleteVideo(rVideo.Id);
 
+                //delete all comments
+                foreach (Comment comment in context.Comments
+                    .Where(c => c.ForId == dbEntry.RepresentationId && c.For == "Representation"))
+                {
+                    _ = DeleteComment(comment.Id);
+                }
+
                 context.Representations.Remove(dbEntry);
                 context.SaveChanges();
             }
@@ -276,7 +298,43 @@ namespace SirmiumCommercial.Models
                 .FirstOrDefault(v => v.Id == videoId);
             if (dbEntry != null)
             {
+                //delete all comments
+                foreach (Comment comment in context.Comments
+                    .Where(c => c.ForId == dbEntry.Id && c.For == "Video"))
+                {
+                    _ = DeleteComment(comment.Id);
+                }
+
                 context.Videos.Remove(dbEntry);
+                context.SaveChanges();
+            }
+            return dbEntry;
+        }
+
+        public void SaveComment(Comment comment)
+        {
+            if(comment.Id == 0)
+            {
+                context.Comments.Add(comment);
+            }
+
+            context.SaveChanges();
+        }
+
+        public Comment DeleteComment (int commentId)
+        {
+            Comment dbEntry = context.Comments.
+                FirstOrDefault(c => c.Id == commentId);
+            if(dbEntry != null)
+            {
+                foreach(Comment subComm in context.Comments)
+                {
+                    if(subComm.CommentId == dbEntry.Id)
+                    {
+                        context.Comments.Remove(subComm);
+                    }
+                }
+                context.Comments.Remove(dbEntry);
                 context.SaveChanges();
             }
             return dbEntry;

@@ -3,6 +3,8 @@
 @{
     Layout = "_UserLayout";
     ViewData["Title"] = Model.Course.Title;
+    ViewData["For"] = "Course";
+    ViewData["ForId"] = Model.Course.CourseId;
 }
 
 @section Styles {
@@ -133,7 +135,7 @@
 
 
 <!--Show presentation or users on course-->
-<div id="topNav" class="row m-b-sm">
+<div id="topNav" class="row m-b-sm m-l-sm m-r-sm">
     <div class="col-lg-3 navBtn" id="showPresentationsBtn">
         <h2 class="m-l-sm"><strong>Presentations</strong></h2>
     </div>
@@ -142,6 +144,9 @@
     </div>
     <div class="col-lg-3 navBtn" id="showUsersBtn">
         <h2 class="m-l-sm"><strong>Users</strong></h2>
+    </div>
+    <div class="col-lg-3 navBtn" id="showCommentsBtn">
+        <h2 class="m-l-sm"><strong>Comments</strong></h2>
     </div>
 </div>
 <div id="showPresentations" style="">
@@ -152,6 +157,9 @@
 </div>
 <div id="showUsers" style="display: none">
     @await Component.InvokeAsync("CourseAllUsers", new { courseId = Model.Course.CourseId })
+</div>
+<div id="showComments" style="display: none">
+    @await  Component.InvokeAsync("Comment", new { For = "Course", forId = Model.Course.CourseId })
 </div>
 
 @section Scripts {

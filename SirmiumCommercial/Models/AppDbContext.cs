@@ -19,5 +19,6 @@ namespace SirmiumCommercial.Models
         public DbSet<CourseUsers> CourseUsers { get; set; }
         public DbSet<GroupUsers> GroupUsers { get; set; }
         public DbSet<Video> Videos { get; set; }
+        public DbSet<Comment> Comments { get; set; } 
     }
 }

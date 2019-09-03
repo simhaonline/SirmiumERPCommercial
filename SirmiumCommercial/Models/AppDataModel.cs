@@ -129,4 +129,26 @@ namespace SirmiumCommercial.Models
         //video path
         public string VideoPath { get; set; }
     }
+
+    public class Comment
+    {
+        public int Id { get; set; }
+
+        //UserId
+        public string CreatedBy { get; set; }
+
+        //Course, Presentation, Representation, Video
+        public string For { get; set; }
+
+        //CourseId, PresentationId, VideoId, ...
+        public int ForId { get; set; }
+
+        public string Content { get; set; }
+        public DateTime DateAdded { get; set; }
+        public int Likes { get; set; }
+        public int Dislikes { get; set; }
+
+        //if this is subcomment
+        public int CommentId { get; set; }
+    }
 }

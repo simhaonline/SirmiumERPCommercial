@@ -21,6 +21,8 @@ namespace SirmiumCommercial.Models
 
         IQueryable<Video> Videos { get; }
 
+        IQueryable<Comment> Comments { get; }
+
         void SaveCourse(Course course);
 
         Course DeleteCourse(int courseId);
@@ -45,5 +47,9 @@ namespace SirmiumCommercial.Models
         void SaveVideo(Video video);
 
         Video DeleteVideo(int videoId);
+
+        void SaveComment(Comment comment);
+
+        Comment DeleteComment(int commentId);
     }
 }

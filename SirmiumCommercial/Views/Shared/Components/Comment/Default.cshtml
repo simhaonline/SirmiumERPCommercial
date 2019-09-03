@@ -1,0 +1,156 @@
+﻿@model CommentViewModel
+
+<style>
+    textarea {
+        resize: none;
+        overflow-y: scroll;
+    }
+</style>
+
+
+@if (Model.Comments.Count() == 0)
+{
+    <h3 class="text-primary text-muted">No Comments</h3>
+}
+else
+{
+    var i = 0;
+    @foreach (Comment comment in Model.Comments.Where(c => c.CommentId == 0))
+    {
+        <div class="content p-xxs">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="hpanel forum-box m-b-n-sm">
+                        <div class="panel-body">
+                            <div class="media">
+                                <div class="media-image pull-left">
+                                    @if (@Model.Users.FirstOrDefault(u => u.Id == comment.CreatedBy).ProfilePhotoUrl == null)
+                                    {
+                                        <img src="~/defaultAvatar.png" class="img-circle m-b"
+                                             alt="logo" />
+                                    }
+                                    else
+                                    {
+                                        <img src="~/UsersData/@Model.Users.FirstOrDefault(u => u.Id == comment.CreatedBy).ProfilePhotoUrl" class="img-circle m-b" alt="logo" />
+                                    }
+                                </div>
+                                <div class="media-body">
+                                    <span class="font-bold">
+                                        <a href="@Url.Action("UserProfile", "User",
+                                                    new{
+                                                        id = ViewData["Id"],
+                                                        userId = Model.Users.FirstOrDefault(u => u.Id == comment.CreatedBy).Id
+                                                    })"
+                                           style="font-size: 30px">
+                                            @Model.Users.FirstOrDefault(u => u.Id == comment.CreatedBy).FirstName
+                                            @Model.Users.FirstOrDefault(u => u.Id == comment.CreatedBy).LastName
+                                        </a>
+                                    </span><br />
+                                    <span class="text-muted">@comment.DateAdded</span>
+                                    <br />
+                                    <br />
+                                    @comment.Content
+                                    <br />
+                                    <br />
+                                    <button class="btn" onclick="ReplyComment.show(@i)">
+                                        Reply <span class="fa fa-reply"></span>
+                                    </button>
+                                </div>
+
+                                <!--Subcomment-->
+                                @if (Model.Comments.FirstOrDefault(c => c.CommentId == comment.Id) != null)
+                                {
+                                    @foreach (Comment subcomm in
+                                            Model.Comments.Where(c => c.CommentId == comment.Id))
+                                    {
+                                        <div class="forum-comments">
+                                            <div class="media">
+                                                <a class="pull-left">
+                                                    @if (@Model.Users.FirstOrDefault(u => u.Id == subcomm.CreatedBy).ProfilePhotoUrl == null)
+                                                    {
+                                                        <img src="~/defaultAvatar.png" class="img-circle m-b"
+                                                             alt="logo" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="~/UsersData/@Model.Users.FirstOrDefault(u => u.Id == comment.CreatedBy).ProfilePhotoUrl" class="img-circle m-b" alt="logo" />
+                                                    }
+                                                </a>
+
+                                                <div class="media-body">
+                                                    <a href="@Url.Action("UserProfile", "User", new{
+                                                            id = ViewData["Id"],
+                                                            userId = Model.Users.FirstOrDefault(u => u.Id == subcomm.CreatedBy).Id
+                                                        })"
+                                                       style="font-size: 30px">
+                                                        @Model.Users.FirstOrDefault(u => u.Id == subcomm.CreatedBy).FirstName
+                                                        @Model.Users.FirstOrDefault(u => u.Id == subcomm.CreatedBy).LastName
+                                                    </a><br />
+                                                    <span class="text-muted">@comment.DateAdded</span>
+                                                    <br />
+                                                    <br />
+
+                                                    <div class="social-content">
+                                                        @subcomm.Content
+                                                    </div>
+                                                    <br />
+                                                    <button class="btn" onclick="ReplyComment.show(@i)">
+                                                        Reply <span class="fa fa-reply"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                <div class="commentReply" style="display: none">
+                                    @Html.Partial("NewComment", new Comment
+                               {
+                                   CreatedBy = ViewData["Id"].ToString(),
+                                   For = ViewData["For"].ToString(),
+                                   ForId = int.Parse(ViewData["ForId"].ToString()),
+                                   CommentId = comment.Id
+                               })
+                                </div>
+                                @{
+                                    i++;
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<div class="m-sm">
+    @Html.Partial("NewComment", new Comment
+    {
+                            CreatedBy = ViewData["Id"].ToString(),
+                            For = ViewData["For"].ToString(),
+                            ForId = int.Parse(ViewData["ForId"].ToString())
+    })
+</div>
+
+<script type="text/javascript">
+    var comment = document.getElementById('comment');
+    var commentBtn = document.getElementById('commentBtn');
+
+    comment.addEventListener("focusout", () => {
+        if (comment.value == "") {
+            commentBtn.style.display = "none";
+        }
+    });
+    var CommentBtn = new function () {
+        this.enable = function () {
+            commentBtn.style.display = "";
+        };
+        };
+
+    var ReplyComment = new function () {
+        this.show = function (i) {
+            var commentReply = document.getElementsByClassName('commentReply');
+            commentReply[i].style.display = "";
+        }
+    }
+</script>

@@ -173,4 +173,10 @@ namespace SirmiumCommercial.Models.ViewModels
         public string videoUrl { get; set; }
         public string returnUrl { get; set; }
     }
+
+    public class CommentViewModel
+    {
+        public IQueryable<Comment> Comments { get; set; }
+        public IQueryable<AppUser> Users { get; set; }
+    }
 }

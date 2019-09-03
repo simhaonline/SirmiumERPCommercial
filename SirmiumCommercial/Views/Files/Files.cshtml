@@ -1,0 +1,120 @@
+﻿@model IQueryable<FilesViewModel>
+
+@{
+    Layout = "_UserLayout";
+    var borderTop = new List<String>{"hviolet", "hred", "hgreen", "hyellow",
+            "hblue", "hnavyblue", "horange", "hreddeep"};
+    var i = 0;
+}
+
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+        <link rel="stylesheet" href="~/lib_local/videoPlayer/videoPlayer.css" />
+    </environment>
+
+    <style type="text/css">
+        .videoBtn {
+            display: none;
+            position: absolute;
+            transform: translateY(-45%) translateX(-6%);
+        }
+
+        .img-video:hover + .videoBtn {
+            display: inline;
+        }
+
+        .videoBtn:hover {
+            display: inline;
+        }
+    </style>
+}
+
+<div id="topNav" class="nav navbar">
+    <div class="navbar-left m-l">
+        <ul class="nav navbar-nav no-borders">
+            <li>
+                <h2><strong>@ViewData["Title"]</strong></h2>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!--Video Player-->
+<div>
+    @Html.Partial("VideoPlayer")
+</div>
+
+<div class="content">
+    <div class="row">
+        @foreach (FilesViewModel fModel in Model)
+        {
+
+            <div class="col-lg-3">
+                <div class="hpanel contact-panel @borderTop[i]">
+                    <div class="panel-body">
+                        @if ((DateTime.Now - fModel.Video.DateAdded).TotalDays < 30)
+                        {
+                            <span class="label label-success pull-right">NEW</span>
+                        }
+
+                        @if (fModel.Video.Id != 0)
+                        {
+                            var videoPath = fModel.Video.VideoPath;
+                            <video src="@videoPath" class="img-video"
+                                   style="z-index: 1"></video>
+                            <div class="text-center img-video videoBtn" style="z-index: 1">
+                                <button class="btn btn-sm btn-primary2 p-xs"
+                                        onclick='videoPlay.show("@videoPath");'>
+                                    <span class="fa fa-play" style="font-size: xx-large"></span>
+                                </button>
+                            </div>
+                        }
+                        <h3>@fModel.Video.Title</h3>
+                        <a href="@Url.Action("UserProfile", "User",
+                            new { id = ViewData["Id"], userId = fModel.CreatedBy.Id })">
+                            <span class="text-muted font-bold m-b-xs text-info">
+                                &#64;@fModel.CreatedBy.UserName
+                            </span>
+                        </a><br />
+                        <div class="row">
+                            <a href=""
+                               class="btn btn-primary pull-right m-r-sm">
+                                Message <span class="pe pe-7s-chat"></span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="panel-footer contact-footer">
+                        <div class="row">
+                            <div class="col-md-4 border-right">
+                                <div class="contact-stat">
+                                    <span class="far fa-thumbs-up" style="font-size:15px"></span>
+                                    <strong>0</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-4 border-right">
+                                <div class="contact-stat">
+                                    <span class="far fa-thumbs-down" style="font-size:15px"></span>
+                                    <strong>0</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="contact-stat">
+                                    <span class="text-error far fa-eye" style="font-size:15px"></span>
+                                    <strong>0</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            if (i == 7) { i = 0; } else { i++; }
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+        <script src="~/lib_local/videoPlayer/videoPlayer.js"></script>
+    </environment>
+}
