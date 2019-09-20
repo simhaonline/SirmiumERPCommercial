@@ -10,6 +10,8 @@ using SirmiumCommercial.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
+using SirmiumCommercial.Hubs;
 
 namespace SirmiumCommercial
 {
@@ -38,6 +40,14 @@ namespace SirmiumCommercial
                 }).AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
             services.AddApplicationInsightsTelemetry(Configuration);
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+            services.AddSignalR();
             services.AddMvc();
         }
 
@@ -61,6 +71,12 @@ namespace SirmiumCommercial
                     name: null,
                     template: "{Controller}/{Action}/{id?}");
             });
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<VideoHub>("/videoHub");
+                routes.MapHub<CommentsHub>("/commentsHub");
+            });
+
             AppSeedData.EnsurePopulated(app);
         }
     }

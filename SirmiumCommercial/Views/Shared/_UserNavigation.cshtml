@@ -101,5 +101,13 @@
                                        action: "Index")">Admin</span>
             </a>
         </li>
+        <li class="@Html.IsSelected(controller: "Recorder")">
+            <a href="@Url.Action("Index", "Recorder", new { id = ViewData["Id"] })">
+                <span class="fa fa-play @Html.IsSelected(controller: "Recorder",
+                                       action: "Index")"></span>
+                <span class="nav-label @Html.IsSelected(controller: "Recorder",
+                                       action: "Index")">Player</span>
+            </a>
+        </li>
     </ul>
 </div>

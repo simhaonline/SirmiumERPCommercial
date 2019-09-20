@@ -1,119 +1,67 @@
 ﻿@model CommentViewModel
 
-<style>
-    textarea {
-        resize: none;
-        overflow-y: scroll;
-    }
-</style>
-
-
-@if (Model.Comments.Count() == 0)
-{
-    <h3 class="text-primary text-muted">No Comments</h3>
-}
-else
-{
+@{
     var i = 0;
-    @foreach (Comment comment in Model.Comments.Where(c => c.CommentId == 0))
+    var j = 0;
+}
+
+<!--Warning Window-->
+<div id="customWarningDialog"></div>
+
+<input id="current-user" value="@ViewData["Id"]" hidden />
+
+<!--new comment-->
+<div class="content p-xxs m-l-lg m-r-lg">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="hpanel forum-box m-b-n-sm">
+                <div class="panel-body">
+                    <div class="media">
+                        <div class="media-image pull-left">
+                            @if (Model.Users.FirstOrDefault(u => u.Id == ViewData["Id"].ToString()).ProfilePhotoUrl == null)
+                            {
+                                <img src="~/defaultAvatar.png" class="img-circle m-b"
+                                     alt="logo" />
+                            }
+                            else
+                            {
+                                <img src="~/UsersData/@Model.Users.FirstOrDefault(u => u.Id == ViewData["Id"].ToString()).ProfilePhotoUrl"
+                                     class="img-circle m-b" alt="logo" />
+                            }
+                        </div>
+                        <div class="media-body">
+                            <input id="comment-for" hidden />
+                            <input id="comment-forId" hidden />
+                            <div class="m-r-sm m-b-sm">
+                                <textarea class="form-control form-input form-group" placeholder="Add a comment..."
+                                          id="comment-content" style="width: 100%;"
+                                          rows="3"></textarea>
+                                <button id="comment-add" class="btn btn-primary m-b-sm m-l-sm">
+                                    <span class="fa fa-paper-plane"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="all-comments">
+    @if (Model.Comments.Count() == 0)
     {
-        <div class="content p-xxs">
+        <div class="content p-xxs m-l-lg m-r-lg">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="hpanel forum-box m-b-n-sm">
                         <div class="panel-body">
                             <div class="media">
-                                <div class="media-image pull-left">
-                                    @if (@Model.Users.FirstOrDefault(u => u.Id == comment.CreatedBy).ProfilePhotoUrl == null)
-                                    {
-                                        <img src="~/defaultAvatar.png" class="img-circle m-b"
-                                             alt="logo" />
-                                    }
-                                    else
-                                    {
-                                        <img src="~/UsersData/@Model.Users.FirstOrDefault(u => u.Id == comment.CreatedBy).ProfilePhotoUrl" class="img-circle m-b" alt="logo" />
-                                    }
-                                </div>
                                 <div class="media-body">
                                     <span class="font-bold">
-                                        <a href="@Url.Action("UserProfile", "User",
-                                                    new{
-                                                        id = ViewData["Id"],
-                                                        userId = Model.Users.FirstOrDefault(u => u.Id == comment.CreatedBy).Id
-                                                    })"
-                                           style="font-size: 30px">
-                                            @Model.Users.FirstOrDefault(u => u.Id == comment.CreatedBy).FirstName
-                                            @Model.Users.FirstOrDefault(u => u.Id == comment.CreatedBy).LastName
-                                        </a>
-                                    </span><br />
-                                    <span class="text-muted">@comment.DateAdded</span>
-                                    <br />
-                                    <br />
-                                    @comment.Content
-                                    <br />
-                                    <br />
-                                    <button class="btn" onclick="ReplyComment.show(@i)">
-                                        Reply <span class="fa fa-reply"></span>
-                                    </button>
+                                        No comments
+                                    </span>
                                 </div>
-
-                                <!--Subcomment-->
-                                @if (Model.Comments.FirstOrDefault(c => c.CommentId == comment.Id) != null)
-                                {
-                                    @foreach (Comment subcomm in
-                                            Model.Comments.Where(c => c.CommentId == comment.Id))
-                                    {
-                                        <div class="forum-comments">
-                                            <div class="media">
-                                                <a class="pull-left">
-                                                    @if (@Model.Users.FirstOrDefault(u => u.Id == subcomm.CreatedBy).ProfilePhotoUrl == null)
-                                                    {
-                                                        <img src="~/defaultAvatar.png" class="img-circle m-b"
-                                                             alt="logo" />
-                                                    }
-                                                    else
-                                                    {
-                                                        <img src="~/UsersData/@Model.Users.FirstOrDefault(u => u.Id == comment.CreatedBy).ProfilePhotoUrl" class="img-circle m-b" alt="logo" />
-                                                    }
-                                                </a>
-
-                                                <div class="media-body">
-                                                    <a href="@Url.Action("UserProfile", "User", new{
-                                                            id = ViewData["Id"],
-                                                            userId = Model.Users.FirstOrDefault(u => u.Id == subcomm.CreatedBy).Id
-                                                        })"
-                                                       style="font-size: 30px">
-                                                        @Model.Users.FirstOrDefault(u => u.Id == subcomm.CreatedBy).FirstName
-                                                        @Model.Users.FirstOrDefault(u => u.Id == subcomm.CreatedBy).LastName
-                                                    </a><br />
-                                                    <span class="text-muted">@comment.DateAdded</span>
-                                                    <br />
-                                                    <br />
-
-                                                    <div class="social-content">
-                                                        @subcomm.Content
-                                                    </div>
-                                                    <br />
-                                                    <button class="btn" onclick="ReplyComment.show(@i)">
-                                                        Reply <span class="fa fa-reply"></span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    }
-                                }
-                                <div class="commentReply" style="display: none">
-                                    @Html.Partial("NewComment", new Comment
-                               {
-                                   CreatedBy = ViewData["Id"].ToString(),
-                                   For = ViewData["For"].ToString(),
-                                   ForId = int.Parse(ViewData["ForId"].ToString()),
-                                   CommentId = comment.Id
-                               })
-                                </div>
-                                @{
-                                    i++;
-                                }
                             </div>
                         </div>
                     </div>
@@ -121,36 +69,279 @@ else
             </div>
         </div>
     }
-}
-
-<div class="m-sm">
-    @Html.Partial("NewComment", new Comment
+    else
     {
-                            CreatedBy = ViewData["Id"].ToString(),
-                            For = ViewData["For"].ToString(),
-                            ForId = int.Parse(ViewData["ForId"].ToString())
-    })
-</div>
+        @foreach (Comment comment in Model.Comments.Where(c => c.CommentId == 0).OrderBy(c => c.DateAdded))
+        {
+            <div class="content p-xxs m-l-lg m-r-lg" id="@comment.Id">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="hpanel forum-box m-b-n-sm">
+                            <div class="panel-body">
+                                <div class="media">
+                                    <div class="media-image pull-left">
+                                        @if (Model.Users.FirstOrDefault(u => u.Id == comment.CreatedBy).ProfilePhotoUrl == null)
+                                        {
+                                            <img src="~/defaultAvatar.png" class="img-circle m-b"
+                                                 alt="logo" />
+                                        }
+                                        else
+                                        {
+                                            <img src="~/UsersData/@Model.Users.FirstOrDefault(u => u.Id == comment.CreatedBy).ProfilePhotoUrl" class="img-circle m-b" alt="logo" />
+                                        }
+                                    </div>
+                                    <div class="media-body">
+                                        <span class="font-bold">
+                                            <a href="@Url.Action("UserProfile", "User",
+                                                    new{
+                                                        id = ViewData["Id"],
+                                                        userId = Model.Users.FirstOrDefault(u => u.Id == comment.CreatedBy).Id
+                                                    })"
+                                               style="font-size: 15px">
+                                                @Model.Users.FirstOrDefault(u => u.Id == comment.CreatedBy).FirstName
+                                                @Model.Users.FirstOrDefault(u => u.Id == comment.CreatedBy).LastName
+                                            </a>
+                                            <!--Delete comment-->
+                                            @if (comment.CreatedBy == ViewData["Id"].ToString())
+                                            {
+                                            <div class="dropdown pull-right">
+                                                <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                                                    <i class="pe-7s-more"></i>
+                                                </a>
+                                                <div class="dropdown-menu hdropdown bigmenu animated fadeInDown"
+                                                     style="padding: 10px 10px 0 10px;">
+                                                    <table><tbody><tr>
+                                                        <td>
+                                                           <a onclick="DeleteComment.delete('@comment.Id');">
+                                                              <i class="pe pe-7s-trash text-error"></i>
+                                                              Remove
+                                                           </a>
+                                                        </td>
+                                                    </tr></tbody></table>
+                                                </div>
+                                            </div>
+                                            }
+                                        </span><br />
+                                        <span>@Model.CommentDateAdded(DateTime.Now, comment.DateAdded)</span>
+                                        <br />
+                                        <br />
+                                        <strong>@comment.Content</strong>
+                                        <br />
+                                        <br />
+                                        @{
+                                            j = 0;
+                                            var totalSubcomments = $"total-subcoments-{i}";
+                                            var commentReplyId = $"commentReply{comment.Id}";
+                                            var replyContentId = $"subcomment-content{comment.Id}";
+                                            var commentLikesCountId = $"comment-likes-count-{comment.Id}";
+                                            var commentDislikesCountId = $"comment-dislikes-count-{comment.Id}";
+                                            var currentCommentId = $"current-commentId-{i}";
+                                        }
+                                        <span class="btn fa fa-thumbs-up m-l-n m-r-n" style="font-weight:300; color: #777;"
+                                                  id="@commentLikesCountId"
+                                              onclick="AddRemoveCommentLikeDislike.like('@comment.Id', '@commentLikesCountId', '@commentDislikesCountId');">
+                                        </span>
+                                        <span>&emsp;</span>
+                                        <span class="btn fa fa-thumbs-down m-l-n m-r-n" style="font-weight:300; color: #777;"
+                                                  id="@commentDislikesCountId" 
+                                              onclick="AddRemoveCommentLikeDislike.dislike('@comment.Id', '@commentLikesCountId', '@commentDislikesCountId');">
+                                        </span>
+                                        <span>&emsp;</span>
+                                        <a class="text-muted" onclick="ReplyComment.show('@commentReplyId');">
+                                            Reply
+                                        </a>
+                                        <input id="@currentCommentId" value="@comment.Id" hidden />
+                                    </div>
 
-<script type="text/javascript">
-    var comment = document.getElementById('comment');
-    var commentBtn = document.getElementById('commentBtn');
+                                    <!--Subcomment-->
+                                    @{ var subcommDivId = $"subocmm{comment.Id}"; }
+                                    <div id="@subcommDivId">
+                                    @if (Model.Comments.FirstOrDefault(c => c.CommentId == comment.Id) != null)
+                                    {
+                                        @foreach (Comment subcomm in
+                                            Model.Comments.Where(c => c.CommentId == comment.Id))
+                                        {
+                                            <div class="forum-comments m-t-n m-b-n" id="@subcomm.Id">
+                                                <div class="media">
+                                                    <a class="pull-left">
+                                                        @if (Model.Users.FirstOrDefault(u => u.Id == subcomm.CreatedBy).ProfilePhotoUrl == null)
+                                                        {
+                                                            <img src="~/defaultAvatar.png" class="img-circle m-b"
+                                                                 alt="logo" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <img src="~/UsersData/@Model.Users.FirstOrDefault(u => u.Id == subcomm.CreatedBy).ProfilePhotoUrl" class="img-circle m-b" alt="logo" />
+                                                        }
+                                                    </a>
 
-    comment.addEventListener("focusout", () => {
-        if (comment.value == "") {
-            commentBtn.style.display = "none";
-        }
-    });
-    var CommentBtn = new function () {
-        this.enable = function () {
-            commentBtn.style.display = "";
-        };
-        };
+                                                    <div class="media-body">
+                                                        <a href="@Url.Action("UserProfile", "User", new{
+                                                            id = ViewData["Id"],
+                                                            userId = Model.Users.FirstOrDefault(u => u.Id == subcomm.CreatedBy).Id
+                                                        })"
+                                                           style="font-size: 15px">
+                                                            @Model.Users.FirstOrDefault(u => u.Id == subcomm.CreatedBy).FirstName
+                                                            @Model.Users.FirstOrDefault(u => u.Id == subcomm.CreatedBy).LastName
+                                                        </a>
+                                                        <!--Delete subcomment-->
+                                                        @if (subcomm.CreatedBy == ViewData["Id"].ToString())
+                                                        {
+                                                            <div class="dropdown pull-right">
+                                                                <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                                                                    <i class="pe-7s-more"></i>
+                                                                </a>
+                                                                <div class="dropdown-menu hdropdown bigmenu animated fadeInDown"
+                                                                     style="padding: 10px 10px 0 10px;">
+                                                                    <table><tbody><tr>
+                                                                        <td>
+                                                                           <a onclick="DeleteComment.delete('@subcomm.Id');">
+                                                                              <i class="pe pe-7s-trash text-error"></i>
+                                                                              Remove
+                                                                           </a>
+                                                                        </td>
+                                                                    </tr></tbody></table>
+                                                                </div>
+                                                            </div>
+                                                        }<br />
+                                                         <span class="text-muted">@Model.CommentDateAdded(DateTime.Now, subcomm.DateAdded)</span>
+                                                        <br />
+                                                        <br />
 
-    var ReplyComment = new function () {
-        this.show = function (i) {
-            var commentReply = document.getElementsByClassName('commentReply');
-            commentReply[i].style.display = "";
+                                                        <div class="social-content">
+                                                            <strong>@subcomm.Content</strong>
+                                                        </div>
+                                                        <br />
+                                                        @{
+                                                            var subcommentLikesCountId = $"subcomment-likes-count-{subcomm.Id}";
+                                                            var subcommentDislikesCountId = $"subcomment-dislikes-count-{subcomm.Id}";
+                                                        }
+                                                        <span class="btn fa fa-thumbs-up m-l-n m-r-n" style="font-weight:300; color: #777;"
+                                                                  id="@subcommentLikesCountId"
+                                                                  onclick="AddRemoveCommentLikeDislike.like('@subcomm.Id', '@subcommentLikesCountId', '@subcommentDislikesCountId');">
+                                                        </span>
+                                                        <span>&emsp;</span>
+                                                        <span class="btn fa fa-thumbs-down m-l-n m-r-n" style="font-weight:300; color: #777;"
+                                                                  id="@subcommentDislikesCountId"
+                                                                  onclick="AddRemoveCommentLikeDislike.dislike('@subcomm.Id', '@subcommentLikesCountId', '@subcommentDislikesCountId');">
+                                                        </span>
+                                                        <span>&emsp;</span>
+                                                        <a class="text-muted" onclick="ReplyComment.show('@commentReplyId');">
+                                                            Reply
+                                                        </a>
+                                                        @{ 
+                                                            var currentSubcommentId = $"current-subcommentId-{i}-{j}";
+                                                            j++;
+                                                        }
+                                                        <input id="@currentSubcommentId" value="@subcomm.Id" hidden />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    </div>
+                                    <input id="@totalSubcomments" value="@j" hidden />
+
+                                    <!--Reply comment form-->
+                                    <div class="forum-comments" id="@commentReplyId" style="display: none">
+                                        <div class="media">
+                                            <a class="pull-left">
+                                                @if (Model.Users.FirstOrDefault(u => u.Id == ViewData["Id"].ToString()).ProfilePhotoUrl == null)
+                                                {
+                                                    <img src="~/defaultAvatar.png" class="img-circle m-b"
+                                                         alt="logo" />
+                                                }
+                                                else
+                                                {
+                                                    <img src="~/UsersData/@Model.Users.FirstOrDefault(u => u.Id == ViewData["Id"].ToString()).ProfilePhotoUrl" class="img-circle m-b" alt="logo" />
+                                                }
+                                            </a>
+
+                                            <div class="media-body">
+                                                <!--Close reply-->
+                                                <a onclick="ReplyComment.close('@commentReplyId');"
+                                                   class="pull-right">
+                                                    <span style="font-size: 30px"
+                                                          class="text-muted pe-7s-angle-up"></span>
+                                                </a>
+                                                <br />
+                                                <div class="social-content">
+
+                                                    <input id="parent-commentId" value="@comment.Id" hidden />
+                                                    <div class="m-r-sm m-b-sm">
+                                                        <textarea class="form-control form-input form-group" placeholder="Add a comment..."
+                                                                  id="@replyContentId" style="width: 100%;"
+                                                                  rows="3"></textarea>
+                                                        <button class="btn btn-primary m-b-sm m-l-sm"
+                                                                onclick="newSubcomment.add('@replyContentId', '@comment.Id');">
+                                                            <span class="fa fa-paper-plane"></span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @{
+                                        i++;
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         }
     }
-</script>
+</div>
+<!--total comments-->
+<input id="total-comments" value="@i" hidden />
+
+@section Scripts {
+    <script>
+            
+    
+        
+    /*
+    //-----------comment likes and dislikes---------------
+    var CommFor = "Comment";
+
+    //comments.count
+    var n = document.getElementById('i').value;
+
+    for (var i = 0; i < 3; i++) {
+        //id for likeDislike partial container
+        var commLikeId = "#commLikeId" + i;
+
+        var commForId = "commForId" + i; //id of input with value CommentID
+        var commForIdVal = document.getElementById(commForId).value; //CommentID
+
+        //load partial for comment with id = commForIdVal
+        $(commLikeId).load('/Recorder/LikesDislikes', { userId: userId, For: CommFor, forId: commForIdVal, spanId: commLikeId });
+        setInterval(function () {
+            $(commLikeId).load('/Recorder/LikesDislikes', { userId: userId, For: CommFor, forId: commForIdVal, spanId: commLikeId });
+        }, 2000);
+
+        //-------subcomment likes and dislikes
+        //check if subcomment exists
+        var subcommExists = "subcommExists" + i;
+        if (document.getElementById(subcommExists) != null) {
+            //subcomments.count
+            var m = document.getElementById('j').value;
+
+            for (var j = 0; j < m; j++) {
+                //id for likeDislike partial
+                var subcommLikeId = "#subcommLikeId" + i + j;
+
+                var subcommForId = "subcommForId" + i + j;//id of input with value SubcommentID
+                var subcommForIdVal = document.getElementById(subcommForId).value; //SubcommentID
+
+                //load partial for subcomment with id = subcommForIdVal
+                $(subcommLikeId).load('/Recorder/LikesDislikes', { userId: userId, For: CommFor, forId: subcommForIdVal, spanId: subcommLikeId });
+                setInterval(function () {
+                    $(subcommLikeId).load('/Recorder/LikesDislikes', { userId: userId, For: CommFor, forId: subcommForIdVal, spanId: subcommLikeId });
+                }, 2000);
+            }
+        }
+    }*/
+    </script>
+}

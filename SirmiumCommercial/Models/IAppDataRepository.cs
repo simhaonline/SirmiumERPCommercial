@@ -23,6 +23,10 @@ namespace SirmiumCommercial.Models
 
         IQueryable<Comment> Comments { get; }
 
+        IQueryable<Likes> Likes { get; }
+
+        IQueryable<Dislikes> Dislikes { get; }
+
         void SaveCourse(Course course);
 
         Course DeleteCourse(int courseId);
@@ -51,5 +55,13 @@ namespace SirmiumCommercial.Models
         void SaveComment(Comment comment);
 
         Comment DeleteComment(int commentId);
+
+        void AddLike(Likes like);
+
+        void DeleteLike(int likeId);
+
+        void AddDislike(Dislikes dislike);
+
+        void DeleteDislike(int dislikeId);
     }
 }

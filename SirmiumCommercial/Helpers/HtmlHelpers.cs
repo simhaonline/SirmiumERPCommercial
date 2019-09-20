@@ -75,5 +75,29 @@ namespace SirmiumCommercial.Helpers
             return controller == currentController && action == currentAction ?
                 cssClass : String.Empty;
         }
+
+        public static string IsSelectedCourseDetails(this IHtmlHelper html, string controller = null,
+            string action = null, string cssClass = null)
+        {
+            if (String.IsNullOrEmpty(cssClass))
+            {
+                cssClass = " selected";
+            }
+
+            string currentAction = (string)html.ViewContext.RouteData.Values["action"];
+            string currentController = (string)html.ViewContext.RouteData.Values["controller"];
+
+            if (String.IsNullOrEmpty(controller))
+            {
+                controller = currentController;
+            }
+            if (String.IsNullOrEmpty(action))
+            {
+                action = currentAction;
+            }
+
+            return controller == currentController && action == currentAction ?
+                cssClass : String.Empty;
+        }
     }
 }

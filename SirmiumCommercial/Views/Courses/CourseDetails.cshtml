@@ -28,142 +28,96 @@
     </div>
 }
 
-<div class="col-lg-12">
-    <div class="col-lg-2 text-center p-lg">
-        <h5 class="text-muted">Award</h5>
-        <h1>
-            <span class="@Model.Course.AwardIcon text-big"></span>
-        </h1>
-    </div>
-    <div class="col-lg-3">
-        <h2>
-            @Model.Course.Title
-        </h2>
-        <h4>
-            by:
-            @if (Model.User != null)
-            {
-                <span class="text-info">
-                    &#64;@Model.User.UserName
-                </span>
-            }
-            else
-            {
-                <span class="text-info"> &#64;SirmiumCommercial</span>
-            }
-        </h4>
-        <h5><span class="fa fa-plus-circle"></span> Added: @Model.Course.DateAdded.ToString()</h5>
-        <h5><span class="fa fa-pencil-square-o"></span> Date modified: @Model.Course.DateAdded.ToString()</h5>
-    </div>
-    <div class="col-lg-2">
-        @if (Model.Course.Presentations.Count() > 0)
-        {
-            <h4>Parts: <span class="text-warning">@Model.Course.Presentations.Count()</span>   </h4>
-        }
-        else
-        {
-            <h4>Parts: <span class="text-danger">0</span></h4>
-        }
-        <h5>
-            <span class="fa fa-clock-o"></span>End Date:
-            @if (Model.Course.EndDate != DateTime.MinValue)
-            {
-                <span class="text-danger">
-                    @Model.Course.EndDate.ToShortDateString()
-                </span>
-            }
-            else
-            {
-                <span class="text-success">
-                    NO END DATE
-                </span>
-            }
-        </h5>
-        @if ((DateTime.Now > Model.Course.EndDate) &&
-(Model.Course.EndDate != DateTime.MinValue))
-        {
-            <h4>
-                <span class="badge badge-danger text-warning" style="font-size:16px">
-                    <b>FINISHED</b>
-                </span>
-            </h4>
-        }
-    </div>
-    <div class="col-md-1"></div>
-    <div class="col-md-2 text-center">
-        @if (Model.UsersOnCourse.FirstOrDefault(u => u.Id == ViewData["Id"].ToString())
-             != null)
-        {
-            <span class="badge badge-primary">My course</span>
-        }
-        else
-        {
-            if ((DateTime.Now > Model.Course.EndDate) &&
-                (Model.Course.EndDate != DateTime.MinValue))
-            {
-                <button class="btn btn-primary" disabled>
-                    <span class="fa fa-plus"></span>
-                    Participate
-                </button>
-            }
-            else
-            {
-                <a href="@Url.Action("Participate", "Courses",
-                                new { id = ViewData["Id"],
-                                    courseId = Model.Course.CourseId,
-                                    returnUrl = ViewContext.HttpContext.Request.PathAndQuery() })"
-                   class="btn btn-primary">
-                    <span class="fa fa-plus"></span>Participate
-                </a>
-            }
-        }
+<!--Course details-->
+<div class="row m-b-n">
+    <div class="col-lg-12">
+        <div class="hpanel">
+            <div class="panel-heading">
+                <div class="panel-tools">
+                    <a class="showhide"><i class="fa fa-chevron-up" style="font-size:20px"></i></a>
+                </div>
+                <h2 class="m-n">
+                    <span class="@Model.Course.AwardIcon"></span>
+                    <span class="text-primary">@Model.Course.Title</span> details
+                </h2>
+            </div>
+            <div class="panel-body">
+                @Html.Partial("Details", Model)
+            </div>
+        </div>
     </div>
 </div>
 
-@if (Model.Course.Description != null)
+@await Component.InvokeAsync("CourseDetailsNav", new { id = Model.Course.CourseId })
+
+@if (Model.Course.Presentations.Count() == 0)
 {
-    <div class="row m-sm p-sm">
-        <div class="col-md-1"></div>
-        <div class="col-md-10 borderDashed" style="">
-            <h4>Description:</h4>
-            <span class="text-info">@Model.Course.Description</span>
-            <br />
-            <br />
-        </div>
+    <div class="col-lg-12 navbar bg-info">
+        <span class="navbar-brand">No Presentation</span>
     </div>
+}
+else
+{
+    var i = 0;
+    foreach (Presentation p in Model.Course.Presentations.OrderBy(p => p.Part))
+    {
+        var partColor = new List<String>{"text-primary", "text-primary-2", "text-info",
+                            "text-success", "text-warning", "text-danger"};
+        <div class="col-lg-12 m-b-sm coursCardManage">
+            <div class="col-lg-1 text-center">
+                <h4 class="@partColor[i]">PART</h4>
+                <h1><span class="text-big @partColor[i]">@p.Part</span></h1>
+                @if (i == 5)
+                {
+                    i = 0;
+                }
+                else
+                {
+                    i++;
+                }
+            </div>
+            <div class="col-lg-4">
+                <h1>@p.Title</h1>
+                <h5>
+                    <span class="fa fa-plus-circle"></span>
+                    Added:
+                    <span class="text-success">
+                        @p.DateAdded.Date.ToShortDateString()
+                    </span>
+                </h5>
+                <h5>
+                    <span class="fa fa-pencil-square-o"></span>
+                    Date modified:
+                    <span class="text-info">
+                        @p.DateModified.Date.ToShortDateString()
+                    </span>
+                </h5>
+            </div>
+            <div class="col-lg-5 borderDashed">
+                <h4>Description:</h4>
+                <span class="text-info">@p.Description</span>
+                <br />
+                <br />
+            </div>
+            <div class="col-lg-2 text-center">
+                <a class="btn btn-primary2">
+                    Watch <span class="pe pe-7s-play"></span>
+                </a>
+                @*if (Model.Course.Users
+                        .Select(u => u.Id == ViewData["Id"])
+                        .FirstOrDefault())
+                    {*@
+                <a class="btn btn-primary m-t-sm">
+                    Respond <span class="fa fa-reply-all"></span>
+                </a>
+
+            </div>
+        </div>
+    }
 }
 
 
-<!--Show presentation or users on course-->
-<div id="topNav" class="row m-b-sm m-l-sm m-r-sm">
-    <div class="col-lg-3 navBtn" id="showPresentationsBtn">
-        <h2 class="m-l-sm"><strong>Presentations</strong></h2>
-    </div>
-    <div class="col-lg-3 navBtn" id="showRepresentationsBtn">
-        <h2 class="m-l-sm"><strong>Representations</strong></h2>
-    </div>
-    <div class="col-lg-3 navBtn" id="showUsersBtn">
-        <h2 class="m-l-sm"><strong>Users</strong></h2>
-    </div>
-    <div class="col-lg-3 navBtn" id="showCommentsBtn">
-        <h2 class="m-l-sm"><strong>Comments</strong></h2>
-    </div>
-</div>
-<div id="showPresentations" style="">
-    @Html.Partial("AllPresentations", Model)
-</div>
-<div id="showRepresentations" style="display: none">
-    @Html.Partial("AllRepresentations", Model)
-</div>
-<div id="showUsers" style="display: none">
-    @await Component.InvokeAsync("CourseAllUsers", new { courseId = Model.Course.CourseId })
-</div>
-<div id="showComments" style="display: none">
-    @await  Component.InvokeAsync("Comment", new { For = "Course", forId = Model.Course.CourseId })
-</div>
-
 @section Scripts {
     <environment names="Development,Staging,Production">
-        <script src="~/lib_local/courseDetails/courseDetails.js"></script>
     </environment>
 }

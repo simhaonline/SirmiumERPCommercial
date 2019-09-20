@@ -1,0 +1,98 @@
+﻿@model CourseViewModel
+
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = Model.Course.Title;
+    ViewData["For"] = "Course";
+    ViewData["ForId"] = Model.Course.CourseId;
+}
+
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+        <link rel="stylesheet" href="~/lib_local/courseDetails/courseDetails.css" />
+    </environment>
+}
+
+<!--Msg window-->
+@if (TempData["sccMsgCourse"] != null)
+{
+    <div id="msgWindowSuccess">
+        <input value="@TempData["sccMsgCourse"]" id="windowMsg" hidden />
+    </div>
+}
+@if (TempData["errMsgCourse"] != null)
+{
+    <div id="msgWindowError">
+        <input value="@TempData["errMsgCM"]" id="windowMsg" hidden />
+    </div>
+}
+
+<!--Course details-->
+<div class="row m-b-n">
+    <div class="col-lg-12">
+        <div class="hpanel">
+            <div class="panel-heading">
+                <div class="panel-tools">
+                    <a class="showhide"><i class="fa fa-chevron-up" style="font-size:20px"></i></a>
+                </div>
+                <h2 class="m-n">
+                    <span class="@Model.Course.AwardIcon"></span>
+                    <span class="text-primary">@Model.Course.Title</span> details
+                </h2>
+            </div>
+            <div class="panel-body">
+                @Html.Partial("Details", Model)
+            </div>
+        </div>
+    </div>
+</div>
+
+@await Component.InvokeAsync("CourseDetailsNav", new { id = Model.Course.CourseId })
+
+@if (Model.Course.Presentations.Count() == 0)
+{
+    <div class="col-lg-12 navbar bg-info">
+        <span class="navbar-brand">No Presentation</span>
+    </div>
+}
+else
+{
+    @foreach (Presentation p in Model.Course.Presentations)
+    {
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="hpanel collapsed">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="panel-tools col-lg-1 pull-right">
+                                <a class="showhide">
+                                    <i class="fa fa-chevron-up"
+                                       style="font-size: xx-large"></i>
+                                </a>
+                            </div>
+                            <div class="col-lg-4 m-t-sm">
+                                <h1>@p.Title</h1>
+                                <h3 class="text-primary"><b>PART @p.Part</b></h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        @if (p.Representations.Count() == 0)
+                        {
+                            <div class="col-lg-12 navbar bg-info">
+                                <span class="navbar-brand">No Representation</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+    </environment>
+}

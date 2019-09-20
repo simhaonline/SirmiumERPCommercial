@@ -1,0 +1,134 @@
+﻿@model CourseViewModel
+
+    <style type="text/css">
+        .videoBtnCD {
+            display: none;
+            position: absolute;
+            top: 32%;
+            left: 2%;
+        }
+
+        .img-video:hover + .videoBtnCD {
+            display: inline;
+        }
+
+        .videoBtnCD:hover {
+            display: inline;
+        }
+    </style>
+
+<div class="col-lg-12">
+    <div class="col-lg-2 text-center">
+        @if (Model.Course.VideoId != 0)
+        {
+            var videoPath = Model.Videos.FirstOrDefault(v => v.Id == Model.Course.VideoId).VideoPath;
+            <div style="position: relative;">
+                <video src="@videoPath" class="img-video"
+                       style="z-index: 1"></video>
+                <div class="text-center img-video videoBtnCD" style="z-index: 1;">
+                    <a href="@Url.Action("Index", "Recorder", new { id = ViewData["Id"], videoId = Model.Course.VideoId })"
+                       class="btn btn-sm btn-primary2 p-xs">
+                        <span style="font-weight: 400; font-size: 18px">Watch</span>
+                        <span class="fa fa-play" style="font-size: 18px"></span>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="col-lg-3">
+        <h2>
+            @Model.Course.Title
+        </h2>
+        <h4>
+            by:
+            @if (Model.User != null)
+            {
+                <span class="text-info">
+                    &#64;@Model.User.UserName
+                </span>
+            }
+            else
+            {
+                <span class="text-info"> &#64;SirmiumCommercial</span>
+            }
+        </h4>
+        <h5><span class="fa fa-plus-circle"></span> Added: @Model.Course.DateAdded.ToString()</h5>
+        <h5><span class="fa fa-pencil-square-o"></span> Date modified: @Model.Course.DateAdded.ToString()</h5>
+    </div>
+    <div class="col-lg-2">
+        @if (Model.Course.Presentations.Count() > 0)
+        {
+            <h4>Parts: <span class="text-warning">@Model.Course.Presentations.Count()</span>   </h4>
+        }
+        else
+        {
+            <h4>Parts: <span class="text-danger">0</span></h4>
+        }
+        <h5>
+            <span class="fa fa-clock-o"></span>End Date:
+            @if (Model.Course.EndDate != DateTime.MinValue)
+            {
+                <span class="text-danger">
+                    @Model.Course.EndDate.ToShortDateString()
+                </span>
+            }
+            else
+            {
+                <span class="text-success">
+                    NO END DATE
+                </span>
+            }
+        </h5>
+        @if ((DateTime.Now > Model.Course.EndDate) &&
+(Model.Course.EndDate != DateTime.MinValue))
+        {
+            <h4>
+                <span class="badge badge-danger text-warning" style="font-size:16px">
+                    <b>FINISHED</b>
+                </span>
+            </h4>
+        }
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-2 text-center">
+        @if (Model.UsersOnCourse.FirstOrDefault(u => u.Id == ViewData["Id"].ToString())
+           != null)
+        {
+            <span class="badge badge-primary">My course</span>
+        }
+        else
+        {
+            if ((DateTime.Now > Model.Course.EndDate) &&
+                (Model.Course.EndDate != DateTime.MinValue))
+            {
+                <button class="btn btn-primary" disabled>
+                    <span class="fa fa-plus"></span>
+                    Participate
+                </button>
+            }
+            else
+            {
+                <a href="@Url.Action("Participate", "Courses",
+                                new { id = ViewData["Id"],
+                                    courseId = Model.Course.CourseId,
+                                    returnUrl = ViewContext.HttpContext.Request.PathAndQuery() })"
+                   class="btn btn-primary">
+                    <span class="fa fa-plus"></span>Participate
+                </a>
+            }
+        }
+    </div>
+</div>
+
+@if (Model.Course.Description != null)
+{
+    <div class="row m-sm p-sm">
+        <div class="col-md-1"></div>
+        <div class="col-md-10 borderDashed" style="">
+            <h4>Description:</h4>
+            <span class="text-info">@Model.Course.Description</span>
+            <br />
+            <br />
+        </div>
+    </div>
+}

@@ -27,7 +27,161 @@ namespace SirmiumCommercial.Controllers
             hostingEnvironment = hosting;
         }
 
-       [HttpPost]
+        public ViewResult Index(string id, int videoId)
+        {
+            ViewData["Id"] = id;
+
+            Video video = repository.Videos
+                .FirstOrDefault(v => v.Id == videoId);
+
+            if(video != null)
+            {
+                //likes
+                IQueryable<Likes> likes = repository.Likes
+                    .Where(l => l.For == "Video" && l.ForId == video.Id);
+
+                //dislikes
+                IQueryable<Dislikes> dislikes = repository.Dislikes
+                    .Where(d => d.For == "Video" && d.ForId == video.Id);
+
+                //comments
+                IQueryable<Comment> comments = repository.Comments
+                    .Where(c => c.ForId == video.Id);
+
+                //users 
+                IQueryable<AppUser> users = userManager.Users;
+
+                ViewData["Title"] = video.Title;
+
+                return View(new PlayerViewModel
+                {
+                    Video = video,
+                    Likes = likes,
+                    Dislikes = dislikes,
+                    Comments = comments,
+                    Users = users
+                });
+            }
+            else
+            {
+                return View("Error", "Error");
+            }
+        }
+
+        public ActionResult LikesDislikes(string userId, string For, int forId, string spanId)
+        {
+            ViewData["Id"] = userId;
+
+            return PartialView("LikesDislikesCount", new LikesDislikes
+            {
+                For = For,
+                ForId = forId,
+                spanId = spanId,
+                Likes = repository.Likes.Where(l => l.For == For && l.ForId == forId),
+                Dislikes = repository.Dislikes.Where(d => d.For == For && d.ForId == forId)
+            });
+        }
+
+        public ActionResult AddLike(string userId, string For, int forId, string spanId)
+        {
+            ViewData["Id"] = userId;
+
+            Likes like = new Likes
+            {
+                For = For,
+                ForId = forId,
+                UserId = userId
+            };
+            repository.AddLike(like);
+
+            return PartialView("LikesDislikesCount", new LikesDislikes
+            {
+                For = For,
+                ForId = forId,
+                spanId = spanId,
+                Likes = repository.Likes.Where(l => l.For == For && l.ForId == forId),
+                Dislikes = repository.Dislikes.Where(d => d.For == For && d.ForId == forId)
+            });
+        }
+
+        public ActionResult RemoveLike(string userId, string For, int forId, string spanId)
+        {
+            ViewData["Id"] = userId;
+
+            Likes like = repository.Likes
+                .FirstOrDefault(l => l.For == For && l.ForId == forId && l.UserId == userId );
+            repository.DeleteLike(like.Id);
+
+            return PartialView("LikesDislikesCount", new LikesDislikes
+            {
+                For = For,
+                ForId = forId,
+                spanId = spanId,
+                Likes = repository.Likes.Where(l => l.For == For && l.ForId == forId),
+                Dislikes = repository.Dislikes.Where(d => d.For == For && d.ForId == forId)
+            });
+        }
+
+        public ActionResult AddDislike(string userId, string For, int forId, string spanId)
+        {
+            ViewData["Id"] = userId;
+
+            Dislikes dislike = new Dislikes
+            {
+                For = For,
+                ForId = forId,
+                UserId = userId
+            };
+            repository.AddDislike(dislike);
+
+            return PartialView("LikesDislikesCount", new LikesDislikes
+            {
+                For = For,
+                ForId = forId,
+                spanId = spanId,
+                Likes = repository.Likes.Where(l => l.For == For && l.ForId == forId),
+                Dislikes = repository.Dislikes.Where(d => d.For == For && d.ForId == forId)
+            });
+        }
+
+        public ActionResult RemoveDislike(string userId, string For, int forId, string spanId)
+        {
+            ViewData["Id"] = userId;
+
+            Dislikes dislike = repository.Dislikes
+                .FirstOrDefault(d => d.For == For && d.ForId == forId && d.UserId == userId);
+            repository.DeleteDislike(dislike.Id);
+
+            return PartialView("LikesDislikesCount", new LikesDislikes
+            {
+                For = For,
+                ForId = forId,
+                spanId = spanId,
+                Likes = repository.Likes.Where(l => l.For == For && l.ForId == forId),
+                Dislikes = repository.Dislikes.Where(d => d.For == For && d.ForId == forId)
+            });
+        }
+
+        public ActionResult VideoTotalViews(int videoId)
+        {
+            Video video = repository.Videos
+                .FirstOrDefault(v => v.Id == videoId);
+
+            return PartialView("VideoTotalViews", video.Views);
+        }
+
+        public ActionResult NewView(int videoId)
+        {
+            Video video = repository.Videos
+                .FirstOrDefault(v => v.Id == videoId);
+            int totalViews = video.Views + 1;
+            video.Views = totalViews;
+            repository.SaveVideo(video);
+
+            return PartialView("VideoTotalViews", totalViews);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> SaveProfilePhoto(ChangeProfilePhoto model)
         {
             AppUser user = await userManager.FindByIdAsync(model.userId);
@@ -104,14 +258,14 @@ namespace SirmiumCommercial.Controllers
             return View(ModelState);
         }
 
-        public ViewResult Video(string id)
+        /*public ViewResult Video(string id)
         {
             ViewData["Id"] = id;
             return View(new VideoModel
             {
                 UserId = id
             });
-        }
+        }*/
 
         [HttpPost]
         public async Task<IActionResult> SaveVideo(VideoModel model)

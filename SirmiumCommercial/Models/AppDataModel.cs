@@ -151,4 +151,24 @@ namespace SirmiumCommercial.Models
         //if this is subcomment
         public int CommentId { get; set; }
     }
+
+    public class Likes
+    {
+        public int Id { get; set; }
+        //Course, Presentation, Representation, Video, Comment
+        public string For { get; set; }
+        //CourseId, PresentationId, VideoId, ...
+        public int ForId { get; set; }
+        public string UserId { get; set; }
+    }
+
+    public class Dislikes
+    {
+        public int Id { get; set; }
+        //Course, Presentation, Representation, Video, Comment
+        public string For { get; set; }
+        //CourseId, PresentationId, VideoId, ...
+        public int ForId { get; set; }
+        public string UserId { get; set; }
+    }
 }

@@ -14,7 +14,7 @@
     .videoBtn {
         display: none;
         position: absolute;
-        transform: translateY(-90%) translateX(-50%);
+        transform: translateY(35%) translateX(-90%);
     }
 
     .img-video:hover + .videoBtn {
@@ -123,7 +123,7 @@
 
 <!--Video Player-->
 <div>
-    @Html.Partial("VideoPlayer")
+    <!--Html.Partial("VideoPlayer")-->
 </div>
 
 @foreach (Course course in Model.Courses)
@@ -168,10 +168,11 @@
                     <video src="@videoPath" class="img-video"
                            style="z-index: 1"></video>
                     <div class="text-center img-video videoBtn" style="z-index: 1">
-                        <button class="btn btn-sm btn-primary2 p-xs"
-                                onclick='videoPlay.show("@videoPath");'>
+                        <a href="@Url.Action("Index", "Recorder", new { id = ViewData["Id"], videoId = course.VideoId })"
+                           class="btn btn-sm btn-primary2 p-xs"
+                               @* onclick='videoPlay.show("@videoPath");'*@>
                             <span class="fa fa-play" style="font-size: xx-large"></span>
-                        </button>
+                        </a>
                     </div>
                 }
             </div>

@@ -25,7 +25,8 @@ namespace SirmiumCommercial.Components
         {
             return View(new CommentViewModel {
                 Comments = repository.Comments
-                    .Where(c => c.For == For && c.ForId == forId),
+                    .Where(c => c.For == For && c.ForId == forId)
+                    .OrderBy(c => c.DateAdded),
                 Users = userManager.Users
             });
         }

@@ -142,25 +142,101 @@ namespace SirmiumCommercial.Controllers
         public IActionResult CourseDetails(string id, int courseId)
         {
             ViewData["Id"] = id;
+            Course course = repository.Courses
+                        .FirstOrDefault(c => c.CourseId == courseId);
 
             //Users on course
-            IQueryable<CourseUsers> courseUsers = repository.CourseUsers
-                .Where(c => c.CourseId == courseId);
-            List<AppUser> users = new List<AppUser>();
-            foreach(CourseUsers cu in courseUsers)
-            {
-                users.Add(userManager.Users
-                    .FirstOrDefault(u => u.Id == cu.AppUserId));
-            }
- 
+            IQueryable<AppUser> users = UsersOnCourse(course);
+
+            //Course, presentations and representations videos
+            IQueryable<Video> videos = CprVideos(course);
+
             return View(new CourseViewModel
             {
-                Course = repository.Courses
-                        .FirstOrDefault(c => c.CourseId == courseId),
+                Course = course,
                 User = repository.Courses.Where(c => c.CreatedBy != null
                     && c.CourseId == courseId).Select(u => u.CreatedBy)
                     .FirstOrDefault(),
-                UsersOnCourse = users.AsQueryable()
+                UsersOnCourse = users,
+                Videos = videos
+            });
+        }
+
+        public IActionResult CourseDetailsRepresentations(string id, int courseId)
+        {
+            ViewData["Id"] = id;
+            Course course = repository.Courses
+                        .FirstOrDefault(c => c.CourseId == courseId);
+
+            //Users on course
+            IQueryable<AppUser> users = UsersOnCourse(course);
+
+            //Course, presentations and representations videos
+            IQueryable<Video> videos = CprVideos(course);
+
+            return View(new CourseViewModel
+            {
+                Course = course,
+                User = repository.Courses.Where(c => c.CreatedBy != null
+                    && c.CourseId == courseId).Select(u => u.CreatedBy)
+                    .FirstOrDefault(),
+                UsersOnCourse = users,
+                Videos = videos
+            });
+        }
+
+        public IActionResult CourseDetailsUsers(string id, int courseId)
+        {
+            ViewData["Id"] = id;
+            Course course = repository.Courses
+                        .FirstOrDefault(c => c.CourseId == courseId);
+
+            //Users on course
+            IQueryable<AppUser> users = UsersOnCourse(course);
+
+            //Course, presentations and representations videos
+            IQueryable<Video> videos = CprVideos(course);
+
+            return View(new CourseViewModel
+            {
+                Course = course,
+                User = repository.Courses.Where(c => c.CreatedBy != null
+                    && c.CourseId == courseId).Select(u => u.CreatedBy)
+                    .FirstOrDefault(),
+                UsersOnCourse = users,
+                Videos = videos
+            });
+        }
+
+        public IActionResult CourseDetailsComments(string id, int courseId)
+        {
+            ViewData["Id"] = id;
+            Course course = repository.Courses
+                        .FirstOrDefault(c => c.CourseId == courseId);
+
+            //created by
+            AppUser createdBy = repository.Courses.Where(c => c.CreatedBy != null
+                    && c.CourseId == courseId).Select(u => u.CreatedBy)
+                    .FirstOrDefault();
+
+            //Users on course
+            IQueryable<AppUser> users = UsersOnCourse(course);
+
+            //Course, presentations and representations videos
+            IQueryable<Video> videos = CprVideos(course);
+
+            //Comments
+            IQueryable<Comment> comments = repository.Comments
+                .Where(c => c.For == "Course" && c.ForId == course.CourseId);
+
+            return View(new CourseViewModel
+            {
+                Course = course,
+                User = createdBy,
+                UsersOnCourse = users,
+                Videos = videos,
+                Comments = comments,
+                CommentUserInfo = userManager.Users
             });
         }
 
@@ -197,6 +273,45 @@ namespace SirmiumCommercial.Controllers
                 TempData["errMsgCourse"] = "Sorry, something went wrong!";
                 return Redirect(returnUrl ?? "/" + id);
             }
+        }
+
+        public IQueryable<AppUser> UsersOnCourse (Course course)
+        {
+            IQueryable<CourseUsers> courseUsers = repository.CourseUsers
+                .Where(c => c.CourseId == course.CourseId);
+
+            List<AppUser> users = new List<AppUser>();
+            foreach (CourseUsers cu in courseUsers)
+            {
+                users.Add(userManager.Users
+                    .FirstOrDefault(u => u.Id == cu.AppUserId));
+            }
+
+            return users.AsQueryable();
+        }
+
+        public IQueryable<Video> CprVideos (Course course)
+        {
+            List<Video> videos = new List<Video>();
+
+            //course video
+            videos.Add(repository.Videos.FirstOrDefault(v => v.Id == course.VideoId));
+
+            foreach (Presentation p in course.Presentations)
+            {
+                //presentation video
+                videos.Add(repository.Videos.
+                    FirstOrDefault(v => v.Id == p.VideoId));
+
+                foreach (Representation r in p.Representations)
+                {
+                    //representation video
+                    videos.Add(repository.Videos.
+                        FirstOrDefault(v => v.Id == r.VideoId));
+                }
+            }
+
+            return videos.AsQueryable();
         }
     }
 }

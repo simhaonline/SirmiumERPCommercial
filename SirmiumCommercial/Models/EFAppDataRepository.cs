@@ -27,6 +27,8 @@ namespace SirmiumCommercial.Models
         public IQueryable<GroupUsers> GroupUsers => context.GroupUsers;
         public IQueryable<Video> Videos => context.Videos;
         public IQueryable<Comment> Comments => context.Comments;
+        public IQueryable<Likes> Likes => context.Likes;
+        public IQueryable<Dislikes> Dislikes => context.Dislikes;
 
         public void SaveCourse(Course course)
         {
@@ -305,6 +307,20 @@ namespace SirmiumCommercial.Models
                     _ = DeleteComment(comment.Id);
                 }
 
+                //delete all likes
+                foreach (Likes like in context.Likes
+                    .Where(l => l.For == "Video" && l.ForId == dbEntry.Id))
+                {
+                    DeleteLike(like.Id);
+                }
+
+                //delete all dislikes
+                foreach (Dislikes dislike in context.Dislikes
+                    .Where(d => d.For == "Video" && d.ForId == dbEntry.Id))
+                {
+                    DeleteDislike(dislike.Id);
+                }
+
                 context.Videos.Remove(dbEntry);
                 context.SaveChanges();
             }
@@ -327,6 +343,26 @@ namespace SirmiumCommercial.Models
                 FirstOrDefault(c => c.Id == commentId);
             if(dbEntry != null)
             {
+                //delete all likes
+                foreach (Likes like in context.Likes
+                    .Where(l => l.For == "Comment" && l.ForId == dbEntry.Id))
+                {
+                    if(like != null)
+                    {
+                        context.Likes.Remove(like);
+                    }
+                }
+
+                //delete all dislikes
+                foreach (Dislikes dislike in context.Dislikes
+                    .Where(d => d.For == "Comment" && d.ForId == dbEntry.Id))
+                {
+                    if (dislike != null)
+                    {
+                        context.Dislikes.Remove(dislike);
+                    }
+                }
+
                 foreach(Comment subComm in context.Comments)
                 {
                     if(subComm.CommentId == dbEntry.Id)
@@ -338,6 +374,64 @@ namespace SirmiumCommercial.Models
                 context.SaveChanges();
             }
             return dbEntry;
+        }
+
+        public void AddLike(Likes like)
+        {
+            if(like.Id == 0)
+            {
+                //remove dislike added by user like.userId
+                Dislikes dislike = context.Dislikes
+                    .FirstOrDefault(d => d.For == like.For &&
+                        d.ForId == like.ForId && d.UserId == like.UserId);
+                if(dislike != null)
+                {
+                    DeleteDislike(dislike.Id);
+                }
+
+                context.Likes.Add(like);
+                context.SaveChanges();
+            }
+        }
+
+        public void DeleteLike(int likeId)
+        {
+            Likes dbEntry = context.Likes
+                .FirstOrDefault(l => l.Id == likeId);
+            if(dbEntry != null)
+            {
+                context.Likes.Remove(dbEntry);
+                context.SaveChanges();
+            }
+        }
+
+        public void AddDislike(Dislikes dislike)
+        {
+            if(dislike.Id == 0)
+            {
+                //remove like added by user dislike.UserId
+                Likes like = context.Likes
+                    .FirstOrDefault(l => l.For == dislike.For &&
+                        l.ForId == dislike.ForId && l.UserId == dislike.UserId);
+                if(like != null)
+                {
+                    DeleteLike(like.Id);
+                }
+
+                context.Dislikes.Add(dislike);
+                context.SaveChanges();
+            }
+        }
+
+        public void DeleteDislike(int dislikeId)
+        {
+            Dislikes dbEntry = context.Dislikes
+                .FirstOrDefault(d => d.Id == dislikeId);
+            if(dbEntry != null)
+            {
+                context.Dislikes.Remove(dbEntry);
+                context.SaveChanges();
+            }
         }
     }
 }

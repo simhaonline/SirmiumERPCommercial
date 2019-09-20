@@ -29,7 +29,7 @@
 
     @Html.ApplicationInsightsJavaScript(TelemetryConfiguration)
 </head>
-<body class="@Html.PageClass()">
+<body class="@Html.PageClass() sidebar-scroll fixed-navbar">
     <div class="splash">
         <div class="color-line"></div>
         <div class="title">
@@ -67,7 +67,7 @@
     </div>
 
     <!-- Footer -->
-    <div>
+    <div class="m-lg" style="background: #f1f3f6">
         @Html.Partial("_Footer")
     </div>
 
@@ -81,6 +81,7 @@
         <script src="~/homer/lib_local/sparkline/index.js"></script>
         <script src="~/homer/js/homer.js"></script>
         <script src="~/lib_local/sirmiumCustomWindow/sirmiumCustomWindow.js"></script>
+        <script src="~/lib_local/aspnet-signalr/signalr.js"></script>
     </environment>
     <environment names="Staging,Production">
         <script src="https://kit.fontawesome.com/93d875730e.js"></script>
@@ -92,6 +93,7 @@
         <script src="~/homer/lib_local/sparkline/index.js"></script>
         <script src="~/homer/js/homer.min.js"></script>
         <script src="~/lib_local/sirmiumCustomWindow/sirmiumCustomWindow.js"></script>
+        <script src="~/lib_local/aspnet-signalr/signalr.min.js"></script>
     </environment>
 
     @RenderSection("Scripts", required: false)

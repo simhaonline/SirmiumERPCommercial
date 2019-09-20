@@ -1,0 +1,299 @@
+﻿@model PlayerViewModel
+
+@{
+    Layout = "_UserLayout";
+    ViewData["For"] = "Video";
+    ViewData["ForId"] = Model.Video.Id;
+    ViewData["ReturnUrl"] = ViewContext.HttpContext.Request.PathAndQuery();
+}
+
+@section Styles {
+    <environment names="Development,Staging,Production">
+    </environment>
+    <style type="text/css">
+        #videoBox {
+            position: relative;
+        }
+
+        #videoPlayer {
+            width: 90%;
+            height: auto;
+            max-height: 500px;
+            z-index: 1;
+            background: rgba(0, 0, 0, .8);
+        }
+
+        #videoControls {
+            width: 90%;
+            height: 100%;
+            max-height: 500px;
+            background-color: rgba(0, 0, 0, .5);
+            vertical-align: central;
+            position: absolute;
+            top: 0%;
+            left: 5%;
+            z-index: 1;
+        }
+
+        #videoControlsPlay {
+            font-size: 7vw;
+            color: #fff;
+            position: absolute;
+            top: 40%;
+            left: 45%;
+            opacity: 0.9;
+            z-index: 2;
+        }
+
+        #videoControlsReplay {
+            font-size: 7vw;
+            color: #fff;
+            position: absolute;
+            top: 40%;
+            left: 45%;
+            opacity: 0.9;
+            z-index: 2;
+        }
+
+        #videoControlsPlay:hover {
+            cursor: pointer;
+        }
+
+        #videoControlsReplay:hover {
+            cursor: pointer;
+        }
+        textarea{
+            resize: none;
+            overflow-y: scroll;
+        }
+    </style>
+}
+
+<div class="row text-center" id="videoBox">
+    <video src="@Model.Video.VideoPath" id="videoPlayer"></video>
+    <div id="videoControls">
+    </div>
+    <span class="fa fa-play videoControlsBtn" id="videoControlsPlay"
+          onclick="player.play();"></span>
+    <span class="fa fa-redo videoControlsBtn" id="videoControlsReplay" style="display: none"
+          onclick="player.replay();"></span>
+</div>
+
+<div class="row m-t-sm m-l-lg">
+    <h2 style="color: #000; font-weight:500;">@Model.Video.Title</h2>
+</div>
+
+<div class="row m-l-lg m-r-lg m-t-n-xs" style="font-size: 18px">
+    @if (Model.Video.Views == 1)
+    {
+        <span class="text-muted" style="font-size: 15px" id="total-video-views">
+            @Model.Video.Views View
+        </span>
+    }
+    else
+    {
+        <span class="text-muted" style="font-size: 15px" id="total-video-views">
+            @Model.Video.Views Views
+        </span>
+    }
+    <span>&emsp;</span>
+    <span class="text-muted" style="font-size: 15px">&#8718;</span>
+    <span>&emsp;</span>
+    <span class="text-muted" style="font-size: 15px">
+        Published on:  @Model.Video.DateAdded.ToLongDateString()
+    </span>
+    <span>&emsp;</span>
+    <span class="text-muted" style="font-size: 15px">&#8718;</span>
+    <span>&emsp;</span>
+    <span>&emsp;</span>
+    @if (Model.Likes.FirstOrDefault(l => l.UserId == ViewData["Id"].ToString()) == null)
+    {
+        <span class="btn fa fa-thumbs-up m-l-n m-r-n" style="font-weight:300; color: #777;"
+              id="likes-count">
+            @Model.Likes.Count()
+        </span>
+    }
+    else
+    {
+        <span class="btn fa fa-thumbs-up m-l-n m-r-n" style="font-weight:300; color: #62cb31;"
+              id="likes-count">
+            @Model.Likes.Count()
+        </span>
+    }
+    <span>&emsp;</span>
+    @if (Model.Dislikes.FirstOrDefault(d => d.UserId == ViewData["Id"].ToString()) == null)
+    {
+        <span class="btn fa fa-thumbs-down m-l-n m-r-n" style="font-weight:300; color: #777;"
+              id="dislikes-count">
+            @Model.Dislikes.Count()
+        </span>
+    }
+    else
+    {
+        <span class="btn fa fa-thumbs-down m-l-n m-r-n" style="font-weight:300; color: #e74c3c;"
+              id="dislikes-count">
+            @Model.Dislikes.Count()
+        </span>
+    }
+</div>
+
+<div class="row m-t-sm m-l-md" style="font-size: 17px">
+    <div class="pull-left">
+        @if (Model.Users.FirstOrDefault(u => u.Id == Model.Video.CreatedBy).ProfilePhotoUrl == null)
+        {
+            <img src="~/defaultAvatar.png" class="img-circle m-b"
+                 style="width:50px;height:50px;"
+                 alt="logo" />
+        }
+        else
+        {
+            <img src="~/UsersData/@Model.Users.FirstOrDefault(u => u.Id == Model.Video.CreatedBy).ProfilePhotoUrl"
+                 class="img-circle m-b" style="width:50px;height:50px;" alt="logo" />
+        }
+    </div>
+    <div class="pull-left m-l-sm">
+        <a href="@Url.Action("UserProfile", "User",
+                     new { id = ViewData["Id"], userId = Model.Video.CreatedBy })"
+           style="font-size: 18px; color: #000">
+            @Model.Users.FirstOrDefault(u => u.Id == Model.Video.CreatedBy).FirstName
+            @Model.Users.FirstOrDefault(u => u.Id == Model.Video.CreatedBy).LastName
+        </a>
+        <br />
+        <a href="@Url.Action("UserProfile", "User",
+                     new { id = ViewData["Id"], userId = Model.Video.CreatedBy })"
+           class="text-info" style="font-size: 14px">
+            @@@Model.Users.FirstOrDefault(u => u.Id == Model.Video.CreatedBy).UserName
+        </a>
+    </div>
+</div>
+
+<input id="videoId" value="@Model.Video.Id" hidden />
+<input id="userId" value="@ViewData["Id"]" hidden />
+<input id="current-user-photo" value="@Model.Users.FirstOrDefault(u => u.Id == ViewData["Id"].ToString()).ProfilePhotoUrl" hidden />
+<input id="for" value="Video" hidden />
+<input id="forId" value="@Model.Video.Id" hidden />
+
+
+<div id="allCommentsPartial">
+    @await Component.InvokeAsync("Comment", new { For = "Video", forId = Model.Video.Id })
+</div>
+
+@section Scripts {
+    <script src="~/lib_local/comment-hub/comment-hub.js"></script>
+    <script>
+        //Player controls
+        var videoPlayer = document.getElementById('videoPlayer');
+        var videoControls = document.getElementById('videoControls');
+        var videoControlsPlay = document.getElementById('videoControlsPlay');
+        var videoControlsReplay = document.getElementById('videoControlsReplay');
+        var videoId = document.getElementById('videoId').value;
+        var userId = document.getElementById('userId').value;
+
+        var player = new function () {
+            this.play = function () {
+                videoPlayer.play();
+                videoPlayer.controls = true;
+
+                videoControls.style.display = "none";
+                videoControlsPlay.style.display = "none";
+            };
+            this.replay = function () {
+                videoPlayer.play();
+                videoPlayer.controls = true;
+
+                videoControls.style.display = "none";
+                videoControlsReplay.style.display = "none";
+            };
+        };
+
+        videoPlayer.onended = function () {
+            videoPlayer.controls = false;
+            videoControls.style.display = "";
+            videoControlsReplay.style.display = "";
+        };
+
+        //SignalR connection
+        var connection = new signalR.HubConnectionBuilder().withUrl("/videoHub").build();
+
+        //post total video views
+        connection.on("NewVideoView", function (id, views) {
+            if (id == videoId) {
+                $('#total-video-views').html(views + " Views");
+            }
+        });
+
+        //post total video likes
+        var likesCount = document.getElementById('likes-count');
+        var dislikesCount = document.getElementById('dislikes-count');
+
+        connection.on("AddRemoveLike", function (vId, uId,
+            totalLikes, likeInd, totalDislikes, dislikeInd) {
+            if (vId == videoId) {
+                if (uId == userId) {
+                    likesCount.style.color = (likeInd) ? "#62cb31" : "#777";
+                    dislikesCount.style.color = "#777";
+                }
+                $('#likes-count').html(totalLikes);
+                $('#dislikes-count').html(totalDislikes);
+            }
+        });
+
+        //post total video dislikes
+        connection.on("AddRemoveDislike", function (vId, uId,
+            totalLikes, likeInd, totalDislikes, dislikeInd) {
+            if (vId == videoId) {
+                if (uId == userId) {
+                    likesCount.style.color = "#777";
+                    dislikesCount.style.color = (dislikeInd) ? "#e74c3c" : "#777";
+                }
+                $('#likes-count').html(totalLikes);
+                $('#dislikes-count').html(totalDislikes);
+            }
+        });
+
+        //start connection
+        connection.start().then(function () {
+            console.log("Connected");
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        //add video view (btn-Play)
+        document.getElementById('videoControlsPlay').addEventListener("click", function (event) {
+            connection.invoke("VideoViews", videoId).catch(function (err) {
+                return console.error(err.toString());
+            });
+            event.preventDefault();
+        });
+
+        //add video view (btn-Replay)
+        document.getElementById('videoControlsReplay').addEventListener("click", function (event) {
+            connection.invoke("VideoViews", videoId).catch(function (err) {
+                return console.error(err.toString());
+            });
+            event.preventDefault();
+        });
+
+        //add/remove video like
+        likesCount.addEventListener("click", function (event) {
+            connection.invoke("VideoLikes", videoId, userId).catch(function (err) {
+                return console.error(err.toString());
+            });
+            event.preventDefault();
+        });
+
+        //add/remove video dislike
+        dislikesCount.addEventListener("click", function (event) {
+            connection.invoke("VideoDislikes", videoId, userId).catch(function (err) {
+                return console.error(err.toString());
+            });
+            event.preventDefault();
+        });
+
+        //-----------------------Commments-------------------
+        var commentFor = "Video";
+        var currentUser = userId;
+        var commentForId = videoId;
+
+    </script>
+}
