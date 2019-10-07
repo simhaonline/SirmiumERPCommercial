@@ -27,6 +27,18 @@ namespace SirmiumCommercial.Models
 
         IQueryable<Dislikes> Dislikes { get; }
 
+        IQueryable<Chat> Chats { get; }
+
+        IQueryable<ChatMessage> ChatMessages { get; }
+
+        IQueryable<GroupChat> GroupChats { get; }
+
+        IQueryable<GroupChatUsers> GroupChatUsers { get; }
+
+        IQueryable<GroupChatMessage> GroupChatMessages { get; }
+
+        IQueryable<GroupMessageView> GroupMessageViews { get; }
+
         void SaveCourse(Course course);
 
         Course DeleteCourse(int courseId);
@@ -48,6 +60,7 @@ namespace SirmiumCommercial.Models
         void AddRepresentation(ICollection<Representation> representations,
             Presentation presentation);
 
+        //-------- Comment---------
         void SaveVideo(Video video);
 
         Video DeleteVideo(int videoId);
@@ -56,6 +69,7 @@ namespace SirmiumCommercial.Models
 
         Comment DeleteComment(int commentId);
 
+        //------- Like / Dislike ------------
         void AddLike(Likes like);
 
         void DeleteLike(int likeId);
@@ -63,5 +77,32 @@ namespace SirmiumCommercial.Models
         void AddDislike(Dislikes dislike);
 
         void DeleteDislike(int dislikeId);
+
+        //-------- Chat -------
+        void NewChat(Chat chat);
+
+        void EditGroupChat(GroupChat chat);
+
+        void AddUserToGroupChat(int chatId, string userId);
+
+        void RemoveUserFromGroupChat(int id);
+
+        void NewChatMessage(ChatMessage msg, Chat chat);
+
+        void NewGroupChatMessage(GroupChatMessage msg, GroupChat chat);
+
+        void AddSeenChat(ChatMessage msg);
+
+        void AddViewToGroupMessage(int groupMsgId, string userId, int groupChatId);
+
+        void DeleteChatMessage(int msgId);
+
+        void DeleteGroupChatMessage(int msgId);
+
+        void DeleteGroupChat(int chatId);
+
+        void ClearChat(string userId, int chatId);
+
+        void CheckpointDelete(Chat chat);
     }
 }

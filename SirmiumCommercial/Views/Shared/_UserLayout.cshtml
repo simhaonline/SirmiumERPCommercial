@@ -29,7 +29,7 @@
 
     @Html.ApplicationInsightsJavaScript(TelemetryConfiguration)
 </head>
-<body class="@Html.PageClass() sidebar-scroll fixed-navbar">
+<body class="@Html.PageClass() sidebar-scroll fixed-navbar fixed-small-header">
     <div class="splash">
         <div class="color-line"></div>
         <div class="title">
@@ -82,6 +82,202 @@
         <script src="~/homer/js/homer.js"></script>
         <script src="~/lib_local/sirmiumCustomWindow/sirmiumCustomWindow.js"></script>
         <script src="~/lib_local/aspnet-signalr/signalr.js"></script>
+        <script type="text/javascript">
+
+            function msgLine(msgCont) {
+                var br = msgCont.indexOf("</br>");
+
+                if (msgCont.length > 21)
+                {
+                    var line = msgCont.substring(0, 20);
+                    return (br <= 20 && br != -1) ? msgCont.substring(0, br) + "..." : line + "...";
+                }
+                else
+                {
+                    return (br == -1) ? msgCont : msgCont.substring(0, br) + "...";
+                }
+            };
+
+            var currentUser = document.getElementById('current-userId').value;
+            var chatWindow = document.getElementById('chat-header-window');
+
+
+            var connectionChatHeader = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+
+            //start connection
+            connectionChatHeader.start().then(function () {
+                console.log("Connected");
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+
+            connectionChatHeader.on("UserHeaderNewMsg", function (senderId, recipientId, cId, senderName,
+                date, msgContent, unseenMsgs, senderPhoto, recipientPhoto, recipientName) {
+                if (recipientId == currentUser) {
+                    var chatId = "chat-header-" + cId;
+                    var chatExists = document.getElementById(chatId);
+                    if (chatExists != null) {
+                        var chatIdJQ = "#chat-header-" + cId;
+                        $(chatIdJQ).remove();
+                    }
+                    $('#chat-header-window').prepend(`
+                            <a href="/Chat/Chat/`+ currentUser + `?user2Id=` + senderId + `"
+                                    id="chat-header-` + cId + `">
+                                <div class="chat-message m-b-xs" id="chat-style-` + cId + `"
+                                        style="padding-left:0px; border-radius: 10px;
+                                        border:2px solid #007bff; background-color: #e6f2ff;
+                                        box-sizing: border-box">
+                                    <img class="message-avatar m-l-md m-t-sm"
+                                        src="` + senderPhoto + `" alt="">
+                                    <div class="message" style="background: none;">
+                                        <span class="message-author" style="color: #000000">` + senderName + `</span>
+                                        <span>&emsp;</span><span>` + date + `</span>
+                                        <span id='unseen-header-span-` + cId + `' class='badge badge-primary pull-right'
+                                            style='font-size:10px; background-color: #007bff;'>`
+                                            + unseenMsgs + `</span>
+                                        <span class="message-content">` +  msgLine(msgContent) + `</span>
+                                    </div>
+                                </div>
+                            </a>
+                    `);
+
+                    connectionChatHeader.invoke("TotalUnseenMsgHeader", currentUser)
+                        .catch(function (err) {
+                        return console.error(err.toString());
+                    });
+                }
+                if (senderId == currentUser) {
+                    var chatId = "chat-header-" + cId;
+                    var chatExists = document.getElementById(chatId);
+                    if (chatExists != null) {
+                        var chatIdJQ = "#chat-header-" + cId;
+                        $(chatIdJQ).remove();
+                    }
+                    $('#chat-header-window').prepend(`
+                            <a href="/Chat/Chat/`+ currentUser + `?user2Id=` + recipientId + `"
+                                    id="chat-header-` + cId + `">
+                                <div class="chat-message m-b-xs" id="chat-style-` + cId + `"
+                                        style="padding-left:0px; border-radius: 10px;
+                                        border:1px solid #99caff;
+                                        box-sizing: border-box">
+                                    <img class="message-avatar m-l-md m-t-sm"
+                                        src="` + recipientPhoto + `" alt="">
+                                    <div class="message" style="background: none;">
+                                        <span class="message-author" style="color: #000000">` + recipientName + `</span>
+                                        <span>&emsp;</span><span>` + date + `</span>
+                                        <span class="message-content">Me: ` + msgLine(msgContent) + `</span>
+                                    </div>
+                                </div>
+                            </a>
+                    `);
+                }
+            });
+
+            connectionChatHeader.on("PostTotalUnseenHeader", function (userId, totalUnseenMsg) {
+                if (currentUser == userId) {
+                    $('#total-unseen-label').html("");
+                    $('#total-unseen-label').append(`<i class="pe-7s-mail"></i>`);
+                    if (totalUnseenMsg != 0) {
+                        $('#total-unseen-label').append(`
+                        <span class='label' style='background-color: #007bff;'>
+                            ` + totalUnseenMsg + `
+                        </span>
+                        `);
+                    }
+                }
+            });
+
+            connectionChatHeader.on("UserHeaderNewLastMsg", function (senderId, recipientId, cId, senderName,
+                date, msgContent, unseenMsgs, senderPhoto, recipientPhoto, recipientName) {
+                if (recipientId == currentUser) {
+                    var chatId = "chat-header-" + cId;
+                    var chatDivId = document.getElementById(chatId);
+                    if (chatDivId != null) {
+                         var chatDivIdJQ = "#chat-header-" + cId;
+                        $(chatDivIdJQ).empty();
+                        $(chatDivIdJQ).append(`
+                            <a href="/Chat/Chat/`+ currentUser + `?user2Id=` + senderId + `"
+                                    id="chat-header-` + cId + `">
+                                <div class="chat-message m-b-xs" id="chat-style-` + cId + `"
+                                        style="padding-left:0px; border-radius: 10px;`
+                                        + unseenExistsBorder(unseenMsgs) +
+                                        `box-sizing: border-box">
+                                    <img class="message-avatar m-l-md m-t-sm"
+                                        src="` + senderPhoto + `" alt="">
+                                    <div class="message" style="background: none;">
+                                        <span class="message-author" style="color: #000000">` + senderName + `</span>
+                                        <span>&emsp;</span><span>` + date + `</span>`
+                                        + unseenExistsSpan(unseenMsgs) + `
+                                        <span class="message-content">` +  msgLine(msgContent) + `</span>
+                                    </div>
+                                </div>
+                            </a>
+                        `);
+                        connectionChatHeader.invoke("TotalUnseenMsgHeader", currentUser)
+                            .catch(function (err) {
+                            return console.error(err.toString());
+                        });
+                    }
+                }
+                else if (senderId == currentUser) {
+                    var chatId = "chat-header-" + cId;
+                    var chatDivId = document.getElementById(chatId);
+                    if (chatDivId != null) {
+                        console.log("Header works");
+                        var chatDivIdJQ = "#chat-header-" + cId;
+                        $(chatDivIdJQ).empty();
+                        $(chatDivIdJQ).append(`
+                            <a href="/Chat/Chat/`+ currentUser + `?user2Id=` + recipientId + `"
+                                    id="chat-header-` + cId + `">
+                                <div class="chat-message m-b-xs" id="chat-style-` + cId + `"
+                                        style="padding-left:0px; border-radius: 10px;
+                                        border:1px solid #99caff;
+                                        box-sizing: border-box">
+                                    <img class="message-avatar m-l-md m-t-sm"
+                                        src="` + recipientPhoto + `" alt="">
+                                    <div class="message" style="background: none;">
+                                        <span class="message-author" style="color: #000000">` + recipientName + `</span>
+                                        <span>&emsp;</span><span>` + date + `</span>
+                                        <span class="message-content">Me: ` + msgLine(msgContent) + `</span>
+                                    </div>
+                                </div>
+                            </a>
+                        `);
+                    }
+                }
+            });
+
+            connectionChatHeader.on("CheckTotalUnseenHeader", function (user1, user2) {
+                if (currentUser == user1 || currentUser == user2) {
+                    connectionChatHeader.invoke("TotalUnseenMsgHeader", currentUser)
+                        .catch(function (err) {
+                        return console.error(err.toString());
+                    });
+                }
+            });
+
+            connectionChatHeader.on("HeaderMsgSeen", function (cId, userId) {
+                if (currentUser == userId) {
+                    var spanId = "#unseen-header-span-" + cId;
+                    $(spanId).remove();
+                    var divId = "chat-style-" + cId;
+                    var div = document.getElementById(divId);
+                    div.style.border = "1px solid #99caff";
+                    div.style.backgroundColor = "";
+                }
+            });
+
+            function unseenExistsBorder(n) {
+                return (n > 0) ? "border:2px solid #007bff; background-color: #e6f2ff;"
+                    : "border:1px solid #99caff;";
+            };
+            function unseenExistsSpan(n) {
+                return (n > 0) ? 
+                    `<span id='unseen-span' class='badge badge-primary pull-right' 
+                     style='font-size:10px; background-color: #007bff;'>`
+                     + n + `</span>` : "";
+            };
+        </script>
     </environment>
     <environment names="Staging,Production">
         <script src="https://kit.fontawesome.com/93d875730e.js"></script>
@@ -94,6 +290,52 @@
         <script src="~/homer/js/homer.min.js"></script>
         <script src="~/lib_local/sirmiumCustomWindow/sirmiumCustomWindow.js"></script>
         <script src="~/lib_local/aspnet-signalr/signalr.min.js"></script>
+        <script type="text/javascript">
+            var currentUser = document.getElementById('current-userId').value;
+            var chatWindow = document.getElementById('chat-header-window');
+
+            var connectionChatHeader = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+
+            //start connection
+            connectionChatHeader.start().then(function () {
+                console.log("Connected");
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+
+            connectionChatHeader.on("UserHeaderNewMsg", function (senderId, recipientId, cId, senderName,
+                date, msgContent, unseenMsgs, senderPhoto) {
+                if (recipientId == currentUser) {
+                    console.log("UserHeaderNewMsg");
+                    var chatId = "chat-header-" + cId;
+                    var chatExists = document.getElementById(chatId);
+                    if (chatExists != null) {
+                        var chatIdJQ = "#chat-" + cId;
+                        $(chatIdJQ).remove();
+                    }
+                    $('#chat-window').prepend(`
+                            <a href="/Chat/Chat/`+ currentUser + `?user2Id=` + senderId + `"
+                                    id="chat-` + cId + `">
+                                <div class="chat-message m-b-xs"
+                                        style="padding-left:0px; border-radius: 10px;
+                                        border:2px solid #007bff; background-color: #e6f2ff;
+                                        box-sizing: border-box">
+                                    <img class="message-avatar m-l-md m-t-sm"
+                                        src="` + senderPhoto + `" alt="">
+                                    <div class="message" style="background: none;">
+                                        <span class="message-author" style="color: #000000">` + senderName + `</span>
+                                        <span>&emsp;</span><span>` + date + `</span>
+                                        <span id='unseen-span' class='badge badge-primary pull-right'
+                                            style='font-size:10px; background-color: #007bff;'>`
+                        + unseenMsgs + `</span>
+                                        <span class="message-content">` + msgContent + `</span>
+                                    </div>
+                                </div>
+                            </a>
+                        `);
+                }
+            });
+        </script>
     </environment>
 
     @RenderSection("Scripts", required: false)

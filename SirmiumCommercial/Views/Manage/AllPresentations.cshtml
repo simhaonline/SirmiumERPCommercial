@@ -1,6 +1,5 @@
 ﻿@model CourseViewModel
 
-
 @if (Model.Course.Presentations.Count() == 0)
 {
     <div class="col-lg-12 navbar bg-info">
@@ -61,12 +60,24 @@ else
                 <br />
             </div>
             <div class="col-lg-2 text-center">
-                <a class="btn btn-primary2">
-                    Watch <span class="pe pe-7s-play"></span>
-                </a>
+                @if (p.VideoId == 0)
+                {
+                    <a class="btn btn-primary" onclick="NewVideo.show('Presentation', @p.PresentationId); Camera.active('Presentation', @p.PresentationId)">
+                        Create a Video
+                        <span class="far fa-dot-circle-o text-danger"></span>
+                    </a>
+                }
+                else
+                {
+                    <a href="@Url.Action("Index", "Recorder", 
+                            new { id = ViewData["Id"], videoId = p.VideoId })"
+                       class="btn btn-primary2">
+                        Watch <span class="pe pe-7s-play"></span>
+                    </a>
+                }
                 <br />
                 @if (Model.User != null &&
-                   Model.User.Id == ViewData["Id"].ToString())
+                 Model.User.Id == ViewData["Id"].ToString())
                 {
                     <a onclick="EditPresentation.show(@p.PresentationId)"
                        class="btn btn-outline btn-warning2 m-t-sm">
@@ -82,6 +93,15 @@ else
            CourseId = Model.Course.CourseId,
            Presentation = p
         })
+        </div>
+        <!--Add presentation video-->
+        <div>
+            @Html.Partial("CaptureVideo", new VideoModel
+            {
+                UserId = ViewData["Id"].ToString(),
+                For = "Presentation",
+                ForId = p.PresentationId
+            })
         </div>
     }
 }

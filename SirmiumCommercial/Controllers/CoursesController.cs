@@ -240,17 +240,11 @@ namespace SirmiumCommercial.Controllers
             });
         }
 
-        public async Task<IActionResult> Participate(string id, int courseId, 
-            string returnUrl, string userId = null)
+        public async Task<IActionResult> Participate(string id, int courseId)
         {
             ViewData["Id"] = id;
 
-            if (userId == null)
-            {
-                userId = id;
-            }
-
-            AppUser user = await userManager.FindByIdAsync(userId);
+            AppUser user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
                 Course course = repository.Courses
@@ -258,20 +252,20 @@ namespace SirmiumCommercial.Controllers
                 
                 if(course != null)
                 {
-                    repository.AddUserToCourse(userId, courseId);
+                    repository.AddUserToCourse(id, courseId);
                     TempData["sccMsgCourse"] = "You have successfully joined this course.";
-                    return Redirect(returnUrl ?? "/" + id);
+                    return RedirectToAction("CourseDetails", new { id, courseId });
                 }
                 else
                 {
                     TempData["errMsgCourse"] = "Sorry, something went wrong!";
-                    return Redirect(returnUrl ?? "/" + id);
+                    return RedirectToAction("CourseDetails", new { id, courseId });
                 }
             }
             else
             {
                 TempData["errMsgCourse"] = "Sorry, something went wrong!";
-                return Redirect(returnUrl ?? "/" + id);
+                return RedirectToAction("CourseDetails", new { id, courseId });
             }
         }
 

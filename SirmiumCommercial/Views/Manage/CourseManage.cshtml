@@ -24,7 +24,7 @@
             CustomSuccessWindow.show(msg);
         };
 
-        /**/</script>
+                    /**/</script>
 }
 
 <!--Warning Window-->
@@ -54,6 +54,7 @@
 </div>
 
 <!--Create a Video form-->
+<div id="videoFreezeLayer" class="video-freeze-layer" style="display: none"></div>
 <div>
     @Html.Partial("CaptureVideo", new VideoModel
     {
@@ -61,9 +62,9 @@
         For = "Course",
         ForId = Model.Course.CourseId
     })
-</div>    
+</div>
 
-<div class="col-lg-12">
+<div class="col-lg-12" style="padding-top: 10px">
     <div class="col-lg-2 text-center p-lg">
         <h5 class="text-muted">Award</h5>
         <h1>
@@ -127,7 +128,7 @@
     <div class="col-md-1"></div>
     <div class="col-md-2 text-center">
         @if (Model.User != null &&
-            Model.User.Id == ViewData["Id"].ToString())
+        Model.User.Id == ViewData["Id"].ToString())
         {
             <div class="dropdown">
                 <a class="dropdown-toggle btn btn-info" href="#" data-toggle="dropdown">
@@ -201,8 +202,14 @@
             <br />
             @if (Model.Course.VideoId == 0)
             {
-                <a class="btn btn-primary" onclick="NewVideo.show(); Camera.active()" >
+                <a class="btn btn-primary" onclick="NewVideo.show('Course', @Model.Course.CourseId); Camera.active('Course', @Model.Course.CourseId)">
                     Create a Video <span class="far fa-dot-circle-o text-danger"></span>
+                </a>
+            }
+            else if (Model.Course.Status == "Private")
+            {
+                <a class="btn btn-primary" onclick="NewVideo.show('Course', @Model.Course.CourseId); Camera.active('Course', @Model.Course.CourseId)">
+                    Create a New Video <span class="far fa-dot-circle-o text-danger"></span>
                 </a>
             }
         }

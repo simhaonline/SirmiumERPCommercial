@@ -1,7 +1,6 @@
 ﻿@model VideoModel
 
-<div id="videoFreezeLayer" class="video-freeze-layer" style="display: none"></div>
-<div id="video" class="video-container" style="display: none">
+<div id="video-@Model.For-@Model.ForId" class="video-container" style="display: none">
     <div class="video-header">
         <span>Camera</span>
         <a href="@ViewData["ReturnUrl"]"
@@ -10,14 +9,14 @@
     </div>
     <div class="contents text-center">
         <div class="video">
-            <video id="recorder" class="text-center"></video>
-            <div class="controls" id="controls">
+            <video id="recorder-@Model.For-@Model.ForId" class="text-center"></video>
+            <div class="controls" id="controls-@Model.For-@Model.ForId">
                 <div class="btnC row text-center">
-                    <a id="recBtn" class="btn btn-outline btn-default">
+                    <a id="recBtn-@Model.For-@Model.ForId" class="btn btn-outline btn-default">
                         <i class="far fa-dot-circle-o text-danger text-big"></i>
                         <span style="font-size:20px">Rec</span>
                     </a>
-                    <a id="stopBtn" class="btn btn-outline btn-default" style="display: none">
+                    <a id="stopBtn-@Model.For-@Model.ForId" class="btn btn-outline btn-default" style="display: none">
                         <i class="far fa-stop-circle text-primary text-big"></i>
                         <span style="font-size:20px">Stop</span>
                     </a>
@@ -27,20 +26,20 @@
                 <input asp-for="UserId" hidden/>
                 <input asp-for="For"  hidden/>
                 <input asp-for="ForId"  hidden/>
-                <input asp-for="videoUrl" id="videoUrl" hidden />
-                <video id="player" controls style="display: none"></video>
-                <div class="playerControls" id="controls2" style="display: none">
+                <input asp-for="videoUrl" id="videoUrl-@Model.For-@Model.ForId" hidden />
+                <video id="player-@Model.For-@Model.ForId" controls style="display: none"></video>
+                <div class="playerControls" id="controls2-@Model.For-@Model.ForId" style="display: none">
                     <div class="playerBtn">
-                        <a id="replayBtn" class="btn btn-outline btn-default">
+                        <a id="replayBtn-@Model.For-@Model.ForId" class="btn btn-outline btn-default">
                             <i class="fas fa-redo text-primary text-big"></i>
                             <span style="font-size:20px">Replay</span>
                         </a>
-                        <button id="downloadBtn" class="btn btn-outline btn-default"
+                        <button id="downloadBtn-@Model.For-@Model.ForId" class="btn btn-outline btn-default"
                                 type="submit">
                             <i class="fa fa-save text-success text-big"></i>
                             <span style="font-size:20px">Save</span>
                         </button>
-                        <a id="newVideoBtn" class="btn btn-outline btn-default">
+                        <a id="newVideoBtn-@Model.For-@Model.ForId" class="btn btn-outline btn-default">
                             <i class="far fa-dot-circle-o text-danger text-big"></i>
                             <span style="font-size:20px">Try Again</span>
                         </a>

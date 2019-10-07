@@ -1,0 +1,260 @@
+﻿@model ChatViewModel
+
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = "Chat";
+
+    string imgSrc(string imgPath)
+    {
+        return (imgPath != null) ? $"/UsersData/{imgPath}" : "/defaultAvatar.png";
+    }
+
+    string firstLastNameNull(string fName, string lName, string userName)
+    {
+        return (fName == null && lName == null) ?
+            userName : $"{fName} {lName}";
+    }
+
+    string msgImgSrc(Chat chat, string userId)
+    {
+        string uId = (chat.User1Id == userId) ? chat.User2Id : chat.User1Id;
+
+        string userPhoto = Model.Users.FirstOrDefault(u => u.Id == uId).ProfilePhotoUrl;
+
+        return (userPhoto != null) ? $"/UsersData/{userPhoto}" : "/defaultAvatar.png";
+    }
+
+    string msgUserName(Chat chat, string userId)
+    {
+        string uId = (chat.User1Id == userId) ? chat.User2Id : chat.User1Id;
+
+        string userFirstName = Model.Users.FirstOrDefault(u => u.Id == uId).FirstName;
+        string userLastName = Model.Users.FirstOrDefault(u => u.Id == uId).LastName;
+        string userName = Model.Users.FirstOrDefault(u => u.Id == uId).UserName;
+
+        return (userFirstName == null && userLastName == null) ?
+           userName : $"{userFirstName} {userLastName}";
+    }
+
+    string lastMessageSender(string userId)
+    {
+        return (userId == ViewData["Id"].ToString()) ? "Me: " : "";
+    }
+
+    string unseenSpan(int unseenMsg)
+    {
+        return (unseenMsg == 0) ? "" :
+            "<span id='unseen-span' class='badge badge-primary" +
+            $" pull-right' style='font-size:10px; background-color: #007bff;'>{unseenMsg}</span>";
+    }
+
+    string unseenBorder(int unseenMsg)
+    {
+        return (unseenMsg == 0) ? "border:1px solid #99caff;" :
+            "border:2px solid #007bff; background-color: #e6f2ff;";
+    }
+
+    
+
+    string lastMsg (string msg)
+    {
+        int br = msg.IndexOf("</br>");
+
+        if (msg.Length > 61)
+        {
+            string line = msg.Substring(0, 60);
+            return (br <= 60 && br != -1) ? msg.Substring(0, br) + "..." : line + "...";
+        }
+        else
+        {
+            return (br == -1) ? msg : msg.Substring(0, br) + "...";
+        }
+    }
+}
+
+<div class="normalheader" style="padding-top: 10px">
+    <div class="hpanel">
+        <div class="panel-body">
+            <strong style="font-size:30px">Chat</strong>
+            <a class="btn btn-info m-l-md pull-right">
+                New Group <span class="fa fa-group"></span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="content" style="padding-top: 10px">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="hpanel ">
+                <div class="panel-body no-padding">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="chat-users">
+                                <div class="users-list">
+                                    @foreach (AppUser user in Model.Users)
+                                    {
+                                        <a href="@Url.Action("Chat", "Chat",
+                                                new { id = ViewData["Id"], user2Id = user.Id })">
+                                            <div class="chat-user m-l-lg">
+                                                <!--TODO: User online
+                                                <span class="pull-right label label-success">Online</span>
+                                                -->
+                                                <img class="chat-avatar" src="@imgSrc(user.ProfilePhotoUrl)" alt="Photo">
+                                                <div class="chat-user-name">
+                                                    <span>
+                                                        @firstLastNameNull(user.FirstName, user.LastName, user.UserName)
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="chat-discussion" id="chat-window">
+                                @foreach (IndexChat chat in Model.Chats)
+                                {
+                                    <a href="@Url.Action("Chat", "Chat", new {
+                                        id = ViewData["Id"].ToString(),
+                                        user2Id = (ViewData["Id"].ToString() == chat.chat.User1Id) ?
+                                            chat.chat.User2Id : chat.chat.User1Id
+                                    })" id="chat-@chat.chat.ChatId">
+                                        <div class="chat-message m-r-md m-b-xs"
+                                             style="padding-left:0px; border-radius: 10px;
+                                            @unseenBorder(chat.UnseenMsg)
+                                            box-sizing: border-box">
+                                            <img class="message-avatar m-l-md m-t-sm" src="@msgImgSrc(chat.chat, ViewData["Id"].ToString())" alt="">
+                                            <div class="message" style="background: none;">
+                                                <span class="message-author" style="color: #000000">
+                                                    @msgUserName(chat.chat, ViewData["Id"].ToString())
+                                                </span>
+                                                <span>&emsp;</span><span>@chat.MsgSentDate(chat.LastMessageDate)</span>
+                                                @Html.Raw(unseenSpan(chat.UnseenMsg))
+                                                <span class="message-content">
+                                                    @lastMessageSender(chat.LastMessage.UserId)
+                                                    @lastMsg(chat.LastMessage.MessageContent)
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input id="current-user" value="@ViewData["Id"].ToString()" hidden />
+<!--
+
+    Ako postoji vec Chat -> svaki mora imati id = chatId
+                        selektujem element po id-u iybrisati ga i ici na inace
+    inace -> na posetak dodati novi chat
+
+-->
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+    </environment>
+
+    <script type="text/javascript">
+        var currentUser = document.getElementById('current-user').value;
+        var chatWindow = document.getElementById('chat-window');
+
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+
+        //start connection
+        connection.start().then(function () {
+            console.log("Connected");
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        connection.on("ChatIndexNewMsg", function (senderId, recipientId, cId, senderName,
+            date, msgContent, unseenMsgs, senderPhoto) {
+            if (recipientId == currentUser) {
+                var chatId = "chat-" + cId;
+                var chatExists = document.getElementById(chatId);
+                if (chatExists != null) {
+                    var chatIdJQ = "#chat-" + cId;
+                    $(chatIdJQ).remove();
+                }
+                $('#chat-window').prepend(`
+                    <a href="/Chat/Chat/`+ currentUser + `?user2Id=` + senderId +`"
+                            id="chat-` + cId + `">
+                        <div class="chat-message m-r-md m-b-xs"
+                                style="padding-left:0px; border-radius: 10px;
+                                border:2px solid #007bff; background-color: #e6f2ff;
+                                box-sizing: border-box">
+                            <img class="message-avatar m-l-md m-t-sm"
+                                src="` + senderPhoto + `" alt="">
+                            <div class="message" style="background: none;">
+                                <span class="message-author" style="color: #000000">` + senderName + `</span>
+                                <span>&emsp;</span><span>` + date + `</span>
+                                <span id='unseen-span' class='badge badge-primary pull-right' 
+                                    style='font-size:10px; background-color: #007bff;'>`
+                    + unseenMsgs + `</span>
+                                <span class="message-content">` + lastMsgContent.post(msgContent) + `</span>
+                            </div>
+                        </div>
+                    </a>
+                `);
+            }
+        });
+
+        connection.on("ChatIndexNewLastMsg", function (senderId, recipientId, cId, senderName,
+            date, msgContent, unseenMsgs, senderPhoto) {
+            if (recipientId == currentUser) {
+                var chatDivIdJQ = "#chat-" + cId;
+                $(chatDivIdJQ).empty();
+                $(chatDivIdJQ).append(`
+                    <a href="/Chat/Chat/`+ currentUser + `?user2Id=` + senderId +`"
+                            id="chat-` + cId + `">
+                        <div class="chat-message m-r-md m-b-xs"
+                                style="padding-left:0px; border-radius: 10px;`
+                                + unseenExistsBorder(unseenMsgs) +
+                                `box-sizing: border-box">
+                            <img class="message-avatar m-l-md m-t-sm"
+                                src="` + senderPhoto + `" alt="">
+                            <div class="message" style="background: none;">
+                                <span class="message-author" style="color: #000000">` + senderName + `</span>
+                                <span>&emsp;</span><span>` + date + `</span>`
+                                + unseenExistsSpan(unseenMsgs) + `
+                                <span class="message-content">` + lastMsgContent.post(msgContent) + `</span>
+                            </div>
+                        </div>
+                    </a>
+                `);
+            }
+        });
+
+        var lastMsgContent = new function () {
+            this.post = function (msgCont) {
+                var br = msgCont.indexOf("</br>");
+                if (msgCont.length > 21) {
+                    var line = msgCont.substring(0, 20);
+                    return (br <= 20 && br != -1) ? msgCont.substring(0, br) + "..." : line + "...";
+                }
+                else {
+                    return (br == -1) ? msgCont : msgCont.substring(0, br) + "...";
+                }
+            };
+        };
+
+        function unseenExistsBorder(n) {
+            return (n > 0) ? "border:2px solid #007bff; background-color: #e6f2ff;"
+                : "border:1px solid #99caff;";
+        };
+        function unseenExistsSpan(n) {
+            return (n > 0) ? 
+                `<span id='unseen-span' class='badge badge-primary pull-right' 
+                    style='font-size:10px; background-color: #007bff;'>`
+                 + n + `</span>` : "";
+        }
+    </script>
+}

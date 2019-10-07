@@ -1,4 +1,4 @@
-﻿@model IEnumerable<AppUser>
+﻿@model IQueryable<CompanyViewModel>
 
 @{
     Layout = "_UserLayout";
@@ -6,6 +6,14 @@
     var borderTop = new List<String>{"hviolet", "hred", "hgreen", "hyellow",
             "hblue", "hnavyblue", "horange", "hreddeep"};
     var i = 0;
+
+    string imgSrc(string imgPath)
+    {
+        return (imgPath != null) ? 
+            $"<img src='/UsersData/{imgPath}' class='img-circle m-b' alt='photo' />"
+            : "<img src='/defaultAvatar.png' class='img-circle m-b' alt='photo' />";
+        
+    }
 }
 
 @section Styles {
@@ -14,47 +22,38 @@
     </environment>
 }
 
-<div id="topNav" class="nav navbar">
-    <div class="navbar-left m-l">
-        <ul class="nav navbar-nav no-borders">
-            <li>
-                <h2><strong>@ViewData["Title"]</strong></h2>
-            </li>
-        </ul>
+<div class="normalheader" style="padding-top: 10px">
+    <div class="hpanel">
+        <div class="panel-body">
+            <strong style="font-size:30px">All Users</strong>
+        </div>
     </div>
 </div>
 
-<div class="content">
+<div class="content" style="padding-top: 20px;">
     <div class="row">
-        @foreach (AppUser user in Model)
+        @foreach (CompanyViewModel user in Model)
         {
 
             <div class="col-lg-3">
                 <div class="hpanel contact-panel @borderTop[i]">
                     <div class="panel-body">
-                        @if ((DateTime.Now - user.RegistrationDate).TotalDays < 30)
+                        @if ((DateTime.Now - user.User.RegistrationDate).TotalDays < 30)
                         {
                             <span class="label label-success pull-right">NEW</span>
                         }
-                        @if (user.ProfilePhotoUrl == null)
-                        {
-                            <img src="~/defaultAvatar.png" class="img-circle m-b"
-                                 alt="logo" />
-                        }
-                        else
-                        {
-                            <img src="~/UsersData/@user.ProfilePhotoUrl" class="img-circle m-b" alt="logo" />
-                        }
+                        @Html.Raw(imgSrc(user.User.ProfilePhotoUrl))
 
-                        <h3>@user.FirstName <br /> @user.LastName</h3>
+                        <h3>@user.User.FirstName <br /> @user.User.LastName</h3>
                         <a href="@Url.Action("UserProfile", "User",
-                            new { id = ViewData["Id"], userId = user.Id })">
+                            new { id = ViewData["Id"], userId = user.User.Id })">
                             <span class="text-muted font-bold m-b-xs text-info">
-                                &#64;@user.UserName
+                                &#64;@user.User.UserName
                             </span>
                         </a><br />
                         <div class="row">
-                            <a href=""
+                            <a href="@Url.Action("Chat", "Chat", 
+                                    new { id = ViewData["Id"], user2Id = user.User.Id})"
                                class="btn btn-primary pull-right m-r-sm">
                                 Message <span class="pe pe-7s-chat"></span>
                             </a>
@@ -63,8 +62,8 @@
                     <div class="panel-footer contact-footer">
                         <div class="row">
                             <div class="col-md-4 border-right"> <div class="contact-stat"><span>Awards: </span> <strong>0</strong></div> </div>
-                            <div class="col-md-4 border-right"> <div class="contact-stat"><span>Practices </span> <strong>0</strong></div> </div>
-                            <div class="col-md-4"> <div class="contact-stat"><span>Views: </span> <strong>0</strong></div> </div>
+                            <div class="col-md-4 border-right"> <div class="contact-stat"><span>Rating: </span> <strong>0</strong></div> </div>
+                            <div class="col-md-4"> <div class="contact-stat"><span>Views: </span> <strong>@user.Views</strong></div> </div>
                         </div>
                     </div>
                 </div>

@@ -98,23 +98,7 @@
                 </div>
             </li>
             <li class="dropdown">
-                <a class="dropdown-toggle label-menu-corner" href="#" data-toggle="dropdown">
-                    <i class="pe-7s-mail"></i>
-                    <span class="label label-success">1</span>
-                </a>
-                <ul class="dropdown-menu hdropdown animated flipInX">
-                    <div class="title">
-                        You have 1 new message
-                    </div>
-                    <li>
-                        <a>
-                            Welcome User!
-                        </a>
-                    </li>
-                    <li class="summary">
-                        <a href="@Url.Action("Messages", "User")">See All Messages</a>
-                    </li>
-                </ul>
+                @await Component.InvokeAsync("HeaderChat", new { userId = ViewData["Id"] })
             </li>
             <li>
                 <a id="sidebar" class="right-sidebar-toggle">
@@ -129,3 +113,11 @@
         </ul>
     </div>
 </nav>
+
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+    </environment>
+
+    
+}

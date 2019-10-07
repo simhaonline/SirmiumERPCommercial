@@ -1,0 +1,112 @@
+﻿@model ChatViewModel
+
+@{
+    string msgImgSrc(Chat chat, string userId)
+    {
+        string uId = (chat.User1Id == userId) ? chat.User2Id : chat.User1Id;
+
+        string userPhoto = Model.Users.FirstOrDefault(u => u.Id == uId).ProfilePhotoUrl;
+
+        return (userPhoto != null) ? $"/UsersData/{userPhoto}" : "/defaultAvatar.png";
+    }
+
+    string msgUserName(Chat chat, string userId)
+    {
+        string uId = (chat.User1Id == userId) ? chat.User2Id : chat.User1Id;
+
+        string userFirstName = Model.Users.FirstOrDefault(u => u.Id == uId).FirstName;
+        string userLastName = Model.Users.FirstOrDefault(u => u.Id == uId).LastName;
+        string userName = Model.Users.FirstOrDefault(u => u.Id == uId).UserName;
+
+        return (userFirstName == null && userLastName == null) ?
+           userName : $"{userFirstName} {userLastName}";
+    }
+
+    string lastMessageSender(string userId)
+    {
+        return (userId == ViewData["Id"].ToString()) ? "Me: " : "";
+    }
+
+    string newMsgExists(int totalNewMsg)
+    {
+        return (totalNewMsg == 0) ? "" :
+            $"<span class='label' style='background-color: #007bff;'>{totalNewMsg}</span>";
+    }
+
+    string unseenSpan(int unseenMsg, int chatId)
+    {
+        return (unseenMsg == 0) ? "" :
+            $"<span id='unseen-header-span-{chatId}' class='badge badge-primary" +
+            $" pull-right' style='font-size:10px; background-color: #007bff;'>{unseenMsg}</span>";
+    }
+
+    string unseenBorder(int unseenMsg)
+    {
+        return (unseenMsg == 0) ? "border:1px solid #99caff;" :
+            "border:2px solid #007bff; background-color: #e6f2ff;";
+    }
+
+    string lastMsg (string msg)
+    {
+        int br = msg.IndexOf("</br>");
+
+        if (msg.Length > 21)
+        {
+            string line = msg.Substring(0, 20);
+            return (br <= 20 && br != -1) ? msg.Substring(0, br) + "..." : line + "...";
+        }
+        else
+        {
+            return (br == -1) ? msg : msg.Substring(0, br) + "...";
+        }
+    }
+}
+
+<a class="dropdown-toggle label-menu-corner" href="#" id='total-unseen-label'
+   data-toggle="dropdown">
+    <i class="pe-7s-mail"></i>
+    @Html.Raw(newMsgExists(Model.TotalNewMessages))
+</a>
+<ul class="dropdown-menu hdropdown animated flipInX" style="width: 390px">
+    <li class="title">
+        <a>New Message</a>
+    </li>
+    <li>
+        <div class="row">
+            <div class="chat-discussion" id="chat-header-window"
+                 style="padding-top: 0px; padding-bottom: 0px" >
+                @foreach (IndexChat chat in Model.Chats)
+                {
+                    <a href="@Url.Action("Chat", "Chat", new {
+                                        id = ViewData["Id"].ToString(),
+                                        user2Id = (ViewData["Id"].ToString() == chat.chat.User1Id) ?
+                                            chat.chat.User2Id : chat.chat.User1Id
+                                    })" id="chat-header-@chat.chat.ChatId">
+                        <div class="chat-message m-b-xs" id="chat-style-@chat.chat.ChatId"
+                             style="padding-left:0px; padding-top:10px; border-radius: 10px;
+                                            @unseenBorder(chat.UnseenMsg)
+                                            box-sizing: border-box;">
+                            <img class="message-avatar m-l-md m-t-sm" src="@msgImgSrc(chat.chat, ViewData["Id"].ToString())" alt="">
+                            <div class="message" style="background: none;">
+                                <span class="message-author" style="color: #000000">
+                                    @msgUserName(chat.chat, ViewData["Id"].ToString())
+                                </span>
+                                <span>&emsp;</span><span>@chat.MsgSentDate(chat.LastMessageDate)</span>
+                                @Html.Raw(unseenSpan(chat.UnseenMsg, chat.chat.ChatId))
+                                <span class="message-content">
+                                    @lastMessageSender(@chat.LastMessage.UserId)
+                                    @lastMsg(chat.LastMessage.MessageContent)
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        </div>
+    </li>
+    <li class="summary">
+        <a href="@Url.Action("Index", "Chat", new { id = ViewData["Id"] })">See All Messages</a>
+    </li>
+</ul>
+
+<input id="current-userId" value="@ViewData["Id"].ToString()" hidden />

@@ -22,5 +22,11 @@ namespace SirmiumCommercial.Models
         public DbSet<Comment> Comments { get; set; } 
         public DbSet<Likes> Likes { get; set; }
         public DbSet<Dislikes> Dislikes { get; set; }
+        public DbSet<Chat> Chats { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<GroupChat> GroupChats { get; set; }
+        public DbSet<GroupChatUsers> GroupChatUsers { get; set; }
+        public DbSet<GroupChatMessage> GroupChatMessages { get; set; }
+        public DbSet<GroupMessageView> GroupMessageViews { get; set; }
     }
 }

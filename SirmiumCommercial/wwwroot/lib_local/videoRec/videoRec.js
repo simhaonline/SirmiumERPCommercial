@@ -1,19 +1,22 @@
-﻿var videoWindow = document.getElementById('video');
-var freezeLayer = document.getElementById('videoFreezeLayer');
+﻿var freezeLayer = document.getElementById('videoFreezeLayer');
 
 var NewVideo = new function () {
-    this.show = function () {
+    this.show = function (For, forId) {
+        var videoWindowId = "video-" + For + "-" + forId;
+        var videoWindow = document.getElementById(videoWindowId);
         videoWindow.style.display = '';
         freezeLayer.style.display = '';
     };
     this.close = function () {
+        var videoWindowId = "video-" + For + "-" + forId;
+        var videoWindow = document.getElementById(videoWindowId);
         videoWindow.style.display = 'none';
         freezeLayer.style.display = 'none';
     }
 }
 
 var Camera = new function () {
-    this.active = function () {
+    this.active = function (For, forId) {
         let constraintObj = {
             audio: true,
             video: true
@@ -44,7 +47,8 @@ var Camera = new function () {
 
         navigator.mediaDevices.getUserMedia(constraintObj)
             .then(function (mediaStreamObj) {
-                let video = document.getElementById('recorder');
+                var videoName = "recorder-" + For + "-" + forId;
+                let video = document.getElementById(videoName);
                 if ("srcObject" in video) {
                     video.srcObject = mediaStreamObj;
                 } else {
@@ -55,11 +59,21 @@ var Camera = new function () {
                     video.play();
                 };
 
-                let start = document.getElementById('recBtn');
-                let stop = document.getElementById('stopBtn');
-                let vidSave = document.getElementById('player');
-                let save = document.getElementById('saveBtn');
-                let videoSave = document.getElementById('videoUrl');
+                var recBtnId = "recBtn-" + For + "-" + forId;
+                let start = document.getElementById(recBtnId);
+
+                var stopBtnId = "stopBtn-" + For + "-" + forId;
+                let stop = document.getElementById(stopBtnId);
+
+                var playerId = "player-" + For + "-" + forId;
+                let vidSave = document.getElementById(playerId);
+
+                var saveBtnId = "saveBtn-" + For + "-" + forId;
+                let save = document.getElementById(saveBtnId);
+
+                var videoUrlId = "videoUrl-" + For + "-" + forId;
+                let videoSave = document.getElementById(videoUrlId);
+
                 let mediaRecorder = new MediaRecorder(mediaStreamObj);
                 let chunks = [];
 
@@ -84,8 +98,13 @@ var Camera = new function () {
                 }
 
                 var reader = new FileReader();
-                let controls = document.getElementById('controls');
-                let playerControls = document.getElementById('controls2');
+
+                var controlsId = "controls-" + For + "-" + forId;
+                let controls = document.getElementById(controlsId);
+
+                var controls2Id = "controls2-" + For + "-" + forId;
+                let playerControls = document.getElementById(controls2Id);
+
                 mediaRecorder.onstop = (ev) => {
                     let blob = new Blob(chunks, { 'type': 'video/mp4' });
                     chunks = [];
@@ -111,14 +130,16 @@ var Camera = new function () {
                     playerControls.style.display = 'inline';
                 }
 
-                let replay = document.getElementById('replayBtn');
+                var replayBtnId = "replayBtn-" + For + "-" + forId;
+                let replay = document.getElementById(replayBtnId);
                 replay.addEventListener('click', (ev) => {
                     playerControls.style.display = 'none';
                     vidSave.controls = true;
                     vidSave.play();
                 });
 
-                let newVideo = document.getElementById('newVideoBtn');
+                var newVideoBtnId = "newVideoBtn-" + For + "-" + forId;
+                let newVideo = document.getElementById(newVideoBtnId);
                 newVideo.addEventListener('click', (ev) => {
                     vidSave.style.display = 'none';
                     playerControls.style.display = 'none';

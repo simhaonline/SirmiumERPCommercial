@@ -23,6 +23,9 @@
     <Content Update="Views\Admin\Index2.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Chat\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Courses\AllPresentations.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -33,6 +36,9 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Manage\EditCourse.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Shared\Components\HeaderChat\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Shared\UploadPhoto.cshtml">
@@ -53,10 +59,6 @@
     <Content Update="Views\User\MyProfile.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\UsersData\" />
   </ItemGroup>
 
   <ItemGroup>

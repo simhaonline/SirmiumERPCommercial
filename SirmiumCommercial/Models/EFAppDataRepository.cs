@@ -29,6 +29,14 @@ namespace SirmiumCommercial.Models
         public IQueryable<Comment> Comments => context.Comments;
         public IQueryable<Likes> Likes => context.Likes;
         public IQueryable<Dislikes> Dislikes => context.Dislikes;
+        public IQueryable<Chat> Chats => context.Chats.Include(c => c.Messages);
+        public IQueryable<ChatMessage> ChatMessages => context.ChatMessages;
+        public IQueryable<GroupChat> GroupChats => context.GroupChats
+            .Include(g => g.Messages).Include(g => g.Users);
+        public IQueryable<GroupChatUsers> GroupChatUsers => context.GroupChatUsers;
+        public IQueryable<GroupChatMessage> GroupChatMessages => context.GroupChatMessages
+            .Include(m => m.Views);
+        public IQueryable<GroupMessageView> GroupMessageViews => context.GroupMessageViews;
 
         public void SaveCourse(Course course)
         {
@@ -430,6 +438,202 @@ namespace SirmiumCommercial.Models
             if(dbEntry != null)
             {
                 context.Dislikes.Remove(dbEntry);
+                context.SaveChanges();
+            }
+        }
+
+        public void NewChat(Chat chat)
+        {
+            //if chat not exists create new else return this chat
+            if (chat.ChatId == 0)
+            {
+                context.Chats.Add(chat);
+                context.SaveChanges();
+            }
+        }
+
+        public void EditGroupChat(GroupChat chat)
+        {
+            //if not exists create new
+            if(chat.ChatId == 0)
+            {
+                context.GroupChats.Add(chat);
+                context.SaveChanges();
+            }
+            else
+            {
+                GroupChat dbEntry = context.GroupChats
+                    .FirstOrDefault(c => c.ChatId == chat.ChatId);
+                dbEntry.ChatPhotoPath = chat.ChatPhotoPath;
+                dbEntry.Title = chat.Title;
+                context.SaveChanges();
+            }
+        }
+
+        public void AddUserToGroupChat (int chatId, string userId)
+        {
+            GroupChatUsers dbEntry = new GroupChatUsers
+            {
+                UserId = userId
+            };
+            GroupChat chat = context.GroupChats
+                .FirstOrDefault(c => c.ChatId == chatId);
+
+            context.Attach(chat);
+            context.GroupChatUsers.Add(dbEntry);
+            context.SaveChanges();
+        }
+
+        public void RemoveUserFromGroupChat (int id)
+        {
+            GroupChatUsers dbEntry = context.GroupChatUsers
+                .FirstOrDefault(cu => cu.id == id);
+            context.GroupChatUsers.Remove(dbEntry);
+            context.SaveChanges();
+        }
+
+        public void NewChatMessage (ChatMessage msg, Chat chat)
+        {
+            if (msg.Id == 0)
+            {
+                msg.DateAdded = DateTime.Now;
+                context.Attach(chat);
+                context.ChatMessages.Add(msg);
+                chat.Messages.Add(msg);
+                context.SaveChanges();
+            }
+        }
+
+        public void NewGroupChatMessage (GroupChatMessage msg, GroupChat chat)
+        {
+            if (msg.MessageId == 0)
+            {
+                msg.DateAdded = DateTime.Now;
+                context.Attach(chat);
+                context.GroupChatMessages.Add(msg);
+                context.SaveChanges();
+            }
+        }
+
+        public void AddSeenChat (ChatMessage msg)
+        {
+            if (msg.Id != 0)
+            {
+                msg.Seen = true;
+                context.SaveChanges();
+            }
+        }
+
+        public void AddViewToGroupMessage (int groupMsgId, string userId, int groupChatId)
+        {
+            GroupMessageView dbEntry = new GroupMessageView
+            {
+                UserId = userId
+            };
+            GroupChatMessage msg = context.GroupChatMessages
+                .FirstOrDefault(m => m.MessageId == groupMsgId);
+            context.Attach(msg);
+            context.GroupMessageViews.Add(dbEntry);
+            context.SaveChanges();
+
+            //check: if all users saw the message
+            GroupChat chat = context.GroupChats
+                .FirstOrDefault(c => c.ChatId == groupChatId);
+            msg = context.GroupChatMessages
+                .FirstOrDefault(m => m.MessageId == groupMsgId);
+
+            if (chat.Users.Count() == msg.Views.Count())
+            {
+                msg.Seen = true;
+                foreach (GroupMessageView view in msg.Views)
+                {
+                    context.GroupMessageViews.Remove(view);
+                }
+                context.SaveChanges();
+            }
+        }
+
+        public void DeleteChatMessage (int msgId)
+        {
+            ChatMessage dbEntry = context.ChatMessages
+                .FirstOrDefault(c => c.Id == msgId);
+            if( dbEntry != null)
+            {
+                context.ChatMessages.Remove(dbEntry);
+                context.SaveChanges();
+            }
+        }
+
+        public void DeleteGroupChatMessage (int msgId)
+        {
+            GroupChatMessage dbEntry = context.GroupChatMessages
+                .FirstOrDefault(c => c.MessageId == msgId);
+            if (dbEntry != null)
+            {
+                //delete all group message views
+                foreach (GroupMessageView view in dbEntry.Views)
+                {
+                    context.GroupMessageViews.Remove(view);
+                    context.SaveChanges();
+                }
+
+                context.GroupChatMessages.Remove(dbEntry);
+                context.SaveChanges();
+            }
+        }
+
+        public void DeleteGroupChat (int chatId)
+        {
+            GroupChat dbEntry = context.GroupChats
+                .FirstOrDefault(c => c.ChatId == chatId);
+            if(dbEntry != null)
+            {
+                //delete all chat users
+                foreach (GroupChatUsers user in dbEntry.Users)
+                {
+                    RemoveUserFromGroupChat(user.id);
+                }
+
+                //delete all chat messages
+                foreach (GroupChatMessage msg in dbEntry.Messages)
+                {
+                    DeleteGroupChatMessage(msg.MessageId);
+                }
+                    
+                context.GroupChats.Remove(dbEntry);
+                context.SaveChanges();
+            }
+        }
+
+        public void ClearChat(string userId, int chatId)
+        {
+            Chat chat = context.Chats
+                .FirstOrDefault(c => c.ChatId == chatId);
+            if (chat != null)
+            {
+                if (chat.User1Id == userId)
+                {
+                    chat.User1Checkpoint = DateTime.Now;
+                    context.SaveChanges();
+                }
+                else
+                {
+                    chat.User2Checkpoint = DateTime.Now;
+                    context.SaveChanges();
+                }
+
+                CheckpointDelete(chat);
+            }
+        }
+
+        public void CheckpointDelete (Chat chat)
+        {
+            DateTime date = (chat.User1Checkpoint >= chat.User2Checkpoint) ?
+                chat.User1Checkpoint : chat.User2Checkpoint;
+
+            foreach (ChatMessage msg in chat.Messages.Where(c => c.DateAdded >= date))
+            {   
+                DeleteChatMessage(msg.Id);
                 context.SaveChanges();
             }
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -169,6 +170,95 @@ namespace SirmiumCommercial.Models
         public string For { get; set; }
         //CourseId, PresentationId, VideoId, ...
         public int ForId { get; set; }
+        public string UserId { get; set; }
+    }
+
+
+    //-----Chat classes-----
+
+    //2 persons chat
+    public class Chat
+    {
+        public int ChatId { get; set; }
+        public string User1Id { get; set; }
+        public string User2Id { get; set; }
+
+        public ICollection<ChatMessage> Messages { get; set; }
+            = new List<ChatMessage>();
+
+        //both checkpoint default = date of first msg
+        //after delete chat = current date (delete)
+        public DateTime User1Checkpoint { get; set; }
+        public DateTime User2Checkpoint { get; set; }
+    }
+
+    //2 persons chat messages
+    public class ChatMessage
+    {
+        public int Id { get; set; }
+        public string UserId { get; set; }
+        public DateTime DateAdded { get; set; }
+
+        //Txt, Img, Video or Audio
+        public string MessageType { get; set; }
+
+        //For Txt type : text
+        //For Img, Video, Audio type : path
+        public string MessageContent { get; set; }
+
+        //the user saw message
+        public bool Seen { get; set; } = false;
+    }
+
+    public class GroupChat
+    {
+        [Key]
+        public int ChatId { get; set; }
+        public string CreatedBy { get; set; }
+        public string Title { get; set; }
+        public string ChatPhotoPath { get; set; }
+
+        public ICollection<GroupChatUsers> Users { get; set; }
+            = new List<GroupChatUsers>();
+
+        public ICollection<GroupChatMessage> Messages { get; set; }
+            = new List<GroupChatMessage>();
+    }
+
+    public class GroupChatUsers
+    {
+        [Key]
+        public int id { get; set; }
+        public string UserId { get; set; }
+    }
+
+    //group chat messages
+    public class GroupChatMessage
+    {
+        [Key]
+        public int MessageId { get; set; }
+        public string UserId { get; set; }
+        public DateTime DateAdded { get; set; }
+
+        //Txt, Img, Video or Audio
+        public string MessageType { get; set; }
+
+        //For Txt type : text
+        //For Img, Video, Audio type : path
+        public string MessageContent { get; set; }
+
+        public ICollection<GroupMessageView> Views { get; set; }
+            = new List<GroupMessageView>();
+
+        //if all users saw the massage: seen = true
+        public bool Seen { get; set; } = false;
+    }
+
+    //users who saw the message
+    public class GroupMessageView
+    {
+        [Key]
+        public int Id { get; set; }
         public string UserId { get; set; }
     }
 }

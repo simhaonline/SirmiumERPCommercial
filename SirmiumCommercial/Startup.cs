@@ -75,6 +75,7 @@ namespace SirmiumCommercial
             {
                 routes.MapHub<VideoHub>("/videoHub");
                 routes.MapHub<CommentsHub>("/commentsHub");
+                routes.MapHub<ChatHub>("/chatHub");
             });
 
             AppSeedData.EnsurePopulated(app);

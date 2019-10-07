@@ -276,6 +276,7 @@ namespace SirmiumCommercial.Controllers
             if (user != null)
             {
                 ViewData["Id"] = user.Id;
+                int videoId = 0;
 
                 string base64 = model.videoUrl.Substring(model.videoUrl.IndexOf(',') + 1);
                 byte[] data = Convert.FromBase64String(base64);
@@ -312,16 +313,18 @@ namespace SirmiumCommercial.Controllers
                             .FirstOrDefault(v => v.ForId == course.CourseId).Id;
                         repository.SaveCourse(course);
 
+                        videoId = course.VideoId;
+
                         break;
 
                     case "Presentation":
                         Presentation presentation = repository.Presentations
-                            .FirstOrDefault(p => p.PresentationId == model.Id);
+                            .FirstOrDefault(p => p.PresentationId == model.ForId);
 
                         dirPath = Path.Combine(hostingEnvironment.WebRootPath, 
-                            $@"UsersData\{user.Id}\Presentations\{model.Id}");
+                            $@"UsersData\{user.Id}\Presentations\");
                         System.IO.Directory.CreateDirectory(dirPath);
-                        fileName = $@"{presentation.Title}.mp4";
+                        fileName = $@"{presentation.PresentationId}.mp4";
                         filePath = Path.Combine(dirPath, fileName);
 
                         //save presentation video 
@@ -333,20 +336,23 @@ namespace SirmiumCommercial.Controllers
                             For = "Presentation",
                             ForId = presentation.PresentationId,
                             DateAdded = DateTime.Now,
-                            VideoPath = $@"UsersData\{user.Id}\Presentations\{model.Id}\{presentation.Title}.mp4"
+                            VideoPath = $@"/UsersData/{user.Id}/Presentations/{presentation.PresentationId}.mp4"
                         };
+                        repository.SaveVideo(video2);
                         presentation.VideoId = repository.Videos
                             .FirstOrDefault(v => v.ForId == presentation.PresentationId).Id;
                         repository.SavePresentation(presentation);
+                        videoId = presentation.VideoId;
 
                         break;
+
                     case "Representation":
                         Representation representation = repository.Representations
-                            .FirstOrDefault(r => r.RepresentationId == model.Id);
+                            .FirstOrDefault(r => r.RepresentationId == model.ForId);
                         dirPath = Path.Combine(hostingEnvironment.WebRootPath, 
-                            $@"UsersData\{user.Id}");
+                            $@"UsersData\{user.Id}\Representations");
                         System.IO.Directory.CreateDirectory(dirPath);
-                        fileName = $@"{representation.Title}.mp4";
+                        fileName = $@"{representation.RepresentationId}.mp4";
                         filePath = Path.Combine(dirPath, fileName);
 
                         //save representation vide path
@@ -358,11 +364,14 @@ namespace SirmiumCommercial.Controllers
                             For = "Representation",
                             ForId = representation.RepresentationId,
                             DateAdded = DateTime.Now,
-                            VideoPath = $@"UsersData\{user.Id}\{representation.Title}.mp4"
+                            VideoPath = $@"/UsersData/{user.Id}/Representations/{representation.RepresentationId}.mp4"
                         };
+                        repository.SaveVideo(video3);
                         representation.VideoId = repository.Videos
                             .FirstOrDefault(v => v.Id == representation.RepresentationId).Id;
                         repository.SaveRepresentation(representation);
+                        videoId = representation.VideoId;
+
                         break;
                 }
 
@@ -372,7 +381,7 @@ namespace SirmiumCommercial.Controllers
                      videoFile.Flush();
                  }
 
-                return RedirectToAction("Video", new { id = user.Id });
+                return RedirectToAction("Index", new { id = user.Id, videoId});
             }
             else
             {
