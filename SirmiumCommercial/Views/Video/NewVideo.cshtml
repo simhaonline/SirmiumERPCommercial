@@ -1,0 +1,97 @@
+﻿@model Video
+
+
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = "New Video";
+}
+
+@section Styles {
+    <environment names="Development,Staging,Production">
+    </environment>
+    <style>
+    </style>
+}
+
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body">
+            <strong style="font-size:30px">@ViewData["Title"]</strong>
+        </div>
+    </div>
+</div>
+
+<div class="row p-sm">
+    <div class="col-lg-12">
+        <div class="hpanel" style="margin-bottom: 0px;">
+            <div class="panel-body">
+                <div class="content" style="padding: 0px;">
+                    <div class="row">
+                        <div class="hpanel contact-panel hreddeep">
+                            <div class="panel-body">
+                                <input asp-for="Title" class="form-control"
+                                       placeholder="Video Title" />
+                            </div>
+                        </div>
+                        <div class="hpanel contact-panel hnavyblue">
+                            <div class="panel-body">
+                                <div id="video-practice-1" class="video-container">
+                                    <div class="contents text-center">
+                                        <div class="video">
+                                            <video id="recorder-practice-1" class="text-center"></video>
+                                            <div class="controls" id="controls-practice-1">
+                                                <div class="btnC row text-center">
+                                                    <a id="recBtn-practice-1" class="btn btn-outline btn-default">
+                                                        <i class="far fa-dot-circle-o text-danger text-big"></i>
+                                                        <span style="font-size:20px">Rec</span>
+                                                    </a>
+                                                    <a id="stopBtn-practice-1" class="btn btn-outline btn-default" style="display: none">
+                                                        <i class="far fa-stop-circle text-primary text-big"></i>
+                                                        <span style="font-size:20px">Stop</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <input asp-for="CreatedBy" value="@ViewData["Id"]" hidden />
+                                            <input asp-for="For" hidden />
+                                            <input asp-for="ForId" hidden />
+                                            @*<input asp-for="videoUrl" id="videoUrl-practice-1" hidden />*@
+                                            <video id="player-practice-1" controls style="display: none"></video>
+                                            <div class="playerControls" id="controls2-practice-1" style="display: none">
+                                                <div class="playerBtn">
+                                                    <a id="replayBtn-practice-1" class="btn btn-outline btn-default">
+                                                        <i class="fas fa-redo text-primary text-big"></i>
+                                                        <span style="font-size:20px">Replay</span>
+                                                    </a>
+                                                    <button id="downloadBtn-practice-1" class="btn btn-outline btn-default"
+                                                            type="submit">
+                                                        <i class="fa fa-save text-success text-big"></i>
+                                                        <span style="font-size:20px">Save</span>
+                                                    </button>
+                                                    <a id="newVideoBtn-practice-1" class="btn btn-outline btn-default">
+                                                        <i class="far fa-dot-circle-o text-danger text-big"></i>
+                                                        <span style="font-size:20px">Try Again</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+        <script src="~/lib_local/videoRec/videoRec.js"></script>
+    </environment>
+<script>
+    $( document ).ready(function() {
+         Camera.active('practice', '1');
+    });
+</script>
+}

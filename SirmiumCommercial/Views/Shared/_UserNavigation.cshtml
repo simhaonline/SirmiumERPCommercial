@@ -77,6 +77,29 @@
                 </li>
             </ul>
         </li>
+        <li class="@Html.IsSelected(controller: "Video")">
+            <a href="#">
+                <span class="fa fa-play @Html.IsSelected(controller: "Video")"></span>
+                <span class="nav-label @Html.IsSelected(controller: "Video")">Video</span>
+                <span class="fa arrow @Html.IsSelected(controller: "Video")"></span>
+            </a>
+            <ul class="nav nav-second-level">
+                <li class="@Html.IsSelected(action: "MyGallery")">
+                    <a href="@Url.Action("MyGallery", "Video", new { id = ViewData["Id"] })">
+                        <span class="@Html.IsSelected(action: "MyGallery")">
+                            My Gallery
+                        </span>
+                    </a>
+                </li>
+                <li class="@Html.IsSelected(action: "VideoGallery")">
+                    <a href="@Url.Action("VideoGallery", "Video", new { id = ViewData["Id"] })">
+                        <span class="@Html.IsSelected(action: "VideoGallery")">
+                            Video Gallery
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </li>
         <li class="@Html.IsSelected(controller: "Reporting")">
             <a href="@Url.Action("Index", "Reporting", new { id = ViewData["Id"] })">
                 <span class="fa fa-bar-chart @Html.IsSelected(controller: "Reporting",
@@ -99,14 +122,6 @@
                                        action: "Index")"></span>
                 <span class="nav-label @Html.IsSelected(controller: "Admin",
                                        action: "Index")">Admin</span>
-            </a>
-        </li>
-        <li class="@Html.IsSelected(controller: "Recorder")">
-            <a href="@Url.Action("Index", "Recorder", new { id = ViewData["Id"] })">
-                <span class="fa fa-play @Html.IsSelected(controller: "Recorder",
-                                       action: "Index")"></span>
-                <span class="nav-label @Html.IsSelected(controller: "Recorder",
-                                       action: "Index")">Player</span>
             </a>
         </li>
     </ul>

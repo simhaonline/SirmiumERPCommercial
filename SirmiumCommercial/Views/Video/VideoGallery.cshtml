@@ -1,0 +1,202 @@
+﻿@model GalleryViewModel
+
+@{
+    Layout = "_UserLayout";
+
+}
+
+@section Styles {
+    <environment names="Development,Staging,Production">
+    </environment>
+    <style>
+        .collapse-btn {
+            border: none;
+            background: none;
+            color: #999999;
+        }
+
+            .collapse-btn:hover {
+                background-color: #f2f2f2;
+                border-radius: 20px;
+                box-sizing: border-box;
+            }
+
+        .videoBtnCD {
+            display: none;
+            position: absolute;
+            top: 32%;
+            left: 2%;
+        }
+
+        .img-video:hover + .videoBtnCD {
+            display: inline;
+        }
+
+        .videoBtnCD:hover {
+            display: inline;
+        }
+
+        .img-video {
+            width: 100%;
+            height: 80%;
+        }
+    </style>
+}
+
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body">
+            <strong style="font-size:30px">@ViewData["Title"]</strong>
+            <a href="@Url.Action("NewVideo", "Video", new { id = ViewData["Id"] })"
+               class="btn btn-primary btn-outline pull-right">
+                New Video <span class="far fa-dot-circle-o text-danger"></span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!--Private Videos-->
+@if (Model.Private.Count() != 0)
+{
+    @Html.Partial("GalleryPartial", new GalleryPartialViewModel
+    {
+        VideoInfo = Model.Private,
+        DivId = "private-collapse",
+        BtnId = "private-btn",
+        OnClickAction = "private"
+    })
+}
+
+<!--Most popular videos-->
+@if (Model.MostPopular.Count() != 0)
+{
+    @Html.Partial("GalleryPartial", new GalleryPartialViewModel
+    {
+        VideoInfo = Model.MostPopular,
+        DivId = "most-popular-collapse",
+        BtnId = "most-popular-btn",
+        OnClickAction = "mostPopular"
+    })
+}
+
+<!--Top 10 Videos-->
+@if (Model.Top10.Count() != 0)
+{
+    @Html.Partial("GalleryPartial", new GalleryPartialViewModel
+    {
+        VideoInfo = Model.Top10,
+        DivId = "top10-collapse",
+        BtnId = "top10-btn",
+        OnClickAction = "top10"
+    })
+}
+
+<!--Course Videos-->
+@if (Model.CourseVideos.Count() != 0)
+{
+    @Html.Partial("GalleryPartial", new GalleryPartialViewModel
+    {
+        VideoInfo = Model.CourseVideos,
+        DivId = "course-collapse",
+        BtnId = "course-btn",
+        OnClickAction = "course"
+    })
+}
+
+<!--Presentation Videos-->
+@if (Model.PresentationVideos.Count() != 0)
+{
+    @Html.Partial("GalleryPartial", new GalleryPartialViewModel
+    {
+        VideoInfo = Model.PresentationVideos,
+        DivId = "presentation-collapse",
+        BtnId = "presentation-btn",
+        OnClickAction = "presentation"
+    })
+}
+
+<!--Representation Videos-->
+@if (Model.RepresentationVideos.Count() != 0)
+{
+    @Html.Partial("GalleryPartial", new GalleryPartialViewModel
+    {
+        VideoInfo = Model.RepresentationVideos,
+        DivId = "representation-collapse",
+        BtnId = "representation-btn",
+        OnClickAction = "representation"
+    })
+}
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+    </environment>
+    <script>
+        var collapseBtn = new function () {
+            this.private = function () {
+                if ($('#private-collapse').hasClass('in')) {
+                    $('#private-btn').html(`
+                    Show More <span class="fa fa-angle-double-down">`);
+                }
+                else {
+                    $('#private-btn').html(`
+                    Hide <span class="fa fa-angle-double-up">`);
+                }
+            };
+
+            this.mostPopular = function () {
+                if ($('#most-popular-collapse').hasClass('in')) {
+                    $('#most-popular-btn').html(`
+                    Show More <span class="fa fa-angle-double-down">`);
+                }
+                else {
+                    $('#most-popular-btn').html(`
+                    Hide <span class="fa fa-angle-double-up">`);
+                }
+            };
+
+            this.top10 = function () {
+                if ($('#top10-collapse').hasClass('in')) {
+                    $('#top10-btn').html(`
+                    Show More <span class="fa fa-angle-double-down">`);
+                }
+                else {
+                    $('#top10-btn').html(`
+                    Hide <span class="fa fa-angle-double-up">`);
+                }
+            };
+
+            this.course = function () {
+                if ($('#course-collapse').hasClass('in')) {
+                    $('#course-btn').html(`
+                    Show More <span class="fa fa-angle-double-down">`);
+                }
+                else {
+                    $('#course-btn').html(`
+                    Hide <span class="fa fa-angle-double-up">`);
+                }
+            };
+
+            this.presentation = function () {
+                if ($('#presentation-collapse').hasClass('in')) {
+                    $('#presentation-btn').html(`
+                    Show More <span class="fa fa-angle-double-down">`);
+                }
+                else {
+                    $('#presentation-btn').html(`
+                    Hide <span class="fa fa-angle-double-up">`);
+                }
+            };
+
+            this.representation = function () {
+                if ($('#representation-collapse').hasClass('in')) {
+                    $('#representation-btn').html(`
+                    Show More <span class="fa fa-angle-double-down">`);
+                }
+                else {
+                    $('#representation-btn').html(`
+                    Hide <span class="fa fa-angle-double-up">`);
+                }
+            };
+        };
+    </script>
+}
