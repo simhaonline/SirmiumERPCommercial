@@ -165,6 +165,7 @@ namespace SirmiumCommercial.Models.ViewModels
     public class VideoModel
     {
         public int Id { get; set; }
+        public string Title { get; set; }
 
         //Course, Presentation, Representation
         public string For { get; set; }

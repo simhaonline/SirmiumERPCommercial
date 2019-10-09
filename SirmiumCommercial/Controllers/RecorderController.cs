@@ -390,5 +390,78 @@ namespace SirmiumCommercial.Controllers
 
             return Redirect(model.returnUrl);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> NewPracticeVideo(VideoModel model)
+        {
+            AppUser user = await userManager.FindByIdAsync(model.UserId);
+
+            if (user != null)
+            {
+                ViewData["Id"] = user.Id;
+                int videoId = 0;
+
+                string base64 = model.videoUrl.Substring(model.videoUrl.IndexOf(',') + 1);
+                byte[] data = Convert.FromBase64String(base64);
+
+                //Create video directory
+                var videoTitle = (model.Title == "" || model.Title == null) ?
+                    $"Video{DateTime.Now.Day}{DateTime.Now.Month}{DateTime.Now.Year}" +
+                    $"{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}" :
+                    model.Title;
+
+                var dirPath = Path.Combine(hostingEnvironment.WebRootPath,
+                    $@"UsersData\{model.UserId}\Video");
+                System.IO.Directory.CreateDirectory(dirPath);
+                var fileName = $@"{videoTitle}.mp4";
+                var filePath = Path.Combine(dirPath, fileName);
+
+                //save video
+                DateTime currentDate = DateTime.Now;
+                Video video = new Video
+                {
+                    Title = $"{videoTitle}",
+                    CreatedBy = model.UserId,
+                    Status = "Private",
+                    For = "Practice",
+                    DateAdded = currentDate,
+                    VideoPath = $@"/UsersData/{model.UserId}/Video/{videoTitle}.mp4"
+                };
+                repository.SaveVideo(video);
+
+                videoId = repository.Videos
+                    .FirstOrDefault(v => v.Title == videoTitle &&
+                                    v.DateAdded == currentDate).Id;
+
+                using (var videoFile = new FileStream(filePath, FileMode.Create))
+                {
+                    videoFile.Write(data, 0, data.Length);
+                    videoFile.Flush();
+                }
+
+                return RedirectToAction("Index", new { id = user.Id, videoId });
+            }
+            else
+            {
+                return Redirect("Error");
+            }
+        }
+
+        public IActionResult DeletePrivateVideo (string id, int videoId)
+        {
+            ViewData["Id"] = id;
+
+            Video video = repository.Videos.FirstOrDefault(v => v.Id == videoId);
+            if(video != null)
+            {
+                repository.DeleteVideo(videoId);
+                TempData["succMsgMG"] = $"Video: '{video.Title}' has been deleted!";
+            }
+            else
+            {
+                TempData["errMsgMG"] = "Sorry, something went wrong!";
+            }
+            return RedirectToAction("MyGallery", "Video", new { id = id });
+        }
     }
 }

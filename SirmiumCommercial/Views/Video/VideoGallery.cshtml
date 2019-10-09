@@ -43,6 +43,20 @@
     </style>
 }
 
+<!--Msg window-->
+@if (TempData["succMsgMG"] != null)
+{
+    <div id="msgWindowSuccess">
+        <input value="@TempData["succMsgMG"]" id="windowMsg" hidden />
+    </div>
+}
+@if (TempData["errMsgMG"] != null)
+{
+    <div id="msgWindowError">
+        <input value="@TempData["errMsgMG"]" id="windowMsg" hidden />
+    </div>
+}
+
 <div class="normalheader p-sm">
     <div class="hpanel">
         <div class="panel-body">
@@ -135,66 +149,66 @@
             this.private = function () {
                 if ($('#private-collapse').hasClass('in')) {
                     $('#private-btn').html(`
-                    Show More <span class="fa fa-angle-double-down">`);
+                        Show More <span class="fa fa-angle-double-down">`);
                 }
                 else {
                     $('#private-btn').html(`
-                    Hide <span class="fa fa-angle-double-up">`);
+                        Hide <span class="fa fa-angle-double-up">`);
                 }
             };
 
             this.mostPopular = function () {
                 if ($('#most-popular-collapse').hasClass('in')) {
                     $('#most-popular-btn').html(`
-                    Show More <span class="fa fa-angle-double-down">`);
+                        Show More <span class="fa fa-angle-double-down">`);
                 }
                 else {
                     $('#most-popular-btn').html(`
-                    Hide <span class="fa fa-angle-double-up">`);
+                        Hide <span class="fa fa-angle-double-up">`);
                 }
             };
 
             this.top10 = function () {
                 if ($('#top10-collapse').hasClass('in')) {
                     $('#top10-btn').html(`
-                    Show More <span class="fa fa-angle-double-down">`);
+                        Show More <span class="fa fa-angle-double-down">`);
                 }
                 else {
                     $('#top10-btn').html(`
-                    Hide <span class="fa fa-angle-double-up">`);
+                        Hide <span class="fa fa-angle-double-up">`);
                 }
             };
 
             this.course = function () {
                 if ($('#course-collapse').hasClass('in')) {
                     $('#course-btn').html(`
-                    Show More <span class="fa fa-angle-double-down">`);
+                        Show More <span class="fa fa-angle-double-down">`);
                 }
                 else {
                     $('#course-btn').html(`
-                    Hide <span class="fa fa-angle-double-up">`);
+                        Hide <span class="fa fa-angle-double-up">`);
                 }
             };
 
             this.presentation = function () {
                 if ($('#presentation-collapse').hasClass('in')) {
                     $('#presentation-btn').html(`
-                    Show More <span class="fa fa-angle-double-down">`);
+                        Show More <span class="fa fa-angle-double-down">`);
                 }
                 else {
                     $('#presentation-btn').html(`
-                    Hide <span class="fa fa-angle-double-up">`);
+                        Hide <span class="fa fa-angle-double-up">`);
                 }
             };
 
             this.representation = function () {
                 if ($('#representation-collapse').hasClass('in')) {
                     $('#representation-btn').html(`
-                    Show More <span class="fa fa-angle-double-down">`);
+                        Show More <span class="fa fa-angle-double-down">`);
                 }
                 else {
                     $('#representation-btn').html(`
-                    Hide <span class="fa fa-angle-double-up">`);
+                        Hide <span class="fa fa-angle-double-up">`);
                 }
             };
         };

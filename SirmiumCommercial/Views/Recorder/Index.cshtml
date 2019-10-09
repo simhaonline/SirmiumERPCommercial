@@ -62,7 +62,8 @@
         #videoControlsReplay:hover {
             cursor: pointer;
         }
-        textarea{
+
+        textarea {
             resize: none;
             overflow-y: scroll;
         }
@@ -172,14 +173,22 @@
 <input id="current-user-photo" value="@Model.Users.FirstOrDefault(u => u.Id == ViewData["Id"].ToString()).ProfilePhotoUrl" hidden />
 <input id="for" value="Video" hidden />
 <input id="forId" value="@Model.Video.Id" hidden />
+<input id="video-status" value="@Model.Video.Status" hidden />
 
-
-<div id="allCommentsPartial">
-    @await Component.InvokeAsync("Comment", new { For = "Video", forId = Model.Video.Id })
-</div>
+@if (Model.Video.Status != "Private")
+{
+    <div id="allCommentsPartial">
+        @await Component.InvokeAsync("Comment", new { For = "Video", forId = Model.Video.Id })
+    </div>
+}
 
 @section Scripts {
-    <script src="~/lib_local/comment-hub/comment-hub.js"></script>
+
+    @if (Model.Video.Status != "Private")
+    {
+        <script src="~/lib_local/comment-hub/comment-hub.js"></script>
+    }
+
     <script>
         //Player controls
         var videoPlayer = document.getElementById('videoPlayer');
@@ -212,88 +221,89 @@
             videoControlsReplay.style.display = "";
         };
 
-        //SignalR connection
-        var connection = new signalR.HubConnectionBuilder().withUrl("/videoHub").build();
+        if (document.getElementById('video-status').value != 'Private') {
+            //SignalR connection
+            var connection = new signalR.HubConnectionBuilder().withUrl("/videoHub").build();
 
-        //post total video views
-        connection.on("NewVideoView", function (id, views) {
-            if (id == videoId) {
-                $('#total-video-views').html(views + " Views");
-            }
-        });
-
-        //post total video likes
-        var likesCount = document.getElementById('likes-count');
-        var dislikesCount = document.getElementById('dislikes-count');
-
-        connection.on("AddRemoveLike", function (vId, uId,
-            totalLikes, likeInd, totalDislikes, dislikeInd) {
-            if (vId == videoId) {
-                if (uId == userId) {
-                    likesCount.style.color = (likeInd) ? "#62cb31" : "#777";
-                    dislikesCount.style.color = "#777";
+            //post total video views
+            connection.on("NewVideoView", function (id, views) {
+                if (id == videoId) {
+                    $('#total-video-views').html(views + " Views");
                 }
-                $('#likes-count').html(totalLikes);
-                $('#dislikes-count').html(totalDislikes);
-            }
-        });
+            });
 
-        //post total video dislikes
-        connection.on("AddRemoveDislike", function (vId, uId,
-            totalLikes, likeInd, totalDislikes, dislikeInd) {
-            if (vId == videoId) {
-                if (uId == userId) {
-                    likesCount.style.color = "#777";
-                    dislikesCount.style.color = (dislikeInd) ? "#e74c3c" : "#777";
+            //post total video likes
+            var likesCount = document.getElementById('likes-count');
+            var dislikesCount = document.getElementById('dislikes-count');
+
+            connection.on("AddRemoveLike", function (vId, uId,
+                totalLikes, likeInd, totalDislikes, dislikeInd) {
+                if (vId == videoId) {
+                    if (uId == userId) {
+                        likesCount.style.color = (likeInd) ? "#62cb31" : "#777";
+                        dislikesCount.style.color = "#777";
+                    }
+                    $('#likes-count').html(totalLikes);
+                    $('#dislikes-count').html(totalDislikes);
                 }
-                $('#likes-count').html(totalLikes);
-                $('#dislikes-count').html(totalDislikes);
-            }
-        });
+            });
 
-        //start connection
-        connection.start().then(function () {
-            console.log("Connected");
-        }).catch(function (err) {
-            return console.error(err.toString());
-        });
+            //post total video dislikes
+            connection.on("AddRemoveDislike", function (vId, uId,
+                totalLikes, likeInd, totalDislikes, dislikeInd) {
+                if (vId == videoId) {
+                    if (uId == userId) {
+                        likesCount.style.color = "#777";
+                        dislikesCount.style.color = (dislikeInd) ? "#e74c3c" : "#777";
+                    }
+                    $('#likes-count').html(totalLikes);
+                    $('#dislikes-count').html(totalDislikes);
+                }
+            });
 
-        //add video view (btn-Play)
-        document.getElementById('videoControlsPlay').addEventListener("click", function (event) {
-            connection.invoke("VideoViews", videoId).catch(function (err) {
+            //start connection
+            connection.start().then(function () {
+                console.log("Connected");
+            }).catch(function (err) {
                 return console.error(err.toString());
             });
-            event.preventDefault();
-        });
 
-        //add video view (btn-Replay)
-        document.getElementById('videoControlsReplay').addEventListener("click", function (event) {
-            connection.invoke("VideoViews", videoId).catch(function (err) {
-                return console.error(err.toString());
+            //add video view (btn-Play)
+            document.getElementById('videoControlsPlay').addEventListener("click", function (event) {
+                connection.invoke("VideoViews", videoId).catch(function (err) {
+                    return console.error(err.toString());
+                });
+                event.preventDefault();
             });
-            event.preventDefault();
-        });
 
-        //add/remove video like
-        likesCount.addEventListener("click", function (event) {
-            connection.invoke("VideoLikes", videoId, userId).catch(function (err) {
-                return console.error(err.toString());
+            //add video view (btn-Replay)
+            document.getElementById('videoControlsReplay').addEventListener("click", function (event) {
+                connection.invoke("VideoViews", videoId).catch(function (err) {
+                    return console.error(err.toString());
+                });
+                event.preventDefault();
             });
-            event.preventDefault();
-        });
 
-        //add/remove video dislike
-        dislikesCount.addEventListener("click", function (event) {
-            connection.invoke("VideoDislikes", videoId, userId).catch(function (err) {
-                return console.error(err.toString());
+            //add/remove video like
+            likesCount.addEventListener("click", function (event) {
+                connection.invoke("VideoLikes", videoId, userId).catch(function (err) {
+                    return console.error(err.toString());
+                });
+                event.preventDefault();
             });
-            event.preventDefault();
-        });
 
-        //-----------------------Commments-------------------
-        var commentFor = "Video";
-        var currentUser = userId;
-        var commentForId = videoId;
+            //add/remove video dislike
+            dislikesCount.addEventListener("click", function (event) {
+                connection.invoke("VideoDislikes", videoId, userId).catch(function (err) {
+                    return console.error(err.toString());
+                });
+                event.preventDefault();
+            });
 
+            //-----------------------Commments-------------------
+            var commentFor = "Video";
+            var currentUser = userId;
+            var commentForId = videoId;
+        }
     </script>
 }

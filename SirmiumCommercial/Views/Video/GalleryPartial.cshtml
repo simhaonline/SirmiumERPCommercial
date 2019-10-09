@@ -17,7 +17,20 @@
                         {
                             <div class="col-lg-3">
                                 <div class="hpanel contact-panel @Model.panelTopColor(Model.OnClickAction)">
-                                    <div class="panel-body">
+                                    <div class="panel-body" style="padding-top: 10px;">
+                                        @if (vInfo.Video.Status == "Private")
+                                        {
+                                            <div class="btn-group">
+                                                <a data-toggle="dropdown" class="dropdown-toggle"
+                                                    style="font-size: 17px"><i class="pe-7s-more"></i></a>
+                                                <ul class='dropdown-menu'>
+                                                    <li><a style='font-size: 17px' 
+                                                           href="@Url.Action("DeletePrivateVideo", "Recorder", new { id = ViewData["Id"], videoId = vInfo.Video.Id })">
+                                                        <i class='pe pe-7s-trash text-error'></i> Remove
+                                                    </a></li>
+                                                </ul>   
+                                            </div>
+                                        }
                                         <div style="position: relative;">
                                             <video src="@vInfo.Video.VideoPath" class="img-video"
                                                    style="z-index: 1"></video>
@@ -38,14 +51,14 @@
                                         </a>
                                         @if (Model.OnClickAction != "private")
                                         {
-                                        <br /><br />
-                                        <span>Views: @vInfo.Video.Views &emsp;</span>
-                                        <span class="far fa-thumbs-up" style="font-weight: 300"></span>
-                                        <span> @vInfo.Likes &emsp;</span>
-                                        <span class="far fa-thumbs-down" style="font-weight: 300"></span>
-                                        <span> @vInfo.Dislikes &emsp;</span>
-                                        <span class="text-error fas fa-comment" style="font-weight: 300"></span>
-                                        <span> @vInfo.Comments &emsp;</span>
+                                            <br /><br />
+                                            <span>Views: @vInfo.Video.Views &emsp;</span>
+                                            <span class="far fa-thumbs-up" style="font-weight: 300"></span>
+                                            <span> @vInfo.Likes &emsp;</span>
+                                            <span class="far fa-thumbs-down" style="font-weight: 300"></span>
+                                            <span> @vInfo.Dislikes &emsp;</span>
+                                            <span class="text-error fas fa-comment" style="font-weight: 300"></span>
+                                            <span> @vInfo.Comments &emsp;</span>
                                         }
                                     </div>
                                 </div>
