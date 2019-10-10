@@ -48,7 +48,7 @@
     </div>
 </div>
 
-@await Component.InvokeAsync("CourseDetailsNav", new { id = Model.Course.CourseId })
+@await Component.InvokeAsync("CourseDetailsNav", new { courseId = Model.Course.CourseId, userId = ViewData["Id"] })
 
 @if (Model.Course.Presentations.Count() == 0)
 {

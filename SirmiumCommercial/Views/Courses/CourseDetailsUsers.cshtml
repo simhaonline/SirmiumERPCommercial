@@ -51,7 +51,7 @@
     </div>
 </div>
 
-@await Component.InvokeAsync("CourseDetailsNav", new { id = Model.Course.CourseId })
+@await Component.InvokeAsync("CourseDetailsNav", new { courseId = Model.Course.CourseId, userId = ViewData["Id"] })
 
 @if (Model.UsersOnCourse.Count() == 0)
 {
@@ -63,7 +63,7 @@
 }
 else
 {
-    <div class="content">
+    <div class="content" style="padding-top: 10px;">
         <div class="row">
             @foreach (AppUser user in Model.UsersOnCourse)
             {
@@ -89,7 +89,8 @@ else
                                 </span>
                             </a><br />
                             <div class="row">
-                                <a href=""
+                                <a href="@Url.Action("Chat", "Chat", 
+                                    new { id = ViewData["Id"], user2Id = user.Id})"
                                    class="btn btn-primary pull-right m-r-sm">
                                     Message <span class="pe pe-7s-chat"></span>
                                 </a>

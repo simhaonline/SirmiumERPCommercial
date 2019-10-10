@@ -48,7 +48,7 @@
     </div>
 </div>
 
-@await Component.InvokeAsync("CourseDetailsNav", new { id = Model.Course.CourseId })
+@await Component.InvokeAsync("CourseDetailsNav", new { courseId = Model.Course.CourseId, userId = ViewData["Id"] })
 
 @if (Model.Course.Presentations.Count() == 0)
 {
@@ -100,17 +100,22 @@ else
                 <br />
             </div>
             <div class="col-lg-2 text-center">
-                <a class="btn btn-primary2">
-                    Watch <span class="pe pe-7s-play"></span>
-                </a>
-                @*if (Model.Course.Users
-                        .Select(u => u.Id == ViewData["Id"])
-                        .FirstOrDefault())
-                    {*@
-                <a class="btn btn-primary m-t-sm">
-                    Respond <span class="fa fa-reply-all"></span>
-                </a>
-
+                @if (Model.UsersOnCourse
+                  .FirstOrDefault(u => u.Id == ViewData["Id"].ToString()) != null)
+                {
+                    @if (p.VideoId != 0)
+                    {
+                        <a class="btn btn-primary2"
+                           href="@Url.Action("Index", "Recorder", 
+                                new { id = ViewData["Id"], videoId = p.VideoId })">
+                            Watch <span class="pe pe-7s-play"></span>
+                        </a>
+                    }
+                    @await Component.InvokeAsync("CourseNewRepresentation",
+                                    new { courseId = Model.Course.CourseId,
+                                        presentationId = p.PresentationId,
+                                        userId = ViewData["Id"] })
+                }
             </div>
         </div>
     }

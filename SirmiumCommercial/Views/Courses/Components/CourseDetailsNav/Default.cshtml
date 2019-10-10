@@ -1,4 +1,4 @@
-﻿@model int
+﻿@model CourseNavViewModel
 
 <style type="text/css">
     .selected{
@@ -12,25 +12,28 @@
 
 <div id="topNav" class="m-b-sm">
     <a href="@Url.Action("CourseDetails", "Courses",
-            new { id = ViewData["Id"], courseId = Model })" 
+            new { id = ViewData["Id"], courseId = Model.CourseId })"
        class="btn btn-outline
        @Html.IsSelectedCourseDetails(controller: "Courses", action: "CourseDetails")">
         <strong style="font-size:30px;">Presentations</strong>
     </a>
-    <a href="@Url.Action("CourseDetailsRepresentations", "Courses",
-            new { id = ViewData["Id"], courseId = Model })" 
-       class="btn btn-outline
+    @if (Model.CurrentUserOnCourse)
+    {
+        <a href="@Url.Action("CourseDetailsRepresentations", "Courses",
+            new { id = ViewData["Id"], courseId = Model.CourseId })"
+           class="btn btn-outline
        @Html.IsSelectedCourseDetails(controller: "Courses", action: "CourseDetailsRepresentations")">
-        <strong style="font-size:30px;">Representations</strong>
-    </a>
+            <strong style="font-size:30px;">Representations</strong>
+        </a>
+    }
     <a href="@Url.Action("CourseDetailsUsers", "Courses",
-            new { id = ViewData["Id"], courseId = Model })" 
+            new { id = ViewData["Id"], courseId = Model.CourseId })"
        class="btn btn-outline
        @Html.IsSelectedCourseDetails(controller: "Courses", action: "CourseDetailsUsers")">
         <strong style="font-size:30px;">Users</strong>
     </a>
     <a href="@Url.Action("CourseDetailsComments", "Courses",
-            new { id = ViewData["Id"], courseId = Model })" 
+            new { id = ViewData["Id"], courseId = Model.CourseId })"
        class="btn btn-outline
        @Html.IsSelectedCourseDetails(controller: "Courses", action: "CourseDetailsComments")">
         <strong style="font-size:30px;">Comments</strong>

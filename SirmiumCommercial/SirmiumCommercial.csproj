@@ -32,6 +32,9 @@
     <Content Update="Views\Courses\AllUsers.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Courses\Components\CourseNewRepresentation\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Courses\CourseDetailsComments.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

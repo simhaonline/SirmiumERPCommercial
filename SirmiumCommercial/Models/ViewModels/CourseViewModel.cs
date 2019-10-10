@@ -15,6 +15,12 @@ namespace SirmiumCommercial.Models.ViewModels
         public IQueryable<AppUser> CommentUserInfo { get; set; }
     }
 
+    public class CourseNavViewModel
+    {
+        public int CourseId { get; set; }
+        public bool CurrentUserOnCourse { get; set; }
+    }
+
     public class NewEditCourse
     {
         public Course Course { get; set; }
@@ -25,5 +31,25 @@ namespace SirmiumCommercial.Models.ViewModels
     {
         public Presentation Presentation { get; set; }
         public int CourseId { get; set; }
+    }
+
+    public class NewRepresentation
+    {
+        public int CourseId { get; set; }
+        public int PresentationId { get; set; }
+        public string RepresentationTitle { get; set; }
+        public string VideoTitle { get; set; }
+        public string UserId { get; set; }
+        public string videoUrl { get; set; }
+
+        public string TitlePlaceholder { get; set; }
+    }
+
+    public class CourseNewRepresComponent
+    {
+        public int CourseId { get; set; }
+        public int PresentationId { get; set; }
+        public string UserId { get; set; }
+        public bool UserRepresentation { get; set; }
     }
 }

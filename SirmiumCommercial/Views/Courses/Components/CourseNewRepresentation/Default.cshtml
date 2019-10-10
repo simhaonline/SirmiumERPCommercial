@@ -1,0 +1,15 @@
+﻿@model CourseNewRepresComponent
+
+@if (Model.UserRepresentation == false)
+{
+    <a class="btn btn-primary m-t-sm"
+       href="@Url.Action("NewRepresentation", "Courses",
+                            new
+                            {
+                                id = Model.UserId,
+                                courseId = Model.CourseId,
+                                presentationId = Model.PresentationId
+                            })">
+        Respond <span class="fa fa-reply-all"></span>
+    </a>
+}

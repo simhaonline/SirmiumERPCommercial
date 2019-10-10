@@ -17,9 +17,18 @@ namespace SirmiumCommercial.Components
             repository = repo;
         }
 
-        public IViewComponentResult Invoke(int id)
+        public IViewComponentResult Invoke(int courseId, string userId)
         {
-            return View(id);
+            bool userOnCourse = false;
+
+            if(repository.CourseUsers.FirstOrDefault(cu => cu.CourseId == courseId
+                    && cu.AppUserId == userId) != null)
+            {
+                userOnCourse = true;
+            }
+
+            return View(new CourseNavViewModel { CourseId = courseId,
+                CurrentUserOnCourse = userOnCourse });
         }
     }
 }

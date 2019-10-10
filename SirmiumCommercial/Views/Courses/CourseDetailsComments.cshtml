@@ -45,7 +45,7 @@
     </div>
 </div>
 
-@await Component.InvokeAsync("CourseDetailsNav", new { id = Model.Course.CourseId })
+@await Component.InvokeAsync("CourseDetailsNav", new { courseId = Model.Course.CourseId, userId = ViewData["Id"] })
 
 <div id="allCommentsPartial">
     @await Component.InvokeAsync("Comment", new { For = "Course", forId = Model.Course.CourseId })

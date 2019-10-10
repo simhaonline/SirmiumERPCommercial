@@ -76,6 +76,34 @@
                 "</div>" +
            "</div>";
     }
+
+    string MessageNewLine (string msg)
+    {
+        int msgLength = msg.Length;
+
+        if (msgLength > 100)
+        {
+            //first part of msg
+            string substr1 = msg.Substring(0, 100);
+            int indexOfBr = substr1.IndexOf("</br>");
+
+            if (indexOfBr == -1)
+            {
+                //msg tail
+                string substr2 = msg.Substring(100);
+
+                return $"{substr1}</br>" + MessageNewLine(substr2);
+            }
+            else
+            {
+                substr1 = msg.Substring(0, indexOfBr + 6);
+                string substr2 = msg.Substring(indexOfBr + 6);
+
+                return substr1 + MessageNewLine(substr2);
+            }
+        }
+        return msg;
+    }
 }
 
 <style>
@@ -168,7 +196,7 @@ else
                                                 @Model.MsgSentDate(msg.DateAdded)
                                             </button>
                                             <span style="color: #000" class="message-content">
-                                                @Html.Raw(msg.MessageContent)
+                                                @Html.Raw(MessageNewLine(msg.MessageContent))
                                             </span>
                                         </div>
                                         @Html.Raw(msgSeen(msg.Seen, msg.Id))
@@ -191,7 +219,7 @@ else
                                                 @Model.MsgSentDate(msg.DateAdded) 
                                             </button>
                                             <span style="color: #000" class="message-content">
-                                                @Html.Raw(msg.MessageContent)
+                                                @Html.Raw(MessageNewLine(msg.MessageContent))
                                             </span>
                                         </div>
                                         @Html.Raw(unSeenMsgId(msg))
