@@ -41,6 +41,9 @@
     <Content Update="Views\Manage\EditCourse.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Recorder\Components\RepresentationRating\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Shared\Components\HeaderChat\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

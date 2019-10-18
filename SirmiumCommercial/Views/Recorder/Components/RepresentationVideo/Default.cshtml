@@ -1,0 +1,19 @@
+﻿@model RepreVideoComponentViewModel
+
+@if (Model.IsRepresentationVideo)
+{
+    <form asp-action="RepresentationRating" asp-controller="Recorder">
+        <input asp-for="representationId" id="repid" value="@Model.representationId" hidden />
+        <input asp-for="userId" value="@Model.userId" hidden />
+        <input asp-for="Rating" id="form-rating" hidden />
+        <button class='btn btn-outline btn-warning2 p-xs pull-right m-r-xl m-t-sm'
+           id='rating-a' style='display: none' type="submit">
+            <strong>Save</strong>
+        </button>
+        <div class='pull-right m-r-lg'>
+            <input id='rating-input' class='rating' data-min='0' data-max='5'
+                   data-step='1' data-size='xs' data-show-clear='false'
+                   onchange='ratingChange()' >
+        </div>
+    </form>
+}

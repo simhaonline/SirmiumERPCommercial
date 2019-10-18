@@ -3,6 +3,19 @@
 @{
     Layout = "_UserLayout";
     ViewData["Title"] = "Home";
+
+    string isSelectedSort (string sort, string order)
+    {
+        if (sort == ViewData["Sort"].ToString()
+            && order == ViewData["Order"].ToString())
+        {
+            return " text-bold text-primary";
+        }
+        else
+        {
+            return "";
+        }
+    }
 }
 
 @section Styles {
@@ -10,7 +23,7 @@
         <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
     </environment>
 }
-
+@*
 <div id="topNav" class="nav navbar">
     <div class="navbar-left m-l">
         <ul class="nav navbar-nav no-borders">
@@ -177,7 +190,186 @@
             |
         </h3>
     </div>
+</div>*@
+
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <span class="fa fa-home"></span>
+            <strong>@ViewData["Title"]</strong>
+            <span>&emsp;</span>
+            <a href="#" class="pull-right btn"
+               data-toggle="collapse" data-target="#collapseExample"
+               aria-expanded="false" aria-controls="collapseExample">
+                <span class="pe-7s-edit" style="font-size: 25px; color: #000000"></span>
+                <span class="text-muted" style="font-size: 20px;">Filter</span>
+            </a>
+        </div>
+        <div class="collapse " id="collapseExample">
+            <div class="well well-lg row m-l-xs m-r-xs">
+                <div class="col-sm-3">
+                    <h4 class="font-bold">Category:</h4>
+                    <ul style="list-style-type: square; font-size: 20px; font-weight: 500">
+                        <li>
+                            <a href="@Url.Action("Index", "User",
+                                new { id = ViewData["Id"], contentType = "All"})">
+                                <span class="text-muted
+                                        @Html.IsSelectedContentType(contentType: "All")">
+                                    All
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "User",
+                                 new { id = ViewData["Id"], contentType = "course"})">
+                                <span class="text-muted
+                                         @Html.IsSelectedContentType(contentType: "course")">
+                                    Courses
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "User",
+                                new { id = ViewData["Id"], contentType = "presentation"})">
+                                <span class="text-muted
+                                        @Html.IsSelectedContentType(contentType: "presentation")">
+                                    Presentations
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "User",
+                                    new { id = ViewData["Id"], contentType = "representation"})">
+                                <span class="text-muted
+                                    @Html.IsSelectedContentType(contentType: "representation")">
+                                    Respond
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-sm-3">
+                    <h4 class="font-bold">Sort:</h4>
+                    <ul style="list-style-type: square; font-size: 20px; font-weight: 500">
+                        <li>
+                            <a href="@Url.Action("Index", "User",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "Title",
+                                    order = "asc",
+                                    contentType = ViewData["ContentType"]
+                                })">
+                                <span class="text-muted @isSelectedSort("Title", "asc")">
+                                    Title Asc
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "User",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "Title",
+                                    order = "desc",
+                                    contentType = ViewData["ContentType"]
+                                })">
+                                <span class="text-muted @isSelectedSort("Title", "desc")">
+                                    Title Desc
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "User",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "End Date",
+                                    order = "asc",
+                                    contentType = ViewData["ContentType"]
+                                })">
+                                <span class="text-muted @isSelectedSort("End Date", "asc")">
+                                    End Date Asc
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "User",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "End Date",
+                                    order = "desc",
+                                    contentType = ViewData["ContentType"]
+                                })">
+                                <span class="text-muted @isSelectedSort("End Date", "desc")">
+                                    End Date Desc
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "User",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "Date Added",
+                                    order = "asc",
+                                    contentType = ViewData["ContentType"]
+                                })">
+                                <span class="text-muted @isSelectedSort("Date Added", "asc")">
+                                    Date Added Asc
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "User",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "Date Added",
+                                    order = "desc",
+                                    contentType = ViewData["ContentType"]
+                                })">
+                                <span class="text-muted @isSelectedSort("Date Added", "desc")">
+                                    Date Added Desc
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "User",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "Date Modified",
+                                    order = "asc",
+                                    contentType = ViewData["ContentType"]
+                                })">
+                                <span class="text-muted @isSelectedSort("Date Modified", "asc")">
+                                    Date Modified Asc
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "User",
+                                new
+                                {
+                                    userId = ViewData["Id"],
+                                    sort = "Date Modified",
+                                    order = "desc",
+                                    contentType = ViewData["ContentType"]
+                                })">
+                                <span class="text-muted @isSelectedSort("Date Modified", "desc")">
+                                    Date Modified Desc
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 <!--Main-->
 <div>
     @Html.Partial("Activity", Model)

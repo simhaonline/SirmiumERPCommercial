@@ -1,0 +1,20 @@
+﻿@model int
+
+@if (Model != -1)
+{
+    <span>&emsp;</span>
+    <span class="text-muted" style="font-size: 15px">&#8718;</span>
+    <span>&emsp;</span>
+    <span>&emsp;</span>
+        @for (var i = 0; i < Model; i++)
+        {
+            <span class="fa fa-star text-warning"></span>
+        }
+        @if (Model < 5)
+        {
+            for (var i = Model; i < 5; i++)
+            {
+                <span class="fa fa-star text-muted"></span>
+            }
+        }
+}

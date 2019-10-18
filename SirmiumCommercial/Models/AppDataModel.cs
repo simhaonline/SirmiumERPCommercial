@@ -97,6 +97,7 @@ namespace SirmiumCommercial.Models
         public string Status { get; set; } = "Private";
 
         public int VideoId { get; set; }
+        public int Rating { get; set; }
     }
 
     public class CourseUsers

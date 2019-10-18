@@ -9,8 +9,12 @@
 
 @section Styles {
     <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/homer/lib_local/bootstrap-star-rating/css/star-rating.min.css" />
     </environment>
     <style type="text/css">
+        .rating-container .rating-stars:before {
+            text-shadow: none;
+        }
         #videoBox {
             position: relative;
         }
@@ -136,6 +140,7 @@
             @Model.Dislikes.Count()
         </span>
     }
+    @await Component.InvokeAsync("RepresentationRating", new { videoFor = Model.Video.For, videoForId = Model.Video.ForId })
 </div>
 
 <div class="row m-t-sm m-l-md" style="font-size: 17px">
@@ -166,6 +171,17 @@
             @@@Model.Users.FirstOrDefault(u => u.Id == Model.Video.CreatedBy).UserName
         </a>
     </div>
+    <!--Rating--
+    <a class='btn btn-outline btn-warning2 p-xs pull-right m-r-xl m-t-sm'
+       id='rating-a' style='display: none'>
+        <strong>Save</strong>
+    </a>
+    <div class='pull-right m-r-lg'>
+        <input id='rating-input' class='rating' data-min='0' data-max='5'
+               data-step='1' data-size='xs' data-show-clear='false'
+               onchange='ratingChange()'>
+    </div>-->
+    @await Component.InvokeAsync("RepresentationVideo", new { videoFor = Model.Video.For, videoForId = Model.Video.ForId, userId = ViewData["Id"] })
 </div>
 
 <input id="videoId" value="@Model.Video.Id" hidden />
@@ -184,12 +200,29 @@
 
 @section Scripts {
 
+    <environment names="Development,Staging,Production">
+        <script src="~/homer/lib_local/bootstrap-star-rating/js/star-rating.min.js"></script>
+    </environment>
+
     @if (Model.Video.Status != "Private")
     {
         <script src="~/lib_local/comment-hub/comment-hub.js"></script>
     }
 
     <script>
+        //Rating
+        function ratingChange() {
+            console.log(document.getElementById('repid').value);
+            document.getElementById('rating-a').style.display = "";
+            document.getElementById('form-rating').value =
+                document.getElementById('rating-input').value;
+        }
+        $(function () {
+
+            // initialize with defaults
+            $("#input-1").rating();
+        });
+
         //Player controls
         var videoPlayer = document.getElementById('videoPlayer');
         var videoControls = document.getElementById('videoControls');

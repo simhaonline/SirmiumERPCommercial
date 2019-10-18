@@ -91,4 +91,12 @@ namespace SirmiumCommercial.Models.ViewModels
             }
         }
     }
+
+    public class RepreVideoComponentViewModel
+    {
+        public bool IsRepresentationVideo { get; set; }
+        public int representationId { get; set; }
+        public string userId { get; set; }
+        public int Rating { get; set; }
+    }
 }

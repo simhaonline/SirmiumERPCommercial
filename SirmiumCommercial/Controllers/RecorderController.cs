@@ -463,5 +463,17 @@ namespace SirmiumCommercial.Controllers
             }
             return RedirectToAction("MyGallery", "Video", new { id = id });
         }
+
+        [HttpPost]
+        public IActionResult RepresentationRating(RepreVideoComponentViewModel model)
+        {
+            Representation representation = repository.Representations
+                .FirstOrDefault(r => r.RepresentationId == model.representationId);
+
+            representation.Rating = model.Rating;
+            repository.SaveRepresentation(representation);
+
+            return RedirectToAction("Index", new { id = model.userId, videoId = representation.VideoId });
+        }
     }
 }

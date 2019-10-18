@@ -1,132 +1,515 @@
 ﻿@model HomeContent
-
-<style type="text/css">
-    .videoBtn{
-        display: none;
-        position: absolute;
-        transform: translateY(-80%) translateX(-50%);
-    }
-    .img-video:hover + .videoBtn{
-        display: inline;
-    }
-    .videoBtn:hover{
-        display: inline;
-    }
-</style>
-
-@foreach (HomeViewModel content in Model.Content)
-{
-    <div class="row  m-b-md m-l-sm m-r-sm">
-        <div class="col-lg-3 p-xxs text-center courseCardEndDate">
-            <h1><span class="text-big @content.AwardIcon"></span></h1>
-            <h3>@Model.DateDifference(DateTime.Now, content.DateAdded)</h3>
-            <h4>
-                <span class="fa fa-clock-o"></span>
-                @if (content.EndDate != DateTime.MinValue)
+@{
+    string contentMsg(HomeViewModel model)
+    {
+        switch (model.ContentType)
+        {
+            case "course":
+                if (model.DateModified == model.DateAdded)
                 {
-                    @if (DateTime.Now > content.EndDate)
-                    {
-                        <span class="text-danger">
-                            FINISHED
-                        </span>
-                    }
-                    else
-                    {
-                        <span class="text-danger">
-                            End in
-                            @Model.DateDifference(content.EndDate,
-                                    DateTime.Now).Replace("ago", "")
-                        </span>
-                    }
+                    return "<strong class='label label-success pull-right'>NEW</strong>";
+                }
+                else if (model.Video != null)
+                {
+                    return (model.DateModified == model.Video.DateAdded) ?
+                        "<strong class='label label-success pull-right'>NEW video</strong>" :
+                        "<strong class='label label-info pull-right'>Modified</strong>";
                 }
                 else
                 {
-                    <span class="text-success">
-                        NO END DATE
-                    </span>
+                    return "<strong class='label label-info pull-right'>Modified</strong>";
+                }
 
-                }
-            </h4>
-        </div>
-        <div class="col-lg-9 p-sm">
-            <div class="col-lg-3 text-center" id="img-video-btn">
-                <img src="~/imgAlt.jpg" alt="video" class="img-video" 
-                     style="z-index: 2"/>
-                <div class="text-center img-video videoBtn" style="z-index: 1">
-                    <button class="btn btn-sm btn-primary2 p-xs">
-                        <span class="fa fa-play"style="font-size: 30px"></span>
-                    </button>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <h2>
-                    @switch (content.ContentType)
-                    {
-                        case "course":
-                            <a href="@Url.Action("CourseDetails", "Courses",
-                            new { id = ViewData["Id"], courseId = content.ContentId })">
-                                @content.Title
-                            </a>
-                            break;
-                        case "presentation":
-                            <a href="@Url.Action("CourseDetails", "Courses",
-                            new { id = ViewData["Id"], courseId = content.ContentId })">
-                                @content.Title
-                            </a>
-                            break;
-                    }
-                </h2>
-                <h4 class="text-muted">
-                    by:
-                    <a href="@Url.Action("UserProfile", "User",
-                            new { id = ViewData["Id"],
-                            userId = content.CreatedById })">
-                        <span class="text-info">&#64;@content.CreatedBy</span>
-                    </a>
-                </h4>
-                <h5>
-                    <span class="far fa-edit"></span>
-                    Date Modified:
-                    <span class="text-success">
-                        @Model.DateDifference(DateTime.Now, content.DateModified)
-                    </span>
-                </h5>
-                <h5><span class="fa fa-eye"></span> 0 Views</h5>
-            </div>
-            <div class="col-lg-2">
-                @switch (content.ContentType)
+            case "presentation":
+                if (model.DateModified == model.DateAdded)
                 {
-                    case "course":
-                        <a href="@Url.Action("AllCourses", "Courses",
-                            new { id = ViewData["Id"], sort = "Date Added",
-                                order = "desc"})"
-                           class="btn btn-outline btn-info"
-                           style="font-size: 20px; border-radius: 15px">
-                            Course
-                        </a>
-                        break;
-                    case "presentation":
-                        <a href="@Url.Action("CourseDetails", "Courses",
-                            new { id = ViewData["Id"], courseId = content.ContentId })"
-                           class="btn btn-outline btn-info"
-                           style="font-size: 20px; border-radius: 15px">
-                            @content.ContentType
-                        </a>
-                        break;
+                    return "<strong class='label label-success pull-right'>NEW</strong>";
                 }
+                else if (model.Video != null)
+                {
+                    return (model.DateModified == model.Video.DateAdded) ?
+                        "<strong class='label label-success pull-right'>NEW video</strong>" :
+                        "<strong class='label label-info pull-right'>Modified</strong>";
+                }
+                else
+                {
+                    return "<strong class='label label-info pull-right'>Modified</strong>";
+                }
+
+            default:
+                return "<strong class='label label-success pull-right'>NEW</strong>";
+        }
+    }
+
+    string firstLastNameExists(AppUser user)
+    {
+        return (user.FirstName == null || user.LastName == null) ?
+            user.UserName : user.FirstName + " " + user.LastName;
+    }
+
+    string isCourse(string type, string icon)
+    {
+        return (type == "course") ?
+            $"<strong class='{icon}' style='font-size: 25px'></strong>&emsp;" : "";
+    }
+
+    string userPhoto (string path)
+    {
+        return (path == null) ? "/defaultAvatar.png" : $"/UsersData/{path}";
+    }
+
+    string rating(string type, double cRating, double pRating, double rRating)
+    {
+        var returnStr = "";
+
+        switch (type)
+        {
+            case "course":
+                if (cRating == 0)
+                {
+                    returnStr = "<strong class='text-muted' >Average Rating: </strong>";
+                    returnStr += "<strong style='color: #868686'>Not Rated Yet </strong>";
+                }
+                else
+                {
+                    returnStr += "<strong class='text-muted'>Average Rating: </strong>";
+                    for (var i = 0; i < cRating; i++)
+                    {
+                        returnStr += "<span class='fa fa-star text-warning'></span>";
+                    }
+                    if (cRating < 5)
+                    {
+                        for (var i = cRating; i < 5; i++)
+                        {
+                            returnStr += "<span class='fa fa-star text-muted'></span>";
+                        }
+                    }
+                    returnStr += $"<span>&emsp; {String.Format("{0:0.0}", cRating)} / 5.0 </span>";
+                }
+                break;
+
+            case "presentation":
+                if (pRating == 0)
+                {
+                    returnStr = "<strong class='text-muted'>Average Rating: </strong>";
+                    returnStr += "<strong style='color: #868686'>Not Rated Yet </strong>";
+                }
+                else
+                {
+                    returnStr += "<strong class='text-muted'>Average Rating: </strong>";
+                    for (var i = 0; i < pRating; i++)
+                    {
+                        returnStr += "<span class='fa fa-star text-warning'></span>";
+                    }
+                    if (pRating < 5)
+                    {
+                        for (var i = pRating; i < 5; i++)
+                        {
+                            returnStr += "<span class='fa fa-star text-muted'></span>";
+                        }
+                    }
+                    returnStr += $"<span>&emsp; {String.Format("{0:0.0}", pRating)} / 5.0 </span>";
+                }
+                break;
+
+            case "representation":
+                if (rRating == 0)
+                {
+                    returnStr = "<strong class='text-muted'>Rating: </strong>";
+                    returnStr += "<strong style='color: #868686'>Not Rated Yet </strong>";
+                }
+                else
+                {
+                    returnStr += "<strong class='text-muted'>Rating: </strong>";
+                    for (var i = 0; i < rRating; i++)
+                    {
+                        returnStr += "<span class='fa fa-star text-warning'></span>";
+                    }
+                    if (cRating < 5)
+                    {
+                        for (var i = rRating; i < 5; i++)
+                        {
+                            returnStr += "<span class='fa fa-star text-muted'></span>";
+                        }
+                    }
+                    returnStr += $"<span>&emsp; {String.Format("{0:0.0}", rRating)} / 5.0 </span>";
+                }
+                break;
+
+            default:
+                returnStr = "";
+                break;
+        }
+
+        return returnStr;
+    }
+}
+
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+    </environment>
+}
+<style type="text/css">
+    .videoBtn {
+        display: none;
+        position: absolute;
+        top: 38%;
+        left: 2%;
+    }
+
+    .img-video:hover + .videoBtn {
+        display: inline;
+    }
+
+    .videoBtn:hover {
+        display: inline;
+    }
+
+    #video-video:hover {
+        opacity: 0.4;
+    }
+
+    #video-videoBtn:hover > #video-video{
+        opacity: 0.4;
+    }
+
+    #all-users{
+        height: 200px;
+        width: 200px;
+        overflow-y: scroll;
+    }
+</style>
+
+@foreach (HomeViewModel viewModel in Model.Content)
+{
+    <div class="row m-l-md m-r-md">
+        <div class="col-lg-12">
+            <div class="hpanel">
+                <div class="panel-heading">
+                    <div class="panel-tools">
+                        <a class="showhide"><i class="fa fa-chevron-up"></i></a>
+                        <a class="closebox"><i class="fa fa-times"></i></a>
+                    </div>
+                    <span style="font-size: 18px">
+                        @Html.Raw(isCourse(viewModel.ContentType, viewModel.AwardIcon))
+                        @viewModel.Title
+                        @Html.Raw(contentMsg(viewModel))
+                    </span>
+                </div>
+                <div class="panel-body" style="padding-bottom: 5px;">
+                    <div class="row">
+                        @if (viewModel.Video != null)
+                        {
+                            <div class="col-lg-3">
+                                <div id="video-videoBtn"
+                                 style="background-color: #0c0830; padding:0px">
+                                    <video src="@viewModel.Video.VideoPath" class="img-video"
+                                           style="z-index: 1" id="video-video"></video>
+                                    <div class="text-center img-video videoBtn" style="z-index: 1">
+                                        <a href="@Url.Action("Index", "Recorder",
+                                    new { id = ViewData["Id"], videoId = viewModel.Video.Id })"
+                                           class="btn btn-sm btn-primary2 p-xs">
+                                            <span style="font-weight: 400; font-size: 18px">Watch</span>
+                                            <span class="fa fa-play" style="font-size: 18px"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="text-center p-xxs" style="font-size: 17px;">
+                                    <span class="text-muted">@viewModel.Video.Views Views</span>
+                                    <span>&emsp;</span>
+                                    @if (viewModel.Likes.Count() > 0)
+                                    {
+                                        <span class="dropdown">
+                                            <a class="dropdown-toggle" data-toggle='dropdown' href="#">
+                                                <span class="fa fa-thumbs-up text-muted"
+                                                      style="font-weight: 300"></span>
+                                                <span class="text-muted">@viewModel.Likes.Count()</span>
+                                            </a>
+                                            <span class="dropdown-menu hdropdown p-xs
+                                                      bigmenu animated flipInX"
+                                                  style="padding: 0px;" id="all-users">
+                                                @foreach (AppUser user in viewModel.Likes)
+                                                {
+                                                    <a href="@Url.Action("UserProfile", "User",
+                                                                new { id = ViewData["Id"],
+                                                                    userId = user.Id
+                                                                })" style="margin: 0px;">
+                                                        <img class="img-circle m-b-xs"
+                                                            style="width: 30px; height: 30px"
+                                                            src="@userPhoto(user.ProfilePhotoUrl)" />
+                                                        <span class="m-b-xs">@firstLastNameExists(user)</span>
+                                                    </a>
+                                                    <br />
+                                                }
+                                            </span>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fa fa-thumbs-up text-muted"
+                                              style="font-weight: 300"></span>
+                                        <span class="text-muted">0</span>
+                                    }
+                                    <span>&emsp;</span>
+                                    @if (viewModel.Dislikes.Count() > 0)
+                                    {
+                                        <span class="dropdown">
+                                            <a class="dropdown-toggle" data-toggle='dropdown' href="#">
+                                                <span class="fa fa-thumbs-down text-muted"
+                                                      style="font-weight: 300"></span>
+                                                <span class="text-muted">@viewModel.Dislikes.Count()</span>
+                                            </a>
+                                            <span class="dropdown-menu hdropdown p-xs
+                                                      bigmenu animated flipInX"
+                                                  style="padding: 0px;" id="all-users">
+                                                @foreach (AppUser user in viewModel.Dislikes)
+                                                {
+                                                    <a href="@Url.Action("UserProfile", "User",
+                                                                new { id = ViewData["Id"],
+                                                                    userId = user.Id
+                                                                })" style="margin: 0px;">
+                                                        <img class="img-circle m-b-xs"
+                                                            style="width: 30px; height: 30px"
+                                                            src="@userPhoto(user.ProfilePhotoUrl)" />
+                                                        <span class="m-b-xs">@firstLastNameExists(user)</span>
+                                                    </a>
+                                                    <br />
+                                                }
+                                            </span>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fa fa-thumbs-down text-muted"
+                                              style="font-weight: 300"></span>
+                                        <span class="text-muted">0</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-lg-3">
+                                <div class="text-center p-lg" style="width: 100%; height: 80%;
+                                    background-color: #bbbbbb;">
+                                    <strong style="color:#34495e; font-size:20px;
+                                            font-family: 'Open Sans','Helvetica Neue',
+                                            Helvetica,Arial,sans-serif; ">
+                                        SirmiumCommercial
+                                    </strong>
+                                    <br />  
+                                    <br />
+                                    <i style="font-size: 45px; color:#5b80a4;" class="fas fa-video-slash"></i>
+                                    <br />
+                                    <strong style="font-size: 25px; color:#5b80a4;">NO VIDEO</strong>
+                                </div>
+                            </div>
+                        }
+                        <div class="col-lg-4">
+                            <h5 class="text-muted">Created by:</h5>
+                            <h4 class="text-info font-bold">
+                                <img class="img-circle" style="width: 30px; height: 30px"
+                                     src="@userPhoto(viewModel.CreatedBy.ProfilePhotoUrl)" />
+                                <a href="@Url.Action("UserProfile", "User",
+                                    new { id = ViewData["Id"], userId = viewModel.CreatedBy.Id })">
+                                    @firstLastNameExists(viewModel.CreatedBy)
+                                </a>
+                            </h4>
+                            <h5 class="text-muted">Published on: </h5>
+                            <h4>@viewModel.DateAdded.ToLongDateString()</h4>
+                            @if(viewModel.ContentType != "representation")
+                            {
+                                <h5 class="text-muted">End in: </h5>
+                                <h4>@Html.Raw(Model.DateDifference(viewModel.EndDate))</h4>
+                            }
+                            <strong class="text-success"></strong>
+                        </div>
+                        <div class="col-lg-3">
+                            @switch (viewModel.ContentType)
+                            {
+                                case "course":
+                                    <h5 class="text-muted">Users on course: </h5>
+                                    @if (viewModel.UsersOnCourse.Count() == 0)
+                                    {
+                                        <strong class="text-muted">
+                                            There are no users on this course
+                                        </strong>
+                                    }
+
+                                    @foreach (AppUser user in viewModel.UsersOnCourse
+                                     .Take(4))
+                                    {
+                                        <a href="@Url.Action("UserProfile", "User",
+                                            new { id = ViewData["Id"],
+                                                userId = user.Id
+                                            })" style="margin: 0px;">
+                                            <img class="img-circle"
+                                                style="width: 30px; height: 30px"
+                                                src="@userPhoto(user.ProfilePhotoUrl)"
+                                                data-toggle='tooltip' data-placement='bottom'
+                                                title="@firstLastNameExists(user)" />
+                                        </a>
+                                    }
+                                    if (viewModel.UsersOnCourse.Count() > 4)
+                                    {
+                                        <br />
+                                        @foreach (AppUser user in viewModel.UsersOnCourse
+                                           .Skip(4).Take(3))
+                                        {
+                                            <a href="@Url.Action("UserProfile", "User",
+                                                new { id = ViewData["Id"],
+                                                    userId = user.Id
+                                                })" style="margin: 0px;">
+                                                <img class="img-circle"
+                                                     style="width: 30px; height: 30px"
+                                                     src="@userPhoto(user.ProfilePhotoUrl)"
+                                                     data-toggle='tooltip' data-placement='bottom'
+                                                     title="@firstLastNameExists(user)" />
+                                            </a>
+
+                                        }
+                                        @if (viewModel.UsersOnCourse.Count() > 7)
+                                        {
+                                            <span class="dropdown">
+                                                <a class="dropdown-toggle btn btn-circle"
+                                                   style="width: 30px; background: #bbbbbb"
+                                                   data-toggle='dropdown' href="#">
+                                                    <span class="pe-7s-more"></span>
+                                                </a>
+                                                <span class="dropdown-menu hdropdown p-xs
+                                                      bigmenu animated flipInX"
+                                                      style="padding: 0px;" id="all-users">
+                                                    @foreach (AppUser user in viewModel.UsersOnCourse.Skip(7))
+                                                    {
+                                                        <a href="@Url.Action("UserProfile", "User",
+                                                            new { id = ViewData["Id"],
+                                                                userId = user.Id
+                                                            })" style="margin: 0px;">
+                                                            <img class="img-circle m-b-xs"
+                                                                 style="width: 30px; height: 30px"
+                                                                 src="@userPhoto(user.ProfilePhotoUrl)" />
+                                                            <span class="m-b-xs">@firstLastNameExists(user)</span>
+                                                        </a>
+                                                        <br />
+                                                    }
+                                                </span>
+                                            </span>
+                                        }
+                                    }
+                                    break;
+                                case "presentation":
+                                    <h5 class="text-muted">Users on course: </h5>
+                                    @if (viewModel.UsersOnCourse.Count() == 0)
+                                    {
+                                        <strong class="text-muted">
+                                            There are no users on this course
+                                        </strong>
+                                    }
+
+                                    @foreach (AppUser user in viewModel.UsersOnCourse
+                                     .Take(4))
+                                    {
+                                        <a href="@Url.Action("UserProfile", "User",
+                                            new { id = ViewData["Id"],
+                                                userId = user.Id
+                                            })" style="margin: 0px;">
+                                            <img class="img-circle"
+                                                 style="width: 30px; height: 30px"
+                                                src="@userPhoto(user.ProfilePhotoUrl)"
+                                                data-toggle='tooltip' data-placement='bottom'
+                                                title="@firstLastNameExists(user)" />
+                                        </a>
+                                    }
+                                    if (viewModel.UsersOnCourse.Count() > 4)
+                                    {
+                                        <br />
+                                        foreach (AppUser user in viewModel.UsersOnCourse
+                                             .Skip(4).Take(3))
+                                        {
+                                            <a href="@Url.Action("UserProfile", "User",
+                                                new { id = ViewData["Id"],
+                                                    userId = user.Id
+                                                })" style="margin: 0px;">
+                                                <img class="img-circle"
+                                                    style="width: 30px; height: 30px"
+                                                    src="@userPhoto(user.ProfilePhotoUrl)"
+                                                    data-toggle='tooltip' data-placement='bottom'
+                                                    title="@firstLastNameExists(user)" />
+                                            </a>
+                                        }
+                                        @if (viewModel.UsersOnCourse.Count() > 7)
+                                        {
+                                            <span class="dropdown">
+                                                <a class="dropdown-toggle btn btn-circle"
+                                                   style="width: 30px; background: #bbbbbb"
+                                                   data-toggle='dropdown' href="#">
+                                                    <span class="pe-7s-more"></span>
+                                                </a>
+                                                <span class="dropdown-menu hdropdown
+                                                      bigmenu animated flipInX p-xs"
+                                                      style="padding: 0px;" id="all-users">
+                                                    @foreach (AppUser user in viewModel.UsersOnCourse.Skip(7))
+                                                    {
+                                                        <a href="@Url.Action("UserProfile", "User",
+                                                            new { id = ViewData["Id"],
+                                                                userId = user.Id
+                                                            })" style="margin: 0px;">
+                                                            <img class="img-circle m-b-xs"
+                                                                style="width: 30px; height: 30px"
+                                                                src="@userPhoto(user.ProfilePhotoUrl)" />
+                                                            <span class="m-b-xs">@firstLastNameExists(user)</span>
+                                                        </a>
+                                                        <br />
+                                                    }
+                                                </span>
+                                            </span>
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        </div>
+                        <div class="col-lg-2 text-center">
+                            @switch (viewModel.ContentType)
+                            {
+                                case "course":
+                                    <a class="btn btn-warning2 btn-lg"
+                                       href="@Url.Action("AllCourses", "Courses",
+                                            new { id = ViewData["Id"], sort = "Date Added",
+                                                order = "desc"})" >
+                                        <strong>Course</strong>
+                                    </a>
+                                    break;
+                                case "presentation":
+                                    <a class="btn btn-warning btn-lg"
+                                       href="@Url.Action("CourseDetails", "Courses",
+                                            new { id = ViewData["Id"],
+                                                courseId = viewModel.CourseId })" >
+                                        <strong>Presentation</strong>
+                                    </a>
+                                    break;
+                                case "representation":
+                                    <a class="btn btn-success btn-lg"
+                                       href="@Url.Action("CourseDetailsRepresentations",
+                                            "Courses", new { id = ViewData["Id"],
+                                                courseId = viewModel.CourseId })" >
+                                        <strong>Representation</strong>
+                                    </a>
+                                    break;
+                                default:
+                                    break;
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer" style="font-size: 18px;">
+                    @Html.Raw(rating(viewModel.ContentType, viewModel.CourseAverageRating,
+                       viewModel.PresentationAverageRating, viewModel.RepresentationRating))
+                </div>
             </div>
         </div>
     </div>
-    <script type="text/javascript">
-    var videoBtn = document.getElementById('videoBtn');
-
-    function videoPlayBtn() {
-        videoBtn.removeAttribute("hidden");
-    }
-
-    function imgNormal() {
-        videoBtn.hidden = "true";
-    }
-    </script>
 }
 
