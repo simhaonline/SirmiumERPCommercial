@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SirmiumCommercial.Models;
 
 namespace SirmiumCommercial.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191024103950_Notivication_v3")]
+    partial class Notivication_v3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -456,7 +458,7 @@ namespace SirmiumCommercial.Migrations
 
             modelBuilder.Entity("SirmiumCommercial.Models.Notification", b =>
                 {
-                    b.Property<int>("NotificationId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -464,32 +466,15 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<int>("ForId");
 
-                    b.Property<DateTime>("NotificationDateAdded");
-
-                    b.Property<string>("Subject");
-
-                    b.HasKey("NotificationId");
-
-                    b.ToTable("Notifications");
-                });
-
-            modelBuilder.Entity("SirmiumCommercial.Models.NotificationCard", b =>
-                {
-                    b.Property<int>("NotificationCardId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CreatedBy");
-
                     b.Property<string>("Msg");
 
-                    b.Property<int?>("NotificationId");
+                    b.Property<DateTime>("NotificationDate");
 
-                    b.HasKey("NotificationCardId");
+                    b.Property<string>("UserId");
 
-                    b.HasIndex("NotificationId");
+                    b.HasKey("Id");
 
-                    b.ToTable("NotificationCards");
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("SirmiumCommercial.Models.NotificationViews", b =>
@@ -498,13 +483,13 @@ namespace SirmiumCommercial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("NotificationCardId");
+                    b.Property<int?>("NotificationId");
 
                     b.Property<string>("UserId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NotificationCardId");
+                    b.HasIndex("NotificationId");
 
                     b.ToTable("NotificationViews");
                 });
@@ -730,18 +715,11 @@ namespace SirmiumCommercial.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("SirmiumCommercial.Models.NotificationCard", b =>
-                {
-                    b.HasOne("SirmiumCommercial.Models.Notification")
-                        .WithMany("NotificationCards")
-                        .HasForeignKey("NotificationId");
-                });
-
             modelBuilder.Entity("SirmiumCommercial.Models.NotificationViews", b =>
                 {
-                    b.HasOne("SirmiumCommercial.Models.NotificationCard")
-                        .WithMany("NotificationViews")
-                        .HasForeignKey("NotificationCardId");
+                    b.HasOne("SirmiumCommercial.Models.Notification")
+                        .WithMany("Views")
+                        .HasForeignKey("NotificationId");
                 });
 
             modelBuilder.Entity("SirmiumCommercial.Models.Presentation", b =>

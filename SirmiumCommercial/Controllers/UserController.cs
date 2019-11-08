@@ -125,7 +125,7 @@ namespace SirmiumCommercial.Controllers
                             {
                                 AppUser representCreatedBy = repository.Representations
                                     .Where(r => r.CreatedBy != null
-                                        && r.RepresentationId == r.RepresentationId)
+                                        && r.RepresentationId == representation.RepresentationId)
                                     .Select(c => c.CreatedBy).FirstOrDefault();
 
                                 content = new HomeViewModel

@@ -35,7 +35,7 @@
     <div class="navbar-right">
         <ul class="nav navbar-nav no-borders">
             <li class="dropdown">
-                <a class="dropdown-toggle label-menu-corner" href="#" data-toggle="dropdown">
+                @*<a class="dropdown-toggle label-menu-corner" href="#" data-toggle="dropdown">
                     <i class="pe-7s-bell"></i>
                     <span class="label label-info">0</span>
                 </a>
@@ -46,7 +46,8 @@
                     <li class="summary">
                         <a href="@Url.Action("Notifications", "User")">See All Notifications</a>
                     </li>
-                </ul>
+                </ul>*@
+                @await Component.InvokeAsync("Notification", new { userId = ViewData["Id"] })
             </li>
             <li class="dropdown">
                 <a class="dropdown-toggle" href="#" data-toggle="dropdown">

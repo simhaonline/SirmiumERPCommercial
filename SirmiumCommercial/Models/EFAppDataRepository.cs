@@ -37,6 +37,11 @@ namespace SirmiumCommercial.Models
         public IQueryable<GroupChatMessage> GroupChatMessages => context.GroupChatMessages
             .Include(m => m.Views);
         public IQueryable<GroupMessageView> GroupMessageViews => context.GroupMessageViews;
+        public IEnumerable<Notification> Notifications => context.Notifications
+            .Include(c => c.NotificationCards).ThenInclude(v => v.NotificationViews);
+        public IEnumerable<NotificationCard> NotificationCards => context.NotificationCards
+            .Include(v => v.NotificationViews);
+        public IEnumerable<NotificationViews> NotificationViews => context.NotificationViews;
 
         public void SaveCourse(Course course)
         {
@@ -339,10 +344,25 @@ namespace SirmiumCommercial.Models
         {
             if(comment.Id == 0)
             {
-                context.Comments.Add(comment);
-            }
+                string forTmp = comment.For;
+                string userTmp = comment.CreatedBy;
+                int forIdTmp = comment.ForId;
 
-            context.SaveChanges();
+                context.Comments.Add(comment);
+                context.SaveChanges();
+
+                NewNotification(comment.CreatedBy, "NewComment", comment.For,
+                    comment.ForId);
+                //notification
+                /*Notification notification = new Notification
+                {
+                    Subject = "NewComment",
+                    For = forTmp,
+                    ForId = forIdTmp,
+                    UserId = userTmp
+                };
+                AddNotification(notification);*/
+            }
         }
 
         public Comment DeleteComment (int commentId)
@@ -399,6 +419,15 @@ namespace SirmiumCommercial.Models
 
                 context.Likes.Add(like);
                 context.SaveChanges();
+
+                if (like.For == "Video")
+                {
+                    NewNotification(like.UserId, "LikeDislikeVideo", like.For, like.ForId);
+                }
+                else if (like.For == "Comment")
+                {
+                    NewNotification(like.UserId, "LikeDislikeComment", like.For, like.ForId);
+                }
             }
         }
 
@@ -428,6 +457,16 @@ namespace SirmiumCommercial.Models
 
                 context.Dislikes.Add(dislike);
                 context.SaveChanges();
+
+
+                if (dislike.For == "Video")
+                {
+                    NewNotification(dislike.UserId, "LikeDislikeVideo", dislike.For, dislike.ForId);
+                }
+                else if (dislike.For == "Comment")
+                {
+                    NewNotification(dislike.UserId, "LikeDislikeComment", dislike.For, dislike.ForId);
+                }
             }
         }
 
@@ -636,6 +675,171 @@ namespace SirmiumCommercial.Models
                 DeleteChatMessage(msg.Id);
                 context.SaveChanges();
             }
+        }
+
+        public void NewNotification (string userId, string subject, string For,
+            int forId)
+        {
+            Notification notification = context.Notifications
+                .FirstOrDefault(n => n.Subject == subject && n.For == For
+                    && n.ForId == forId);
+
+            if (notification != null)
+            {
+                AppUser user = userManager.Users
+                    .FirstOrDefault(u => u.Id == userId);
+                string userName = (user.FirstName == null && user.LastName == null) ?
+                    user.UserName : $"{user.FirstName} {user.LastName}";
+                string forName = "";
+                int totalUsers = 0;
+
+                NotificationCard newNotificationCard = new NotificationCard
+                {
+                    CreatedBy = user.Id,
+                };
+
+                if (notification.Subject == "NewComment")
+                {
+                    switch (notification.For)
+                    {
+                        case "Video":
+                            forName = context.Videos
+                                .FirstOrDefault(v => v.Id == notification.ForId).Title;
+                            totalUsers = context.Comments.Where(c => c.For == "Video"
+                                && c.ForId == notification.ForId)
+                                .Select(c => c.CreatedBy).Distinct().Count() - 1;
+                            break;
+                        case "Course":
+                            forName = context.Courses
+                                .FirstOrDefault(c => c.CourseId == notification.ForId).Title;
+                            totalUsers = context.Comments.Where(c => c.For == "Course"
+                                && c.ForId == notification.ForId)
+                                .Select(c => c.CreatedBy).Distinct().Count() - 1;
+                            break;
+                    }
+
+                    newNotificationCard.Msg = (totalUsers >= 1) ?
+                     $"{userName} and {totalUsers} others comment on {notification.For} '{forName}'" :
+                     $"{userName} comment on {notification.For} '{forName}'";
+
+                    context.Attach(notification);
+                    context.NotificationCards.Add(newNotificationCard);
+                    notification.NotificationCards.Add(newNotificationCard);
+                    //set datetime of last notification
+                    notification.NotificationDateAdded = DateTime.Now;
+                    context.SaveChanges();
+                }
+                
+                else if (notification.Subject == "LikeDislikeVideo")
+                {
+                    forName = context.Videos
+                                .FirstOrDefault(v => v.Id == notification.ForId).Title;
+
+                    //all likes and dislikes on video
+                    totalUsers = context.Likes
+                        .Where(l => l.For == "Video" && l.ForId == notification.ForId)
+                        .Select(c => c.UserId).Count();
+                    totalUsers += context.Dislikes
+                        .Where(d => d.For == "Video" && d.ForId == notification.ForId)
+                        .Select(c => c.UserId).Count();
+
+                    newNotificationCard.Msg = (totalUsers > 1) ?
+                     $"{userName} and {totalUsers} others reacted on your video '{forName}'" :
+                     $"{userName} reacted on your video '{forName}'";
+
+                    context.Attach(notification);
+                    context.NotificationCards.Add(newNotificationCard);
+                    notification.NotificationCards.Add(newNotificationCard);
+                    //set datetime of last notification
+                    notification.NotificationDateAdded = DateTime.Now;
+                    context.SaveChanges();
+                }
+
+                else if (notification.Subject == "LikeDislikeComment")
+                {
+                    //notification.for = "Comment" 
+                    //notification.forID = CommentId
+                    //get comment where commentId == notification.forID
+                    Comment comment = context.Comments
+                        .FirstOrDefault(c => c.Id == notification.ForId);
+
+                    /*forName = (comment.For == "Video") ?
+                        context.Videos.FirstOrDefault(v => v.Id == comment.ForId).Title :
+                        context.Courses
+                        .FirstOrDefault(c => c.CourseId == comment.ForId).Title;*/
+
+                    //all likes and dislikes for comment where comment.id = notification.forId
+                   totalUsers = context.Likes
+                        .Where(l => l.For == "Comment" && l.ForId == notification.ForId)
+                        .Select(c => c.UserId).Count();
+                    totalUsers += context.Dislikes
+                        .Where(d => d.For == "Comment" && d.ForId == notification.ForId)
+                        .Select(c => c.UserId).Count();
+
+                    string commentContent = (comment.Content.Length > 25) ?
+                        comment.Content.Substring(0, 25) + "..." : comment.Content;
+
+                    newNotificationCard.Msg = (totalUsers > 1) ?
+                     $"{userName} and {totalUsers} others reacted on your comment '{commentContent}'" :
+                     $"{userName} reacted on your comment for '{commentContent}'";
+
+                    context.Attach(notification);
+                    context.NotificationCards.Add(newNotificationCard);
+                    notification.NotificationCards.Add(newNotificationCard);
+                    //set datetime of last notification
+                    notification.NotificationDateAdded = DateTime.Now;
+                    context.SaveChanges();
+                    
+                }/*
+                else if (notification.Subject == "NewVideo")
+                {
+                for all user on course
+                if video for == course or presentation
+                }
+                else if (notification.Subject == "UserJoinCourse")
+                {
+                for user who created course
+                and all user on course
+                }
+                else if (notification.Subject == "RepresentationRating")
+                {
+                for user who created representation
+                }
+                else if (notification.Subject == "NewRepresentation")
+                {
+                for user who created course
+                }*/
+            }
+            else
+            {
+                notification = new Notification
+                {
+                    Subject = subject,
+                    For = For,
+                    ForId = forId,
+                    NotificationDateAdded = DateTime.Now
+                };
+                context.Notifications.Add(notification);
+                context.SaveChanges();
+
+                NewNotification(userId, subject, For, forId);
+            }
+        }
+
+        public void NewNotificationCardView(int notificationCarId, string userId)
+        {
+            NotificationCard card = context.NotificationCards
+                .FirstOrDefault(c => c.NotificationCardId == notificationCarId);
+
+            NotificationViews view = new NotificationViews
+            {
+                UserId = userId
+            };
+            context.Attach(card);
+            context.NotificationViews.Add(view);
+            context.SaveChanges();
+            card.NotificationViews.Add(view);
+            context.SaveChanges();
         }
     }
 }

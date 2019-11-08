@@ -28,5 +28,8 @@ namespace SirmiumCommercial.Models
         public DbSet<GroupChatUsers> GroupChatUsers { get; set; }
         public DbSet<GroupChatMessage> GroupChatMessages { get; set; }
         public DbSet<GroupMessageView> GroupMessageViews { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<NotificationCard> NotificationCards { get; set; }
+        public DbSet<NotificationViews> NotificationViews { get; set; }
     }
 }

@@ -262,4 +262,44 @@ namespace SirmiumCommercial.Models
         public int Id { get; set; }
         public string UserId { get; set; }
     }
+
+    //Notifications
+    public class Notification
+    {
+        public int NotificationId { get; set; }
+
+        //NewComment, LikeVideo, DislikeVideo, LikeComment, DislikeComment
+        //NewVideo, UserJoinCourse, NewRepresentation, RepresentationRating
+        public string Subject { get; set; }
+
+        //Video, Course, Representation
+        public string For { get; set; }
+        public int ForId { get; set; }
+
+        //------? TODO ?----------
+        //CurrentDate - NotificationDateAdded > 1 year => delete Notification ?????
+        public DateTime NotificationDateAdded { get; set; }
+        public ICollection<NotificationCard> NotificationCards { get; set; }
+            = new List<NotificationCard>();
+    }
+
+    public class NotificationCard
+    {
+        public int NotificationCardId { get; set; }
+
+        //UserId
+        public string CreatedBy { get; set; }
+
+        //Notification Message
+        public string Msg { get; set; }
+
+        public ICollection<NotificationViews> NotificationViews { get; set; }
+            = new List<NotificationViews>();
+    }
+
+    public class NotificationViews
+    {
+        public int Id { get; set; }
+        public string UserId { get; set; }
+    }
 }

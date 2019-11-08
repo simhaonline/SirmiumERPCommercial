@@ -1,0 +1,85 @@
+﻿@model IQueryable<NotificationViewModel>
+
+
+@{
+    string IsSeen (NotificationCard n)
+    {
+        string returnStr = "padding-left:0px; padding-top:10px; border-radius: 10px;" +
+            " box-sizing: border-box; border:1px solid #99caff;";
+        return (n.NotificationViews.FirstOrDefault(v => v.UserId == ViewData["Id"].ToString()) != null) ?
+            returnStr : returnStr + "border:2px solid #007bff; background-color: #e6f2ff;";
+    }
+
+    int CountUnseen (IQueryable<NotificationViewModel> model)
+    {
+        int count = 0;
+
+        foreach(NotificationViewModel n in model)
+        {
+            count += (n.NotificationCard.NotificationViews.FirstOrDefault(v => v.UserId ==
+                    ViewData["Id"].ToString()) == null) ? 1 : 0;
+        }
+
+        return count;
+    }
+
+    string UnseenLabel (IQueryable<NotificationViewModel> model)
+    {
+        int count = CountUnseen(model);
+
+        return (count == 0) ? "" : $"<span class='label label-info'>{count}</span>";
+    }
+
+    string ImgSrc (string path)
+    {
+        return (path != null) ? $"/UsersData/{path}" : "/defaultAvatar.png";
+    }
+
+    string redirectToView(Notification n)
+    {
+        if (n.For == "Video")
+        {
+            return $"/Recorder/Index/{ViewData["Id"]}?videoId={n.ForId}";
+        }
+        return "#";
+    }
+}
+
+<a class="dropdown-toggle label-menu-corner" href="#" data-toggle="dropdown">
+    <i class="pe-7s-bell"></i>
+    @Html.Raw(UnseenLabel(Model))
+</a>
+<ul class="dropdown-menu hdropdown animated flipInX"  style="width: 390px">
+    <li class="title">
+        You have @CountUnseen(Model) new notification
+    </li>
+    <li>
+        <div class="row">
+            <div class="chat-discussion" id="chat-header-window"
+                 style="padding-top: 0px; padding-bottom: 0px">
+                @foreach (NotificationViewModel notification in Model)
+                {
+                    <a href="@Url.Action("Redirect", "Notification",
+                        new { id = ViewData["Id"],
+                            notificationCardId = notification.NotificationCard.NotificationCardId,
+                            For = notification.For,
+                            ForId = notification.ForId})">
+                        <div class="chat-message m-b-xs"
+                             style="@IsSeen(notification.NotificationCard)">
+                            <img class="message-avatar m-l-md m-t-sm"
+                                 src="@ImgSrc(notification.UserProfilePhoto)" alt="Photo">
+                            <div class="message" style="background: none;">
+                                <span class="message-content">
+                                    @notification.NotificationCard.Msg
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        </div>
+    </li>
+    <li class="summary">
+        <a href="@Url.Action("Notifications", "User")">See All Notifications</a>
+    </li>
+</ul>

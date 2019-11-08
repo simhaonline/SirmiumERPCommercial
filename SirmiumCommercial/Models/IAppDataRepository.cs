@@ -39,6 +39,12 @@ namespace SirmiumCommercial.Models
 
         IQueryable<GroupMessageView> GroupMessageViews { get; }
 
+        IEnumerable<Notification> Notifications { get; }
+
+        IEnumerable<NotificationCard> NotificationCards { get; }
+
+        IEnumerable<NotificationViews> NotificationViews { get; }
+
         void SaveCourse(Course course);
 
         Course DeleteCourse(int courseId);
@@ -104,5 +110,25 @@ namespace SirmiumCommercial.Models
         void ClearChat(string userId, int chatId);
 
         void CheckpointDelete(Chat chat);
+
+        //------ Notifications -----
+        void NewNotification(string userId, string subject, string For,
+            int forId);
+
+        void NewNotificationCardView(int notificationCarId, string userId);
+        //void AddNotification(Notification notification);
+
+        // void DeleteNotification(int notificationId);
+
+        //void NewNotificationView(NotificationViews notifivationView);
+
+        //void AddNotificationViews(ICollection<NotificationViews> notificationViews,
+        //  Notification notification);
+
+        // void DeleteNotificationView(int viewId);
+
+        //void EditNotification(Notification newNotification, Notification oldNotification);
+
+        //void ClearNotificationViews(int notificationId);
     }
 }

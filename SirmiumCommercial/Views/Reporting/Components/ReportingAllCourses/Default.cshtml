@@ -1,0 +1,68 @@
+﻿@model IQueryable<ReportingAllCourseVCViewModel>
+
+
+
+<style>
+    #wraper {
+        height: 122px;
+        margin-right: 30px;
+        float: left;
+    }
+
+    #icon-wraper {
+        width: 100px;
+        height: 100px;
+        float: left;
+    }
+
+    #progress {
+        font-size: 14px;
+        font-weight: 500;
+        color: #000000;
+        height: 20px;
+        text-align: center;
+    }
+
+    #coures-title {
+        height: 100px;
+        font-size: 36px;
+        margin-top: 32px;
+        margin-left: 10px;
+        float: left;
+    }
+</style>
+
+@if (Model.Count() > 0)
+{
+
+    <div class="normalheader p-sm">
+        <div class="hpanel">
+            <div class="panel-body" style="padding-bottom: 0px; padding-top: 5px;">
+                <!-- overflow-x: scroll; overflow-y:hidden">-->
+                @foreach (ReportingAllCourseVCViewModel m in Model)
+                {
+                    var p = (100 / m.TotalParts) * m.CompletedParts;
+                    var pStr = $"p{p}";
+                    <div id="wraper">
+                        <div id="icon-wraper">
+                            <div id="progress">@m.CompletedParts/@m.TotalParts </div>
+                            
+                            <div class="progress-circle @pStr
+                                 @((p < 50) ? "" : "over50")" style="margin: 0px">
+                                <span class="@m.CourseAward"></span>
+                                <div class="left-half-clipper">
+                                    <div class="first50-bar"></div>
+                                    <div class="value-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="coures-title">
+                            <h1>@m.CourseTitle</h1>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
