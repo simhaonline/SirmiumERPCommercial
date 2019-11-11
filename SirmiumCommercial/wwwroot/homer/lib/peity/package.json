@@ -11,7 +11,7 @@
     "jquery.peity.min.js"
   ],
   "devDependencies": {
-    "ejs": "~0.8.5",
+    "ejs": "~2.7.1",
     "express": "~3.4.8",
     "mocha": "~1.18.2",
     "queue-async": "~1.0.7"
