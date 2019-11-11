@@ -19,7 +19,8 @@ namespace SirmiumCommercial.Models
         }
 
         public IQueryable<Group> Groups => context.Groups;
-        public IQueryable<Course> Courses => context.Courses.Include(p => p.Presentations);
+        public IQueryable<Course> Courses => context.Courses.Include(p => p.Presentations)
+            .ThenInclude(r => r.Representations);
         public IQueryable<Presentation> Presentations => context.Presentations
             .Include(r => r.Representations);
         public IQueryable<Representation> Representations => context.Representations;
@@ -186,6 +187,9 @@ namespace SirmiumCommercial.Models
 
             context.CourseUsers.Add(courseUsers);
             context.SaveChanges();
+
+            //add notification
+            NewNotification(userId, "UserJoinCourse", "Course", courseId);
         }
 
         public void DeleteAllFromCourseUsers(int courseId)
@@ -305,6 +309,12 @@ namespace SirmiumCommercial.Models
                 }
             }
             context.SaveChanges();
+
+            //add notification
+            if (video.For == "Representation")
+            {
+                NewNotification(video.CreatedBy, "NewRepresentation", "Video", video.Id);
+            }
         }
 
         public Video DeleteVideo(int videoId)
@@ -763,18 +773,13 @@ namespace SirmiumCommercial.Models
                     Comment comment = context.Comments
                         .FirstOrDefault(c => c.Id == notification.ForId);
 
-                    /*forName = (comment.For == "Video") ?
-                        context.Videos.FirstOrDefault(v => v.Id == comment.ForId).Title :
-                        context.Courses
-                        .FirstOrDefault(c => c.CourseId == comment.ForId).Title;*/
-
                     //all likes and dislikes for comment where comment.id = notification.forId
                    totalUsers = context.Likes
                         .Where(l => l.For == "Comment" && l.ForId == notification.ForId)
-                        .Select(c => c.UserId).Count();
+                        .Select(c => c.UserId).Count() - 1;
                     totalUsers += context.Dislikes
                         .Where(d => d.For == "Comment" && d.ForId == notification.ForId)
-                        .Select(c => c.UserId).Count();
+                        .Select(c => c.UserId).Count() - 1;
 
                     string commentContent = (comment.Content.Length > 25) ?
                         comment.Content.Substring(0, 25) + "..." : comment.Content;
@@ -790,25 +795,71 @@ namespace SirmiumCommercial.Models
                     notification.NotificationDateAdded = DateTime.Now;
                     context.SaveChanges();
                     
-                }/*
-                else if (notification.Subject == "NewVideo")
-                {
-                for all user on course
-                if video for == course or presentation
                 }
+                /*else if (notification.Subject == "NewVideo")
+                {
+                    //for all user on course
+                    //if video for == course or presentation
+                }*/
                 else if (notification.Subject == "UserJoinCourse")
                 {
-                for user who created course
-                and all user on course
+                    Course course = context.Courses
+                        .FirstOrDefault(c => c.CourseId == notification.ForId);
+
+                    newNotificationCard.Msg = 
+                        $"{userName} has joined the Course '{course.Title}'";
+
+                    context.Attach(notification);
+                    context.NotificationCards.Add(newNotificationCard);
+                    notification.NotificationCards.Add(newNotificationCard);
+                    //set datetime of last notification
+                    notification.NotificationDateAdded = DateTime.Now;
+                    context.SaveChanges();
                 }
                 else if (notification.Subject == "RepresentationRating")
                 {
-                for user who created representation
+                    //for user who created representation
+                    Video representationVideo = context.Videos
+                        .FirstOrDefault(v => v.Id == notification.ForId);
+
+                    if (representationVideo != null)
+                    {
+                        Representation representation = context.Representations
+                            .FirstOrDefault(r => r.RepresentationId == representationVideo.ForId);
+
+                        newNotificationCard.Msg =
+                        $"Your representation {representation.Title} has been rated.";
+
+                        context.Attach(notification);
+                        context.NotificationCards.Add(newNotificationCard);
+                        notification.NotificationCards.Add(newNotificationCard);
+                        //set datetime of last notification
+                        notification.NotificationDateAdded = DateTime.Now;
+                        context.SaveChanges();
+                    }
                 }
                 else if (notification.Subject == "NewRepresentation")
                 {
-                for user who created course
-                }*/
+                    //for user who created course
+                    Video representationVideo = context.Videos
+                        .FirstOrDefault(v => v.Id == notification.ForId);
+
+                    if (representationVideo != null)
+                    {
+                        Representation representation = context.Representations
+                            .FirstOrDefault(r => r.RepresentationId == representationVideo.ForId);
+
+                        newNotificationCard.Msg =
+                        $"{userName} added a new representation '{representation.Title}'";
+
+                        context.Attach(notification);
+                        context.NotificationCards.Add(newNotificationCard);
+                        notification.NotificationCards.Add(newNotificationCard);
+                        //set datetime of last notification
+                        notification.NotificationDateAdded = DateTime.Now;
+                        context.SaveChanges();
+                    }
+                }
             }
             else
             {

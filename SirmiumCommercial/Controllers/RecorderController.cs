@@ -472,6 +472,7 @@ namespace SirmiumCommercial.Controllers
 
             representation.Rating = model.Rating;
             repository.SaveRepresentation(representation);
+            repository.NewNotification(model.userId, "RepresentationRating", "Video", representation.VideoId);
 
             return RedirectToAction("Index", new { id = model.userId, videoId = representation.VideoId });
         }

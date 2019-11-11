@@ -17,6 +17,11 @@
     connectionC.on("PostNewComment", function (commentfor, commentForID, commentDateAdded, commentContent, commentId,
         commentCreatedBy, userFirstName, userLastName, userProfilePhoto) {
         if (commentfor == commentFor && commentForID == commentForId) {
+            var noComment = document.getElementById('no-comment');
+            if (noComment != null) {
+                $('#no-comment').remove();
+            }
+
             var profilePhoto = (userProfilePhoto == null) ?
                 `<img src="/defaultAvatar.png" class="img-circle m-b" alt="logo" />` :
                 `<img src="/UsersData/` + userProfilePhoto + `" class="img-circle m-b" alt="logo" />`;

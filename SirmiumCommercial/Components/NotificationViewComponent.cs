@@ -20,7 +20,7 @@ namespace SirmiumCommercial.Components
             repository = repo;
             userManager = userMgr;
         }
-        
+
         public IViewComponentResult Invoke(string userId)
         {
             List<NotificationViewModel> notifications = new List<NotificationViewModel>();
@@ -37,19 +37,23 @@ namespace SirmiumCommercial.Components
                           && notification.Subject != "DislikeComment")
                     {
                         NotificationCard notificationCard = notification.NotificationCards
-                                    .Last(nc => nc.CreatedBy != userId);
-                        NotificationViewModel nModel = new NotificationViewModel
+                            .LastOrDefault(nc => nc.CreatedBy != userId);
+
+                        if (notificationCard != null)
                         {
-                            NotificationCard = notificationCard,
-                            Views = notificationCard.NotificationViews.AsQueryable(),
-                            UserProfilePhoto = userManager.Users
+                            NotificationViewModel nModel = new NotificationViewModel
+                            {
+                                NotificationCard = notificationCard,
+                                Views = notificationCard.NotificationViews.AsQueryable(),
+                                UserProfilePhoto = userManager.Users
                                 .FirstOrDefault(u => u.Id == notificationCard.CreatedBy)
                                 .ProfilePhotoUrl,
-                            For = notification.For,
-                            ForId = notification.ForId
-                        };
+                                For = notification.For,
+                                ForId = notification.ForId
+                            };
 
-                        notifications.Add(nModel);
+                            notifications.Add(nModel);
+                        }
                     }
                     //For New Comment
                     else if (notification.Subject == "NewComment")
@@ -60,19 +64,58 @@ namespace SirmiumCommercial.Components
                         if (comments.FirstOrDefault(c => c.CreatedBy == userId) != null)
                         {
                             NotificationCard notificationCard = notification.NotificationCards
-                                    .Last(nc => nc.CreatedBy != userId);
-                            NotificationViewModel nModel = new NotificationViewModel
+                                .LastOrDefault(nc => nc.CreatedBy != userId);
+
+                            if (notificationCard != null)
                             {
-                                NotificationCard = notificationCard,
-                                Views = notificationCard.NotificationViews.AsQueryable(),
-                                UserProfilePhoto = userManager.Users
+                                NotificationViewModel nModel = new NotificationViewModel
+                                {
+                                    NotificationCard = notificationCard,
+                                    Views = notificationCard.NotificationViews.AsQueryable(),
+                                    UserProfilePhoto = userManager.Users
                                     .FirstOrDefault(u => u.Id == notificationCard.CreatedBy)
                                     .ProfilePhotoUrl,
-                                For = notification.For,
-                                ForId = notification.ForId
-                            };
+                                    For = notification.For,
+                                    ForId = notification.ForId
+                                };
 
-                            notifications.Add(nModel);
+                                notifications.Add(nModel);
+                            }
+                        }
+                    }
+                    //new representation
+                    else if (notification.Subject == "NewRepresentation")
+                    {
+                        foreach (Course course in repository.Courses
+                            .Where(c => c.CreatedBy.Id == userId))
+                        {
+                            foreach (Presentation presentation in course.Presentations)
+                            {
+                                foreach (Representation repres in presentation.Representations)
+                                {
+                                    if (repres.VideoId == notification.ForId)
+                                    {
+                                        NotificationCard notificationCard = notification.NotificationCards
+                                                         .LastOrDefault(nc => nc.CreatedBy != userId);
+
+                                        if (notificationCard != null)
+                                        {
+                                            NotificationViewModel nModel = new NotificationViewModel
+                                            {
+                                                NotificationCard = notificationCard,
+                                                Views = notificationCard.NotificationViews.AsQueryable(),
+                                                UserProfilePhoto = userManager.Users
+                                                .FirstOrDefault(u => u.Id == notificationCard.CreatedBy)
+                                                .ProfilePhotoUrl,
+                                                For = notification.For,
+                                                ForId = notification.ForId
+                                            };
+
+                                            notifications.Add(nModel);
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -80,25 +123,29 @@ namespace SirmiumCommercial.Components
                 {
                     Course course = repository.Courses
                         .FirstOrDefault(c => c.CourseId == notification.ForId);
-
-                    if (course.CreatedBy != null) { 
-                    if (userId == course.CreatedBy.Id)
+                    if (course.CreatedBy != null)
                     {
-                        NotificationCard notificationCard = notification.NotificationCards
-                                    .Last(nc => nc.CreatedBy != userId);
-                        NotificationViewModel nModel = new NotificationViewModel
+                        if (userId == course.CreatedBy.Id)
                         {
-                            NotificationCard = notificationCard,
-                            Views = notificationCard.NotificationViews.AsQueryable(),
-                            UserProfilePhoto = userManager.Users
-                                .FirstOrDefault(u => u.Id == notificationCard.CreatedBy)
-                                .ProfilePhotoUrl,
-                            For = notification.For,
-                            ForId = notification.ForId
-                        };
+                            NotificationCard notificationCard = notification.NotificationCards
+                                .LastOrDefault(nc => nc.CreatedBy != userId);
 
-                        notifications.Add(nModel);
-                    }
+                            if (notificationCard != null)
+                            {
+                                NotificationViewModel nModel = new NotificationViewModel
+                                {
+                                    NotificationCard = notificationCard,
+                                    Views = notificationCard.NotificationViews.AsQueryable(),
+                                    UserProfilePhoto = userManager.Users
+                                    .FirstOrDefault(u => u.Id == notificationCard.CreatedBy)
+                                    .ProfilePhotoUrl,
+                                    For = notification.For,
+                                    ForId = notification.ForId
+                                };
+
+                                notifications.Add(nModel);
+                            }
+                        }
                     }
                     else if (notification.Subject == "NewComment")
                     {
@@ -108,19 +155,23 @@ namespace SirmiumCommercial.Components
                         if (comments.FirstOrDefault(c => c.CreatedBy == userId) != null)
                         {
                             NotificationCard notificationCard = notification.NotificationCards
-                                    .Last(nc => nc.CreatedBy != userId);
-                            NotificationViewModel nModel = new NotificationViewModel
+                                    .LastOrDefault(nc => nc.CreatedBy != userId);
+
+                            if (notificationCard != null)
                             {
-                                NotificationCard = notificationCard,
-                                Views = notificationCard.NotificationViews.AsQueryable(),
-                                UserProfilePhoto = userManager.Users
+                                NotificationViewModel nModel = new NotificationViewModel
+                                {
+                                    NotificationCard = notificationCard,
+                                    Views = notificationCard.NotificationViews.AsQueryable(),
+                                    UserProfilePhoto = userManager.Users
                                     .FirstOrDefault(u => u.Id == notificationCard.CreatedBy)
                                     .ProfilePhotoUrl,
-                                For = notification.For,
-                                ForId = notification.ForId
-                            };
+                                    For = notification.For,
+                                    ForId = notification.ForId
+                                };
 
-                            notifications.Add(nModel);
+                                notifications.Add(nModel);
+                            }
                         }
                     }
                 }
@@ -140,24 +191,27 @@ namespace SirmiumCommercial.Components
                         if (comment.CreatedBy == userId)
                         {
                             NotificationCard notificationCard = notification.NotificationCards
-                                    .Last(nc => nc.CreatedBy != userId);
-                            NotificationViewModel nModel = new NotificationViewModel
-                            {
-                                NotificationCard = notificationCard,
-                                Views = notificationCard.NotificationViews.AsQueryable(),
-                                UserProfilePhoto = userManager.Users
-                                    .FirstOrDefault(u => u.Id == notificationCard.CreatedBy)
-                                    .ProfilePhotoUrl,
-                                For = comment.For,
-                                ForId = comment.ForId
-                            };
+                                .LastOrDefault(n => n.CreatedBy != userId);
 
-                            notifications.Add(nModel);
+                            if (notificationCard != null)
+                            {
+                                NotificationViewModel nModel = new NotificationViewModel
+                                {
+                                    NotificationCard = notificationCard,
+                                    Views = notificationCard.NotificationViews.AsQueryable(),
+                                    UserProfilePhoto = userManager.Users
+                                            .FirstOrDefault(u => u.Id == notificationCard.CreatedBy)
+                                            .ProfilePhotoUrl,
+                                    For = comment.For,
+                                    ForId = comment.ForId
+                                };
+
+                                notifications.Add(nModel);
+                            }
                         }
                     }
                 }
             }
-
             return View(notifications.AsQueryable());
         }
     }
