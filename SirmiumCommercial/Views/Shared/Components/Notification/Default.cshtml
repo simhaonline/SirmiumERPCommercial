@@ -27,7 +27,7 @@
     {
         int count = CountUnseen(model);
 
-        return (count == 0) ? "" : $"<span class='label label-info'>{count}</span>";
+        return (count == 0) ? "" : $"<span class='label label-info' id='notification-unseen-label'>{count}</span>";
     }
 
     string ImgSrc (string path)
@@ -47,7 +47,9 @@
 
 <a class="dropdown-toggle label-menu-corner" href="#" data-toggle="dropdown">
     <i class="pe-7s-bell"></i>
-    @Html.Raw(UnseenLabel(Model))
+    <span id="unseen-label-wrapper">
+        @Html.Raw(UnseenLabel(Model))
+    </span>
 </a>
 <ul class="dropdown-menu hdropdown animated flipInX"  style="width: 390px">
     <li class="title">
@@ -55,7 +57,7 @@
     </li>
     <li>
         <div class="row">
-            <div class="chat-discussion" id="chat-header-window"
+            <div class="chat-discussion" id="notification-menu"
                  style="padding-top: 0px; padding-bottom: 0px">
                 @foreach (NotificationViewModel notification in Model)
                 {
@@ -63,7 +65,8 @@
                         new { id = ViewData["Id"],
                             notificationCardId = notification.NotificationCard.NotificationCardId,
                             For = notification.For,
-                            ForId = notification.ForId})">
+                            ForId = notification.ForId})" 
+                       id="notification-@notification.NotificationCard.NotificationCardId">
                         <div class="chat-message m-b-xs"
                              style="@IsSeen(notification.NotificationCard)">
                             <img class="message-avatar m-l-md m-t-sm"
@@ -83,3 +86,6 @@
         <a href="@Url.Action("Notifications", "User")">See All Notifications</a>
     </li>
 </ul>
+
+<input type="hidden" id="total-notification-unseen-input"
+       value="@CountUnseen(Model)" />

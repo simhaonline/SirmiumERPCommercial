@@ -57,6 +57,7 @@ namespace SirmiumCommercial
             app.UseStatusCodePages();
             app.UseStaticFiles();
             app.UseAuthentication();
+
             app.UseMvc(routes => {
                 routes.MapRoute(
                     name: null,
@@ -71,11 +72,13 @@ namespace SirmiumCommercial
                     name: null,
                     template: "{Controller}/{Action}/{id?}");
             });
+
             app.UseSignalR(routes =>
             {
                 routes.MapHub<VideoHub>("/videoHub");
                 routes.MapHub<CommentsHub>("/commentsHub");
                 routes.MapHub<ChatHub>("/chatHub");
+                routes.MapHub<NotificationHub>("/notificationHub");
             });
 
             AppSeedData.EnsurePopulated(app);

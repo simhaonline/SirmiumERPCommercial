@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using SirmiumCommercial.Models;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,12 @@ namespace SirmiumCommercial.Hubs
     public class VideoHub : Hub
     {
         private IAppDataRepository repository;
+        private UserManager<AppUser> userManager;
 
-        public VideoHub(IAppDataRepository repo)
+        public VideoHub(IAppDataRepository repo, UserManager<AppUser> userMgr)
         {
             repository = repo;
+            userManager = userMgr;
         }
 
         public async Task VideoViews (int videoId)
@@ -45,6 +48,8 @@ namespace SirmiumCommercial.Hubs
                 };
                 repository.AddLike(like);
                 likeInd = true;
+
+                _ = ShowNotification(userId, videoId);
             }
             else
             {
@@ -80,6 +85,8 @@ namespace SirmiumCommercial.Hubs
                 };
                 repository.AddDislike(dislike);
                 dislikeInd = true;
+
+                _ = ShowNotification(userId, videoId);
             }
             else
             {
@@ -95,6 +102,31 @@ namespace SirmiumCommercial.Hubs
 
             await Clients.All.SendAsync("AddRemoveDislike", videoId, userId,
                 totalLikes, likeInd, totalDislikes, dislikeInd);
+        }
+
+        //notifications
+        public async Task ShowNotification(string userId, int videoId)
+        {
+            Video video = repository.Videos
+                .FirstOrDefault(v => v.Id == videoId);
+            Notification notification = repository.Notifications
+                .FirstOrDefault(n => n.Subject == "LikeDislikeVideo"
+                        && n.For == "Video" && n.ForId == videoId);
+            NotificationCard notificationCard = notification.NotificationCards
+                .LastOrDefault(c => c.CreatedBy == userId);
+            AppUser notificationCardCreatedBy = userManager.Users
+                .FirstOrDefault(u => u.Id == notificationCard.CreatedBy);
+            string notificationCardCreatedByPhoto = (notificationCardCreatedBy.ProfilePhotoUrl != null) ?
+                    $"/UsersData/{notificationCardCreatedBy.ProfilePhotoUrl}" : "/defaultAvatar.png";
+
+            //if NotificationCreatedBy == VideoCreatedBy
+            //DO NOT SHOW notification
+            if (userId != video.CreatedBy)
+            {
+                await Clients.All.SendAsync("ShowNewNotification", video.CreatedBy,
+                    notificationCard.NotificationCardId, video.Id,
+                    notificationCard.Msg, notificationCardCreatedByPhoto);
+            }
         }
     }
 }

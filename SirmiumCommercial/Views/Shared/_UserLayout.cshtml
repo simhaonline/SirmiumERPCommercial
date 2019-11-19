@@ -103,14 +103,39 @@
 
 
             var connectionChatHeader = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+            var connectionCommentNotification = new signalR.HubConnectionBuilder().withUrl("/commentsHub").build();
+            var connectionVideoNotification = new signalR.HubConnectionBuilder().withUrl("/videoHub").build();
+            var connectionNotificatino = new signalR.HubConnectionBuilder().withUrl("/notificationHub").build();
 
-            //start connection
+            //start connection for chatHub - chat header
             connectionChatHeader.start().then(function () {
-                console.log("Connected");
+                console.log("Connected: --chat header hub--");
             }).catch(function (err) {
                 return console.error(err.toString());
             });
 
+            //start connection for commentHub - comment notification
+            connectionCommentNotification.start().then(function () {
+                console.log("Connected: --comment notification--");
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+            
+            //start connection for videoHub - video notification
+            connectionVideoNotification.start().then(function () {
+                console.log("Connected: --video notification--");
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+            
+            //start connection for chatHub - chat header
+            connectionNotificatino.start().then(function () {
+                console.log("Connected: --notification hub--");
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+
+            //functions for chat header
             connectionChatHeader.on("UserHeaderNewMsg", function (senderId, recipientId, cId, senderName,
                 date, msgContent, unseenMsgs, senderPhoto, recipientPhoto, recipientName) {
                 if (recipientId == currentUser) {
@@ -272,10 +297,161 @@
                     : "border:1px solid #99caff;";
             };
             function unseenExistsSpan(n) {
-                return (n > 0) ? 
-                    `<span id='unseen-span' class='badge badge-primary pull-right' 
+                return (n > 0) ?
+                    `<span id='unseen-span' class='badge badge-primary pull-right'
                      style='font-size:10px; background-color: #007bff;'>`
                      + n + `</span>` : "";
+            };
+
+
+            //functions for notifications
+            //like & dislike comment
+            connectionCommentNotification.on("ShowNewNotification", function (userId, notificationCardId,
+                commentFor, commentForId, notificationCardMsg, notificationCardUserPhoto) {
+                if (currentUser == userId) {
+
+                    var link = "/Notification/Redirect/" +
+                        userId + "?notificationCardId=" + notificationCardId +
+                        "&amp;For=" + commentFor + "&amp;ForId=" + commentForId;
+
+                    showNotification(notificationCardId,
+                        notificationCardMsg, notificationCardUserPhoto, link);
+                }
+            });
+
+            //new comment --course
+            connectionCommentNotification.on("ShowNewCourseCommentNotification", function (userId, notificationCardId,
+                notificationCourseId, notificationCardMsg, notificationCardUserPhoto) {
+                if (currentUser == userId) {
+
+                    var link = "/Notification/Redirect/" +
+                        userId + "?notificationCardId=" + notificationCardId +
+                        "&amp;For=Course&amp;ForId=" + notificationCourseId;
+
+                    showNotification(notificationCardId,
+                        notificationCardMsg, notificationCardUserPhoto, link);
+                }
+            });
+            
+            //new comment --video
+            connectionCommentNotification.on("ShowNewVideoCommentNotification", function (userId, notificationCardId,
+                notificationVideoId, notificationCardMsg, notificationCardUserPhoto) {
+                if (currentUser == userId) {
+
+                    var link = "/Notification/Redirect/" +
+                        userId + "?notificationCardId=" + notificationCardId +
+                        "&amp;For=Video&amp;ForId=" + notificationVideoId;
+
+                    showNotification(notificationCardId,
+                        notificationCardMsg, notificationCardUserPhoto, link);
+                }
+            });
+
+            //video like & dislike notification
+            connectionVideoNotification.on("ShowNewNotification", function (userId, notificationCardId,
+                notificationVideoId, notificationCardMsg, notificationCardUserPhoto) {
+                if (currentUser == userId) {
+
+                    var link = "/Notification/Redirect/" +
+                        userId + "?notificationCardId=" + notificationCardId +
+                        "&amp;For=Video&amp;ForId=" + notificationVideoId;
+
+                    showNotification(notificationCardId,
+                        notificationCardMsg, notificationCardUserPhoto, link);
+                }
+            });
+
+            //new user on course
+            connectionNotificatino.on("ShowNewUserOnCourseNotification", function (userId,
+                notificationCardId, notificationCourseId, notificationCardMsg, notificationCardUserPhoto) {
+                if (currentUser == userId) {
+
+                    var link = "/Notification/Redirect/" +
+                        userId + "?notificationCardId=" + notificationCardId +
+                        "&amp;For=Course&amp;ForId=" + notificationCourseId;
+
+                    showNotification(notificationCardId,
+                        notificationCardMsg, notificationCardUserPhoto, link);
+                }
+            });
+            
+            //new rating
+            connectionNotificatino.on("ShowNewRatingNotification", function (userId,
+                notificationCardId, notificationVideoId, notificationCardMsg, notificationCardUserPhoto) {
+                if (currentUser == userId) {
+
+                    var link = "/Notification/Redirect/" +
+                        userId + "?notificationCardId=" + notificationCardId +
+                        "&amp;For=Video&amp;ForId=" + notificationVideoId;
+
+                    showNotification(notificationCardId,
+                        notificationCardMsg, notificationCardUserPhoto, link);
+                }
+            });
+
+            function showNotification(notificationCardId,
+                notificationCardMsg, notificationCardUserPhoto, link) {
+
+                //notification unseenLabel
+                var unseenLabel = document.getElementById('notification-unseen-label');
+                //if unseenLabel == null => totalUnseenNotification = 0
+                if (unseenLabel == null) {
+                    $('#unseen-label-wrapper').append(`
+                            <span class='label label-info' id='notification-unseen-label'>1</span>
+                        `);
+                }
+                else {
+                    var totalUnssen = parseInt(document.getElementById('total-notification-unseen-input').value);
+                    totalUnssen += 1;
+                    $('#notification-unseen-label').html(totalUnssen.toString());
+                }
+
+                //notificationCard div
+                var notificationDivIdJS = "notification-" + notificationCardId;
+                var notificationDivIdJQ = "#notification-" + notificationCardId
+                var notificationCardDiv = document.getElementById(notificationDivIdJS);
+
+                //notificationCard exists
+                if (notificationCardDiv != null) {
+                    $(notificationDivIdJQ).remove();
+                    $('#notification-menu').prepend(`
+                            <a href="` + link + `"
+                               id="notification-` + notificationCardId + `">
+                                <div class="chat-message m-b-xs"
+                                    style="border:2px solid #007bff; background-color: #e6f2ff;
+                                           padding-left:0px; padding-top:10px; border-radius: 10px;
+                                           box-sizing: border-box;">
+                                    <img class="message-avatar m-l-md m-t-sm"
+                                        src="` + notificationCardUserPhoto + `" alt="Photo">
+                                    <div class="message" style="background: none;">
+                                        <span class="message-content">
+                                            ` + notificationCardMsg + `
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        `);
+                }
+                //if notificationCard not exists
+                else {
+                    $('#notification-menu').prepend(`
+                            <a href="` + link + `"
+                               id="notification-` + notificationCardId + `">
+                                <div class="chat-message m-b-xs"
+                                    style="border:2px solid #007bff; background-color: #e6f2ff;
+                                           padding-left:0px; padding-top:10px; border-radius: 10px;
+                                           box-sizing: border-box;">
+                                    <img class="message-avatar m-l-md m-t-sm"
+                                        src="` + notificationCardUserPhoto + `" alt="Photo">
+                                    <div class="message" style="background: none;">
+                                        <span class="message-content">
+                                            ` + notificationCardMsg + `
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        `);
+                }
             };
         </script>
     </environment>

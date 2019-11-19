@@ -221,4 +221,10 @@ namespace SirmiumCommercial.Models.ViewModels
             return val;
         }
     }
+
+    public class LeftNavigationComponent {
+        public string UserId { get; set; }
+        public bool IsAdmin { get; set; }
+        public bool IsManager { get; set; }
+    }
 }

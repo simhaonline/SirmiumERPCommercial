@@ -1,21 +1,21 @@
 ﻿@model CourseViewModel
 
-    <style type="text/css">
-        .videoBtnCD {
-            display: none;
-            position: absolute;
-            top: 32%;
-            left: 2%;
-        }
+<style type="text/css">
+    .videoBtnCD {
+        display: none;
+        position: absolute;
+        top: 32%;
+        left: 2%;
+    }
 
-        .img-video:hover + .videoBtnCD {
-            display: inline;
-        }
+    .img-video:hover + .videoBtnCD {
+        display: inline;
+    }
 
-        .videoBtnCD:hover {
-            display: inline;
-        }
-    </style>
+    .videoBtnCD:hover {
+        display: inline;
+    }
+</style>
 
 <div class="col-lg-12">
     <div class="col-lg-2 text-center">
@@ -92,7 +92,7 @@
     <div class="col-md-1"></div>
     <div class="col-md-2 text-center">
         @if (Model.UsersOnCourse.FirstOrDefault(u => u.Id == ViewData["Id"].ToString())
-           != null)
+          != null)
         {
             <span class="badge badge-primary">My course</span>
         }
@@ -110,9 +110,9 @@
             {
                 <a href="@Url.Action("Participate", "Courses",
                                 new { id = ViewData["Id"],
-                                    courseId = Model.Course.CourseId,
-                                    returnUrl = ViewContext.HttpContext.Request.PathAndQuery() })"
-                   class="btn btn-primary">
+                                    courseId = Model.Course.CourseId})"
+                   class="btn btn-primary"
+                   onclick="participateFunction('@ViewData["Id"]', @Model.Course.CourseId);">
                     <span class="fa fa-plus"></span>Participate
                 </a>
             }
@@ -132,3 +132,4 @@
         </div>
     </div>
 }
+

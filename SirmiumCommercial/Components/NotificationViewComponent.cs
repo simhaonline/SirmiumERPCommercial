@@ -123,30 +123,30 @@ namespace SirmiumCommercial.Components
                 {
                     Course course = repository.Courses
                         .FirstOrDefault(c => c.CourseId == notification.ForId);
-                    if (course.CreatedBy != null)
+
+                    //if currentuser == courseCreatedBy
+                    if (userId == course.CreatedBy.Id)
                     {
-                        if (userId == course.CreatedBy.Id)
+                        NotificationCard notificationCard = notification.NotificationCards
+                            .LastOrDefault(nc => nc.CreatedBy != userId);
+
+                        if (notificationCard != null)
                         {
-                            NotificationCard notificationCard = notification.NotificationCards
-                                .LastOrDefault(nc => nc.CreatedBy != userId);
-
-                            if (notificationCard != null)
+                            NotificationViewModel nModel = new NotificationViewModel
                             {
-                                NotificationViewModel nModel = new NotificationViewModel
-                                {
-                                    NotificationCard = notificationCard,
-                                    Views = notificationCard.NotificationViews.AsQueryable(),
-                                    UserProfilePhoto = userManager.Users
-                                    .FirstOrDefault(u => u.Id == notificationCard.CreatedBy)
-                                    .ProfilePhotoUrl,
-                                    For = notification.For,
-                                    ForId = notification.ForId
-                                };
+                                NotificationCard = notificationCard,
+                                Views = notificationCard.NotificationViews.AsQueryable(),
+                                UserProfilePhoto = userManager.Users
+                                .FirstOrDefault(u => u.Id == notificationCard.CreatedBy)
+                                .ProfilePhotoUrl,
+                                For = notification.For,
+                                ForId = notification.ForId
+                            };
 
-                                notifications.Add(nModel);
-                            }
+                            notifications.Add(nModel);
                         }
                     }
+                    //if currentUser commented on this course
                     else if (notification.Subject == "NewComment")
                     {
                         IQueryable<Comment> comments = repository.Comments

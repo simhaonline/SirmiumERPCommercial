@@ -14,7 +14,7 @@
     </environment>
 }
 
-<!--Msg window-->
+<!--Msg window-->@*
 @if (TempData["sccMsgCourse"] != null)
 {
     <div id="msgWindowSuccess">
@@ -26,7 +26,7 @@
     <div id="msgWindowError">
         <input value="@TempData["errMsgCM"]" id="windowMsg" hidden />
     </div>
-}
+}*@
 
 <!--Course details-->
 <div class="row m-b-n">
@@ -101,20 +101,23 @@ else
             </div>
             <div class="col-lg-2 text-center">
                 @if (Model.UsersOnCourse
-                  .FirstOrDefault(u => u.Id == ViewData["Id"].ToString()) != null)
+                 .FirstOrDefault(u => u.Id == ViewData["Id"].ToString()) != null)
                 {
                     @if (p.VideoId != 0)
                     {
                         <a class="btn btn-primary2"
-                           href="@Url.Action("Index", "Recorder", 
+                           href="@Url.Action("Index", "Recorder",
                                 new { id = ViewData["Id"], videoId = p.VideoId })">
                             Watch <span class="pe pe-7s-play"></span>
                         </a>
                     }
                     @await Component.InvokeAsync("CourseNewRepresentation",
-                                    new { courseId = Model.Course.CourseId,
+                                    new
+                                         {
+                                             courseId = Model.Course.CourseId,
                                         presentationId = p.PresentationId,
-                                        userId = ViewData["Id"] })
+                                        userId = ViewData["Id"]
+                                         })
                 }
             </div>
         </div>
@@ -125,4 +128,22 @@ else
 @section Scripts {
     <environment names="Development,Staging,Production">
     </environment>
+
+    <script>
+        //notification hub
+        var connectionNotificatinoAllCourses = new signalR.HubConnectionBuilder().withUrl("/notificationHub").build();
+
+        //start connection for chatHub - chat header
+        connectionNotificatinoAllCourses.start().then(function () {
+            console.log("Connected: --notification hub : CourseDetails--");
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        function participateFunction(currentUserId, courseId) {
+            connectionNotificatinoAllCourses.invoke("Participate", currentUserId, courseId).catch(function (err) {
+                return console.error(err.toString());
+            });
+        };
+    </script>
 }

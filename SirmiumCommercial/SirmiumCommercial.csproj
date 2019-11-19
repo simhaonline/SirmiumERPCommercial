@@ -47,6 +47,9 @@
     <Content Update="Views\Shared\Components\HeaderChat\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Shared\Components\UserLeftNavigation\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Shared\UploadPhoto.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

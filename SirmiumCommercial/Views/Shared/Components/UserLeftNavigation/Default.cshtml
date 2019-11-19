@@ -1,0 +1,25 @@
+﻿@model LeftNavigationComponent
+
+@if (Model.IsManager)
+{
+    <li class="@Html.IsSelected(controller: "Manage")">
+        <a href="@Url.Action("Index", "Manage", new { id = Model.UserId })">
+            <span class="fa fa-cogs @Html.IsSelected(controller: "Manage",
+                                       action: "Index")"></span>
+            <span class="nav-label @Html.IsSelected(controller: "Manage",
+                                       action: "Index")">Manage</span>
+        </a>
+    </li>
+}
+
+@if (Model.IsAdmin)
+{
+    <li class="@Html.IsSelected(controller: "Admin")">
+        <a href="@Url.Action("Index", "Admin", new { id = Model.UserId })">
+            <span class="fa fa-sliders @Html.IsSelected(controller: "Admin",
+                                       action: "Index")"></span>
+            <span class="nav-label @Html.IsSelected(controller: "Admin",
+                                       action: "Index")">Admin</span>
+        </a>
+    </li>
+}

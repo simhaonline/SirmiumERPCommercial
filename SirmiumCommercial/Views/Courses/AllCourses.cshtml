@@ -229,7 +229,8 @@
                         <a href="@Url.Action("Participate", "Courses",
                         new { id = ViewData["Id"],
                               courseId = course.CourseId})"
-                           class="btn btn-primary">
+                           class="btn btn-primary" 
+                           onclick="participateFunction('@ViewData["Id"]', @course.CourseId);">
                             <span class="fa fa-plus"></span>
                             Participate
                         </a>
@@ -250,4 +251,22 @@
     <environment names="Development,Staging,Production">
         <script src="~/lib_local/videoPlayer/videoPlayer.js"></script>
     </environment>
+
+    <script>
+        //notification hub
+        var connectionNotificatinoAllCourses = new signalR.HubConnectionBuilder().withUrl("/notificationHub").build();
+
+        //start connection for notification hub
+        connectionNotificatinoAllCourses.start().then(function () {
+            console.log("Connected: --notification hub : AllCourses--");
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+        
+        function participateFunction(currentUserId, courseId) {
+            connectionNotificatinoAllCourses.invoke("Participate", currentUserId, courseId).catch(function (err) {
+                return console.error(err.toString());
+            });
+        };
+    </script>
 }

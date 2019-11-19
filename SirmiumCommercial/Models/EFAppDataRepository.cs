@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SirmiumCommercial.Hubs;
 
 namespace SirmiumCommercial.Models
 {
@@ -19,11 +20,13 @@ namespace SirmiumCommercial.Models
         }
 
         public IQueryable<Group> Groups => context.Groups;
-        public IQueryable<Course> Courses => context.Courses.Include(p => p.Presentations)
+        public IQueryable<Course> Courses => context.Courses.Include(u => u.CreatedBy)
+            .Include(p => p.Presentations)
             .ThenInclude(r => r.Representations);
         public IQueryable<Presentation> Presentations => context.Presentations
             .Include(r => r.Representations);
-        public IQueryable<Representation> Representations => context.Representations;
+        public IQueryable<Representation> Representations => context.Representations
+            .Include(u => u.CreatedBy);
         public IQueryable<CourseUsers> CourseUsers => context.CourseUsers;
         public IQueryable<GroupUsers> GroupUsers => context.GroupUsers;
         public IQueryable<Video> Videos => context.Videos;

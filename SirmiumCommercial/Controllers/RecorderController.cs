@@ -464,17 +464,12 @@ namespace SirmiumCommercial.Controllers
             return RedirectToAction("MyGallery", "Video", new { id = id });
         }
 
-        [HttpPost]
-        public IActionResult RepresentationRating(RepreVideoComponentViewModel model)
+        public IActionResult RepresentationRating(string userId, int representationId)
         {
             Representation representation = repository.Representations
-                .FirstOrDefault(r => r.RepresentationId == model.representationId);
+                .FirstOrDefault(r => r.RepresentationId == representationId);
 
-            representation.Rating = model.Rating;
-            repository.SaveRepresentation(representation);
-            repository.NewNotification(model.userId, "RepresentationRating", "Video", representation.VideoId);
-
-            return RedirectToAction("Index", new { id = model.userId, videoId = representation.VideoId });
+            return RedirectToAction("Index", new { id = userId, videoId = representation.VideoId });
         }
     }
 }

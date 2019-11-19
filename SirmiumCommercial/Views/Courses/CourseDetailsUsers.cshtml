@@ -17,19 +17,19 @@
     </environment>
 }
 
-<!--Msg window-->
-@if (TempData["sccMsgCourse"] != null)
-{
-    <div id="msgWindowSuccess">
-        <input value="@TempData["sccMsgCourse"]" id="windowMsg" hidden />
-    </div>
-}
-@if (TempData["errMsgCourse"] != null)
-{
-    <div id="msgWindowError">
-        <input value="@TempData["errMsgCM"]" id="windowMsg" hidden />
-    </div>
-}
+<!--Msg window-->@*
+    @if (TempData["sccMsgCourse"] != null)
+    {
+        <div id="msgWindowSuccess">
+            <input value="@TempData["sccMsgCourse"]" id="windowMsg" hidden />
+        </div>
+    }
+    @if (TempData["errMsgCourse"] != null)
+    {
+        <div id="msgWindowError">
+            <input value="@TempData["errMsgCM"]" id="windowMsg" hidden />
+        </div>
+    }*@
 
 <!--Course details-->
 <div class="row m-b-n">
@@ -89,7 +89,7 @@ else
                                 </span>
                             </a><br />
                             <div class="row">
-                                <a href="@Url.Action("Chat", "Chat", 
+                                <a href="@Url.Action("Chat", "Chat",
                                     new { id = ViewData["Id"], user2Id = user.Id})"
                                    class="btn btn-primary pull-right m-r-sm">
                                     Message <span class="pe pe-7s-chat"></span>
@@ -108,4 +108,22 @@ else
 @section Scripts {
     <environment names="Development,Staging,Production">
     </environment>
+
+    <script>
+        //notification hub
+        var connectionNotificatinoAllCourses = new signalR.HubConnectionBuilder().withUrl("/notificationHub").build();
+
+        //start connection for chatHub - chat header
+        connectionNotificatinoAllCourses.start().then(function () {
+            console.log("Connected: --notification hub : CourseDetails--");
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        function participateFunction(currentUserId, courseId) {
+            connectionNotificatinoAllCourses.invoke("Participate", currentUserId, courseId).catch(function (err) {
+                return console.error(err.toString());
+            });
+        };
+    </script>
 }

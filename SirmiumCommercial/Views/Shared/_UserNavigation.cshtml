@@ -108,6 +108,9 @@
                                        action: "Index")">Reporting</span>
             </a>
         </li>
+
+        @await Component.InvokeAsync("UserLeftNavigation", new { userId = ViewData["Id"] })
+        @*
         <li class="@Html.IsSelected(controller: "Manage")">
             <a href="@Url.Action("Index", "Manage", new { id = ViewData["Id"] })">
                 <span class="fa fa-cogs @Html.IsSelected(controller: "Manage",
@@ -124,5 +127,6 @@
                                        action: "Index")">Admin</span>
             </a>
         </li>
+        *@
     </ul>
 </div>
