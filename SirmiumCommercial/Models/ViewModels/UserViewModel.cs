@@ -48,14 +48,37 @@ namespace SirmiumCommercial.Models.ViewModels
         public IFormFile ProfilePhoto { get; set; }
     }
 
-    public class AllCourse
+    public class AllCourses
     {
-        public IQueryable<Course> Courses { get; set; }
-        public IQueryable<CourseUsers> Users { get; set; }
-        public IQueryable<Video> Videos { get; set; }
-        public string DateDifference (DateTime date1, DateTime date2)
+        public Course Course { get; set; }
+        public Video Video { get; set; }
+        public IQueryable<AppUser> UsersOnCourse { get; set; }
+        public double CourseAverageRating { get; set; }
+
+        //video likes & dislikes
+        public IQueryable<AppUser> Likes { get; set; }
+        public IQueryable<AppUser> Dislikes { get; set; }
+    }
+
+    public class AllCoursesViewModel
+    {
+        public IQueryable<AllCourses> Content { get; set; }
+
+        public string DateDifference(DateTime date1)
         {
-            var dateDiff = date1 - date2;
+            DateTime currentDateTime = DateTime.Now;
+
+            if (date1 == DateTime.MinValue)
+            {
+                return "<strong class='text-success'>NO END DATE</strong>";
+            }
+            else if (date1 < currentDateTime)
+            {
+                return "<strong class='text-danger' data-toggle='tooltip' data-placement='bottom' " +
+                    $"title='{date1.ToString("dd.mm.yyyy. HH:mm")}'>FINISHED</strong>";
+            }
+
+            var dateDiff = date1 - currentDateTime;
             string val = "";
 
             int days = dateDiff.Days;
@@ -63,38 +86,93 @@ namespace SirmiumCommercial.Models.ViewModels
             int minutes = dateDiff.Minutes;
 
             //years
-            if (days/365 > 0)
+            if (days / 365 > 0)
             {
-                val = (days / 365 == 1) ? "1 year ago" : days / 365 + " years ago";
+                val = (days / 365 == 1) ? "<strong class='text-info' data-toggle='tooltip' data-placement='bottom' " +
+                    $"title='{date1.ToString("dd.mm.yyyy. HH:mm")}' >1 year</strong>" :
+                    $"<strong class='text-info' data-toggle='tooltip' data-placement='bottom' " +
+                    $"title='{date1.ToString("dd.mm.yyyy. HH:mm")}' >{days / 365} years</strong>";
             }
-            else if(days/30 > 0)
+            else if (days / 30 > 0)
             {
                 //Months
-                val = (days / 30 == 1) ? "1 month ago" : days / 30 + " months ago";
-            } 
-            else if(days > 0)
+                val = (days / 30 == 1) ? "<strong class='text-info' data-toggle='tooltip' data-placement='bottom' " +
+                    $"title='{date1.ToString("dd.mm.yyyy. HH:mm")}' > 1 month</strong>" :
+                    $"<strong class='text-info' data-toggle='tooltip' data-placement='bottom' " +
+                    $"title='{date1.ToString("dd.mm.yyyy. HH:mm")}' > {days / 30} months</strong>";
+            }
+            else if (days > 0)
             {
                 //Days
-                val = (days == 1) ? "1 day ago" : days + " days ago";
+                val = (days == 1) ? "<strong class='text-danger' data-toggle='tooltip' data-placement='bottom' " +
+                    $"title='{date1.ToString("dd.mm.yyyy. HH:mm")}' > 1 day</strong>" :
+                    $"<strong class='text-warning' data-toggle='tooltip' data-placement='bottom' " +
+                    $"title='{date1.ToString("dd.mm.yyyy. HH:mm")}' > {days} days</strong>";
             }
-            else if(hours > 0)
+            else if (hours > 0)
             {
                 //hours
-                val = (hours == 1) ? "1 hour ago" : hours + " hours ago";
+                val = (hours == 1) ? "<strong class='text-danger' data-toggle='tooltip' data-placement='bottom' " +
+                    $"title='{date1.ToString("dd.mm.yyyy. HH:mm")}' > 1 hour</strong>" :
+                    $"<strong class='text-danger' data-toggle='tooltip' data-placement='bottom' " +
+                    $"title='{date1.ToString("dd.mm.yyyy. HH:mm")}' > {hours} days</strong>";
             }
             else if (minutes > 0)
             {
                 //Minutes
-                val = (minutes == 1) ? "1 minute ago" : minutes + " minutes ago";
+                val = (minutes == 1) ? "<strong class='text-danger' data-toggle='tooltip' data-placement='bottom' " +
+                    $"title='{date1.ToString("dd.mm.yyyy. HH:mm")}' > 1 minute</strong>" :
+                    $"<strong class='text-danger' data-toggle='tooltip' data-placement='bottom' " +
+                    $"title='{date1.ToString("dd.mm.yyyy. HH:mm")}' > {minutes} minutes</strong>";
             }
             else
             {
-                val = "few seconds ago";
+                val = "<strong class='text-danger' data-toggle='tooltip' data-placement='bottom' " +
+                    $"title='{date1.ToString("dd.mm.yyyy. HH:mm")}' > few seconds</strong>";
             }
 
             return val;
         }
 
+        public string firstLastNameExists(AppUser user)
+        {
+            return (user.FirstName == null || user.LastName == null) ?
+                user.UserName : user.FirstName + " " + user.LastName;
+        }
+
+        public string userPhoto(string path)
+        {
+            return (path == null) ? "/defaultAvatar.png" : $"/UsersData/{path}";
+        }
+
+        public string rating(double avgRating)
+        {
+            var returnStr = "";
+
+            if (avgRating == 0)
+            {
+                returnStr = "<strong class='text-muted' >Average Rating: </strong>";
+                returnStr += "<strong style='color: #868686'>Not Rated Yet </strong>";
+            }
+            else
+            {
+                returnStr += "<strong class='text-muted'>Average Rating: </strong>";
+                for (var i = 0; i < Math.Round(avgRating, MidpointRounding.ToEven); i++)
+                {
+                    returnStr += "<span class='fa fa-star text-warning'></span>";
+                }
+                if (avgRating < 5)
+                {
+                    for (var i = Math.Round(avgRating, MidpointRounding.ToEven); i < 5; i++)
+                    {
+                        returnStr += "<span class='fa fa-star text-muted'></span>";
+                    }
+                }
+                returnStr += $"<span>&emsp; {String.Format("{0:0.0}", avgRating)} / 5.0 </span>";
+            }
+
+            return returnStr;
+        }
     }
 
     public class CourseDetails
@@ -141,7 +219,6 @@ namespace SirmiumCommercial.Models.ViewModels
 
             return val;
         }
-
     }
 
     public class MyCompanyUsers

@@ -52,18 +52,12 @@ namespace SirmiumCommercial.Controllers
                     repository.NewNotificationCardView(notificationCardId, id);
                 }
 
-                return RedirectToAction("CourseDetailsComments", "Courses",
+                return RedirectToAction("CourseDetails", "Courses",
                     new { id, courseId = ForId });
             }
 
             return RedirectToAction("Error", "Error",
                     new { id, errMsg = "" });
         }
-        /*
-        public RedirectToActionResult Remove (string id, int notificationId)
-        {
-            repository.DeleteNotification(notificationId);
-            return RedirectToAction("Index", id);
-        }*/
     }
 }

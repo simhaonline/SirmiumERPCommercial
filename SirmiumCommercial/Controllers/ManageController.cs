@@ -22,75 +22,83 @@ namespace SirmiumCommercial.Controllers
             repository = repo;
         }
 
-        public IActionResult Index(string id, string status, string sort, string order)
+        public async Task<IActionResult> Index(string id, string status, 
+            string sort, string order)
         {
+            status = status ?? "Public";
             ViewData["Id"] = id;
             ViewData["Status"] = status;
-            ViewData["Sort"] = sort;
-            ViewData["Order"] = order;
-            if (status == null)
+            ViewData["Sort"] = sort ?? "Date Added";
+            ViewData["Order"] = order ?? "desc";
+
+            AppUser user = await userManager.FindByIdAsync(id);
+            if (user != null)
             {
-                ViewData["Status"] = "Public";
-                ViewData["Sort"] = "Title";
-                ViewData["Order"] = "asc";
-                return View(repository.Courses.Where(c => c.Status == "Public"
-                        && c.CreatedBy.Id == id)
-                        .OrderBy(c => c.Title));
-            }
-            else if (status == "All")
-            {
+                //AllCourses List
+                List<AllCourses> allCourses = new List<AllCourses>();
+
+                if (status == "All")
+                {
+                    foreach (Course course in repository.Courses
+                             .Where(c => c.CreatedBy == user))
+                    {
+                        AllCourses c = new AllCourses
+                        {
+                            Course = course,
+                            Video = repository.Videos.FirstOrDefault(v => v.Id == course.VideoId)
+                        };
+                        allCourses.Add(c);
+                    }
+                }
+                //status == Public || status == Private
+                else
+                {
+                    foreach (Course course in repository.Courses
+                             .Where(c => c.CreatedBy == user
+                                && c.Status == status))
+                    {
+                        AllCourses c = new AllCourses
+                        {
+                            Course = course,
+                            Video = repository.Videos.FirstOrDefault(v => v.Id == course.VideoId)
+                        };
+                        allCourses.Add(c);
+                    }
+                }
+
                 switch (sort)
                 {
+                    case "Date Modified":
+                        return View(new AllCoursesViewModel
+                        {
+                            Content = (order == "asc") ?
+                                allCourses.OrderBy(c => c.Course.DateModified).AsQueryable() :
+                                allCourses.OrderByDescending(c => c.Course.DateModified).AsQueryable()
+                        });
                     case "End Date":
-                        return View((order == "asc") ?
-                                repository.Courses.Where(c => c.CreatedBy.Id == id)
-                                .OrderBy(c => c.EndDate) :
-                                repository.Courses.Where(c => c.CreatedBy.Id == id)
-                                .OrderByDescending(c => c.EndDate));
-                    case "Date Added":
-                        return View((order == "asc") ?
-                                repository.Courses.Where(c => c.CreatedBy.Id == id)
-                                .OrderBy(c => c.DateAdded) :
-                                repository.Courses.Where(c => c.CreatedBy.Id == id)
-                                .OrderByDescending(c => c.DateAdded));
+                        return View(new AllCoursesViewModel
+                        {
+                            Content = (order == "asc") ?
+                                allCourses.OrderBy(c => c.Course.EndDate).AsQueryable() :
+                                allCourses.OrderByDescending(c => c.Course.EndDate).AsQueryable()
+                        });
+                    case "Title":
+                        return View(new AllCoursesViewModel
+                        {
+                            Content = (order == "asc") ?
+                                allCourses.OrderBy(c => c.Course.Title).AsQueryable() :
+                                allCourses.OrderByDescending(c => c.Course.Title).AsQueryable()
+                        });
                     default:
-                        return View((order == "asc") ?
-                                repository.Courses.Where(c => c.CreatedBy.Id == id)
-                                .OrderBy(c => c.Title) :
-                                repository.Courses.Where(c => c.CreatedBy.Id == id)
-                                .OrderByDescending(c => c.Title));
+                        return View(new AllCoursesViewModel
+                        {
+                            Content = (order == "asc") ?
+                                allCourses.OrderBy(c => c.Course.DateAdded).AsQueryable() :
+                                allCourses.OrderByDescending(c => c.Course.DateAdded).AsQueryable()
+                        });
                 }
             }
-            else
-            {
-                switch (sort)
-                {
-                    case "End Date":
-                        return View((order == "asc") ?
-                                repository.Courses.Where(c => c.Status == status
-                                    && c.CreatedBy.Id == id)
-                                    .OrderBy(c => c.EndDate) :
-                                repository.Courses.Where(c => c.Status == status
-                                    && c.CreatedBy.Id == id)
-                                    .OrderByDescending(c => c.EndDate));
-                    case "Date Added":
-                            return View((order == "asc") ?
-                                repository.Courses.Where(c => c.Status == status
-                                    && c.CreatedBy.Id == id)
-                                    .OrderBy(c => c.DateAdded) :
-                                repository.Courses.Where(c => c.Status == status
-                                    && c.CreatedBy.Id == id)
-                                    .OrderByDescending(c => c.DateAdded));
-                    default:
-                        return View((order == "asc") ?
-                                repository.Courses.Where(c => c.Status == status
-                                    && c.CreatedBy.Id == id)
-                                    .OrderBy(c => c.Title) :
-                                repository.Courses.Where(c => c.Status == status
-                                    && c.CreatedBy.Id == id)
-                                    .OrderByDescending(c => c.Title));
-                }
-            }   
+            return RedirectToAction("Error", "Error404");
         }
 
         public async Task<IActionResult> NewCourse(string id)

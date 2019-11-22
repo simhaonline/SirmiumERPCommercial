@@ -73,13 +73,13 @@
                 else
                 {
                     returnStr += "<strong class='text-muted'>Average Rating: </strong>";
-                    for (var i = 0; i < cRating; i++)
+                    for (var i = 0; i < Math.Round(cRating, MidpointRounding.ToEven); i++)
                     {
                         returnStr += "<span class='fa fa-star text-warning'></span>";
                     }
                     if (cRating < 5)
                     {
-                        for (var i = cRating; i < 5; i++)
+                        for (var i = Math.Round(cRating, MidpointRounding.ToEven); i < 5; i++)
                         {
                             returnStr += "<span class='fa fa-star text-muted'></span>";
                         }
@@ -97,13 +97,13 @@
                 else
                 {
                     returnStr += "<strong class='text-muted'>Average Rating: </strong>";
-                    for (var i = 0; i < pRating; i++)
+                    for (var i = 0; i < Math.Round(pRating, MidpointRounding.ToEven); i++)
                     {
                         returnStr += "<span class='fa fa-star text-warning'></span>";
                     }
                     if (pRating < 5)
                     {
-                        for (var i = pRating; i < 5; i++)
+                        for (var i = Math.Round(pRating, MidpointRounding.ToEven); i < 5; i++)
                         {
                             returnStr += "<span class='fa fa-star text-muted'></span>";
                         }
@@ -121,13 +121,13 @@
                 else
                 {
                     returnStr += "<strong class='text-muted'>Rating: </strong>";
-                    for (var i = 0; i < rRating; i++)
+                    for (var i = 0; i < Math.Round(rRating, MidpointRounding.ToEven); i++)
                     {
                         returnStr += "<span class='fa fa-star text-warning'></span>";
                     }
                     if (cRating < 5)
                     {
-                        for (var i = rRating; i < 5; i++)
+                        for (var i = Math.Round(rRating, MidpointRounding.ToEven); i < 5; i++)
                         {
                             returnStr += "<span class='fa fa-star text-muted'></span>";
                         }
@@ -185,7 +185,7 @@
 {
     <div class="row m-l-md m-r-md">
         <div class="col-lg-12">
-            <div class="hpanel">
+            <div class="hpanel m-b-xs">
                 <div class="panel-heading">
                     <div class="panel-tools">
                         <a class="showhide"><i class="fa fa-chevron-up"></i></a>
