@@ -1,0 +1,9 @@
+﻿@model bool
+
+@if (Model == true){
+<span>&emsp;</span>
+<a href="@Url.Action("NewGroup", "Groups", new { id = ViewData["Id"] })" class="pull-right btn">
+    <span class="fa fa-plus text-success" style="font-size: 20px;"></span>
+    <span class="text-muted" style="font-size: 20px;">New Group</span>
+</a>
+}

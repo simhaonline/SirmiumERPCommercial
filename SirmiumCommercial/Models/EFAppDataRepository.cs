@@ -19,7 +19,8 @@ namespace SirmiumCommercial.Models
             userManager = userMgr;
         }
 
-        public IQueryable<Group> Groups => context.Groups;
+        public IQueryable<Group> Groups => context.Groups.Include(u => u.CreatedBy)
+            .Include(c => c.Courses).Include(u => u.Users);
         public IQueryable<Course> Courses => context.Courses.Include(u => u.CreatedBy)
             .Include(p => p.Presentations)
             .ThenInclude(r => r.Representations);
@@ -29,6 +30,7 @@ namespace SirmiumCommercial.Models
             .Include(u => u.CreatedBy);
         public IQueryable<CourseUsers> CourseUsers => context.CourseUsers;
         public IQueryable<GroupUsers> GroupUsers => context.GroupUsers;
+        public IEnumerable<GroupCourses> GroupCourses => context.GroupCourses;
         public IQueryable<Video> Videos => context.Videos;
         public IQueryable<Comment> Comments => context.Comments;
         public IQueryable<Likes> Likes => context.Likes;
@@ -101,6 +103,13 @@ namespace SirmiumCommercial.Models
                     .Where(c => c.ForId == dbEntry.CourseId && c.For == "Course"))
                 {
                     _ = DeleteComment(comment.Id);
+                }
+
+                //delete course from groups
+                foreach (GroupCourses group in context.GroupCourses
+                            .Where(g => g.CourseId == dbEntry.CourseId))
+                {
+                    RemoveCourseFromGroup(group.GroupId, dbEntry.CourseId);
                 }
 
                 context.Courses.Remove(dbEntry);
@@ -690,6 +699,7 @@ namespace SirmiumCommercial.Models
             }
         }
 
+        //notifications
         public void NewNotification (string userId, string subject, string For,
             int forId)
         {
@@ -894,6 +904,119 @@ namespace SirmiumCommercial.Models
             context.SaveChanges();
             card.NotificationViews.Add(view);
             context.SaveChanges();
+        }
+
+        //groups
+        public int SaveGroup (Group group)
+        {
+            if (group.GroupId == 0)
+            {
+                context.Attach(group.CreatedBy);
+                context.Groups.Add(group);
+
+            }
+            else
+            {
+                Group dbEntry = context.Groups
+                    .FirstOrDefault(g => g.GroupId == group.GroupId);
+                dbEntry.Name = group.Name;
+                dbEntry.Description = group.Description;
+            }
+            context.SaveChanges();
+
+            return group.GroupId;
+        }
+
+        public void AddUserToGroup (string userId, int groupId)
+        {
+            AppUser user = userManager.Users.FirstOrDefault(u => u.Id == userId);
+
+            if (user != null)
+            {
+                Group group = context.Groups
+                    .FirstOrDefault(g => g.GroupId == groupId);
+                if (group != null)
+                {
+                    GroupUsers dbEntry = new GroupUsers
+                    {
+                        GroupId = group.GroupId,
+                        AppUserId = user.Id
+                    };
+                    context.GroupUsers.Add(dbEntry);
+                    context.SaveChanges();
+                }
+            }
+        }
+
+        public void AddCourseToGroup(int courseId, int groupId)
+        {
+            Course course = context.Courses
+                .FirstOrDefault(c => c.CourseId == courseId);
+
+            if (course != null)
+            {
+                Group group = context.Groups
+                    .FirstOrDefault(g => g.GroupId == groupId);
+                if (group != null)
+                {
+                    GroupCourses dbEntry = new GroupCourses
+                    {
+                        GroupId = group.GroupId,
+                        CourseId = course.CourseId
+                    };
+                    context.GroupCourses.Add(dbEntry);
+                    context.SaveChanges();
+                }
+            }
+        }
+
+        public void DeleteGroup (int groupId)
+        {
+            Group dbEntry = context.Groups
+                .FirstOrDefault(g => g.GroupId == groupId);
+
+            if (dbEntry != null)
+            {
+                //delete all users from group
+                foreach(GroupUsers user in dbEntry.Users)
+                {
+                    RemoveUserFromGroup(dbEntry.GroupId, user.AppUserId);
+                }
+
+                //delete all courses from group
+                foreach (GroupCourses course in dbEntry.Courses)
+                {
+                    RemoveCourseFromGroup(dbEntry.GroupId, course.CourseId);
+                }
+
+                //delete group
+                context.Groups.Remove(dbEntry);
+                context.SaveChanges();
+            }
+        }
+
+        public void RemoveUserFromGroup (int groupId, string userId)
+        {
+            GroupUsers dbEntry = context.GroupUsers
+                .FirstOrDefault(g => g.AppUserId == userId && g.GroupId == groupId);
+
+            if(dbEntry != null)
+            {
+                context.GroupUsers.Remove(dbEntry);
+                context.SaveChanges();
+            }
+        }
+
+        public void RemoveCourseFromGroup (int groupId, int coursId)
+        {
+            GroupCourses dbEntry = context.GroupCourses
+                .FirstOrDefault(g => g.GroupId == groupId && g.CourseId == coursId);
+
+            if (dbEntry != null)
+            {
+                context.GroupCourses.Remove(dbEntry);
+                context.SaveChanges();
+            }
         }
     }
 }

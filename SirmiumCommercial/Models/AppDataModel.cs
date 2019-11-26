@@ -33,10 +33,13 @@ namespace SirmiumCommercial.Models
     {
         public int GroupId { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
         public AppUser CreatedBy { get; set; }
         public string CompanyName { get; set; }
         public ICollection<GroupUsers> Users { get; set; }
             = new List<GroupUsers>();
+        public ICollection<GroupCourses> Courses { get; set; }
+            = new List<GroupCourses>();
     }
 
     public class Course
@@ -112,6 +115,13 @@ namespace SirmiumCommercial.Models
         public int Id { get; set; }
         public int GroupId { get; set; }
         public string AppUserId { get; set; }
+    }
+
+    public class GroupCourses
+    {
+        public int Id { get; set; }
+        public int GroupId { get; set; }
+        public int CourseId { get; set; }
     }
 
     public class Video

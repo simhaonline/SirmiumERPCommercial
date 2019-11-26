@@ -59,6 +59,25 @@
             box-sizing: border-box;
         }
 
+    .dlg-footer button {
+        display: inline-block;
+        width: 100px;
+        padding: 5px 0;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+        .dlg-footer button:active {
+            box-shadow: inset 2px 2px 4px 0 rgba(0, 0, 0, .5);
+            color: rgba(0, 0, 0, .5);
+        }
+
+        .dlg-footer button:hover {
+            border: 1px solid rgba(0, 0, 0, .5);
+            color: #696969;
+            box-sizing: border-box;
+        }
+
 .freeze-layer {
     position: fixed;
     top: 0;

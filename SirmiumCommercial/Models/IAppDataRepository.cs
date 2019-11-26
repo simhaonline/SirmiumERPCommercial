@@ -19,6 +19,8 @@ namespace SirmiumCommercial.Models
 
         IQueryable<GroupUsers> GroupUsers { get; }
 
+        IEnumerable<GroupCourses> GroupCourses { get; }
+
         IQueryable<Video> Videos { get; }
 
         IQueryable<Comment> Comments { get; }
@@ -116,6 +118,20 @@ namespace SirmiumCommercial.Models
             int forId);
 
         void NewNotificationCardView(int notificationCarId, string userId);
+
+        //------ Groups ---------
+        int SaveGroup(Group group);
+
+        void AddUserToGroup(string userId, int groupId);
+
+        void AddCourseToGroup(int courseId, int groupId);
+
+        void DeleteGroup(int groupId);
+
+        void RemoveUserFromGroup(int groupId, string userId);
+
+        void RemoveCourseFromGroup(int groupId, int coursId);
+
         //void AddNotification(Notification notification);
 
         // void DeleteNotification(int notificationId);

@@ -1,0 +1,57 @@
+﻿@model NewGroupStep3ViewModel
+
+<div class="dlg-container">
+    <div class="text-center" style="font-size:30px;">
+        <span class="fa fa-book text-muted"></span>
+        <span class="fa fa-plus text-muted" style="font-size:15px;"></span>
+        <span class="text-muted">Add Courses</span>
+    </div>
+    <div class="dlg-body">
+        <form asp-action="AddCourses" asp-controller="Groups" method="post">
+            <input asp-for="@Model.UserId" value="@Model.Group.CreatedBy.Id" hidden />
+            <input asp-for="@Model.GroupId" value="@Model.Group.GroupId" hidden />
+            <input asp-for="@Model.CoursesIdString" id="checked-courses" value="" hidden />
+            <div style="width: 350px; max-height:300px; overflow-y: scroll;">
+                @foreach (Course course in Model.Courses)
+                {
+                    <div class="form-group">
+                        <span class="@course.AwardIcon" style="font-size: 25px;"></span>
+                        <span style="font-size: 15px">
+                            @course.Title
+                        </span>
+                        <input type="checkbox" value="@course.CourseId" id="check-@course.CourseId"
+                               onchange="checkboxCoursesOnChange(@course.CourseId)" />
+                    </div>
+                }
+            </div>
+            <div class="dlg-footer">
+                <a onclick="groupNewCourses.close()" class="">Cancel</a>
+                <button type="submit" style="background: #62cb31; color: #fff">
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    
+    var checkedCourses = document.getElementById('checked-courses').value;
+
+    function checkboxCoursesOnChange(courseId) {
+        var checkboxId = "check-" + courseId;
+        var checkbox = document.getElementById(checkboxId);
+        
+        if (checkbox.checked == true) {
+            //add user to list
+            checkedCourses += checkbox.value + ";";
+            document.getElementById('checked-courses').value = checkedCourses;
+            console.log("value: " + checkedCourses);
+        }
+        else {
+            //remove user from list
+            checkedCourses = checkedUsers.replace(checkbox.value + ";", "");
+            document.getElementById('checked-courses').value = checkedCourses;
+        }
+    };
+</script>

@@ -1,5 +1,77 @@
-﻿@{
+﻿@model IQueryable<Group>
+
+@{
     Layout = "_UserLayout";
     ViewData["Title"] = "Groups";
+
+    string userPhoto(string path)
+    {
+        return (path == null) ? "/defaultAvatar.png" : $"/UsersData/{path}";
+    }
+
+    string firstLastNameExists(AppUser user)
+    {
+        return (user.FirstName == null || user.LastName == null) ?
+            user.UserName : user.FirstName + " " + user.LastName;
+    }
 }
 
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <span class="fa fa-users"></span>
+            <strong>@ViewData["Title"]</strong>
+            <span>&emsp;</span>
+            <a href="#" class="pull-right btn"
+               data-toggle="collapse" data-target="#collapseExample"
+               aria-expanded="false" aria-controls="collapseExample">
+                <span class="pe-7s-edit" style="font-size: 25px; color: #000000"></span>
+                <span class="text-muted" style="font-size: 20px;">Filter</span>
+            </a>
+            @await Component.InvokeAsync("GroupsAdmin", new { userId = ViewData["Id"] })
+        </div>
+        <div class="collapse " id="collapseExample">
+            <div class="well well-lg row m-l-xs m-r-xs">
+            </div>
+        </div>
+    </div>
+</div>
+
+@foreach (Group group in Model)
+{
+    <div class="row m-l-md m-r-md">
+        <div class="hpanel m-b-xs">
+            <div class="panel-body" style="padding-bottom: 5px">
+                <div class="col-sm-3">
+                    <h3>@group.Name</h3>
+                </div>
+                <div class="col-sm-3">
+                    <h5 class="text-muted">Created by:</h5>
+                    <h4 class="text-info font-bold">
+                        <img class="img-circle" style="width: 30px; height: 30px"
+                             src="@userPhoto(group.CreatedBy.ProfilePhotoUrl)" />
+                        <a href="@Url.Action("UserProfile", "User",
+                                    new { id = ViewData["Id"], userId = group.CreatedBy.Id })">
+                            @firstLastNameExists(group.CreatedBy)
+                        </a>
+                    </h4>
+                </div>
+                <div class="col-sm-5">
+                </div>
+                <div class="col-sm-1 text-center">
+                    <a href="@Url.Action("GroupDetails", "Groups", new { id = ViewData["Id"],
+                            groupId = group.GroupId})" class="btn">
+                        <span class="fa fa-info text-info" style="font-size: 30px"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*foreach (Group group in Model)
+{
+    <h4>id: @group.GroupId</h4>
+    <h4>Created by: @group.CreatedBy.UserName</h4>
+    <h2>Name: @group.Name</h2>
+}*@

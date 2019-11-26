@@ -1,0 +1,71 @@
+﻿@model NewGroupStep2ViewModel
+
+@{ 
+    string userPhoto(string path)
+    {
+        return (path == null) ? "/defaultAvatar.png" : $"/UsersData/{path}";
+    }
+
+    string firstLastNameExists(AppUser user)
+    {
+        return (user.FirstName == null || user.LastName == null) ?
+            user.UserName : user.FirstName + " " + user.LastName;
+    }
+}
+
+<div class="dlg-container">
+    <div class="text-center" style="font-size:30px;">
+        <span class="fa fa-user-plus text-muted"></span>
+        <span class="text-muted">Add Users</span>
+    </div>
+    <div class="dlg-body">
+        <form asp-action="AddUsers" asp-controller="Groups" method="post">
+            <input asp-for="@Model.UserId" value="@Model.Group.CreatedBy.Id" hidden />
+            <input asp-for="@Model.GroupId" value="@Model.Group.GroupId" hidden />
+            <input asp-for="@Model.UsersIdString" id="checked-users" value="" hidden />
+            <div style="width: 350px; max-height:300px; overflow-y: scroll;">
+                @foreach (AppUser user in Model.Users)
+                {
+                    <div class="form-group">
+                        <img class="img-circle" style="width: 40px; height: 40px"
+                                 src="@userPhoto(user.ProfilePhotoUrl)" />
+                        <span style="font-size: 15px">
+                            @firstLastNameExists(user)
+                        </span>
+                        <input type="checkbox" value="@user.Id" id="check-@user.Id"
+                           onchange="checkboxOnChange('@user.Id')" />
+                    </div>
+                }
+            </div>
+            <div class="dlg-footer">
+                <a onclick="groupNewUsers.close()" class="">Cancel</a>
+                <button type="submit" style="background: #62cb31; color: #fff">
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    
+    var checkedUsers = document.getElementById('checked-users').value;
+
+    function checkboxOnChange(userId) {
+        var checkboxId = "check-" + userId;
+        var checkbox = document.getElementById(checkboxId);
+
+        if (checkbox.checked == true) {
+            //add user to list
+            checkedUsers += checkbox.value + ";";
+            document.getElementById('checked-users').value = checkedUsers;
+            console.log("True");
+        }
+        else {
+            //remove user from list
+            checkedUsers = checkedUsers.replace(checkbox.value + ";", "");
+            document.getElementById('checked-users').value = checkedUsers;
+            console.log("False");
+        }
+    };
+</script>
