@@ -29,8 +29,22 @@
                         Step 3 - Add courses to group
                     </button>
                 </div>
-                <form asp-action="NewGroup" asp-controller="Groups" method="post">
+                <form asp-action="NewGroup" asp-controller="Groups" method="post"
+                        enctype="multipart/form-data">
                     <input asp-for="CreatedById" value="@ViewData["Id"]" hidden />
+                    <div class="col-lg-12">
+                        <div class="col-lg-3"></div>
+                        <div class="col-lg-6 text-center">
+                            <div class="text-center">
+                                <img id="output" style="width: 80%; height: auto;
+                                    border-radius: unset" />
+                            </div>
+                            <div class="m-t-sm m-b-sm text-center">
+                                <input asp-for="ProfilePhoto" class="form-control" id="photo"
+                                       onchange="loadFile(event)">
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-lg-12">
                         <div class="row">
                             <div class="form-group col-lg-6">
@@ -56,3 +70,14 @@
         </div>
     </div>
 </div>
+
+<script>
+    var loadFile = function (event) {
+    var reader = new FileReader();
+    reader.onload = function () {
+        var output = document.getElementById('output');
+        output.src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+};
+</script>

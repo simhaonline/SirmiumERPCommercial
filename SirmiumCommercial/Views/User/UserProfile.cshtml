@@ -1,12 +1,54 @@
-﻿@model AppUser
+﻿@model UserProfileViewModel
 
 @{
     Layout = "_UserLayout";
+    
+    ViewData["ReturnUrl"] = ViewContext.HttpContext.Request.PathAndQuery();
+
+
+    string userPhoto(string path)
+    {
+        return (path == null) ? "/defaultAvatar.png" : $"/UsersData/{path}";
+    }
+
+    string firstLastNameExists(AppUser user)
+    {
+        return (user.FirstName == null || user.LastName == null) ?
+            user.UserName : user.FirstName + " " + user.LastName;
+    }
+
+    string rating(double avgRating)
+    {
+        var returnStr = "";
+
+        if (avgRating == 0)
+        {
+            returnStr += "<strong style='color: #868686'>Not Rated Yet </strong>";
+        }
+        else
+        {
+            for (var i = 0; i < Math.Round(avgRating, MidpointRounding.ToEven); i++)
+            {
+                returnStr += "<span class='fa fa-star text-warning'></span>";
+            }
+            if (avgRating < 5)
+            {
+                for (var i = Math.Round(avgRating, MidpointRounding.ToEven); i < 5; i++)
+                {
+                    returnStr += "<span class='fa fa-star text-muted'></span>";
+                }
+            }
+            returnStr += $"<span>&emsp; {String.Format("{0:0.0}", avgRating)} / 5.0 </span>";
+        }
+
+        return returnStr;
+    }
 }
 
 @section Styles {
     <environment names="Development,Staging,Production">
         <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+        <link rel="stylesheet" href="~/lib_local/profilePhoto/profilePhoto.css" />
     </environment>
 
     <style type="text/css">
@@ -15,59 +57,231 @@
             height: 200px;
             border-radius: 50%;
         }
+
+        #dropdown-courses {
+            height: 200px;
+            width: 200px;
+            overflow-y: scroll;
+        }
     </style>
 }
 
-<div class="row m-r-sm m-l-sm">
 
-    <div class="col-lg-12 text-center" id="profileMain">
+<!--Capture Photo-->
+<div>
+    @Html.Partial("CapturePhoto", new ChangeProfilePhoto
+    {
+        userId = ViewData["Id"].ToString()
+    })
+</div>
 
-        <div class="profile-picture">
-            @if (Model.ProfilePhotoUrl == null)
-            {
-                <img src="~/defaultAvatar.png" class="img-circle m-b"
-                     alt="logo" />
-            }
-            else
-            {
-                <img src="~/UsersData/@Model.ProfilePhotoUrl" class="img-circle m-b" alt="logo" />
-            }
+<!--Upload Photo-->
+<div>
+    @Html.Partial("UploadPhoto", new UploadPhoto
+    {
+        UserId = ViewData["Id"].ToString()
+    })
+</div>
+
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <div class="row">
+                <div class="col-lg-2 text-center">
+                    @if (Model.User.Id == ViewData["Id"].ToString())
+                    {
+                        <div class="dropdown">
+                            <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                                <img class="img-circle" style="width: 100px; height: 100px"
+                                     src="@userPhoto(Model.User.ProfilePhotoUrl)" />
+                            </a>
+                            <div class="dropdown-menu hdropdown bigmenu animated flipInY">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <a onclick="NewPhoto.show(); Camera.active()">
+                                                    <i class="pe pe-7s-camera text-info"></i>
+                                                    <h3>Take a Photo</h3>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <a onclick="UploadPhoto.show()">
+                                                    <i class="pe pe-7s-cloud-upload text-success"></i>
+                                                    <h3>Upload a Photo</h3>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <img class="img-circle" style="width: 100px; height: 100px"
+                             src="@userPhoto(Model.User.ProfilePhotoUrl)" />
+                    }
+                </div>
+                <div class="text-center col-lg-4" style="padding-top: 20px;">
+                    <strong>@firstLastNameExists(Model.User)</strong>
+                </div>
+                <div class="col-lg-4"></div>
+                <div class="col-lg-2 text-center" style="padding-top: 20px;">
+                    @if (Model.User.Id == ViewData["Id"].ToString())
+                    {
+                        <a href="@Url.Action("EditProfile", "User", new { id = Model.User.Id })"
+                           class="btn" style="font-size: 25px;">
+                            <i class="fa fa-edit text-warning"></i> Edit
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Chat", "Chat",
+                                new { id = ViewData["Id"], user2Id = Model.User.Id })"
+                           class="btn btn-primary" style="font-size: 18px;">
+                            Message <span class="pe pe-7s-chat"></span>
+                        </a>
+                    }
+                </div>
+            </div>
         </div>
-
-        @if (Model.FirstName != null || Model.LastName != null)
-        {
-            <div class="row">
-                <h2 class="name">@Model.FirstName @Model.LastName</h2>
-            </div>
-
-        }
-
-        @if (Model.UserName != null)
-        {
-            <div class="row">
-                <h3 class="text-info font-bold text-muted m-n">
-                    &#64;@Model.UserName
-                </h3>
-            </div>
-        }
-
-        @if (Model.Email != null)
-        {
-            <div class="row">
-                <h5><i class="pe pe-7s-mail"></i> @Model.Email</h5>
-            </div>
-        }
-
-        @if (Model.PhoneNumber != null)
-        {
-            <div class="row">
-                <h5><i class="fa fa-phone"></i> @Model.PhoneNumber</h5>
-            </div>
-        }
-
-        <a href=""
-           class="btn btn-primary">
-            Message <span class="pe pe-7s-chat"></span>
-        </a>
     </div>
 </div>
+
+<!--Details-->
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel m-b-xs">
+            <div class="panel-heading">
+                <div class="panel-tools">
+                    <a class="showhide"><i class="fa fa-chevron-up" style="font-size:20px"></i></a>
+                </div>
+                <h3 class="m-n">
+                    <span class="fas fa-info text-info"></span>
+                    <span class="text-muted"> Details:</span>
+                </h3>
+            </div>
+
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <h5 class="text-muted">Username:</h5>
+                        <h4 class="text-info">&#64;@Model.User.UserName</h4>
+                        <h5 class="text-muted">e-Mail: </h5>
+                        <h4>@Model.User.Email</h4>
+                        <h5 class="text-muted">Phone: </h5>
+                        <h4>@Model.User.PhoneNumber</h4>
+                    </div>
+                    <div class="col-lg-3">
+                        <h5 class="text-muted">Average rating:</h5>
+                        <h4>@Html.Raw(rating(Model.AverageRating))</h4>
+
+                        <h5 class="text-muted">Views: </h5>
+                        <h4>@Model.Views</h4>
+                        <h5 class="text-muted">Representations: </h5>
+                        <h4>@Model.TotalRepresentations</h4>
+                    </div>
+                    <div class="col-lg-3">
+                        <h5 class="text-muted">Started courses:</h5>
+                        <span class="dropdown">
+                            <a class="dropdown-toggle" data-toggle='dropdown' href="#">
+                                <span style="font-size: 18px">@Model.StartedCourses.Count()</span>
+                            </a>
+                            <span class="dropdown-menu hdropdown p-xs
+                                                      bigmenu animated flipInX"
+                                  style="padding: 0px;" id="dropdown-courses">
+                                @foreach (Course course in Model.StartedCourses)
+                                {
+                                    <a href="@Url.Action("CourseDetails", "Courses",
+                                             new { id = ViewData["Id"],
+                                             courseId = course.CourseId
+                                             })" style="margin: 0px;">
+                                        <span class="@course.AwardIcon" style="font-size: 30px"></span>
+                                        <span class="m-b-xs">@course.Title</span>
+                                    </a>
+                                    <br />
+                                }
+                            </span>
+                        </span>
+                        <h5 class="text-muted">Finished courses: </h5>
+                        <span class="dropdown">
+                            <a class="dropdown-toggle" data-toggle='dropdown' href="#">
+                                <span style="font-size: 18px">@Model.FinishedCourses.Count()</span>
+                            </a>
+                            <span class="dropdown-menu hdropdown p-xs
+                                                      bigmenu animated flipInX"
+                                  style="padding: 0px;" id="dropdown-courses">
+                                @foreach (Course course in Model.FinishedCourses)
+                                {
+                                    <a href="@Url.Action("CourseDetails", "Courses",
+                                             new { id = ViewData["Id"],
+                                             courseId = course.CourseId
+                                             })" style="margin: 0px;">
+                                        <span class="@course.AwardIcon" style="font-size: 30px"></span>
+                                        <span class="m-b-xs">@course.Title</span>
+                                    </a>
+                                    <br />
+                                }
+                            </span>
+                        </span>
+                        <h5 class="text-muted">Awards: </h5>
+                        @foreach (Course course in Model.FinishedCourses
+                                .Take(3))
+                        {
+                            <a href="@Url.Action("CourseDetails", "Courses",
+                                             new { id = ViewData["Id"],
+                                             courseId = course.CourseId
+                                             })" style="margin: 0px;">
+                                <span class="@course.AwardIcon" style="font-size: 30px"
+                                      data-toggle='tooltip' data-placement='bottom'
+                                      title="@course.Title"></span>
+                            </a>
+                        }
+                        @if (Model.FinishedCourses.Count() > 3)
+                        {
+                            <span class="dropdown">
+                                <a class="dropdown-toggle btn btn-circle"
+                                   style="width: 30px; background: #bbbbbb"
+                                   data-toggle='dropdown' href="#">
+                                    <span class="pe-7s-more"></span>
+                                </a>
+                                <span class="dropdown-menu hdropdown
+                                                      bigmenu animated flipInX p-xs"
+                                      style="padding: 0px;" id="all-users">
+                                    @foreach (Course course in Model.FinishedCourses
+                                            .Skip(3))
+                                    {
+
+                                        <a href="@Url.Action("CourseDetails", "Courses",
+                                             new { id = ViewData["Id"],
+                                             courseId = course.CourseId
+                                             })" style="margin: 0px;">
+                                            <span class="@course.AwardIcon" style="font-size: 30px"
+                                                  data-toggle='tooltip' data-placement='bottom'
+                                                  title="@course.Title"></span>
+                                        </a>
+                                        <br />
+                                    }
+                                </span>
+                            </span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Timeline-->
+<div>
+    @Html.Partial("Activity", Model.UserTimeline)
+</div>
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+        <script src="~/lib_local/script_local/CapturePhoto_local.js"></script>
+        <script src="~/lib_local/profilePhoto/profilePhoto.js"></script>
+    </environment>
+}

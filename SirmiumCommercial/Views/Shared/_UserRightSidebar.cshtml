@@ -9,7 +9,8 @@
 
             <ul class="nav metismenu" id="side-menu">
                 <li class="@Html.IsSelected(controller: "User")">
-                    <a href="@Url.Action("MyProfile", "User", new { id = ViewData["Id"] })">
+                    <a href="@Url.Action("UserProfile", "User", new { id = ViewData["Id"],
+                        userId = ViewData["Id"]})">
                         <span class="fa fa-user"></span>
                         <span class="nav-label">Profile</span>
                     </a>

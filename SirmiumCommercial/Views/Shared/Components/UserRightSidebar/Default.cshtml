@@ -7,7 +7,8 @@
     }
 </style>
 
-<a href="@Url.Action("MyProfile", "User", new { id = ViewData["Id"] })">
+<a href="@Url.Action("UserProfile", "User", new { id = ViewData["Id"],
+    userId = ViewData["Id"]})">
     @if (Model.ProfilePhotoUrl == null)
     {
         <img src="~/defaultAvatar.png" class="img-circle m-b"

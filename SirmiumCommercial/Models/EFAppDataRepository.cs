@@ -921,6 +921,7 @@ namespace SirmiumCommercial.Models
                     .FirstOrDefault(g => g.GroupId == group.GroupId);
                 dbEntry.Name = group.Name;
                 dbEntry.Description = group.Description;
+                dbEntry.GroupPhotoPath = group.GroupPhotoPath;
             }
             context.SaveChanges();
 

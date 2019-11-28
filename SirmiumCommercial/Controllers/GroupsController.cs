@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using SirmiumCommercial.Models.ViewModels;
 using SirmiumCommercial.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace SirmiumCommercial.Controllers
 {
@@ -13,11 +16,14 @@ namespace SirmiumCommercial.Controllers
     {
         private IAppDataRepository repository;
         private UserManager<AppUser> userManager;
+        private IHostingEnvironment hostingEnvironment;
 
-        public GroupsController (IAppDataRepository repo, UserManager<AppUser> userMgr)
+        public GroupsController (IAppDataRepository repo, UserManager<AppUser> userMgr,
+                 IHostingEnvironment hosting)
         {
             repository = repo;
             userManager = userMgr;
+            hostingEnvironment = hosting;
         }
 
         public async Task<ViewResult> Groups(string id)
@@ -114,10 +120,40 @@ namespace SirmiumCommercial.Controllers
                 int groupId = repository.SaveGroup(newGroup);
                 repository.AddUserToGroup(user.Id, groupId);
 
+                //if photo exists
+                if (model.ProfilePhoto != null)
+                {
+                    AddGroupPhoto(groupId, model.ProfilePhoto);
+                }
+
                 return RedirectToAction("NewGroupStep2", new { id = model.CreatedById, groupId });
             }
 
             return RedirectToAction("Error", "UserNotFound");
+        }
+
+        private void AddGroupPhoto(int groupId, IFormFile photo)
+        {
+            Group group = repository.Groups
+                .FirstOrDefault(g => g.GroupId == groupId);
+
+            //Create user directory
+            string dirPath = Path.Combine(hostingEnvironment.WebRootPath, $@"UsersData\Groups\{group.GroupId}");
+            System.IO.Directory.CreateDirectory(dirPath);
+
+            string fileName = "profilePhoto.jpeg";
+            string filePath = Path.Combine(dirPath, fileName);
+
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                photo.CopyTo(stream);
+            }
+
+            //add photo path to Group/GroupPhotoPath
+            string photoPath = group.GroupId + @"\profilePhoto.jpeg";
+            group.GroupPhotoPath = photoPath;
+            repository.SaveGroup(group);
         }
 
         public IActionResult NewGroupStep2(string id, int groupId)
@@ -377,6 +413,31 @@ namespace SirmiumCommercial.Controllers
                 id = group.CreatedBy.Id,
                 groupId = group.GroupId
             });
+        }
+
+        [HttpPost]
+        public IActionResult NewGroupPhoto(GroupUploadPhotoViewModel model)
+        {
+            Group group = repository.Groups
+                .FirstOrDefault(g => g.GroupId == model.GroupId);
+
+            if (model.ProfilePhoto != null)
+            {
+                AddGroupPhoto(model.GroupId, model.ProfilePhoto);
+            }
+
+            return RedirectToAction("GroupDetails", new
+            {
+                id = group.CreatedBy.Id,
+                groupId = group.GroupId
+            });
+        }
+
+        public IActionResult AbortNewGroup(string userId, int groupId)
+        {
+            repository.DeleteGroup(groupId);
+
+            return RedirectToAction("Groups", new { id = userId });
         }
     }
 }

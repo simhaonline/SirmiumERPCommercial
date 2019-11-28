@@ -1,8 +1,20 @@
-﻿@model  NewGroupStep2ViewModel
+﻿@model NewGroupStep2ViewModel
 
 @{
     Layout = "_UserLayout";
     ViewData["Title"] = "New Group - step 2";
+
+
+    string userPhoto(string path)
+    {
+        return (path == null) ? "/defaultAvatar.png" : $"/UsersData/{path}";
+    }
+
+    string firstLastNameExists(AppUser user)
+    {
+        return (user.FirstName == null || user.LastName == null) ?
+            user.UserName : user.FirstName + " " + user.LastName;
+    }
 }
 
 <div class="normalheader p-sm">
@@ -36,15 +48,24 @@
                     <input asp-for="@Model.UsersIdString" id="checked-users" value="" hidden />
                     @foreach (AppUser user in Model.Users)
                     {
-                        <div class="col-sm-2">
+                        <div class="col-sm-4">
                             <input type="checkbox" value="@user.Id" id="check-@user.Id"
-                                   onchange="checkboxOnChange('@user.Id')" />
-                            <span>@user.UserName</span>
+                                       onchange="checkboxOnChange('@user.Id')" />
+                            <img class="img-circle" style="width: 40px; height: 40px"
+                                     src="@userPhoto(user.ProfilePhotoUrl)" />
+                            <span style="font-size: 15px">
+                                @firstLastNameExists(user)
+                            </span>
                         </div>
                     }
 
                     <div class="text-right m-t-xs">
-                        <a href="#" class="btn btn-default text-danger">Cancel</a>
+                        <a href="@Url.Action("AbortNewGroup", "Groups",
+                                new
+                                {
+                                    userId = Model.Group.CreatedBy.Id,
+                                    groupId = Model.Group.GroupId
+                                })" class="btn btn-default text-danger">Cancel</a>
                         <button type="submit" class="btn btn-default">Next</button>
                     </div>
                 </form>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,6 +15,13 @@ namespace SirmiumCommercial.Models.ViewModels
         public string CreatedById { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public IFormFile ProfilePhoto { get; set; }
+    }
+
+    public class GroupUploadPhotoViewModel
+    {
+        public int GroupId { get; set; }
+        public IFormFile ProfilePhoto { get; set; }
     }
 
     public class NewGroupStep2ViewModel
@@ -120,6 +128,11 @@ namespace SirmiumCommercial.Models.ViewModels
             }
 
             return val;
+        }
+
+        public string groupPhoto(string path)
+        {
+            return (path == null) ? "/defaultGroup.png" : $"/UsersData/Groups/{path}";
         }
     }
 

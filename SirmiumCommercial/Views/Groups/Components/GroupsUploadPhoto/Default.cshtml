@@ -1,0 +1,38 @@
+﻿@model GroupUploadPhotoViewModel
+
+<div id="uploadPhoto" class="form-container">
+    <div class="form-header">
+        <span>Upload a Photo</span>
+        <a onclick="groupUpload.close()"
+           class="pull-right text-muted fa fa-close"
+           id="closePhotoWindow"></a>
+    </div>
+    <form asp-action="NewGroupPhoto" asp-controller="Groups"
+          enctype="multipart/form-data" id="profilePhotoForm" method="post">
+        <input asp-for="GroupId" value="@Model.GroupId" hidden />
+        <div class="text-center">
+            <img id="output" style="width: 80%; height: auto;
+            border-radius: unset" />
+        </div>
+        <div class="m-t-sm m-b-sm text-center col-md-12">
+            <input asp-for="ProfilePhoto" class="form-control" id="photo"
+                   onchange="loadFile(event)">
+        </div>
+        <div class="text-center col-md-12">
+            <button class="btn btn-outline btn-success" type="submit">
+                Save
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    var loadFile = function (event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('output');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    };
+</script>

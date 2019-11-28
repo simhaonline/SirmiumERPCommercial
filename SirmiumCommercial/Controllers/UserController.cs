@@ -294,18 +294,155 @@ namespace SirmiumCommercial.Controllers
         {
             ViewData["Id"] = id;
 
-            if (userId == id)
-            {
-                return RedirectToAction("MyProfile", new { id });
-            }
-
             AppUser user = await userManager.FindByIdAsync(userId);
             if (user != null)
             {
+                //averge rating
+                int rating = 0;
+                int representationsNumber = 0;
+                foreach(Representation representation in repository.Representations
+                    .Where(r => r.CreatedBy.Id == user.Id && r.Rating != 0))
+                {
+                    rating += representation.Rating;
+                    representationsNumber++;
+                }
+                double avgRating = rating > 0 ? rating*1.0 / representationsNumber*1.0 : 0;
 
+                //number of representations
+                representationsNumber = repository.Representations
+                    .Where(r => r.CreatedBy.Id == user.Id).Count();
+
+                //number of views
+                int totalViews = repository.Videos
+                    .Where(v => v.CreatedBy == user.Id).Count();
+
+                //started courses
+                List<Course> startedCourses = new List<Course>();
+                foreach(Course course in repository.Courses)
+                {
+                    if(repository.CourseUsers
+                        .FirstOrDefault(u => u.AppUserId == user.Id && 
+                            u.CourseId == course.CourseId) != null)
+                    {
+                        startedCourses.Add(course);
+                    }
+                }
+
+                //finished courses
+                List<Course> finishedCourses = new List<Course>();
+                foreach (Course course in startedCourses.AsQueryable())
+                {
+                    int presNumb = course.Presentations.Count();
+                    int userRep = 0;
+                    foreach (Presentation presentation in course.Presentations)
+                    {
+                        if (presentation.Representations != null)
+                        {
+                            if (UserRepresentationExists(presentation.PresentationId, user.Id))
+                            {
+                                userRep++;
+                            }
+                        }
+                    }
+
+                    if (presNumb > 0 && userRep == presNumb)
+                    {
+                        finishedCourses.Add(course);
+                    }
+                }
+
+                //---User timeline---
+                List<HomeViewModel> models = new List<HomeViewModel>();
+                //Courses
+                foreach (Course course in repository.Courses
+                    .Where(c => c.Status == "Public"))
+                {
+                    if (course.CreatedBy.Id == user.Id)
+                    {
+                        //users on courese
+                        List<AppUser> usersOnCourse = new List<AppUser>();
+                        foreach (string uId in repository.CourseUsers
+                            .Where(cu => cu.CourseId == course.CourseId)
+                            .Select(cu => cu.AppUserId))
+                        {
+                            usersOnCourse.Add(userManager.Users
+                                .FirstOrDefault(u => u.Id == uId));
+                        }
+
+                        HomeViewModel content = new HomeViewModel
+                        {
+                            ContentId = course.CourseId,
+                            CreatedBy = course.CreatedBy,
+                            Title = course.Title,
+                            DateAdded = course.DateAdded,
+                            DateModified = course.DateModified,
+                            EndDate = course.EndDate,
+                            AwardIcon = course.AwardIcon,
+                            Video = repository.Videos
+                                .FirstOrDefault(v => v.Id == course.VideoId),
+                            Likes = VideoLikes(course.VideoId),
+                            Dislikes = VideoDislikes(course.VideoId),
+                            ContentType = "course",
+                            CourseAverageRating =
+                                AvgCourseRating(course.Presentations.AsQueryable()),
+                            UsersOnCourse = usersOnCourse.AsQueryable()
+                        };
+                        models.Add(content);
+
+                        //Presenttions
+                        foreach (Presentation presentation in course.Presentations)
+                        {
+                            content = new HomeViewModel
+                            {
+                                CourseId = course.CourseId,
+                                ContentId = presentation.PresentationId,
+                                CreatedBy = presentation.CreatedBy,
+                                Title = presentation.Title,
+                                DateAdded = presentation.DateAdded,
+                                DateModified = presentation.DateModified,
+                                EndDate = course.EndDate,
+                                AwardIcon = "text-primary-2 fa fa-puzzle-piece",
+                                Video = repository.Videos
+                                    .FirstOrDefault(v => v.Id == presentation.VideoId),
+                                Likes = VideoLikes(presentation.VideoId),
+                                Dislikes = VideoDislikes(presentation.VideoId),
+                                ContentType = "presentation",
+                                PresentationAverageRating =
+                                    AvgPresentationRating(repository.Presentations
+                                    .FirstOrDefault(p => p.PresentationId == presentation.PresentationId)
+                                    .Representations.AsQueryable()),
+                                UsersOnCourse = usersOnCourse.AsQueryable()
+                            };
+                            models.Add(content);
+                        }
+                    }
+
+                    //Representation
+                    foreach (Presentation presentation in course.Presentations)
+                    {
+                        HomeViewModel content =
+                            UserRepresentations(userId, presentation.PresentationId, course.CourseId);
+
+                        if (content != null)
+                        {
+                            models.Add(content);
+                        }
+                    }
+                }
+               
                 ViewData["Title"] = user.FirstName + " " +
                     user.LastName + " Profile";
-                return View(user);
+
+                return View(new UserProfileViewModel {
+                    User = user,
+                    AverageRating = avgRating,
+                    Views = totalViews,
+                    TotalRepresentations = representationsNumber,
+                    StartedCourses = startedCourses.AsQueryable(),
+                    FinishedCourses = finishedCourses.AsQueryable(),
+                    UserTimeline = new HomeContent { Content = models.AsQueryable()
+                        .OrderByDescending(c => c.DateModified) }
+                });
             }
             else
             {
@@ -367,6 +504,61 @@ namespace SirmiumCommercial.Controllers
             }
 
             return dislikes.AsQueryable();
+        }
+
+        private bool UserRepresentationExists (int presentationId, string userId)
+        {
+            Presentation presentation = repository.Presentations
+                .FirstOrDefault(p => p.PresentationId == presentationId);
+
+            foreach (Representation representation in presentation.Representations)
+            {
+                if (representation.CreatedBy != null)
+                {
+                    if (representation.CreatedBy.Id == userId)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private HomeViewModel UserRepresentations (string userId, int presentationId, int courseId)
+        {
+            Presentation presentation = repository.Presentations
+                .FirstOrDefault(p => p.PresentationId == presentationId);
+            Course course = repository.Courses.FirstOrDefault(c => c.CourseId == courseId);
+
+            foreach (Representation representation in presentation.Representations)
+            {
+                if (representation.CreatedBy != null)
+                {
+                    if (representation.CreatedBy.Id == userId)
+                    {
+                        HomeViewModel content = new HomeViewModel
+                        {
+                            CourseId = courseId,
+                            ContentId = representation.RepresentationId,
+                            CreatedBy = representation.CreatedBy,
+                            Title = representation.Title,
+                            DateAdded = representation.DateAdded,
+                            EndDate = course.EndDate,
+                            DateModified = representation.DateAdded,
+                            Video = repository.Videos
+                                .FirstOrDefault(v => v.Id == representation.VideoId),
+                            Likes = VideoLikes(representation.VideoId),
+                            Dislikes = VideoDislikes(representation.VideoId),
+                            ContentType = "representation",
+                            RepresentationRating = representation.Rating
+                        };
+                        return content;
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }

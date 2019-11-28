@@ -8,6 +8,7 @@
     <environment names="Development,Staging,Production">
         <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
         <link rel="stylesheet" href="~/lib_local/videoPlayer/videoPlayer.css" />
+        <link rel="stylesheet" href="~/lib_local/profilePhoto/profilePhoto.css" />
     </environment>
 }
 <style type="text/css">
@@ -120,6 +121,35 @@
 
             <div class="panel-body">
                 <div class="row">
+                    <div class="col-lg-2 text-center">
+                        @if (Model.Group.CreatedBy.Id == ViewData["Id"].ToString())
+                        {
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                                    <img class="img-circle" style="width: 120px; height: 120px"
+                                         src="@Model.groupPhoto(Model.Group.GroupPhotoPath)" />
+                                </a>
+                                <div class="dropdown-menu hdropdown bigmenu animated flipInY">
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <a onclick="groupUpload.show()">
+                                                        <i class="pe pe-7s-cloud-upload text-success"></i>
+                                                        <h3>Upload a Photo</h3>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <img class="img-circle" style="width: 120px; height: 120px"
+                                 src="@Model.groupPhoto(Model.Group.GroupPhotoPath)" />
+                        }
+                    </div>
                     <div class="col-lg-3">
                         <h5 class="text-muted">Created by:</h5>
                         <h4 class="text-info font-bold">
@@ -131,7 +161,7 @@
                             </a>
                         </h4>
                     </div>
-                    <div class="col-lg-9">
+                    <div class="col-lg-7">
                         <div class="panel-body m-t-xs" style="padding-top:0px">
                                 <h4 class="text-info">Description:</h4>
                                 <span>@Model.Group.Description</span>
@@ -482,6 +512,11 @@
     @await Component.InvokeAsync("GroupsNewCourses", new { groupId = Model.Group.GroupId })
 </div>
 
+<!--Upload window-->
+<div id="group-upload-window" style="display: none;">
+    @await Component.InvokeAsync("GroupsUploadPhoto", new { groupId = Model.Group.GroupId })
+</div>
+
 @section Scripts {
     <environment names="Development,Staging,Production">
     </environment>
@@ -524,6 +559,20 @@
             };
             this.close = function () {
                 groupNewCoursesWindow.style.display = 'none';
+                freezeLayer.style.display = 'none';
+            };
+            };
+    
+        //group upload profile photo
+        var groupUploadWindow = document.getElementById('group-upload-window');
+
+        var groupUpload = new function () {
+            this.show = function () {
+                groupUploadWindow.style.display = '';
+                freezeLayer.style.display = '';
+            };
+            this.close = function () {
+                groupUploadWindow.style.display = 'none';
                 freezeLayer.style.display = 'none';
             };
         };

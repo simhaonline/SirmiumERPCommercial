@@ -14,6 +14,11 @@
         return (user.FirstName == null || user.LastName == null) ?
             user.UserName : user.FirstName + " " + user.LastName;
     }
+
+    string groupPhoto(string path)
+    {
+        return (path == null) ? "/defaultGroup.png" : $"/UsersData/Groups/{path}";
+    }
 }
 
 <div class="normalheader p-sm">
@@ -41,9 +46,11 @@
 {
     <div class="row m-l-md m-r-md">
         <div class="hpanel m-b-xs">
-            <div class="panel-body" style="padding-bottom: 5px">
-                <div class="col-sm-3">
-                    <h3>@group.Name</h3>
+            <div class="panel-body" style="padding-bottom: 10px">
+                <div class="col-sm-6">
+                    <img class="img-circle" style="width: 100px; height: 100px"
+                         src="@groupPhoto(group.GroupPhotoPath)" />
+                    <span style="font-size: 25px; color: #000000;">@group.Name</span>
                 </div>
                 <div class="col-sm-3">
                     <h5 class="text-muted">Created by:</h5>
@@ -56,7 +63,7 @@
                         </a>
                     </h4>
                 </div>
-                <div class="col-sm-5">
+                <div class="col-sm-2">
                 </div>
                 <div class="col-sm-1 text-center">
                     <a href="@Url.Action("GroupDetails", "Groups", new { id = ViewData["Id"],

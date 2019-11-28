@@ -44,6 +44,9 @@
     <Content Update="Views\Groups\Components\GroupsNewCourses\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Groups\Components\GroupsUploadPhoto\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Groups\Components\GroupsNewUsers\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

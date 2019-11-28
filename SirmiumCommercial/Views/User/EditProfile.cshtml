@@ -4,6 +4,11 @@
     Layout = "_UserLayout";
     ViewData["Title"] = "Edit Profile";
     ViewData["ReturnUrl"] = ViewContext.HttpContext.Request.PathAndQuery();
+
+    string userPhoto(string path)
+    {
+        return (path == null) ? "/defaultAvatar.png" : $"/UsersData/{path}";
+    }
 }
 
 @section Styles {
@@ -35,173 +40,199 @@
     })
 </div>
 
-<div class="row m-r-sm m-l-sm">
-    <div class="col-lg-12" id="profileMain">
-        <div class="row">
-            <div class="col-lg-2"></div>
-            <div class="col-lg-3">
-                @if (Model.appUser.ProfilePhotoUrl == null)
-                {
-                    <img src="~/defaultAvatar.png" class="profile-picture" />
-                }
-                else
-                {
-                    <img src="~/UsersData/@Model.appUser.ProfilePhotoUrl" class="profile-picture" />
-                }
+<!--Header-->
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <div class="row m-l-sm">
+                <span class="fa fa-user-edit"></span>
+                <span class="text-muted">Edit My Profile</span>
             </div>
-            <div class="col-lg-4 m-l-md m-t-lg text-center">
-                <div class="row m-b-sm">
-                    <h4>Change your profile picture:</h4>
+        </div>
+    </div>
+</div>
+
+<!--Profile picture-->
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel m-b-xs">
+            <div class="panel-heading">
+                <div class="panel-tools">
+                    <a class="showhide"><i class="fa fa-chevron-up" style="font-size:20px"></i></a>
                 </div>
-                <div class="row m-b-sm">
-                    <a onclick="NewPhoto.show(); Camera.active()"
-                       class="btn btn-outline btn-info">
-                        <i class="fa fa-camera"></i>
-                        Take a Photo
-                    </a>
-                </div>
+                <h3 class="m-n">
+                    <span class="fas fa-portrait text-warning"></span>
+                    <span class="text-muted"> Profile Picture:</span>
+                </h3>
+            </div>
+            <div class="panel-body">
                 <div class="row">
-                    <button class="btn btn-outline btn-info" type="button"
-                             onclick="UploadPhoto.show()">
-                        <i class="fa fa-cloud-upload"></i>
-                        Upload a Photo
-                    </button>
+                    <div class="col-lg-3 text-center">
+                        <img src="@userPhoto(Model.appUser.ProfilePhotoUrl)" />
+                    </div>
+                    <div class="col-lg-4 m-l-md m-t-lg text-center">
+                        <div class="row m-b-sm">
+                            <h4>Change your profile picture:</h4>
+                        </div>
+                        <div class="row m-b-sm">
+                            <a onclick="NewPhoto.show(); Camera.active()"
+                               class="btn btn-outline btn-info">
+                                <i class="fa fa-camera"></i>
+                                Take a Photo
+                            </a>
+                        </div>
+                        <div class="row">
+                            <button class="btn btn-outline btn-info" type="button"
+                                    onclick="UploadPhoto.show()">
+                                <i class="fa fa-cloud-upload"></i>
+                                Upload a Photo
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
-        <div class="text-center">
-            <div class="col-lg-12"><h2 class="col-lg-5 m-l-md">Info:</h2></div>
-
-            <div>
-                <form asp-action="editUser" method="post">
-                    <div class="form-inline col-lg-12 m-b-sm">
-                        <div class="col-lg-2"></div>
-                        <div class="col-lg-2">
-                            <h4 class="text-info">
-                                <i class="fa fa-user"></i>&nbsp; Username:
-                            </h4>
-                        </div>
-                        <input asp-for="@Model.appUser.UserName" class="form-control col-lg-5"
-                               id="inputUName" disabled />
-                        <button class="col-lg-2 m-l-lg btn btn-outline btn-info"
-                                id="editUName" type="button">
-                            Edit
-                        </button>
-                        <button class="col-lg-2  m-l-lg btn btn-outline btn-danger"
-                                id="cancelUName" type="button" style="display:none">
-                            Cancel
-                        </button>
-                        <button class="col-lg-2 m-l-lg btn btn-outline btn-success"
-                                id="saveUName" type="submit" style="display:none">
-                            Save
-                        </button>
-                    </div>
-
-                    <div class="form-inline col-lg-12  m-b-sm">
-                        <div class="col-lg-2"></div>
-                        <div class="col-lg-2">
-                            <h4 class="text-info">
-                                <span class="fa fa-user-o"></span>&nbsp; First Name:
-                            </h4>
-                        </div>
-                        <input asp-for="@Model.appUser.FirstName" class="form-control col-lg-5"
-                               id="inputFName" disabled />
-                        <button class="btn col-lg-2 m-l-lg btn-outline btn-info"
-                                id="editFName" type="button">
-                            Edit
-                        </button>
-                        <button class="col-lg-2  m-l-lg btn btn-outline btn-danger"
-                                id="cancelFName" type="button" style="display:none">
-                            Cancel
-                        </button>
-                        <button class="col-lg-2 m-l-lg btn btn-outline btn-success"
-                                id="saveFName" type="submit" style="display:none">
-                            Save
-                        </button>
-                    </div>
-
-                    <div class="form-inline col-lg-12  m-b-sm">
-                        <div class="col-lg-2"></div>
-                        <div class="col-lg-2">
-                            <h4 class="text-info">
-                                <span class="fa fa-user-o"></span>&nbsp; Last Name:
-                            </h4>
-                        </div>
-                        <input asp-for="@Model.appUser.LastName" class="form-control col-lg-5"
-                               id="inputLName" disabled />
-                        <button class="btn col-lg-2 m-l-lg btn-outline btn-info"
-                                id="editLName" type="button">
-                            Edit
-                        </button>
-                        <button class="col-lg-2  m-l-lg btn btn-outline btn-danger"
-                                id="cancelLName" type="button" style="display:none">
-                            Cancel
-                        </button>
-                        <button class="col-lg-2 m-l-lg btn btn-outline btn-success"
-                                id="saveLName" type="submit" style="display:none">
-                            Save
-                        </button>
-                    </div>
-
-                    <div class="form-inline col-lg-12  m-b-sm">
-                        <div class="col-lg-2"></div>
-                        <div class="col-lg-2">
-                            <h4 class="text-info">
-                                <span class="fa fa-at"></span>&nbsp; E-mail:
-                            </h4>
-                        </div>
-                        <input asp-for="@Model.appUser.Email" class="form-control col-lg-5"
-                               id="inputEmail" disabled />
-                        <button class="btn col-lg-2 m-l-lg btn-outline btn-info"
-                                id="editEmail" type="button">
-                            Edit
-                        </button>
-                        <button class="col-lg-2  m-l-lg btn btn-outline btn-danger"
-                                id="cancelEmail" type="button" style="display:none">
-                            Cancel
-                        </button>
-                        <button class="col-lg-2 m-l-lg btn btn-outline btn-success"
-                                id="saveEmail" type="submit" style="display:none">
-                            Save
-                        </button>
-                    </div>
-
-                    <div class="form-inline col-lg-12  m-b-sm">
-                        <div class="col-lg-2"></div>
-                        <div class="col-lg-2">
-                            <h4 class="text-info">
-                                <span class="fa fa-phone"></span>&nbsp; Phone Number:
-                            </h4>
-                        </div>
-                        <input asp-for="@Model.appUser.PhoneNumber" class="form-control col-lg-5"
-                               id="inputPhoneNumber" disabled />
-                        <button class="btn col-lg-2 m-l-lg btn-outline btn-info"
-                                id="editPhoneNumber" type="button">
-                            Edit
-                        </button>
-                        <button class="col-lg-2  m-l-lg btn btn-outline btn-danger"
-                                id="cancelPhoneNumber" type="button" style="display:none">
-                            Cancel
-                        </button>
-                        <button class="col-lg-2 m-l-lg btn btn-outline btn-success"
-                                id="savePhoneNumber" type="submit" style="display:none">
-                            Save
-                        </button>
-                    </div>
-                </form>
-            </div>
-            <div class="form-inline col-lg-12  m-b-sm">
-                <div class="col-lg-2"></div>
-                <div class="col-lg-2">
-                    <h4 class="text-info">
-                        <span class="fa fa-industry"></span>&nbsp; Company:
-                    </h4>
+<!--Basic Info-->
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel m-b-xs">
+            <div class="panel-heading">
+                <div class="panel-tools">
+                    <a class="showhide"><i class="fa fa-chevron-up" style="font-size:20px"></i></a>
                 </div>
-                <div class="col-lg-2">
-                    <h4>
-                        @Model.appUser.CompanyName
-                    </h4>
+                <h3 class="m-n">
+                    <span class="fas fa-info text-info"></span>
+                    <span class="text-muted"> Basic Info:</span>
+                </h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <form asp-action="editUser" method="post">
+                        <div class="form-inline col-lg-12 m-b-sm">
+                            <div class="col-lg-2">
+                                <h4>
+                                    <i class="fa fa-user"></i>&nbsp; Username:
+                                </h4>
+                            </div>
+                            <input asp-for="@Model.appUser.UserName" class="form-control col-lg-5"
+                                   id="inputUName" disabled />
+                            <button class="col-lg-2 m-l-lg btn btn-outline btn-info"
+                                    id="editUName" type="button">
+                                Edit
+                            </button>
+                            <button class="col-lg-2  m-l-lg btn btn-outline btn-danger"
+                                    id="cancelUName" type="button" style="display:none">
+                                Cancel
+                            </button>
+                            <button class="col-lg-2 m-l-lg btn btn-outline btn-success"
+                                    id="saveUName" type="submit" style="display:none">
+                                Save
+                            </button>
+                        </div>
+
+                        <div class="form-inline col-lg-12  m-b-sm">
+                            <div class="col-lg-2">
+                                <h4>
+                                    <span class="fa fa-user-o"></span>&nbsp; First Name:
+                                </h4>
+                            </div>
+                            <input asp-for="@Model.appUser.FirstName" class="form-control col-lg-5"
+                                   id="inputFName" disabled />
+                            <button class="btn col-lg-2 m-l-lg btn-outline btn-info"
+                                    id="editFName" type="button">
+                                Edit
+                            </button>
+                            <button class="col-lg-2  m-l-lg btn btn-outline btn-danger"
+                                    id="cancelFName" type="button" style="display:none">
+                                Cancel
+                            </button>
+                            <button class="col-lg-2 m-l-lg btn btn-outline btn-success"
+                                    id="saveFName" type="submit" style="display:none">
+                                Save
+                            </button>
+                        </div>
+
+                        <div class="form-inline col-lg-12  m-b-sm">
+                            <div class="col-lg-2">
+                                <h4>
+                                    <span class="fa fa-user-o"></span>&nbsp; Last Name:
+                                </h4>
+                            </div>
+                            <input asp-for="@Model.appUser.LastName" class="form-control col-lg-5"
+                                   id="inputLName" disabled />
+                            <button class="btn col-lg-2 m-l-lg btn-outline btn-info"
+                                    id="editLName" type="button">
+                                Edit
+                            </button>
+                            <button class="col-lg-2  m-l-lg btn btn-outline btn-danger"
+                                    id="cancelLName" type="button" style="display:none">
+                                Cancel
+                            </button>
+                            <button class="col-lg-2 m-l-lg btn btn-outline btn-success"
+                                    id="saveLName" type="submit" style="display:none">
+                                Save
+                            </button>
+                        </div>
+
+                        <div class="form-inline col-lg-12  m-b-sm">
+                            <div class="col-lg-2">
+                                <h4>
+                                    <span class="fa fa-at"></span>&nbsp; E-mail:
+                                </h4>
+                            </div>
+                            <input asp-for="@Model.appUser.Email" class="form-control col-lg-5"
+                                   id="inputEmail" disabled />
+                            <button class="btn col-lg-2 m-l-lg btn-outline btn-info"
+                                    id="editEmail" type="button">
+                                Edit
+                            </button>
+                            <button class="col-lg-2  m-l-lg btn btn-outline btn-danger"
+                                    id="cancelEmail" type="button" style="display:none">
+                                Cancel
+                            </button>
+                            <button class="col-lg-2 m-l-lg btn btn-outline btn-success"
+                                    id="saveEmail" type="submit" style="display:none">
+                                Save
+                            </button>
+                        </div>
+
+                        <div class="form-inline col-lg-12  m-b-sm">
+                            <div class="col-lg-2">
+                                <h4>
+                                    <span class="fa fa-phone"></span>&nbsp; Phone Number:
+                                </h4>
+                            </div>
+                            <input asp-for="@Model.appUser.PhoneNumber" class="form-control col-lg-5"
+                                   id="inputPhoneNumber" disabled />
+                            <button class="btn col-lg-2 m-l-lg btn-outline btn-info"
+                                    id="editPhoneNumber" type="button">
+                                Edit
+                            </button>
+                            <button class="col-lg-2  m-l-lg btn btn-outline btn-danger"
+                                    id="cancelPhoneNumber" type="button" style="display:none">
+                                Cancel
+                            </button>
+                            <button class="col-lg-2 m-l-lg btn btn-outline btn-success"
+                                    id="savePhoneNumber" type="submit" style="display:none">
+                                Save
+                            </button>
+                        </div>
+                    </form>
+                    <div class="form-inline col-lg-12  m-b-sm">
+                        <div class="col-lg-2">
+                            <h4>
+                                <span class="fa fa-industry"></span>&nbsp; Company:
+                            </h4>
+                        </div>
+                        <div class="col-lg-2">
+                            <h4>
+                                @Model.appUser.CompanyName
+                            </h4>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -214,202 +245,202 @@
         <script src="~/lib_local/profilePhoto/profilePhoto.js"></script>
     </environment>
 
-<script type="text/javascript">
-    //****** Upload profile photo ******
-    var inputProfilePhoto = document.getElementById("inputProfilePhoto"); //TODO: Remove
-    var profilePhotoForm = document.getElementById("profilePhotoForm");
-    var uploadPhoto = new function () {
-        //inputProfilePhoto.click();
-        this.show = function () {
-            profilePhotoForm.hidden = false;
-        };
-        this.close = function () {
-            profilePhotoForm.hidden = true;
-        };
-    }
+    <script type="text/javascript">
+        //****** Upload profile photo ******
+        var inputProfilePhoto = document.getElementById("inputProfilePhoto"); //TODO: Remove
+        var profilePhotoForm = document.getElementById("profilePhotoForm");
+        var uploadPhoto = new function () {
+            //inputProfilePhoto.click();
+            this.show = function () {
+                profilePhotoForm.hidden = false;
+            };
+            this.close = function () {
+                profilePhotoForm.hidden = true;
+            };
+        }
 
-    //****** PROFILE EDIT ******
-    //** edit user name
-    var inputUName = document.getElementById("inputUName");
-    var userNameOld = inputUName.value;
-    var userNameNew = "";
-    var editUName = document.getElementById("editUName");
-    var cancelUName = document.getElementById("cancelUName");
-    var saveUName = document.getElementById("saveUName");
+        //****** PROFILE EDIT ******
+        //** edit user name
+        var inputUName = document.getElementById("inputUName");
+        var userNameOld = inputUName.value;
+        var userNameNew = "";
+        var editUName = document.getElementById("editUName");
+        var cancelUName = document.getElementById("cancelUName");
+        var saveUName = document.getElementById("saveUName");
 
-    editUName.addEventListener("click", () => {
-        editUName.style.display = "none";
-        cancelUName.style.display = "inline-block";
-        inputUName.disabled = false;
+        editUName.addEventListener("click", () => {
+            editUName.style.display = "none";
+            cancelUName.style.display = "inline-block";
+            inputUName.disabled = false;
 
-        //get input new val
-        inputUName.addEventListener("focusout", () => {
-            userNameNew = inputUName.value;
+            //get input new val
+            inputUName.addEventListener("focusout", () => {
+                userNameNew = inputUName.value;
 
-            if (userNameOld != userNameNew) {
-                saveUName.style.display = "inline-block";
-            }
+                if (userNameOld != userNameNew) {
+                    saveUName.style.display = "inline-block";
+                }
+            });
+
+            //cancel
+            cancelUName.addEventListener("click", () => {
+                editUName.style.display = "inline-block";
+                cancelUName.style.display = "none";
+
+                if (userNameOld != userNameNew) {
+                    saveUName.style.display = "none";
+                    inputUName.value = userNameOld;
+                    inputUName.disabled = true;
+                    userNameNew = "";
+                }
+            });
         });
 
-        //cancel
-        cancelUName.addEventListener("click", () => {
-            editUName.style.display = "inline-block";
-            cancelUName.style.display = "none";
 
-            if (userNameOld != userNameNew) {
-                saveUName.style.display = "none";
-                inputUName.value = userNameOld;
-                inputUName.disabled = true;
-                userNameNew = "";
-            }
-        });
-    });
+        //** edit first name
+        var inputFName = document.getElementById("inputFName");
+        var firstNameOld = inputFName.value;
+        var firstNameNew = "";
+        var editFName = document.getElementById("editFName");
+        var cancelFName = document.getElementById("cancelFName");
+        var saveFName = document.getElementById("saveFName");
 
+        editFName.addEventListener("click", () => {
+            editFName.style.display = "none";
+            cancelFName.style.display = "inline-block";
+            inputFName.disabled = false;
 
-    //** edit first name
-    var inputFName = document.getElementById("inputFName");
-    var firstNameOld = inputFName.value;
-    var firstNameNew = "";
-    var editFName = document.getElementById("editFName");
-    var cancelFName = document.getElementById("cancelFName");
-    var saveFName = document.getElementById("saveFName");
+            //get input new val
+            inputFName.addEventListener("focusout", () => {
+                firstNameNew = inputFName.value;
 
-    editFName.addEventListener("click", () => {
-        editFName.style.display = "none";
-        cancelFName.style.display = "inline-block";
-        inputFName.disabled = false;
+                if (firstNameOld != firstNameNew) {
+                    saveFName.style.display = "inline-block";
+                }
+            });
 
-        //get input new val
-        inputFName.addEventListener("focusout", () => {
-            firstNameNew = inputFName.value;
+            //cancel
+            cancelFName.addEventListener("click", () => {
+                editFName.style.display = "inline-block";
+                cancelFName.style.display = "none";
 
-            if (firstNameOld != firstNameNew) {
-                saveFName.style.display = "inline-block";
-            }
-        });
-
-        //cancel
-        cancelFName.addEventListener("click", () => {
-            editFName.style.display = "inline-block";
-            cancelFName.style.display = "none";
-
-            if (firstNameOld != firstNameNew) {
-                saveFName.style.display = "none";
-                inputFName.value = firstNameOld;
-                inputFName.disabled = true;
-                firstNameNew = "";
-            }
-        });
-    });
-
-    //** edit last name
-    var inputLName = document.getElementById("inputLName");
-    var lastNameOld = inputLName.value;
-    var lastNameNew = "";
-    var editLName = document.getElementById("editLName");
-    var cancelLName = document.getElementById("cancelLName");
-    var saveLName = document.getElementById("saveLName");
-
-    editLName.addEventListener("click", () => {
-        editLName.style.display = "none";
-        cancelLName.style.display = "inline-block";
-        inputLName.disabled = false;
-
-        //get input new val
-        inputLName.addEventListener("focusout", () => {
-            lastNameNew = inputLName.value;
-
-            if (lastNameOld != lastNameNew) {
-                saveLName.style.display = "inline-block";
-            }
+                if (firstNameOld != firstNameNew) {
+                    saveFName.style.display = "none";
+                    inputFName.value = firstNameOld;
+                    inputFName.disabled = true;
+                    firstNameNew = "";
+                }
+            });
         });
 
-        //cancel
-        cancelLName.addEventListener("click", () => {
-            editLName.style.display = "inline-block";
-            cancelLName.style.display = "none";
+        //** edit last name
+        var inputLName = document.getElementById("inputLName");
+        var lastNameOld = inputLName.value;
+        var lastNameNew = "";
+        var editLName = document.getElementById("editLName");
+        var cancelLName = document.getElementById("cancelLName");
+        var saveLName = document.getElementById("saveLName");
 
-            if (lastNameOld != lastNameNew) {
-                saveLName.style.display = "none";
-                inputLName.value = lastNameOld;
-                inputLName.disabled = true;
-                lastNameNew = "";
-            }
-        });
-    });
+        editLName.addEventListener("click", () => {
+            editLName.style.display = "none";
+            cancelLName.style.display = "inline-block";
+            inputLName.disabled = false;
 
+            //get input new val
+            inputLName.addEventListener("focusout", () => {
+                lastNameNew = inputLName.value;
 
-    //** edit email
-    var inputEmail = document.getElementById("inputEmail");
-    var emailOld = inputEmail.value;
-    var emailNew = "";
-    var editEmail = document.getElementById("editEmail");
-    var cancelEmail = document.getElementById("cancelEmail");
-    var saveEmail = document.getElementById("saveEmail");
+                if (lastNameOld != lastNameNew) {
+                    saveLName.style.display = "inline-block";
+                }
+            });
 
-    editEmail.addEventListener("click", () => {
-        editEmail.style.display = "none";
-        cancelEmail.style.display = "inline-block";
-        inputEmail.disabled = false;
+            //cancel
+            cancelLName.addEventListener("click", () => {
+                editLName.style.display = "inline-block";
+                cancelLName.style.display = "none";
 
-        //get input new val
-        inputEmail.addEventListener("focusout", () => {
-            emailNew = inputEmail.value;
-
-            if (emailOld != emailNew) {
-                saveEmail.style.display = "inline-block";
-            }
-        });
-
-        //cancel
-        cancelEmail.addEventListener("click", () => {
-            editEmail.style.display = "inline-block";
-            cancelEmail.style.display = "none";
-
-            if (emailOld != emailNew) {
-                saveEmail.style.display = "none";
-                inputEmail.value = lastNameOld;
-                inputEmail.disabled = true;
-                emailNew = "";
-            }
-        });
-    });
-
-
-    //** edit phone number
-    var inputPhoneNumber = document.getElementById("inputPhoneNumber");
-    var phoneNumberOld = inputPhoneNumber.value;
-    var phoneNumberNew = "";
-    var editPhoneNumber = document.getElementById("editPhoneNumber");
-    var cancelPhoneNumber = document.getElementById("cancelPhoneNumber");
-    var savePhoneNumber = document.getElementById("savePhoneNumber");
-
-    editPhoneNumber.addEventListener("click", () => {
-        editPhoneNumber.style.display = "none";
-        cancelPhoneNumber.style.display = "inline-block";
-        inputPhoneNumber.disabled = false;
-
-        //get input new val
-        inputPhoneNumber.addEventListener("focusout", () => {
-            phoneNumberNew = inputPhoneNumber.value;
-
-            if (phoneNumberOld != phoneNumberNew) {
-                savePhoneNumber.style.display = "inline-block";
-            }
+                if (lastNameOld != lastNameNew) {
+                    saveLName.style.display = "none";
+                    inputLName.value = lastNameOld;
+                    inputLName.disabled = true;
+                    lastNameNew = "";
+                }
+            });
         });
 
-        //cancel
-        cancelPhoneNumber.addEventListener("click", () => {
-            editPhoneNumber.style.display = "inline-block";
-            cancelPhoneNumber.style.display = "none";
 
-            if (phoneNumberOld != phoneNumberNew) {
-                savePhoneNumber.style.display = "none";
-                inputPhoneNumber.value = phoneNumberOld;
-                inputPhoneNumber.disabled = true;
-                phoneNumberNew = "";
-            }
+        //** edit email
+        var inputEmail = document.getElementById("inputEmail");
+        var emailOld = inputEmail.value;
+        var emailNew = "";
+        var editEmail = document.getElementById("editEmail");
+        var cancelEmail = document.getElementById("cancelEmail");
+        var saveEmail = document.getElementById("saveEmail");
+
+        editEmail.addEventListener("click", () => {
+            editEmail.style.display = "none";
+            cancelEmail.style.display = "inline-block";
+            inputEmail.disabled = false;
+
+            //get input new val
+            inputEmail.addEventListener("focusout", () => {
+                emailNew = inputEmail.value;
+
+                if (emailOld != emailNew) {
+                    saveEmail.style.display = "inline-block";
+                }
+            });
+
+            //cancel
+            cancelEmail.addEventListener("click", () => {
+                editEmail.style.display = "inline-block";
+                cancelEmail.style.display = "none";
+
+                if (emailOld != emailNew) {
+                    saveEmail.style.display = "none";
+                    inputEmail.value = lastNameOld;
+                    inputEmail.disabled = true;
+                    emailNew = "";
+                }
+            });
         });
-    });
-</script>
+
+
+        //** edit phone number
+        var inputPhoneNumber = document.getElementById("inputPhoneNumber");
+        var phoneNumberOld = inputPhoneNumber.value;
+        var phoneNumberNew = "";
+        var editPhoneNumber = document.getElementById("editPhoneNumber");
+        var cancelPhoneNumber = document.getElementById("cancelPhoneNumber");
+        var savePhoneNumber = document.getElementById("savePhoneNumber");
+
+        editPhoneNumber.addEventListener("click", () => {
+            editPhoneNumber.style.display = "none";
+            cancelPhoneNumber.style.display = "inline-block";
+            inputPhoneNumber.disabled = false;
+
+            //get input new val
+            inputPhoneNumber.addEventListener("focusout", () => {
+                phoneNumberNew = inputPhoneNumber.value;
+
+                if (phoneNumberOld != phoneNumberNew) {
+                    savePhoneNumber.style.display = "inline-block";
+                }
+            });
+
+            //cancel
+            cancelPhoneNumber.addEventListener("click", () => {
+                editPhoneNumber.style.display = "inline-block";
+                cancelPhoneNumber.style.display = "none";
+
+                if (phoneNumberOld != phoneNumberNew) {
+                    savePhoneNumber.style.display = "none";
+                    inputPhoneNumber.value = phoneNumberOld;
+                    inputPhoneNumber.disabled = true;
+                    phoneNumberNew = "";
+                }
+            });
+        });
+    </script>
 }

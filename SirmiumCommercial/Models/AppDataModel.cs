@@ -34,6 +34,7 @@ namespace SirmiumCommercial.Models
         public int GroupId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string GroupPhotoPath { get; set; }
         public AppUser CreatedBy { get; set; }
         public string CompanyName { get; set; }
         public ICollection<GroupUsers> Users { get; set; }

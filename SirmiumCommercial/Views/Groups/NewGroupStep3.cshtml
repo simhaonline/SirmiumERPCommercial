@@ -36,15 +36,22 @@
                     <input asp-for="@Model.CoursesIdString" id="checked-courses" value="" hidden />
                     @foreach (Course course in Model.Courses)
                     {
-                        <div class="col-sm-2">
+                        <div class="col-lg-3">
                             <input type="checkbox" value="@course.CourseId" id="check-@course.CourseId"
                                    onchange="checkboxOnChange(@course.CourseId)" />
-                            <span>@course.Title</span>
+                            <span class="@course.AwardIcon" style="font-size: 25px;"></span>
+                            <span style="font-size: 15px">
+                                @course.Title
+                            </span>
                         </div>
                     }
-
                     <div class="text-right m-t-xs">
-                        <a href="#" class="btn btn-default text-danger">Cancel</a>
+                        <a href="@Url.Action("AbortNewGroup", "Groups",
+                                new
+                                {
+                                    userId = Model.Group.CreatedBy.Id,
+                                    groupId = Model.Group.GroupId
+                                })" class="btn btn-default text-danger">Cancel</a>
                         <button type="submit" class="btn btn-default">Finish</button>
                     </div>
                 </form>
