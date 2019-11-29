@@ -46,6 +46,25 @@ namespace SirmiumCommercial.Models.ViewModels
     {
         public AppUser appUser { get; set; }
         public IFormFile ProfilePhoto { get; set; }
+
+        public string UserId { get; set; }
+        public string UserName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public IEnumerable<IdentityError> errors { get; set; }
+    }
+
+    public class SettingsViewModel
+    {
+        public AppUser User { get; set; }
+
+        public string UserId { get; set; }
+        [Required]
+        public string CurrentPassword { get; set; }
+        [Required]
+        public string NewPassword { get; set; }
     }
 
     public class AllCourses

@@ -76,16 +76,17 @@
                         </div>
                         <div class="row m-b-sm">
                             <a onclick="NewPhoto.show(); Camera.active()"
-                               class="btn btn-outline btn-info">
-                                <i class="fa fa-camera"></i>
-                                Take a Photo
+                               class="btn" style="font-size: 20px;">
+                                <span class="fa fa-camera text-info"></span>
+                                <span class="text-muted">Take a Photo</span>
                             </a>
                         </div>
                         <div class="row">
-                            <button class="btn btn-outline btn-info" type="button"
-                                    onclick="UploadPhoto.show()">
-                                <i class="fa fa-cloud-upload"></i>
-                                Upload a Photo
+                            <button class="btn" type="button"
+                                    onclick="UploadPhoto.show()" style="font-size: 20px;
+                                         background: #ffffff">
+                                <span class="fa fa-cloud-upload text-success"></span>
+                                <span class="text-muted">Upload a Photo</span>
                             </button>
                         </div>
                     </div>
@@ -94,6 +95,17 @@
         </div>
     </div>
 </div>
+
+<!--Msg window-->
+ @if (TempData["EditMsg"] != null)
+ {
+    @if (TempData["EditMsg"].ToString() == "Success")
+    {
+        <div id="msgWindowSuccess">
+            <input value="Your data was successfully updated." id="windowMsg" hidden />
+        </div>
+    }
+ }
 
 <!--Basic Info-->
 <div class="row m-l-md m-r-md">
@@ -110,26 +122,38 @@
             </div>
             <div class="panel-body">
                 <div class="row">
-                    <form asp-action="editUser" method="post">
+                    <form asp-action="EditMyProfile" asp-controller="User" method="post">
+                        <div asp-validation-summary="All" class="text-danger" style="font-size:20px"></div>
+                        <input asp-for="UserId" value="@Model.appUser.Id" hidden />
                         <div class="form-inline col-lg-12 m-b-sm">
                             <div class="col-lg-2">
                                 <h4>
                                     <i class="fa fa-user"></i>&nbsp; Username:
                                 </h4>
                             </div>
-                            <input asp-for="@Model.appUser.UserName" class="form-control col-lg-5"
+                            <input asp-for="UserName" value="@Model.appUser.UserName"
+                                   id="new-username" hidden />
+
+                            <input value="@Model.appUser.UserName"
+                                   class="form-control col-lg-5"
                                    id="inputUName" disabled />
-                            <button class="col-lg-2 m-l-lg btn btn-outline btn-info"
-                                    id="editUName" type="button">
-                                Edit
+                            <button class="col-lg-2 m-l-lg btn"
+                                    id="editUName" type="button" 
+                                    style="font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-edit text-warning"></span>
+                                <span class="text-muted">Edit</span>
                             </button>
-                            <button class="col-lg-2  m-l-lg btn btn-outline btn-danger"
-                                    id="cancelUName" type="button" style="display:none">
-                                Cancel
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="cancelUName" type="button" style="display:none;
+                                    font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-remove text-danger"></span>
+                                <span class="text-muted">Cancel</span>
                             </button>
-                            <button class="col-lg-2 m-l-lg btn btn-outline btn-success"
-                                    id="saveUName" type="submit" style="display:none">
-                                Save
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="saveUName" type="submit" style="display:none;
+                                    font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-save text-success"></span>
+                                <span class="text-muted">Save</span>
                             </button>
                         </div>
 
@@ -139,19 +163,28 @@
                                     <span class="fa fa-user-o"></span>&nbsp; First Name:
                                 </h4>
                             </div>
-                            <input asp-for="@Model.appUser.FirstName" class="form-control col-lg-5"
+                            <input asp-for="FirstName" value="@Model.appUser.FirstName"
+                                   id="new-first-name" hidden />
+                            <input value="@Model.appUser.FirstName"
+                                   class="form-control col-lg-5"
                                    id="inputFName" disabled />
-                            <button class="btn col-lg-2 m-l-lg btn-outline btn-info"
-                                    id="editFName" type="button">
-                                Edit
+                            <button class="btn col-lg-2 m-l-lg"
+                                    id="editFName" type="button" 
+                                    style="font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-edit text-warning"></span>
+                                <span class="text-muted">Edit</span>
                             </button>
-                            <button class="col-lg-2  m-l-lg btn btn-outline btn-danger"
-                                    id="cancelFName" type="button" style="display:none">
-                                Cancel
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="cancelFName" type="button" style="display:none;
+                                    font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-remove text-danger"></span>
+                                <span class="text-muted">Cancel</span>
                             </button>
-                            <button class="col-lg-2 m-l-lg btn btn-outline btn-success"
-                                    id="saveFName" type="submit" style="display:none">
-                                Save
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="saveFName" type="submit" style="display:none;
+                                    font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-save text-success"></span>
+                                <span class="text-muted">Save</span>
                             </button>
                         </div>
 
@@ -161,19 +194,28 @@
                                     <span class="fa fa-user-o"></span>&nbsp; Last Name:
                                 </h4>
                             </div>
-                            <input asp-for="@Model.appUser.LastName" class="form-control col-lg-5"
+                            <input asp-for="LastName" value="@Model.appUser.LastName"
+                                   id="new-last-name" hidden />
+                            <input value="@Model.appUser.LastName"
+                                   class="form-control col-lg-5"
                                    id="inputLName" disabled />
-                            <button class="btn col-lg-2 m-l-lg btn-outline btn-info"
-                                    id="editLName" type="button">
-                                Edit
+                            <button class="btn col-lg-2 m-l-lg"
+                                    id="editLName" type="button"
+                                    style="font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-edit text-warning"></span>
+                                <span class="text-muted">Edit</span>
                             </button>
-                            <button class="col-lg-2  m-l-lg btn btn-outline btn-danger"
-                                    id="cancelLName" type="button" style="display:none">
-                                Cancel
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="cancelLName" type="button" style="display:none;
+                                    font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-remove text-danger"></span>
+                                <span class="text-muted">Cancel</span>
                             </button>
-                            <button class="col-lg-2 m-l-lg btn btn-outline btn-success"
-                                    id="saveLName" type="submit" style="display:none">
-                                Save
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="saveLName" type="submit" style="display:none;
+                                    font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-save text-success"></span>
+                                <span class="text-muted">Save</span>
                             </button>
                         </div>
 
@@ -183,19 +225,27 @@
                                     <span class="fa fa-at"></span>&nbsp; E-mail:
                                 </h4>
                             </div>
-                            <input asp-for="@Model.appUser.Email" class="form-control col-lg-5"
+                            <input asp-for="Email" value="@Model.appUser.Email" id="new-email" hidden />
+                            <input value="@Model.appUser.Email"
+                                   class="form-control col-lg-5"
                                    id="inputEmail" disabled />
-                            <button class="btn col-lg-2 m-l-lg btn-outline btn-info"
-                                    id="editEmail" type="button">
-                                Edit
+                            <button class="btn col-lg-2 m-l-lg"
+                                    id="editEmail" type="button" 
+                                    style="font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-edit text-warning"></span>
+                                <span class="text-muted">Edit</span>
                             </button>
-                            <button class="col-lg-2  m-l-lg btn btn-outline btn-danger"
-                                    id="cancelEmail" type="button" style="display:none">
-                                Cancel
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="cancelEmail" type="button" style="display:none;
+                                    font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-remove text-danger"></span>
+                                <span class="text-muted">Cancel</span>
                             </button>
-                            <button class="col-lg-2 m-l-lg btn btn-outline btn-success"
-                                    id="saveEmail" type="submit" style="display:none">
-                                Save
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="saveEmail" type="submit" style="display:none;
+                                    font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-save text-success"></span>
+                                <span class="text-muted">Save</span>
                             </button>
                         </div>
 
@@ -205,19 +255,28 @@
                                     <span class="fa fa-phone"></span>&nbsp; Phone Number:
                                 </h4>
                             </div>
-                            <input asp-for="@Model.appUser.PhoneNumber" class="form-control col-lg-5"
+                            <input asp-for="PhoneNumber" value="@Model.appUser.PhoneNumber"
+                                   id="new-phone" hidden />
+                            <input value="@Model.appUser.PhoneNumber"
+                                   class="form-control col-lg-5"
                                    id="inputPhoneNumber" disabled />
-                            <button class="btn col-lg-2 m-l-lg btn-outline btn-info"
-                                    id="editPhoneNumber" type="button">
-                                Edit
+                            <button class="btn col-lg-2 m-l-lg"
+                                    id="editPhoneNumber" type="button" 
+                                    style="font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-edit text-warning"></span>
+                                <span class="text-muted">Edit</span>
                             </button>
-                            <button class="col-lg-2  m-l-lg btn btn-outline btn-danger"
-                                    id="cancelPhoneNumber" type="button" style="display:none">
-                                Cancel
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="cancelPhoneNumber" type="button" style="display:none;
+                                    font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-remove text-danger"></span>
+                                <span class="text-muted">Cancel</span>
                             </button>
-                            <button class="col-lg-2 m-l-lg btn btn-outline btn-success"
-                                    id="savePhoneNumber" type="submit" style="display:none">
-                                Save
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="savePhoneNumber" type="submit" style="display:none;
+                                    font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-save text-success"></span>
+                                <span class="text-muted">Save</span>
                             </button>
                         </div>
                     </form>
@@ -279,6 +338,7 @@
 
                 if (userNameOld != userNameNew) {
                     saveUName.style.display = "inline-block";
+                    document.getElementById('new-username').value = userNameNew;
                 }
             });
 
@@ -290,6 +350,7 @@
                 if (userNameOld != userNameNew) {
                     saveUName.style.display = "none";
                     inputUName.value = userNameOld;
+                    document.getElementById('new-username').value = userNameOld;
                     inputUName.disabled = true;
                     userNameNew = "";
                 }
@@ -316,6 +377,7 @@
 
                 if (firstNameOld != firstNameNew) {
                     saveFName.style.display = "inline-block";
+                    document.getElementById('new-first-name').value = firstNameNew;
                 }
             });
 
@@ -327,6 +389,7 @@
                 if (firstNameOld != firstNameNew) {
                     saveFName.style.display = "none";
                     inputFName.value = firstNameOld;
+                    document.getElementById('new-first-name').value = firstNameOld;
                     inputFName.disabled = true;
                     firstNameNew = "";
                 }
@@ -352,6 +415,7 @@
 
                 if (lastNameOld != lastNameNew) {
                     saveLName.style.display = "inline-block";
+                    document.getElementById('new-last-name').value = lastNameNew;
                 }
             });
 
@@ -363,6 +427,7 @@
                 if (lastNameOld != lastNameNew) {
                     saveLName.style.display = "none";
                     inputLName.value = lastNameOld;
+                    document.getElementById('new-last-name').value = lastNameOld;
                     inputLName.disabled = true;
                     lastNameNew = "";
                 }
@@ -389,6 +454,7 @@
 
                 if (emailOld != emailNew) {
                     saveEmail.style.display = "inline-block";
+                    document.getElementById('new-email').value = emailNew;
                 }
             });
 
@@ -400,6 +466,7 @@
                 if (emailOld != emailNew) {
                     saveEmail.style.display = "none";
                     inputEmail.value = lastNameOld;
+                    document.getElementById('new-email').value = lastNameOld;
                     inputEmail.disabled = true;
                     emailNew = "";
                 }
@@ -426,6 +493,7 @@
 
                 if (phoneNumberOld != phoneNumberNew) {
                     savePhoneNumber.style.display = "inline-block";
+                    document.getElementById('new-phone').value = phoneNumberNew;
                 }
             });
 
@@ -437,6 +505,7 @@
                 if (phoneNumberOld != phoneNumberNew) {
                     savePhoneNumber.style.display = "none";
                     inputPhoneNumber.value = phoneNumberOld;
+                    document.getElementById('new-phone').value = phoneNumberOld;
                     inputPhoneNumber.disabled = true;
                     phoneNumberNew = "";
                 }

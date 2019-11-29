@@ -22,7 +22,7 @@
                     </a>
                 </li>
                 <li class="@Html.IsSelected(controller: "User")">
-                    <a href="@Url.Action("Settings", "User")">
+                    <a href="@Url.Action("Settings", "User", new { id = ViewData["Id"] })">
                         <span class="fa fa-cog"></span>
                         <span class="nav-label">Settings</span>
                     </a>

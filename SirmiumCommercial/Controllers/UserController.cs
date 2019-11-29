@@ -267,27 +267,80 @@ namespace SirmiumCommercial.Controllers
             return View(ModelState);
         }
 
-        public IActionResult Settings()
+        public async Task<IActionResult> EditMyProfile (ProfileModel model)
         {
-            return View();
-        }
+            AppUser user = await userManager.FindByIdAsync(model.UserId);
 
-        public async Task<IActionResult> MyProfile(string id)
-        {
-            ViewData["Id"] = id;
-            AppUser user = await userManager.FindByIdAsync(id);
-            if (user != null)
+            if(user != null)
             {
-                return View(new ProfileModel
+                user.UserName = model.UserName;
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.Email = model.Email;
+                user.PhoneNumber = model.PhoneNumber;
+                IdentityResult result = await userManager.UpdateAsync(user);
+                if (result.Succeeded)
                 {
-                    appUser = user
-                });
+                    TempData["EditMsg"] = "Success";
+                    return RedirectToAction("EditProfile", new { id = user.Id });
+                }
+                else
+                {
+                    ResultError(result);
+                    ViewData["Id"] = user.Id;
+                    model.appUser = user;
+                    return View("EditProfile", model);
+                }
+                
             }
             else
             {
-                ModelState.AddModelError("", "User Not Found");
+                return RedirectToAction("UserNotFound", "Error");
             }
-            return View(ModelState);
+        }
+
+        public async Task<IActionResult> Settings(string id)
+        {
+            ViewData["Id"] = id;
+
+            AppUser user = await userManager.FindByIdAsync(id);
+
+            return View(new SettingsViewModel { User = user });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(SettingsViewModel model)
+        {
+            ViewData["Id"] = model.UserId;
+
+            AppUser user = await userManager.FindByIdAsync(model.UserId);
+
+            if (user != null)
+            {
+                if(ModelState.IsValid == false)
+                {
+                    return RedirectToAction("Settings", new { id = user.Id });
+                }
+
+                IdentityResult result = await userManager.ChangePasswordAsync(user, 
+                    model.CurrentPassword, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    TempData["SettingsMsg"] = "Success";
+                    return RedirectToAction("Settings", new { id = user.Id });
+                }
+                else
+                {
+                    ResultError(result);
+                    ViewData["Id"] = user.Id;
+                    model.User = user;
+                    return View("Settings", model);
+                }
+            }
+            else
+            {
+                return RedirectToAction("UserNotFound", "Error");
+            }
         }
 
         public async Task<IActionResult> UserProfile(string id, string userId)
@@ -559,6 +612,15 @@ namespace SirmiumCommercial.Controllers
             }
 
             return null;
+        }
+
+
+        private void ResultError(IdentityResult result)
+        {
+            foreach (IdentityError error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
         }
     }
 }

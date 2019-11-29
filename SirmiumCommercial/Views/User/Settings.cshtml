@@ -1,5 +1,114 @@
-﻿@{
+﻿@using System.Collections.Generic
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Authentication
+@model SettingsViewModel
+
+@{
     Layout = "_UserLayout";
     ViewData["Title"] = "Settings";
 }
 
+
+<!--Header-->
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <div class="row m-l-sm">
+                <span class="fa fa-cog"></span>
+                <span class="text-muted">Settings</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Msg window-->
+@if (TempData["SettingsMsg"] != null)
+{
+    @if (TempData["SettingsMsg"].ToString() == "Success")
+    {
+        <div id="msgWindowSuccess">
+            <input value="Your password was successfully saved." id="windowMsg" hidden />
+        </div>
+    }
+}
+
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel m-b-xs">
+            <div class="panel-body">
+                <div class="row text-center">
+                    <a class="btn" style="font-size: 20px;"
+                       id="password-show-btn" onclick="showPasswordForm.show();">
+                        <span class="fa fa-key text-primary"></span>
+                        <span class="text-muted">Change Password</span>
+                    </a>
+                </div>
+                <form asp-action="ChangePassword" asp-controller="User" method="post">
+                    <div asp-validation-summary="All" class="text-danger" style="font-size: 20px"></div>
+                    <input asp-for="UserId" value="@Model.User.Id" hidden />
+                    <div class="form-inline row m-b-sm text-center"
+                         style="display: none" id="current-password">
+                        <div class="col-lg-3"></div>
+                        <div class="col-lg-2">
+                            <h4 class="text-muted">
+                                Current Password:
+                            </h4>
+                        </div>
+                        <input asp-for="CurrentPassword"
+                               class="form-control col-lg-4" />
+                        <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                    </div>
+                    <div class="form-inline row m-b-sm text-center"
+                         style="display: none" id="new-password">
+                        <div class="col-lg-3"></div>
+                        <div class="col-lg-2">
+                            <h4 class="text-muted">
+                                New Password:
+                            </h4>
+                        </div>
+                        <input asp-for="NewPassword"
+                               class="form-control col-lg-6" />
+                        <span asp-validation-for="NewPassword" class="text-danger"></span>
+                    </div>
+                    <div class="row text-center" style="display: none" id="password-form-btns">
+                        <a class="btn" style="font-size: 20px;"
+                           onclick="showPasswordForm.close();">
+                            <span class="fa fa-remove text-danger"></span>
+                            <span class="text-muted">Cancel</span>
+                        </a>
+                        <button class="btn" style="font-size: 20px; background-color: #ffffff"
+                                type="submit">
+                            <span class="fa fa-save text-success"></span>
+                            <span class="text-muted">Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
+
+<script type="text/javascript">
+    var passwordCloseBtn = document.getElementById('password-form-btns');
+    var currentPassword = document.getElementById('current-password');
+    var newPassword = document.getElementById('new-password');
+
+    var showPasswordForm = new function () {
+        this.show = function () {
+            currentPassword.style.display = "";
+            newPassword.style.display = "";
+            passwordCloseBtn.style.display = "";
+        };
+        this.close = function () {
+            currentPassword.style.display = "none";
+            newPassword.style.display = "none";
+            passwordCloseBtn.style.display = "none";
+        }
+    };
+</script>
