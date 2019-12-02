@@ -15,6 +15,8 @@ namespace SirmiumCommercial.Models.ViewModels
         [Required]
         public string Password { get; set; }
         [Required]
+        public string RepeatPassword { get; set; }
+        [Required]
         public string FirstName { get; set; }
         [Required]
         public string LastName { get; set; }
@@ -28,6 +30,8 @@ namespace SirmiumCommercial.Models.ViewModels
         public DateTime RegistrationDate { get; set; } 
 
         public string Status { get; set; }
+
+        public string Remark { get; set; }
     }
 
     public class LoginModel

@@ -15,6 +15,48 @@
 }
 
 
+<div class="login-container" style="padding-top: 20px;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="text-center m-b-md">
+                <h3>LOGIN</h3>
+            </div>
+            <div class="hpanel">
+                <div class="panel-body">
+                    <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["RetunUrl"]"
+                          method="post" id="loginForm">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="form-group">
+                            <label class="control-label" for="username">Username</label>
+                            <input type="text"  asp-for="UserName" placeholder="Username" title="Please enter you username" id="username" class="form-control">
+                            <span class="help-block small">Your unique username to app</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="password">Password</label>
+                            <input type="password" asp-for="Password" title="Please enter your password" placeholder="******"  id="password" class="form-control">
+                            <span class="help-block small">Your strong password</span>
+                        </div>
+                        <div class="checkbox">
+                            <input type="checkbox" class="i-checks" checked>
+                            Remember login
+                            <p class="help-block small">(if this is a private computer)</p>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-block">Login</button>
+                        <a class="btn btn-default btn-block" asp-action="SignUp" 
+                           asp-route-returnturl="@ViewData["ReturnUrl"]">Register</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            2015 Copyright <strong>SirmiumERPCommercial</strong>
+        </div>
+    </div>
+</div>
+@*
+
 <div id="main">
     <h2 class="title-center"><strong>@ViewData["Title"]</strong></h2>
     <div class="row">
@@ -31,7 +73,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-10 userInput">
-                            <input asp-for="Password" placeholder="&#xf084; Password" class="form-control" type="password" />
+                            <input  placeholder="&#xf084; Password" class="form-control" type="password" />
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
                     </div>
@@ -44,7 +86,7 @@
                                 </label>
                             </div>
                             <div class="col-sm-6">
-                                <button type="submit" class="btn btn-outline btn-info">Log in</button>
+                                <button  class="btn btn-outline btn-info">Log in</button>
                             </div>
                         </div>
                     </div>
@@ -57,13 +99,13 @@
                         <a asp-action="ForgotPassword" class="pull-right userFont">Forgot your password?</a>
                     </p>
                     <p>
-                        
+
                     </p>
                 </form>
             </section>
         </div>
     </div>
-</div>
+</div>*@
 
 @section Scripts{
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

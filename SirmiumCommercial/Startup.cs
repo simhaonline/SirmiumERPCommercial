@@ -28,7 +28,7 @@ namespace SirmiumCommercial
         {
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration["Data:SirmiumCommercialData:ConnectionString"]));
+                    Configuration["Data:NewSirmiumCommercialData:ConnectionString"]));
             services.AddTransient<IAppDataRepository, EFAppDataRepository>();
 
             services.AddIdentity<AppUser, IdentityRole>(options => {
@@ -61,13 +61,7 @@ namespace SirmiumCommercial
             app.UseMvc(routes => {
                 routes.MapRoute(
                     name: null,
-                    template: "{Controller=Home}/{Action=Index}/{id?}");
-                routes.MapRoute(
-                    name: null,
-                    template: "{Controller=Main}/{Action=Index}/{id?}");
-                routes.MapRoute(
-                    name: null,
-                    template: "{Controller=Admin}/{Action=Index}/{id?}");
+                    template: "{Controller=Account}/{Action=Login}/{id?}");
                 routes.MapRoute(
                     name: null,
                     template: "{Controller}/{Action}/{id?}");

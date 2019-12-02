@@ -12,7 +12,11 @@ namespace SirmiumCommercial.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string CompanyName { get; set; }
+
+        //CreatedAt
         public DateTime RegistrationDate { get; set; }
+        //UpdatedAt
+        public DateTime UpdatedAt { get; set; }
 
         //Status Active or Inactive
         public string Status { get; set; }
@@ -27,6 +31,9 @@ namespace SirmiumCommercial.Models
         //User Groups
         public ICollection<GroupUsers> Groups { get; set; }
             = new List<GroupUsers>();
+
+        //Remark
+        public string Remark { get; set; }
     }
 
     public class Group

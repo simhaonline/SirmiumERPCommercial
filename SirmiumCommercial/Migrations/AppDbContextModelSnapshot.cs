@@ -633,7 +633,11 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<DateTime>("RegistrationDate");
 
+                    b.Property<string>("Remark");
+
                     b.Property<string>("Status");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.ToTable("AppUser");
 

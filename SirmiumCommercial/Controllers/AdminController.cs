@@ -97,7 +97,7 @@ namespace SirmiumCommercial.Controllers
             }
             else
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", id);
             }
 
         }
@@ -113,7 +113,7 @@ namespace SirmiumCommercial.Controllers
                 IdentityResult result = await userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", id);
                 }
                 else
                 {
@@ -176,7 +176,7 @@ namespace SirmiumCommercial.Controllers
                 IdentityResult result = await userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Details", new { userId = id, detailsId = changeId });
+                    return RedirectToAction("Details", new { id = id, detailsId = changeId });
                 }
                 else
                 {
@@ -187,7 +187,7 @@ namespace SirmiumCommercial.Controllers
             {
                 ModelState.AddModelError("", "User Not Found");
             }
-            return View("Details", id);
+            return View("Details", new { id = id, detailsId = changeId });
         }
 
         [Authorize(Roles = "Admin")]

@@ -12,69 +12,85 @@
     <environment names="Development,Staging,Production">
         <link rel="stylesheet" href="~/lib_local/css_local/LoginLocal.css" />
     </environment>
+
+    <style type="text/css">
+        .awesome-input{
+            font-family: Arial, FontAwesome;
+        }
+    </style>
 }
 
 
-<div id="main">
-    <h2 class="title-center"><strong>@ViewData["Title"]</strong></h2>
+<div class="register-container" style="padding-top: 20px;">
     <div class="row">
-        <div class="col-md-8 input">
-            <section>
-                <form asp-action="SignUp" asp-route-returnurl="@ViewData["RetunUrl"]"
-                      method="post" class="form-horizontal">
-                    <div asp-validation-summary="All" class="text-danger"></div>
-                    <div class="form-group row">
-                        <div class="userInput col-sm-10">
-                            <input asp-for="UserName" placeholder="&#xf007; Username*" class="form-control" />
-                            <span asp-validation-for="UserName" class="text-danger"></span>
+        <div class="col-md-12">
+            <div class="text-center m-b-md">
+                <h3>Registration</h3>
+            </div>
+            <div class="hpanel">
+                <div class="panel-body">
+                    <form id="loginForm"
+                          asp-action="SignUp" asp-route-returnurl="@ViewData["RetunUrl"]"
+                          method="post">
+                        <div class="row">
+                            <div class="form-group col-lg-12">
+                                <label>Username</label>
+                                <input type="text" asp-for="UserName" placeholder="&#xf007; Username*"
+                                       class="form-control awesome-input" />
+                                <span asp-validation-for="UserName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label>Password</label>
+                                <input asp-for="Password" type="password" placeholder="&#xf084; Password* at least 6 characters" class="form-control awesome-input" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label>Repeat Password</label>
+                                <input asp-for="RepeatPassword" type="password" placeholder="&#xf084; Repeat Password*" class="form-control awesome-input" />
+                                <span asp-validation-for="RepeatPassword" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label>First Name</label>
+                                <input type="text" asp-for="FirstName" placeholder="&#xf007; First Name*" class="form-control awesome-input" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label>Last Name</label>
+                                <input type="text" asp-for="LastName" placeholder="&#xf007; Last Name*" class="form-control awesome-input" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label>Email Address</label>
+                                <input type="text" asp-for="Email" placeholder="&#xf1fa; e-mail*" class="form-control awesome-input" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label>Company Name</label>
+                                <input asp-for="CompanyName" placeholder="&#xf275; Company Name*" class="form-control awesome-input" />
+                                <span asp-validation-for="CompanyName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label>Phone Number</label>
+                                <input asp-for="PhoneNumber" placeholder="&#xf095; Phone Number" class="form-control awesome-input" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-12">
+                                <label>Remark</label>
+                                <textarea asp-for="Remark" placeholder="&#xf044; Remark" class="form-control awesome-input">
+                                </textarea>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-10 userInput">
-                            <input asp-for="Password" placeholder="&#xf084; Password* at least 6 characters" class="form-control" />
-                            <span asp-validation-for="Password" class="text-danger"></span>
+                        <div class="form-group text-center">
+                            <p class="text-danger">
+                                Fields marked with an * are required
+                            </p>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-10 userInput">
-                            <input asp-for="FirstName" placeholder="&#xf007; First Name*" class="form-control" />
-                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success">Register</button>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-10 userInput">
-                            <input asp-for="LastName" placeholder="&#xf007; Last Name*" class="form-control" />
-                            <span asp-validation-for="LastName" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-10 userInput">
-                            <input asp-for="Email" placeholder="&#xf1fa; e-mail*" class="form-control" />
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-10 userInput">
-                            <input asp-for="CompanyName" placeholder="&#xf275; Company Name*" class="form-control" />
-                            <span asp-validation-for="CompanyName" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-10 userInput">
-                            <input asp-for="PhoneNumber" placeholder="&#xf095; Phone Number" class="form-control" />
-                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="form-group text-center">
-                        <p class="text-danger">
-                            Fields marked with an * are required
-                        </p>
-                    </div>
-                    <div class="form-group text-center">
-                        <button type="submit" class="btn btn-outline btn-info">Create</button>
-                    </div>
-                </form>
-            </section>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>

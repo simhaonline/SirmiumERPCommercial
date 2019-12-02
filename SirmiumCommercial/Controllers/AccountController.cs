@@ -108,6 +108,11 @@ namespace SirmiumCommercial.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (model.RepeatPassword != model.Password)
+                {
+                    ModelState.AddModelError("IncorrectPassword", "Please, enter your password again.");
+                    return View();
+                }
                 AppUser user = new AppUser
                 {
                     UserName = model.UserName,
@@ -117,6 +122,8 @@ namespace SirmiumCommercial.Controllers
                     CompanyName = model.CompanyName,
                     PhoneNumber = (model.PhoneNumber != "") ? model.PhoneNumber : "",
                     RegistrationDate = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
+                    Remark = model.Remark,
                     Status = "Inactive"
                 };
                 IdentityResult result

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SirmiumCommercial.Migrations
 {
-    public partial class AllIn1 : Migration
+    public partial class NewAllIn1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -46,8 +46,10 @@ namespace SirmiumCommercial.Migrations
                     LastName = table.Column<string>(nullable: true),
                     CompanyName = table.Column<string>(nullable: true),
                     RegistrationDate = table.Column<DateTime>(nullable: true),
+                    UpdatedAt = table.Column<DateTime>(nullable: true),
                     Status = table.Column<string>(nullable: true),
-                    ProfilePhotoUrl = table.Column<string>(nullable: true)
+                    ProfilePhotoUrl = table.Column<string>(nullable: true),
+                    Remark = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

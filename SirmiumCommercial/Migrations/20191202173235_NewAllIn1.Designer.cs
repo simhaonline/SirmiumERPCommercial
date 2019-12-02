@@ -10,8 +10,8 @@ using SirmiumCommercial.Models;
 namespace SirmiumCommercial.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20191202134653_AllIn1")]
-    partial class AllIn1
+    [Migration("20191202173235_NewAllIn1")]
+    partial class NewAllIn1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -635,7 +635,11 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<DateTime>("RegistrationDate");
 
+                    b.Property<string>("Remark");
+
                     b.Property<string>("Status");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.ToTable("AppUser");
 
