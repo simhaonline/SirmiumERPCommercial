@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SirmiumCommercial.Migrations
 {
-    public partial class Initial : Migration
+    public partial class AllIn1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -52,6 +52,123 @@ namespace SirmiumCommercial.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Chats",
+                columns: table => new
+                {
+                    ChatId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    User1Id = table.Column<string>(nullable: true),
+                    User2Id = table.Column<string>(nullable: true),
+                    User1Checkpoint = table.Column<DateTime>(nullable: false),
+                    User2Checkpoint = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Chats", x => x.ChatId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    For = table.Column<string>(nullable: true),
+                    ForId = table.Column<int>(nullable: false),
+                    Content = table.Column<string>(nullable: true),
+                    DateAdded = table.Column<DateTime>(nullable: false),
+                    Likes = table.Column<int>(nullable: false),
+                    Dislikes = table.Column<int>(nullable: false),
+                    CommentId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Dislikes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    For = table.Column<string>(nullable: true),
+                    ForId = table.Column<int>(nullable: false),
+                    UserId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Dislikes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GroupChats",
+                columns: table => new
+                {
+                    ChatId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    Title = table.Column<string>(nullable: true),
+                    ChatPhotoPath = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GroupChats", x => x.ChatId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Likes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    For = table.Column<string>(nullable: true),
+                    ForId = table.Column<int>(nullable: false),
+                    UserId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Likes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    NotificationId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Subject = table.Column<string>(nullable: true),
+                    For = table.Column<string>(nullable: true),
+                    ForId = table.Column<int>(nullable: false),
+                    NotificationDateAdded = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.NotificationId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Videos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Title = table.Column<string>(nullable: true),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    For = table.Column<string>(nullable: true),
+                    ForId = table.Column<int>(nullable: false),
+                    Status = table.Column<string>(nullable: true),
+                    DateAdded = table.Column<DateTime>(nullable: false),
+                    Views = table.Column<int>(nullable: false),
+                    VideoPath = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Videos", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -174,7 +291,7 @@ namespace SirmiumCommercial.Migrations
                     AwardIcon = table.Column<string>(nullable: true),
                     Status = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
-                    VideoURL = table.Column<string>(nullable: true)
+                    VideoId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -194,6 +311,8 @@ namespace SirmiumCommercial.Migrations
                     GroupId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    GroupPhotoPath = table.Column<string>(nullable: true),
                     CreatedById = table.Column<string>(nullable: true),
                     CompanyName = table.Column<string>(nullable: true)
                 },
@@ -205,6 +324,95 @@ namespace SirmiumCommercial.Migrations
                         column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ChatMessages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<string>(nullable: true),
+                    DateAdded = table.Column<DateTime>(nullable: false),
+                    MessageType = table.Column<string>(nullable: true),
+                    MessageContent = table.Column<string>(nullable: true),
+                    Seen = table.Column<bool>(nullable: false),
+                    ChatId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatMessages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ChatMessages_Chats_ChatId",
+                        column: x => x.ChatId,
+                        principalTable: "Chats",
+                        principalColumn: "ChatId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GroupChatMessages",
+                columns: table => new
+                {
+                    MessageId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<string>(nullable: true),
+                    DateAdded = table.Column<DateTime>(nullable: false),
+                    MessageType = table.Column<string>(nullable: true),
+                    MessageContent = table.Column<string>(nullable: true),
+                    Seen = table.Column<bool>(nullable: false),
+                    GroupChatChatId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GroupChatMessages", x => x.MessageId);
+                    table.ForeignKey(
+                        name: "FK_GroupChatMessages_GroupChats_GroupChatChatId",
+                        column: x => x.GroupChatChatId,
+                        principalTable: "GroupChats",
+                        principalColumn: "ChatId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GroupChatUsers",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<string>(nullable: true),
+                    GroupChatChatId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GroupChatUsers", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_GroupChatUsers_GroupChats_GroupChatChatId",
+                        column: x => x.GroupChatChatId,
+                        principalTable: "GroupChats",
+                        principalColumn: "ChatId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NotificationCards",
+                columns: table => new
+                {
+                    NotificationCardId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    Msg = table.Column<string>(nullable: true),
+                    NotificationId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NotificationCards", x => x.NotificationCardId);
+                    table.ForeignKey(
+                        name: "FK_NotificationCards_Notifications_NotificationId",
+                        column: x => x.NotificationId,
+                        principalTable: "Notifications",
+                        principalColumn: "NotificationId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -247,7 +455,7 @@ namespace SirmiumCommercial.Migrations
                     DateAdded = table.Column<DateTime>(nullable: false),
                     DateModified = table.Column<DateTime>(nullable: false),
                     Status = table.Column<string>(nullable: true),
-                    VideoURL = table.Column<string>(nullable: true),
+                    VideoId = table.Column<int>(nullable: false),
                     CourseId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -265,6 +473,26 @@ namespace SirmiumCommercial.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GroupCourses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    GroupId = table.Column<int>(nullable: false),
+                    CourseId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GroupCourses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GroupCourses_Groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Groups",
+                        principalColumn: "GroupId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -294,6 +522,46 @@ namespace SirmiumCommercial.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "GroupMessageViews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<string>(nullable: true),
+                    GroupChatMessageMessageId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GroupMessageViews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GroupMessageViews_GroupChatMessages_GroupChatMessageMessageId",
+                        column: x => x.GroupChatMessageMessageId,
+                        principalTable: "GroupChatMessages",
+                        principalColumn: "MessageId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NotificationViews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<string>(nullable: true),
+                    NotificationCardId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NotificationViews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_NotificationViews_NotificationCards_NotificationCardId",
+                        column: x => x.NotificationCardId,
+                        principalTable: "NotificationCards",
+                        principalColumn: "NotificationCardId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Representations",
                 columns: table => new
                 {
@@ -303,7 +571,8 @@ namespace SirmiumCommercial.Migrations
                     CreatedById = table.Column<string>(nullable: true),
                     DateAdded = table.Column<DateTime>(nullable: false),
                     Status = table.Column<string>(nullable: true),
-                    VideoURL = table.Column<string>(nullable: true),
+                    VideoId = table.Column<int>(nullable: false),
+                    Rating = table.Column<int>(nullable: false),
                     PresentationId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -363,6 +632,11 @@ namespace SirmiumCommercial.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ChatMessages_ChatId",
+                table: "ChatMessages",
+                column: "ChatId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Courses_CreatedById",
                 table: "Courses",
                 column: "CreatedById");
@@ -378,6 +652,26 @@ namespace SirmiumCommercial.Migrations
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_GroupChatMessages_GroupChatChatId",
+                table: "GroupChatMessages",
+                column: "GroupChatChatId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GroupChatUsers_GroupChatChatId",
+                table: "GroupChatUsers",
+                column: "GroupChatChatId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GroupCourses_GroupId",
+                table: "GroupCourses",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GroupMessageViews_GroupChatMessageMessageId",
+                table: "GroupMessageViews",
+                column: "GroupChatMessageMessageId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Groups_CreatedById",
                 table: "Groups",
                 column: "CreatedById");
@@ -391,6 +685,16 @@ namespace SirmiumCommercial.Migrations
                 name: "IX_GroupUsers_GroupId",
                 table: "GroupUsers",
                 column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NotificationCards_NotificationId",
+                table: "NotificationCards",
+                column: "NotificationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NotificationViews_NotificationCardId",
+                table: "NotificationViews",
+                column: "NotificationCardId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Presentations_CourseId",
@@ -431,22 +735,64 @@ namespace SirmiumCommercial.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ChatMessages");
+
+            migrationBuilder.DropTable(
+                name: "Comments");
+
+            migrationBuilder.DropTable(
                 name: "CourseUsers");
+
+            migrationBuilder.DropTable(
+                name: "Dislikes");
+
+            migrationBuilder.DropTable(
+                name: "GroupChatUsers");
+
+            migrationBuilder.DropTable(
+                name: "GroupCourses");
+
+            migrationBuilder.DropTable(
+                name: "GroupMessageViews");
 
             migrationBuilder.DropTable(
                 name: "GroupUsers");
 
             migrationBuilder.DropTable(
+                name: "Likes");
+
+            migrationBuilder.DropTable(
+                name: "NotificationViews");
+
+            migrationBuilder.DropTable(
                 name: "Representations");
+
+            migrationBuilder.DropTable(
+                name: "Videos");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "Chats");
+
+            migrationBuilder.DropTable(
+                name: "GroupChatMessages");
+
+            migrationBuilder.DropTable(
                 name: "Groups");
 
             migrationBuilder.DropTable(
+                name: "NotificationCards");
+
+            migrationBuilder.DropTable(
                 name: "Presentations");
+
+            migrationBuilder.DropTable(
+                name: "GroupChats");
+
+            migrationBuilder.DropTable(
+                name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "Courses");

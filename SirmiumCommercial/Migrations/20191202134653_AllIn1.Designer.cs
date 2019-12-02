@@ -10,8 +10,8 @@ using SirmiumCommercial.Models;
 namespace SirmiumCommercial.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20191011105458_v2_0")]
-    partial class v2_0
+    [Migration("20191202134653_AllIn1")]
+    partial class AllIn1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -335,6 +335,10 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<string>("CreatedById");
 
+                    b.Property<string>("Description");
+
+                    b.Property<string>("GroupPhotoPath");
+
                     b.Property<string>("Name");
 
                     b.HasKey("GroupId");
@@ -403,6 +407,23 @@ namespace SirmiumCommercial.Migrations
                     b.ToTable("GroupChatUsers");
                 });
 
+            modelBuilder.Entity("SirmiumCommercial.Models.GroupCourses", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CourseId");
+
+                    b.Property<int>("GroupId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("GroupCourses");
+                });
+
             modelBuilder.Entity("SirmiumCommercial.Models.GroupMessageView", b =>
                 {
                     b.Property<int>("Id")
@@ -454,6 +475,61 @@ namespace SirmiumCommercial.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Likes");
+                });
+
+            modelBuilder.Entity("SirmiumCommercial.Models.Notification", b =>
+                {
+                    b.Property<int>("NotificationId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("For");
+
+                    b.Property<int>("ForId");
+
+                    b.Property<DateTime>("NotificationDateAdded");
+
+                    b.Property<string>("Subject");
+
+                    b.HasKey("NotificationId");
+
+                    b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("SirmiumCommercial.Models.NotificationCard", b =>
+                {
+                    b.Property<int>("NotificationCardId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<string>("Msg");
+
+                    b.Property<int?>("NotificationId");
+
+                    b.HasKey("NotificationCardId");
+
+                    b.HasIndex("NotificationId");
+
+                    b.ToTable("NotificationCards");
+                });
+
+            modelBuilder.Entity("SirmiumCommercial.Models.NotificationViews", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("NotificationCardId");
+
+                    b.Property<string>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NotificationCardId");
+
+                    b.ToTable("NotificationViews");
                 });
 
             modelBuilder.Entity("SirmiumCommercial.Models.Presentation", b =>
@@ -658,6 +734,14 @@ namespace SirmiumCommercial.Migrations
                         .HasForeignKey("GroupChatChatId");
                 });
 
+            modelBuilder.Entity("SirmiumCommercial.Models.GroupCourses", b =>
+                {
+                    b.HasOne("SirmiumCommercial.Models.Group")
+                        .WithMany("Courses")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("SirmiumCommercial.Models.GroupMessageView", b =>
                 {
                     b.HasOne("SirmiumCommercial.Models.GroupChatMessage")
@@ -675,6 +759,20 @@ namespace SirmiumCommercial.Migrations
                         .WithMany("Users")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("SirmiumCommercial.Models.NotificationCard", b =>
+                {
+                    b.HasOne("SirmiumCommercial.Models.Notification")
+                        .WithMany("NotificationCards")
+                        .HasForeignKey("NotificationId");
+                });
+
+            modelBuilder.Entity("SirmiumCommercial.Models.NotificationViews", b =>
+                {
+                    b.HasOne("SirmiumCommercial.Models.NotificationCard")
+                        .WithMany("NotificationViews")
+                        .HasForeignKey("NotificationCardId");
                 });
 
             modelBuilder.Entity("SirmiumCommercial.Models.Presentation", b =>
