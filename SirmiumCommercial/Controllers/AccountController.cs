@@ -64,15 +64,15 @@ namespace SirmiumCommercial.Controllers
                                 return RedirectToAction("Index", "Manage", new { id = user.Id });
                             }
                             //Redirect to CompanyAdminController, if user-role="User"
-                            else if (await userManager.IsInRoleAsync(user, "User"))
+                            else //if //(await userManager.IsInRoleAsync(user, "User"))
                             {
 
                                 return RedirectToAction("Index", "User", new { id = user.Id });
                             }
-                            else
+                            /*else
                             {
                                 return Redirect(returnUrl ?? "/");
-                            }
+                            }*/
                         }
                         else
                         {
