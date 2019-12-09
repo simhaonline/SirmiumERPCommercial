@@ -258,7 +258,7 @@ namespace SirmiumCommercial.Controllers
                 return View(new ProfileModel
                 {
                     appUser = user
-                }); ;
+                }); 
             }
             else
             {
@@ -306,6 +306,42 @@ namespace SirmiumCommercial.Controllers
             AppUser user = await userManager.FindByIdAsync(id);
 
             return View(new SettingsViewModel { User = user });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePasswordEditProfile(ProfileModel model)
+        {
+            ViewData["Id"] = model.UserId;
+
+            AppUser user = await userManager.FindByIdAsync(model.UserId);
+
+            if (user != null)
+            {
+                if (ModelState.IsValid == false)
+                {
+                    return RedirectToAction("EditProfile", new { id = user.Id });
+                }
+
+                IdentityResult result = await userManager.ChangePasswordAsync(user,
+                    model.OldPassword, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("EditProfile", new { id = user.Id });
+                }
+                else
+                {
+                    ResultError(result);
+                    ViewData["Id"] = user.Id;
+                    return View("EditProfile", new ProfileModel
+                                                {
+                                                    appUser = user
+                                                });
+                }
+            }
+            else
+            {
+                return RedirectToAction("UserNotFound", "Error");
+            }
         }
 
         [HttpPost]

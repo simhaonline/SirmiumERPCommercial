@@ -10,6 +10,8 @@ using SirmiumCommercial.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Session;
+using System.Net.Mail;
+using System.Net;
 
 namespace SirmiumCommercial.Controllers
 {
@@ -130,6 +132,14 @@ namespace SirmiumCommercial.Controllers
                     = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    foreach(AppUser admin in userManager.Users
+                        .Where(u => u.CompanyName == model.CompanyName))
+                    {
+                        if (await userManager.IsInRoleAsync(admin, "Admin"))
+                        {
+                            SendMail(admin.Id, user.Id);
+                        }
+                    }
                     /*TODO: add user to userDetails*/
                     return RedirectToAction("SuccessSignUp");
                 }
@@ -166,6 +176,55 @@ namespace SirmiumCommercial.Controllers
         public IActionResult FreeTrial()
         {
             return View();
+        }
+
+        //send email to admin
+        private void SendMail(string adminId, string userId)
+        {
+            AppUser admin = userManager.Users.FirstOrDefault(u => u.Id == adminId);
+            AppUser user = userManager.Users.FirstOrDefault(u => u.Id == userId);
+
+            try
+            {
+                String msgBody =
+                    "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px 'Helvetica Neue',Arial,Helvetica\">" +
+                    "<tbody>" +
+                    "<tr width=\"100%\">" +
+                    "<td valign=\"top\" align=\"left\" style=\"background:#f0f0f0;font-size:15px; font-family: 'Helvetica Neue',Arial,Helvetica\">" +
+                    "<table style=\"border:none;padding:0 18px;margin:50px auto;width:500px\">" +
+                    "<tbody>" +
+                    "<tr width=\"100%\" height=\"57\">" +
+                    "<td valign=\"top\" align=\"left\" style=\"border-top-left-radius:4px;border-top-right-radius:4px;background:#0079bf;padding:10px;text-align:center; font:700; font-size: 26px; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; color: #fff;\">" +
+                    "SirmiumERPCommercial</td></tr>" +
+                    "<tr style=\"width:100%\">" +
+                    "<td valign=\"top\" align=\"left\" style=\"background:#fff;padding:18px\">" +
+                    "<p style=\"color:#333333;font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;font-weight:bold;line-height:20px;text-align:center;padding-left:56px;padding-right:56px\"> New User! </p>" +
+                    $"<p style=\"color:#305496;font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;font-weight:bold;line-height:20px;text-align:center;padding-left:56px;padding-right:56px\"> {user.FirstName} {user.LastName} just created an account! </p>" +
+                    "</td> </tr>" +
+                    "<tr style=\"width:100%\">" +
+                    "<td valign=\"top\" align=\"left\" style=\"background:#fff;padding:18px\">" +
+                    $"<p style=\"font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center\"> <a href='https://localhost:5001/Admin/Details/3ca5fbe9-61fa-42c5-bfe4-f76d9d28438e?detailsId={user.Id}' style=\"border-radius:3px;background:#5aac44;color:#fff;display:block;font-weight:600;font-size:20px;line-height:24px;margin:32px auto 24px;padding:11px 13px;text-decoration:none;width:152px\"> Go to user details </a> </p>" +
+                    "</td> </tr> </tbody> </table>" +
+                    "</td> </tr> </tbody> </table>";
+                MailMessage message = new MailMessage();
+                SmtpClient smtp = new SmtpClient();
+                message.From = new MailAddress("sirmiumcommercial@gmail.com");
+                message.To.Add(new MailAddress(admin.Email));
+                message.Subject = "New user";
+                message.IsBodyHtml = true; //to make message body as html  
+                message.Body = msgBody;
+                SmtpClient client = new SmtpClient();
+                client.Port = 587;
+                client.Host = "smtp.gmail.com"; //for gmail host  
+                client.EnableSsl = true;
+                client.UseDefaultCredentials = false;
+                client.Credentials = new NetworkCredential("sirmiumcommercial@gmail.com", "648768422SM");
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                client.Send(message);
+            }
+            catch (SmtpException ex)
+            {
+            }
         }
     }
 }

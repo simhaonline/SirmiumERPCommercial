@@ -126,5 +126,19 @@ namespace SirmiumCommercial.Helpers
             return controller == currentController && action == currentAction ?
                 cssClass : String.Empty;
         }
+
+        public static string SelectedSorAdminIndex2(this IHtmlHelper html, string sort = "RegistrationDate",
+            string order = "desc", string cssClass = null)
+        {
+            if (String.IsNullOrEmpty(cssClass))
+            {
+                cssClass = " text-bold text-primary";
+            }
+            string currentSort = (string)html.ViewContext.ViewData["Sort"];
+            string currentOrder = (string)html.ViewContext.ViewData["Order"];
+
+
+            return ((sort == currentSort) && (order == currentOrder)) ? cssClass : String.Empty;
+        }
     }
 }

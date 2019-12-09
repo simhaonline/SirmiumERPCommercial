@@ -10,6 +10,7 @@ using System.Net;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using System.Reflection.Metadata;
+using System.Net.Mail;
 
 namespace SirmiumCommercial.Controllers
 {
@@ -210,7 +211,7 @@ namespace SirmiumCommercial.Controllers
                 user.ProfilePhotoUrl = photoPath;
                 IdentityResult result = await userManager.UpdateAsync(user);
 
-                return RedirectToAction("MyProfile", "User", new { id = user.Id });
+                return RedirectToAction("UserProfile", "User", new { id = user.Id, userId = user.Id  });
             }
             else
             {
@@ -248,7 +249,7 @@ namespace SirmiumCommercial.Controllers
                 user.ProfilePhotoUrl = photoPath;
                 IdentityResult result = await userManager.UpdateAsync(user);
 
-                return RedirectToAction("MyProfile", "User", new { id = user.Id });
+                return RedirectToAction("UserProfile", "User", new { id = user.Id, userId = user.Id });
             }
             else
             {

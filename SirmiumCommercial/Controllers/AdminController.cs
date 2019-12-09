@@ -11,6 +11,8 @@ using SirmiumCommercial.Models;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using System.Net.Mail;
+using System.Net;
 
 namespace SirmiumCommercial.Controllers
 {
@@ -28,7 +30,7 @@ namespace SirmiumCommercial.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<ViewResult> Index(string id)
+        public async Task<IActionResult> Index(string id)
         {
             ViewData["Id"] = id;
             AppUser admin = await userManager.FindByIdAsync(id);
@@ -37,15 +39,85 @@ namespace SirmiumCommercial.Controllers
                 ViewData["AdminCompany"] = admin.CompanyName;
                 if (admin.CompanyName == null)
                 {
-                    return View(userManager.Users);
+                    return RedirectToAction("HeadAdminIndex", new { id });
                 }
                 else
                 {
-                    return View("Index2", userManager.Users
-                        .Where(u => u.CompanyName == admin.CompanyName));
+                    return RedirectToAction("Index2", new { id });
                 }
             }
             return View();
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<ViewResult> HeadAdminIndex(string id, string sort, string order)
+        {
+            ViewData["Id"] = id;
+            ViewData["Sort"] = (sort == null) ? "RegistrationDate" : sort;
+            ViewData["Order"] = (order == null) ? "desc" : order;
+
+            AppUser admin = await userManager.FindByIdAsync(id);
+
+            switch (sort)
+            {
+                case "Username":
+                    return View(order == "asc" ?
+                        userManager.Users.OrderBy(u => u.UserName) :
+                        userManager.Users.OrderByDescending(u => u.UserName));
+                case "FirstName":
+                    return View(order == "asc" ?
+                        userManager.Users.OrderBy(u => u.FirstName) :
+                        userManager.Users.OrderByDescending(u => u.FirstName));
+                case "LastName":
+                    return View(order == "asc" ?
+                        userManager.Users.OrderBy(u => u.LastName) :
+                        userManager.Users.OrderByDescending(u => u.LastName));
+                case "Company":
+                    return View(order == "asc" ?
+                        userManager.Users.OrderBy(u => u.CompanyName) :
+                        userManager.Users.OrderByDescending(u => u.CompanyName));
+                case "Status":
+                    return View(order == "asc" ?
+                        userManager.Users.OrderBy(u => u.Status) :
+                        userManager.Users.OrderByDescending(u => u.Status));
+                default:
+                    return View(order == "asc" ?
+                        userManager.Users.OrderBy(u => u.RegistrationDate) :
+                        userManager.Users.OrderByDescending(u => u.RegistrationDate));
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<ViewResult> Index2(string id, string sort, string order)
+        {
+            ViewData["Id"] = id;
+            ViewData["Sort"] = (sort == null) ? "RegistrationDate" : sort;
+            ViewData["Order"] = (order == null) ? "desc" : order;
+
+            AppUser admin = await userManager.FindByIdAsync(id);
+
+            switch(sort){
+                case "Username":
+                    return View(order == "asc" ?
+                        userManager.Users.Where(u => u.CompanyName == admin.CompanyName).OrderBy(u => u.UserName) :
+                        userManager.Users.Where(u => u.CompanyName == admin.CompanyName).OrderByDescending(u => u.UserName));
+                case "FirstName":
+                    return View(order == "asc" ?
+                        userManager.Users.Where(u => u.CompanyName == admin.CompanyName).OrderBy(u => u.FirstName) :
+                        userManager.Users.Where(u => u.CompanyName == admin.CompanyName).OrderByDescending(u => u.FirstName));
+                case "LastName":
+                    return View(order == "asc" ?
+                        userManager.Users.Where(u => u.CompanyName == admin.CompanyName).OrderBy(u => u.LastName) :
+                        userManager.Users.Where(u => u.CompanyName == admin.CompanyName).OrderByDescending(u => u.LastName));
+                case "Status":
+                    return View(order == "asc" ?
+                        userManager.Users.Where(u => u.CompanyName == admin.CompanyName).OrderBy(u => u.Status) :
+                        userManager.Users.Where(u => u.CompanyName == admin.CompanyName).OrderByDescending(u => u.Status));
+                default:
+                    return View(order == "asc" ?
+                        userManager.Users.Where(u => u.CompanyName == admin.CompanyName).OrderBy(u => u.RegistrationDate) :
+                        userManager.Users.Where(u => u.CompanyName == admin.CompanyName).OrderByDescending(u => u.RegistrationDate));
+            }
         }
 
         [Authorize(Roles = "Admin")]
@@ -167,9 +239,11 @@ namespace SirmiumCommercial.Controllers
                         break;
                     case "Inactive":
                         user.Status = "Active";
+                        SendMail(user.Id);
                         break;
                     default:
                         user.Status = "Active";
+                        SendMail(user.Id);
                         break;
                 }
                 
@@ -291,11 +365,143 @@ namespace SirmiumCommercial.Controllers
             return View("Details");
         }
 
+        [Authorize(Roles = "Admin")]
+        public ViewResult InviteByEmail(string id)
+        {
+            ViewData["Id"] = id;
+
+            return View(new InviteByEmailViewModel { });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult InviteByEmail(InviteByEmailViewModel model)
+        {
+            if (model.email1 != null && model.email1.Trim().Length > 0)
+            {
+                SendMailInvite(model.adminId, model.email1);
+            }
+            if (model.email2 != null && model.email2.Trim().Length > 0)
+            {
+                SendMailInvite(model.adminId, model.email2);
+            }
+            if (model.email3 != null && model.email3.Trim().Length > 0)
+            {
+                SendMailInvite(model.adminId, model.email3);
+            }
+            if (model.email4 != null && model.email4.Trim().Length > 0)
+            {
+                SendMailInvite(model.adminId, model.email4);
+            }
+            if (model.email5 != null && model.email5.Trim().Length > 0)
+            {
+                SendMailInvite(model.adminId, model.email5);
+            }
+
+            return RedirectToAction("Index", new { id = model.adminId });
+        }
+
         private void ResultError(IdentityResult result)
         {
             foreach (IdentityError error in result.Errors)
             {
                 ModelState.AddModelError("", error.Description);
+            }
+        }
+
+        //send email to user
+        private void SendMail(string userId)
+        {
+            AppUser user = userManager.Users.FirstOrDefault(u => u.Id == userId);
+
+            try
+            {
+                String msgBody =
+                    "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px 'Helvetica Neue',Arial,Helvetica\">" +
+                    "<tbody>" +
+                    "<tr width=\"100%\">" +
+                    "<td valign=\"top\" align=\"left\" style=\"background:#f0f0f0;font-size:15px; font-family: 'Helvetica Neue',Arial,Helvetica\">" +
+                    "<table style=\"border:none;padding:0 18px;margin:50px auto;width:500px\">" +
+                    "<tbody>" +
+                    "<tr width=\"100%\" height=\"57\">" +
+                    "<td valign=\"top\" align=\"left\" style=\"border-top-left-radius:4px;border-top-right-radius:4px;background:#0079bf;padding:10px;text-align:center; font:700; font-size: 26px; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; color: #fff;\">" +
+                    "SirmiumERPCommercial</td></tr>" +
+                    "<tr style=\"width:100%\">" +
+                    "<td valign=\"top\" align=\"left\" style=\"background:#fff;padding:18px\">" +
+                    "<p style=\"color:#333333;font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;font-weight:bold;line-height:20px;text-align:center;padding-left:56px;padding-right:56px\"> Hey there! Welcome to SirmiumERPCommercial </p>" +
+                    $"<p style=\"color:#305496;font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;font-weight:bold;line-height:20px;text-align:center;padding-left:56px;padding-right:56px\"> Your account was activated.</p>" +
+                    "</td> </tr>" +
+                    "<tr style=\"width:100%\">" +
+                    "<td valign=\"top\" align=\"left\" style=\"background:#fff;padding:18px\">" +
+                    $"<p style=\"font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center\"> <a href='https://localhost:5001/' style=\"border-radius:3px;background:#5aac44;color:#fff;display:block;font-weight:600;font-size:20px;line-height:24px;margin:32px auto 24px;padding:11px 13px;text-decoration:none;width:152px\"> Login now </a> </p>" +
+                    "</td> </tr> </tbody> </table>" +
+                    "</td> </tr> </tbody> </table>";
+                MailMessage message = new MailMessage();
+                SmtpClient smtp = new SmtpClient();
+                message.From = new MailAddress("sirmiumcommercial@gmail.com");
+                message.To.Add(new MailAddress(user.Email));
+                message.Subject = "Account activated";
+                message.IsBodyHtml = true; //to make message body as html  
+                message.Body = msgBody;
+                SmtpClient client = new SmtpClient();
+                client.Port = 587;
+                client.Host = "smtp.gmail.com"; //for gmail host  
+                client.EnableSsl = true;
+                client.UseDefaultCredentials = false;
+                client.Credentials = new NetworkCredential("sirmiumcommercial@gmail.com", "648768422SM");
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                client.Send(message);
+            }
+            catch (SmtpException ex)
+            {
+            }
+        }
+
+        //invite by email
+        private void SendMailInvite(string adminId, string userEmail)
+        {
+            AppUser admin = userManager.Users.FirstOrDefault(u => u.Id == adminId);
+
+            try
+            {
+                String msgBody =
+                    "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px 'Helvetica Neue',Arial,Helvetica\">" +
+                    "<tbody>" +
+                    "<tr width=\"100%\">" +
+                    "<td valign=\"top\" align=\"left\" style=\"background:#f0f0f0;font-size:15px; font-family: 'Helvetica Neue',Arial,Helvetica\">" +
+                    "<table style=\"border:none;padding:0 18px;margin:50px auto;width:500px\">" +
+                    "<tbody>" +
+                    "<tr width=\"100%\" height=\"57\">" +
+                    "<td valign=\"top\" align=\"left\" style=\"border-top-left-radius:4px;border-top-right-radius:4px;background:#0079bf;padding:10px;text-align:center; font:700; font-size: 26px; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; color: #fff;\">" +
+                    "SirmiumERPCommercial</td></tr>" +
+                    "<tr style=\"width:100%\">" +
+                    "<td valign=\"top\" align=\"left\" style=\"background:#fff;padding:18px\">" +
+                    "<p style=\"color:#333333;font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;font-weight:bold;line-height:20px;text-align:center;padding-left:56px;padding-right:56px\"> Hey there! </p>" +
+                    $"<p style=\"color:#305496;font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;font-weight:bold;line-height:20px;text-align:center;padding-left:56px;padding-right:56px\"> {admin.FirstName} {admin.LastName} invited you to join the SirmiumERPCommercial</p>" +
+                    "</td> </tr>" +
+                    "<tr style=\"width:100%\">" +
+                    "<td valign=\"top\" align=\"left\" style=\"background:#fff;padding:18px\">" +
+                    $"<p style=\"font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center\"> <a href='https://localhost:5001/Account/SignUp' style=\"border-radius:3px;background:#5aac44;color:#fff;display:block;font-weight:600;font-size:20px;line-height:24px;margin:32px auto 24px;padding:11px 13px;text-decoration:none;width:152px\"> Register now </a> </p>" +
+                    "</td> </tr> </tbody> </table>" +
+                    "</td> </tr> </tbody> </table>";
+                MailMessage message = new MailMessage();
+                SmtpClient smtp = new SmtpClient();
+                message.From = new MailAddress("sirmiumcommercial@gmail.com");
+                message.To.Add(new MailAddress(userEmail));
+                message.Subject = "Account activated";
+                message.IsBodyHtml = true; //to make message body as html  
+                message.Body = msgBody;
+                SmtpClient client = new SmtpClient();
+                client.Port = 587;
+                client.Host = "smtp.gmail.com"; //for gmail host  
+                client.EnableSsl = true;
+                client.UseDefaultCredentials = false;
+                client.Credentials = new NetworkCredential("sirmiumcommercial@gmail.com", "648768422SM");
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                client.Send(message);
+            }
+            catch (SmtpException ex)
+            {
             }
         }
     }

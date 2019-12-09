@@ -97,18 +97,18 @@
 </div>
 
 <!--Msg window-->
- @if (TempData["EditMsg"] != null)
- {
+@if (TempData["EditMsg"] != null)
+{
     @if (TempData["EditMsg"].ToString() == "Success")
     {
         <div id="msgWindowSuccess">
             <input value="Your data was successfully updated." id="windowMsg" hidden />
         </div>
     }
- }
+}
 
 <!--Basic Info-->
-<div class="row m-l-md m-r-md">
+<div class="row m-l-md m-r-md" style="padding-bottom: 30px;">
     <div class="col-lg-12">
         <div class="hpanel m-b-xs">
             <div class="panel-heading">
@@ -125,7 +125,7 @@
                     <form asp-action="EditMyProfile" asp-controller="User" method="post">
                         <div asp-validation-summary="All" class="text-danger" style="font-size:20px"></div>
                         <input asp-for="UserId" value="@Model.appUser.Id" hidden />
-                        <div class="form-inline col-lg-12 m-b-sm">
+                        <div class="form-group col-lg-12 m-b-sm">
                             <div class="col-lg-2">
                                 <h4>
                                     <i class="fa fa-user"></i>&nbsp; Username:
@@ -133,12 +133,13 @@
                             </div>
                             <input asp-for="UserName" value="@Model.appUser.UserName"
                                    id="new-username" hidden />
-
-                            <input value="@Model.appUser.UserName"
-                                   class="form-control col-lg-5"
-                                   id="inputUName" disabled />
+                            <div class="col-lg-6">
+                                <input value="@Model.appUser.UserName"
+                                       class="form-control"
+                                       id="inputUName" disabled />
+                            </div>
                             <button class="col-lg-2 m-l-lg btn"
-                                    id="editUName" type="button" 
+                                    id="editUName" type="button"
                                     style="font-size: 20px; background-color: #ffffff">
                                 <span class="fa fa-edit text-warning"></span>
                                 <span class="text-muted">Edit</span>
@@ -157,7 +158,7 @@
                             </button>
                         </div>
 
-                        <div class="form-inline col-lg-12  m-b-sm">
+                        <div class="form-group col-lg-12  m-b-sm">
                             <div class="col-lg-2">
                                 <h4>
                                     <span class="fa fa-user-o"></span>&nbsp; First Name:
@@ -165,11 +166,13 @@
                             </div>
                             <input asp-for="FirstName" value="@Model.appUser.FirstName"
                                    id="new-first-name" hidden />
-                            <input value="@Model.appUser.FirstName"
-                                   class="form-control col-lg-5"
-                                   id="inputFName" disabled />
+                            <div class="col-lg-6">
+                                <input value="@Model.appUser.FirstName"
+                                       class="form-control"
+                                       id="inputFName" disabled />
+                            </div>
                             <button class="btn col-lg-2 m-l-lg"
-                                    id="editFName" type="button" 
+                                    id="editFName" type="button"
                                     style="font-size: 20px; background-color: #ffffff">
                                 <span class="fa fa-edit text-warning"></span>
                                 <span class="text-muted">Edit</span>
@@ -188,7 +191,7 @@
                             </button>
                         </div>
 
-                        <div class="form-inline col-lg-12  m-b-sm">
+                        <div class="form-group col-lg-12  m-b-sm">
                             <div class="col-lg-2">
                                 <h4>
                                     <span class="fa fa-user-o"></span>&nbsp; Last Name:
@@ -196,9 +199,11 @@
                             </div>
                             <input asp-for="LastName" value="@Model.appUser.LastName"
                                    id="new-last-name" hidden />
-                            <input value="@Model.appUser.LastName"
-                                   class="form-control col-lg-5"
-                                   id="inputLName" disabled />
+                            <div class="col-lg-6">
+                                <input value="@Model.appUser.LastName"
+                                       class="form-control"
+                                       id="inputLName" disabled />
+                            </div>
                             <button class="btn col-lg-2 m-l-lg"
                                     id="editLName" type="button"
                                     style="font-size: 20px; background-color: #ffffff">
@@ -219,18 +224,21 @@
                             </button>
                         </div>
 
-                        <div class="form-inline col-lg-12  m-b-sm">
+                        <div class="form-group col-lg-12  m-b-sm">
                             <div class="col-lg-2">
                                 <h4>
                                     <span class="fa fa-at"></span>&nbsp; E-mail:
                                 </h4>
                             </div>
                             <input asp-for="Email" value="@Model.appUser.Email" id="new-email" hidden />
-                            <input value="@Model.appUser.Email"
-                                   class="form-control col-lg-5"
-                                   id="inputEmail" disabled />
+
+                            <div class="col-lg-6">
+                                <input value="@Model.appUser.Email"
+                                       class="form-control "
+                                       id="inputEmail" disabled />
+                            </div>
                             <button class="btn col-lg-2 m-l-lg"
-                                    id="editEmail" type="button" 
+                                    id="editEmail" type="button"
                                     style="font-size: 20px; background-color: #ffffff">
                                 <span class="fa fa-edit text-warning"></span>
                                 <span class="text-muted">Edit</span>
@@ -249,7 +257,7 @@
                             </button>
                         </div>
 
-                        <div class="form-inline col-lg-12  m-b-sm">
+                        <div class="form-group col-lg-12  m-b-sm">
                             <div class="col-lg-2">
                                 <h4>
                                     <span class="fa fa-phone"></span>&nbsp; Phone Number:
@@ -257,11 +265,14 @@
                             </div>
                             <input asp-for="PhoneNumber" value="@Model.appUser.PhoneNumber"
                                    id="new-phone" hidden />
-                            <input value="@Model.appUser.PhoneNumber"
-                                   class="form-control col-lg-5"
-                                   id="inputPhoneNumber" disabled />
+
+                            <div class="col-lg-6">
+                                <input value="@Model.appUser.PhoneNumber"
+                                       class="form-control "
+                                       id="inputPhoneNumber" disabled />
+                            </div>
                             <button class="btn col-lg-2 m-l-lg"
-                                    id="editPhoneNumber" type="button" 
+                                    id="editPhoneNumber" type="button"
                                     style="font-size: 20px; background-color: #ffffff">
                                 <span class="fa fa-edit text-warning"></span>
                                 <span class="text-muted">Edit</span>
@@ -280,18 +291,60 @@
                             </button>
                         </div>
                     </form>
-                    <div class="form-inline col-lg-12  m-b-sm">
-                        <div class="col-lg-2">
-                            <h4>
-                                <span class="fa fa-industry"></span>&nbsp; Company:
-                            </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Change password-->
+<div class="row m-l-md m-r-md" style="padding-bottom: 30px;">
+    <div class="col-lg-12">
+        <div class="hpanel m-b-xs">
+            <div class="panel-heading">
+                <div class="panel-tools">
+                    <a class="showhide"><i class="fa fa-chevron-up" style="font-size:20px"></i></a>
+                </div>
+                <h3 class="m-n">
+                    <span class="fa fa-key text-primary"></span>
+                    <span class="text-muted">Change Password:</span>
+                </h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <form asp-action="ChangePasswordEditProfile" asp-controller="User" method="post">
+                        <div asp-validation-summary="All" class="text-danger" style="font-size: 20px"></div>
+                        <input asp-for="UserId" value="@ViewData["Id"]" hidden />
+                        <div class="form-group row m-b-sm text-center" id="current-password">
+                            <div class="col-lg-2">
+                                <h4 class="text-muted">
+                                    Current Password:
+                                </h4>
+                            </div>
+                            <div class="col-lg-8">
+                                <input asp-for="OldPassword" class="form-control" />
+                            </div>
+                            <span asp-validation-for="OldPassword" class="text-danger"></span>
                         </div>
-                        <div class="col-lg-2">
-                            <h4>
-                                @Model.appUser.CompanyName
-                            </h4>
+                        <div class="form-group row m-b-sm text-center" id="new-password">
+                            <div class="col-lg-2">
+                                <h4 class="text-muted">
+                                    New Password:
+                                </h4>
+                            </div>
+                            <div class="col-lg-8">
+                                <input asp-for="NewPassword" class="form-control" />
+                            </div>
+                            <span asp-validation-for="NewPassword" class="text-danger"></span>
                         </div>
-                    </div>
+                        <div class="row text-center" id="password-form-btns">
+                            <button class="btn" style="font-size: 20px; background-color: #ffffff"
+                                    type="submit">
+                                <span class="fa fa-save text-success"></span>
+                                <span class="text-muted">Save</span>
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -299,6 +352,7 @@
 </div>
 
 @section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     <environment names="Development,Staging,Production">
         <script src="~/lib_local/script_local/CapturePhoto_local.js"></script>
         <script src="~/lib_local/profilePhoto/profilePhoto.js"></script>
@@ -329,18 +383,9 @@
 
         editUName.addEventListener("click", () => {
             editUName.style.display = "none";
+            saveUName.style.display = "inline-block";
             cancelUName.style.display = "inline-block";
             inputUName.disabled = false;
-
-            //get input new val
-            inputUName.addEventListener("focusout", () => {
-                userNameNew = inputUName.value;
-
-                if (userNameOld != userNameNew) {
-                    saveUName.style.display = "inline-block";
-                    document.getElementById('new-username').value = userNameNew;
-                }
-            });
 
             //cancel
             cancelUName.addEventListener("click", () => {
@@ -369,17 +414,8 @@
         editFName.addEventListener("click", () => {
             editFName.style.display = "none";
             cancelFName.style.display = "inline-block";
+            saveFName.style.display = "inline-block";
             inputFName.disabled = false;
-
-            //get input new val
-            inputFName.addEventListener("focusout", () => {
-                firstNameNew = inputFName.value;
-
-                if (firstNameOld != firstNameNew) {
-                    saveFName.style.display = "inline-block";
-                    document.getElementById('new-first-name').value = firstNameNew;
-                }
-            });
 
             //cancel
             cancelFName.addEventListener("click", () => {
@@ -407,17 +443,8 @@
         editLName.addEventListener("click", () => {
             editLName.style.display = "none";
             cancelLName.style.display = "inline-block";
+            saveLName.style.display = "inline-block";
             inputLName.disabled = false;
-
-            //get input new val
-            inputLName.addEventListener("focusout", () => {
-                lastNameNew = inputLName.value;
-
-                if (lastNameOld != lastNameNew) {
-                    saveLName.style.display = "inline-block";
-                    document.getElementById('new-last-name').value = lastNameNew;
-                }
-            });
 
             //cancel
             cancelLName.addEventListener("click", () => {
@@ -444,19 +471,10 @@
         var saveEmail = document.getElementById("saveEmail");
 
         editEmail.addEventListener("click", () => {
+            saveEmail.style.display = "inline-block";
             editEmail.style.display = "none";
             cancelEmail.style.display = "inline-block";
             inputEmail.disabled = false;
-
-            //get input new val
-            inputEmail.addEventListener("focusout", () => {
-                emailNew = inputEmail.value;
-
-                if (emailOld != emailNew) {
-                    saveEmail.style.display = "inline-block";
-                    document.getElementById('new-email').value = emailNew;
-                }
-            });
 
             //cancel
             cancelEmail.addEventListener("click", () => {
@@ -484,18 +502,9 @@
 
         editPhoneNumber.addEventListener("click", () => {
             editPhoneNumber.style.display = "none";
+            savePhoneNumber.style.display = "inline-block";
             cancelPhoneNumber.style.display = "inline-block";
             inputPhoneNumber.disabled = false;
-
-            //get input new val
-            inputPhoneNumber.addEventListener("focusout", () => {
-                phoneNumberNew = inputPhoneNumber.value;
-
-                if (phoneNumberOld != phoneNumberNew) {
-                    savePhoneNumber.style.display = "inline-block";
-                    document.getElementById('new-phone').value = phoneNumberNew;
-                }
-            });
 
             //cancel
             cancelPhoneNumber.addEventListener("click", () => {

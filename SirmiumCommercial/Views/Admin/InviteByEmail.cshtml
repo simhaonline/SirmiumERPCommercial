@@ -1,0 +1,81 @@
+﻿@model InviteByEmailViewModel
+
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = "InviteByEmail";
+}
+
+
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <span class="pe-7s-mail"></span>
+            <strong>Invite by Email</strong>
+        </div>
+    </div>
+</div>
+
+<div class="content" style="padding-top: 0px;">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="hpanel">
+                <div class="panel-body">
+                    <h3 class="text-center">Max. 5 emails per invite!</h3>
+                    <form asp-controller="Admin" asp-action="InviteByEmail" method="post">
+                        <input asp-for="adminId" value="@ViewData["Id"]" hidden />
+                        <div class="form-group">
+                            <label class="control-label">Email 1:</label>
+                            <div class="input-group m-b">
+                                <span class="input-group-addon">
+                                    <span class="pe-7s-mail" style="font-size: 23px"></span>
+                                </span>
+                                <input asp-for="email1" title="Please enter first email" type="email" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Email 2:</label>
+                            <div class="input-group m-b">
+                                <span class="input-group-addon">
+                                    <span class="pe-7s-mail" style="font-size: 23px"></span>
+                                </span>
+                                <input asp-for="email2" title="Please enter first email" type="email" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Email 3:</label>
+                            <div class="input-group m-b">
+                                <span class="input-group-addon">
+                                    <span class="pe-7s-mail" style="font-size: 23px"></span>
+                                </span>
+                                <input asp-for="email3" title="Please enter first email" type="email" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Email 4:</label>
+                            <div class="input-group m-b">
+                                <span class="input-group-addon">
+                                    <span class="pe-7s-mail" style="font-size: 23px"></span>
+                                </span>
+                                <input asp-for="email4" title="Please enter first email" type="email" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Email 5:</label>
+                            <div class="input-group m-b">
+                                <span class="input-group-addon">
+                                    <span class="pe-7s-mail" style="font-size: 23px"></span>
+                                </span>
+                                <input asp-for="email5" title="Please enter first email" type="email" class="form-control">
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button class="btn btn-success" type="submit">
+                                Invite
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

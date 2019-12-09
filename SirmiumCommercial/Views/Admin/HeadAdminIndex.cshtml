@@ -24,7 +24,7 @@
                 <span class="text-muted" style="font-size: 20px;">Filter</span>
             </a>
             <span>&emsp;</span>
-            <a href="@Url.Action("InviteByEmail", "Admin", new { id = ViewData["Id"] })"
+            <a href="@Url.Action("NewCourse", "Manage", new { id = ViewData["Id"] })"
                class="pull-right btn">
                 <span class="fa fa-user-plus text-success" style="font-size: 20px;"></span>
                 <span class="text-muted" style="font-size: 20px;">Invite by email</span>
@@ -36,7 +36,7 @@
                     <h4 class="font-bold">Sort:</h4>
                     <ul style="list-style-type: square; font-size: 20px; font-weight: 500">
                         <li>
-                            <a href="@Url.Action("Index2", "Admin",
+                            <a href="@Url.Action("HeadAdminIndex", "Admin",
                                     new
                                     {
                                         id = ViewData["Id"],
@@ -50,7 +50,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Index2", "Admin",
+                            <a href="@Url.Action("HeadAdminIndex", "Admin",
                                     new
                                     {
                                         id = ViewData["Id"],
@@ -64,7 +64,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Index2", "Admin",
+                            <a href="@Url.Action("HeadAdminIndex", "Admin",
                                     new
                                     {
                                         id = ViewData["Id"],
@@ -78,7 +78,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Index2", "Admin",
+                            <a href="@Url.Action("HeadAdminIndex", "Admin",
                                     new
                                     {
                                         id = ViewData["Id"],
@@ -92,7 +92,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Index2", "Admin",
+                            <a href="@Url.Action("HeadAdminIndex", "Admin",
                                     new
                                     {
                                         id = ViewData["Id"],
@@ -106,7 +106,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Index2", "Admin",
+                            <a href="@Url.Action("HeadAdminIndex", "Admin",
                                     new
                                     {
                                         id = ViewData["Id"],
@@ -120,7 +120,35 @@
                             </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Index2", "Admin",
+                            <a href="@Url.Action("HeadAdminIndex", "Admin",
+                                    new
+                                    {
+                                        id = ViewData["Id"],
+                                        sort = "Company",
+                                        order = "asc"
+                                    })">
+                                <span class="text-muted
+                                      @Html.SelectedSorAdminIndex2(sort: "Company", order: "asc")">
+                                    Company Asc
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("HeadAdminIndex", "Admin",
+                                    new
+                                    {
+                                        id = ViewData["Id"],
+                                        sort = "Company",
+                                        order = "desc"
+                                    })">
+                                <span class="text-muted
+                                      @Html.SelectedSorAdminIndex2(sort: "Company", order: "desc")">
+                                    Company Desc
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("HeadAdminIndex", "Admin",
                                     new
                                     {
                                         id = ViewData["Id"],
@@ -134,7 +162,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Index2", "Admin",
+                            <a href="@Url.Action("HeadAdminIndex", "Admin",
                                     new
                                     {
                                         id = ViewData["Id"],
@@ -148,7 +176,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Index2", "Admin",
+                            <a href="@Url.Action("HeadAdminIndex", "Admin",
                                     new
                                     {
                                         id = ViewData["Id"],
@@ -162,7 +190,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Index2", "Admin",
+                            <a href="@Url.Action("HeadAdminIndex", "Admin",
                                     new
                                     {
                                         id = ViewData["Id"],
@@ -194,6 +222,7 @@
                                     <th></th>
                                     <th class="text-center">Username</th>
                                     <th class="text-center" colspan="2">Full Name</th>
+                                    <th class="text-center">Company</th>
                                     <th class="text-center">Email</th>
                                     <th class="text-center">User Status</th>
                                     <th class="text-center">Registration Date</th>
@@ -209,39 +238,40 @@
                                 {
                                     foreach (AppUser user in Model)
                                     {
-                                        <tr>
-                                            <td valign="middle" align="center">
-                                                <a href="@Url.Action("UserProfile", "User",
+                            <tr>
+                                <td valign="middle" align="center">
+                                    <a href="@Url.Action("UserProfile", "User",
                                                     new { id = ViewData["Id"], userId = user.Id })">
-                                                    @if (user.ProfilePhotoUrl == null)
-                                                    {
-                                                        <img src="~/defaultAvatar.png" class="img-circle img-small" />
-                                                    }
-                                                    else
-                                                    {
-                                                        <img src="~/UsersData/@user.ProfilePhotoUrl" class="img-circle img-small" />
-                                                    }
-                                                </a>
-                                            </td>
-                                            <td align="center" style="padding-top: 25px;">@user.UserName</td>
-                                            <td colspan="2" style="padding-top: 25px;" align="center">@user.FirstName @user.LastName</td>
-                                            <td style="padding-top: 25px;" align="center">@user.Email</td>
-                                            @if (user.Status == "Active")
-                                            {
-                                                <td style="padding-top: 25px;" align="center" class="text-success">@user.Status</td>
-                                            }
-                                            else
-                                            {
-                                                <td style="padding-top: 25px;" align="center" class="text-danger">@user.Status</td>
-                                            }
-                                            <td style="padding-top: 25px;" align="center">@user.RegistrationDate</td>
-                                            <td style="padding-top: 25px;" align="center">
-                                                <a class="btn btn-sm btn-info" asp-action="Details"
-                                                   asp-route-id="@ViewData["Id"]" asp-route-detailsId="@user.Id">
-                                                    <span class="fa fa-info" style="font-size: 15px"></span>
-                                                </a>
-                                            </td>
-                                        </tr>
+                                        @if (user.ProfilePhotoUrl == null)
+                                        {
+                                            <img src="~/defaultAvatar.png" class="img-circle img-small" />
+                                        }
+                                        else
+                                        {
+                                            <img src="~/UsersData/@user.ProfilePhotoUrl" class="img-circle img-small" />
+                                        }
+                                    </a>
+                                </td>
+                                <td align="center" style="padding-top: 25px;">@user.UserName</td>
+                                <td colspan="2" style="padding-top: 25px;" align="center">@user.FirstName @user.LastName</td>
+                                <td style="padding-top: 25px;" align="center">@user.CompanyName</td>
+                                <td style="padding-top: 25px;" align="center">@user.Email</td>
+                                @if (user.Status == "Active")
+                                {
+                                    <td style="padding-top: 25px;" align="center" class="text-success">@user.Status</td>
+                                }
+                                else
+                                {
+                                    <td style="padding-top: 25px;" align="center" class="text-danger">@user.Status</td>
+                                }
+                                <td style="padding-top: 25px;" align="center">@user.RegistrationDate</td>
+                                <td style="padding-top: 25px;" align="center">
+                                    <a class="btn btn-sm btn-info" asp-action="Details"
+                                       asp-route-id="@ViewData["Id"]" asp-route-detailsId="@user.Id">
+                                        <span class="fa fa-info" style="font-size: 15px"></span>
+                                    </a>
+                                </td>
+                            </tr>
                                     }
                                 }
                             </tbody>

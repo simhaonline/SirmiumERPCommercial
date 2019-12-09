@@ -33,7 +33,12 @@
                         </div>
                         <div class="form-group">
                             <label class="control-label" for="password">Password</label>
-                            <input type="password" asp-for="Password" title="Please enter your password" placeholder="******"  id="password" class="form-control">
+                            <div class="input-group m-b">
+                                <input type="password" asp-for="Password" title="Please enter your password" placeholder="******" id="password" class="form-control">
+                                <span class="input-group-btn">
+                                    <a class="btn" onclick="showPassword();"><span id="password-eye" class="fa fa-eye-slash" style="font-size: 23px"></span></a>
+                                </span>
+                            </div>
                             <span class="help-block small">Your strong password</span>
                         </div>
                         <div class="checkbox">
@@ -51,62 +56,27 @@
     </div>
     <div class="row">
         <div class="col-md-12 text-center">
-            2015 Copyright <strong>SirmiumERPCommercial</strong>
+            2019 Copyright <strong>SirmiumERPCommercial</strong>
         </div>
     </div>
 </div>
-@*
-
-<div id="main">
-    <h2 class="title-center"><strong>@ViewData["Title"]</strong></h2>
-    <div class="row">
-        <div class="col-md-8 input">
-            <section>
-                <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["RetunUrl"]"
-                      method="post" class="form-horizontal">
-                    <div asp-validation-summary="All" class="text-danger"></div>
-                    <div class="form-group row">
-                        <div class="userInput col-sm-10">
-                            <input asp-for="UserName" placeholder="&#xf007; Username" class="form-control" />
-                            <span asp-validation-for="UserName" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-10 userInput">
-                            <input  placeholder="&#xf084; Password" class="form-control" type="password" />
-                            <span asp-validation-for="Password" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-offset-2 col-md-10">
-                            <div class="checkbox col-sm-6">
-                                <label asp-for="RememberMe" class="userFont">
-                                    <input asp-for="RememberMe" />
-                                    @Html.DisplayNameFor(m => m.RememberMe)
-                                </label>
-                            </div>
-                            <div class="col-sm-6">
-                                <button  class="btn btn-outline btn-info">Log in</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                    </div>
-                    <p>
-                        <a asp-action="SignUp" asp-route-returnturl="@ViewData["ReturnUrl"]" class="pull-left userFont">
-                            Register as a new user?
-                        </a>
-                        <a asp-action="ForgotPassword" class="pull-right userFont">Forgot your password?</a>
-                    </p>
-                    <p>
-
-                    </p>
-                </form>
-            </section>
-        </div>
-    </div>
-</div>*@
 
 @section Scripts{
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+    <script type="text/javascript">
+
+        function showPassword() {
+            var passInput = document.getElementById("password");
+            if (passInput.type == "password") {
+                passInput.type = "text";
+                $('#password-eye').removeClass("fa-eye-slash");
+                $('#password-eye').addClass("fa-eye");
+            } else {
+                passInput.type = "password";
+                $('#password-eye').removeClass("fa-eye");
+                $('#password-eye').addClass("fa-eye-slash");
+            }
+        };
+    </script>
 }
