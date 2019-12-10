@@ -10,8 +10,8 @@ using SirmiumCommercial.Models;
 namespace SirmiumCommercial.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20191202173235_NewAllIn1")]
-    partial class NewAllIn1
+    [Migration("20191210141126_AllMigrations")]
+    partial class AllMigrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -193,6 +193,10 @@ namespace SirmiumCommercial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<DateTime>("UpdatedAt");
+
                     b.Property<DateTime>("User1Checkpoint");
 
                     b.Property<string>("User1Id");
@@ -214,6 +218,8 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<int?>("ChatId");
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<DateTime>("DateAdded");
 
                     b.Property<string>("MessageContent");
@@ -221,6 +227,8 @@ namespace SirmiumCommercial.Migrations
                     b.Property<string>("MessageType");
 
                     b.Property<bool>("Seen");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.Property<string>("UserId");
 
@@ -241,6 +249,8 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<string>("Content");
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime>("DateAdded");
@@ -252,6 +262,8 @@ namespace SirmiumCommercial.Migrations
                     b.Property<int>("ForId");
 
                     b.Property<int>("Likes");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.HasKey("Id");
 
@@ -266,6 +278,8 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<string>("AwardIcon");
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<string>("CreatedById");
 
                     b.Property<DateTime>("DateAdded");
@@ -279,6 +293,8 @@ namespace SirmiumCommercial.Migrations
                     b.Property<string>("Status");
 
                     b.Property<string>("Title");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.Property<int>("VideoId");
 
@@ -299,6 +315,10 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<int>("CourseId");
 
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<DateTime>("UpdatedAt");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId");
@@ -314,9 +334,13 @@ namespace SirmiumCommercial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<string>("For");
 
                     b.Property<int>("ForId");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.Property<string>("UserId");
 
@@ -333,6 +357,8 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<string>("CompanyName");
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<string>("CreatedById");
 
                     b.Property<string>("Description");
@@ -340,6 +366,8 @@ namespace SirmiumCommercial.Migrations
                     b.Property<string>("GroupPhotoPath");
 
                     b.Property<string>("Name");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.HasKey("GroupId");
 
@@ -356,9 +384,13 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<string>("ChatPhotoPath");
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<string>("CreatedBy");
 
                     b.Property<string>("Title");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.HasKey("ChatId");
 
@@ -371,6 +403,8 @@ namespace SirmiumCommercial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<DateTime>("DateAdded");
 
                     b.Property<int?>("GroupChatChatId");
@@ -380,6 +414,8 @@ namespace SirmiumCommercial.Migrations
                     b.Property<string>("MessageType");
 
                     b.Property<bool>("Seen");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.Property<string>("UserId");
 
@@ -396,7 +432,11 @@ namespace SirmiumCommercial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<int?>("GroupChatChatId");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.Property<string>("UserId");
 
@@ -415,7 +455,11 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<int>("CourseId");
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<int>("GroupId");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.HasKey("Id");
 
@@ -430,7 +474,11 @@ namespace SirmiumCommercial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<int?>("GroupChatMessageMessageId");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.Property<string>("UserId");
 
@@ -449,7 +497,11 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<string>("AppUserId");
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<int>("GroupId");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.HasKey("Id");
 
@@ -466,9 +518,13 @@ namespace SirmiumCommercial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<string>("For");
 
                     b.Property<int>("ForId");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.Property<string>("UserId");
 
@@ -483,6 +539,8 @@ namespace SirmiumCommercial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<string>("For");
 
                     b.Property<int>("ForId");
@@ -490,6 +548,8 @@ namespace SirmiumCommercial.Migrations
                     b.Property<DateTime>("NotificationDateAdded");
 
                     b.Property<string>("Subject");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.HasKey("NotificationId");
 
@@ -502,11 +562,15 @@ namespace SirmiumCommercial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<string>("CreatedBy");
 
                     b.Property<string>("Msg");
 
                     b.Property<int?>("NotificationId");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.HasKey("NotificationCardId");
 
@@ -521,7 +585,11 @@ namespace SirmiumCommercial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<int?>("NotificationCardId");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.Property<string>("UserId");
 
@@ -540,6 +608,8 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<int?>("CourseId");
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<string>("CreatedById");
 
                     b.Property<DateTime>("DateAdded");
@@ -553,6 +623,8 @@ namespace SirmiumCommercial.Migrations
                     b.Property<string>("Status");
 
                     b.Property<string>("Title");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.Property<int>("VideoId");
 
@@ -571,6 +643,8 @@ namespace SirmiumCommercial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<string>("CreatedById");
 
                     b.Property<DateTime>("DateAdded");
@@ -582,6 +656,8 @@ namespace SirmiumCommercial.Migrations
                     b.Property<string>("Status");
 
                     b.Property<string>("Title");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.Property<int>("VideoId");
 
@@ -600,6 +676,10 @@ namespace SirmiumCommercial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<bool>("AllUserCanSee");
+
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime>("DateAdded");
@@ -612,6 +692,8 @@ namespace SirmiumCommercial.Migrations
 
                     b.Property<string>("Title");
 
+                    b.Property<DateTime>("UpdatedAt");
+
                     b.Property<string>("VideoPath");
 
                     b.Property<int>("Views");
@@ -621,11 +703,28 @@ namespace SirmiumCommercial.Migrations
                     b.ToTable("Videos");
                 });
 
+            modelBuilder.Entity("SirmiumCommercial.Models.VideoShared", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("UserId");
+
+                    b.Property<int>("VideoId");
+
+                    b.HasKey("id");
+
+                    b.ToTable("VideoShared");
+                });
+
             modelBuilder.Entity("SirmiumCommercial.Models.AppUser", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
                     b.Property<string>("CompanyName");
+
+                    b.Property<DateTime>("CreatedAt");
 
                     b.Property<string>("FirstName");
 

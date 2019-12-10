@@ -250,6 +250,8 @@ namespace SirmiumCommercial.Controllers
                 IdentityResult result = await userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
+                    user.UpdatedAt = DateTime.Now;
+                    result = await userManager.UpdateAsync(user);
                     return RedirectToAction("Details", new { id = id, detailsId = changeId });
                 }
                 else

@@ -32,6 +32,7 @@ namespace SirmiumCommercial.Models
         public IQueryable<GroupUsers> GroupUsers => context.GroupUsers;
         public IEnumerable<GroupCourses> GroupCourses => context.GroupCourses;
         public IQueryable<Video> Videos => context.Videos;
+        public IEnumerable<VideoShared> VideoShareds => context.VideoShared;
         public IQueryable<Comment> Comments => context.Comments;
         public IQueryable<Likes> Likes => context.Likes;
         public IQueryable<Dislikes> Dislikes => context.Dislikes;
@@ -54,6 +55,8 @@ namespace SirmiumCommercial.Models
             if (course.CourseId == 0)
             {
                 context.Attach(course.CreatedBy);
+                course.CreatedAt = DateTime.Now;
+                course.UpdatedAt = DateTime.Now;
                 context.Courses.Add(course);
             }
             else
@@ -62,6 +65,7 @@ namespace SirmiumCommercial.Models
                     .FirstOrDefault(c => c.CourseId == course.CourseId);
                 if (dbEntry != null)
                 {
+                    dbEntry.UpdatedAt = DateTime.Now;
                     dbEntry.Title = course.Title;
                     dbEntry.Description = course.Description;
                     dbEntry.CreatedBy = course.CreatedBy;
@@ -123,6 +127,8 @@ namespace SirmiumCommercial.Models
             if (presentation.PresentationId == 0)
             {
                 context.Attach(presentation.CreatedBy);
+                presentation.CreatedAt = DateTime.Now;
+                presentation.UpdatedAt = DateTime.Now;
                 context.Presentations.Add(presentation);
             }
             else
@@ -131,6 +137,7 @@ namespace SirmiumCommercial.Models
                     .FirstOrDefault(p => p.PresentationId == presentation.PresentationId);
                 if (dbEntry != null)
                 {
+                    dbEntry.UpdatedAt = DateTime.Now;
                     dbEntry.Title = presentation.Title;
                     dbEntry.Part = presentation.Part;
                     dbEntry.CreatedBy = presentation.CreatedBy;
@@ -194,7 +201,9 @@ namespace SirmiumCommercial.Models
             CourseUsers courseUsers = new CourseUsers
             {
                 CourseId = courseId,
-                AppUserId = userId
+                AppUserId = userId,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
             };
 
             context.CourseUsers.Add(courseUsers);
@@ -242,6 +251,8 @@ namespace SirmiumCommercial.Models
             if (representation.RepresentationId == 0)
             {
                 context.Attach(representation.CreatedBy);
+                representation.CreatedAt = DateTime.Now;
+                representation.UpdatedAt = DateTime.Now;
                 context.Representations.Add(representation);
             }
             else
@@ -250,6 +261,7 @@ namespace SirmiumCommercial.Models
                     .FirstOrDefault(r => r.RepresentationId == representation.RepresentationId);
                 if (dbEntry != null)
                 {
+                    dbEntry.UpdatedAt = DateTime.Now;
                     dbEntry.Title = representation.Title;
                     dbEntry.CreatedBy = representation.CreatedBy;
                     dbEntry.DateAdded = representation.DateAdded;
@@ -302,6 +314,8 @@ namespace SirmiumCommercial.Models
         {
             if (video.Id == 0)
             {
+                video.CreatedAt = DateTime.Now;
+                video.UpdatedAt = DateTime.Now;
                 context.Videos.Add(video);
             }
             else
@@ -310,6 +324,7 @@ namespace SirmiumCommercial.Models
                     .FirstOrDefault(v => v.Id == video.Id);
                 if (dbEntry != null)
                 {
+                    dbEntry.UpdatedAt = DateTime.Now;
                     dbEntry.Title = video.Title;
                     dbEntry.CreatedBy = video.CreatedBy;
                     dbEntry.For = video.For;
@@ -370,20 +385,13 @@ namespace SirmiumCommercial.Models
                 string userTmp = comment.CreatedBy;
                 int forIdTmp = comment.ForId;
 
+                comment.CreatedAt = DateTime.Now;
+                comment.UpdatedAt = DateTime.Now;
                 context.Comments.Add(comment);
                 context.SaveChanges();
 
                 NewNotification(comment.CreatedBy, "NewComment", comment.For,
                     comment.ForId);
-                //notification
-                /*Notification notification = new Notification
-                {
-                    Subject = "NewComment",
-                    For = forTmp,
-                    ForId = forIdTmp,
-                    UserId = userTmp
-                };
-                AddNotification(notification);*/
             }
         }
 
@@ -439,6 +447,8 @@ namespace SirmiumCommercial.Models
                     DeleteDislike(dislike.Id);
                 }
 
+                like.CreatedAt = DateTime.Now;
+                like.UpdatedAt = DateTime.Now;
                 context.Likes.Add(like);
                 context.SaveChanges();
 
@@ -477,6 +487,8 @@ namespace SirmiumCommercial.Models
                     DeleteLike(like.Id);
                 }
 
+                dislike.CreatedAt = DateTime.Now;
+                dislike.UpdatedAt = DateTime.Now;
                 context.Dislikes.Add(dislike);
                 context.SaveChanges();
 
@@ -509,6 +521,8 @@ namespace SirmiumCommercial.Models
             if (chat.ChatId == 0)
             {
                 context.Chats.Add(chat);
+                chat.CreatedAt = DateTime.Now;
+                chat.UpdatedAt = DateTime.Now;
                 context.SaveChanges();
             }
         }
@@ -519,12 +533,15 @@ namespace SirmiumCommercial.Models
             if(chat.ChatId == 0)
             {
                 context.GroupChats.Add(chat);
+                chat.CreatedAt = DateTime.Now;
+                chat.UpdatedAt = DateTime.Now;
                 context.SaveChanges();
             }
             else
             {
                 GroupChat dbEntry = context.GroupChats
                     .FirstOrDefault(c => c.ChatId == chat.ChatId);
+                dbEntry.UpdatedAt = DateTime.Now;
                 dbEntry.ChatPhotoPath = chat.ChatPhotoPath;
                 dbEntry.Title = chat.Title;
                 context.SaveChanges();
@@ -541,6 +558,8 @@ namespace SirmiumCommercial.Models
                 .FirstOrDefault(c => c.ChatId == chatId);
 
             context.Attach(chat);
+            dbEntry.CreatedAt = DateTime.Now;
+            dbEntry.UpdatedAt = DateTime.Now;
             context.GroupChatUsers.Add(dbEntry);
             context.SaveChanges();
         }
@@ -559,6 +578,8 @@ namespace SirmiumCommercial.Models
             {
                 msg.DateAdded = DateTime.Now;
                 context.Attach(chat);
+                msg.CreatedAt = DateTime.Now;
+                msg.UpdatedAt = DateTime.Now;
                 context.ChatMessages.Add(msg);
                 chat.Messages.Add(msg);
                 context.SaveChanges();
@@ -571,6 +592,8 @@ namespace SirmiumCommercial.Models
             {
                 msg.DateAdded = DateTime.Now;
                 context.Attach(chat);
+                msg.CreatedAt = DateTime.Now;
+                msg.UpdatedAt = DateTime.Now;
                 context.GroupChatMessages.Add(msg);
                 context.SaveChanges();
             }
@@ -581,6 +604,7 @@ namespace SirmiumCommercial.Models
             if (msg.Id != 0)
             {
                 msg.Seen = true;
+                msg.UpdatedAt = DateTime.Now;
                 context.SaveChanges();
             }
         }
@@ -594,6 +618,8 @@ namespace SirmiumCommercial.Models
             GroupChatMessage msg = context.GroupChatMessages
                 .FirstOrDefault(m => m.MessageId == groupMsgId);
             context.Attach(msg);
+            dbEntry.CreatedAt = DateTime.Now;
+            dbEntry.UpdatedAt = DateTime.Now;
             context.GroupMessageViews.Add(dbEntry);
             context.SaveChanges();
 
@@ -675,11 +701,13 @@ namespace SirmiumCommercial.Models
                 if (chat.User1Id == userId)
                 {
                     chat.User1Checkpoint = DateTime.Now;
+                    chat.UpdatedAt = DateTime.Now;
                     context.SaveChanges();
                 }
                 else
                 {
                     chat.User2Checkpoint = DateTime.Now;
+                    chat.UpdatedAt = DateTime.Now;
                     context.SaveChanges();
                 }
 
@@ -697,6 +725,9 @@ namespace SirmiumCommercial.Models
                 DeleteChatMessage(msg.Id);
                 context.SaveChanges();
             }
+
+            chat.UpdatedAt = DateTime.Now;
+            context.SaveChanges();
         }
 
         //notifications
@@ -719,6 +750,8 @@ namespace SirmiumCommercial.Models
                 NotificationCard newNotificationCard = new NotificationCard
                 {
                     CreatedBy = user.Id,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
                 };
 
                 if (notification.Subject == "NewComment")
@@ -873,6 +906,9 @@ namespace SirmiumCommercial.Models
                         context.SaveChanges();
                     }
                 }
+
+                notification.UpdatedAt = DateTime.Now;
+                context.SaveChanges();
             }
             else
             {
@@ -881,7 +917,9 @@ namespace SirmiumCommercial.Models
                     Subject = subject,
                     For = For,
                     ForId = forId,
-                    NotificationDateAdded = DateTime.Now
+                    NotificationDateAdded = DateTime.Now,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
                 };
                 context.Notifications.Add(notification);
                 context.SaveChanges();
@@ -900,8 +938,11 @@ namespace SirmiumCommercial.Models
                 UserId = userId
             };
             context.Attach(card);
+            view.CreatedAt = DateTime.Now;
+            view.UpdatedAt = DateTime.Now;
             context.NotificationViews.Add(view);
             context.SaveChanges();
+            card.UpdatedAt = DateTime.Now;
             card.NotificationViews.Add(view);
             context.SaveChanges();
         }
@@ -912,6 +953,8 @@ namespace SirmiumCommercial.Models
             if (group.GroupId == 0)
             {
                 context.Attach(group.CreatedBy);
+                group.CreatedAt = DateTime.Now;
+                group.UpdatedAt = DateTime.Now;
                 context.Groups.Add(group);
 
             }
@@ -919,6 +962,7 @@ namespace SirmiumCommercial.Models
             {
                 Group dbEntry = context.Groups
                     .FirstOrDefault(g => g.GroupId == group.GroupId);
+                dbEntry.UpdatedAt = DateTime.Now;
                 dbEntry.Name = group.Name;
                 dbEntry.Description = group.Description;
                 dbEntry.GroupPhotoPath = group.GroupPhotoPath;
@@ -943,7 +987,11 @@ namespace SirmiumCommercial.Models
                         GroupId = group.GroupId,
                         AppUserId = user.Id
                     };
+                    dbEntry.CreatedAt = DateTime.Now;
+                    dbEntry.UpdatedAt = DateTime.Now;
                     context.GroupUsers.Add(dbEntry);
+                    context.SaveChanges();
+                    group.UpdatedAt = DateTime.Now;
                     context.SaveChanges();
                 }
             }
@@ -965,7 +1013,11 @@ namespace SirmiumCommercial.Models
                         GroupId = group.GroupId,
                         CourseId = course.CourseId
                     };
+                    dbEntry.CreatedAt = DateTime.Now;
+                    dbEntry.UpdatedAt = DateTime.Now;
                     context.GroupCourses.Add(dbEntry);
+                    context.SaveChanges();
+                    group.UpdatedAt = DateTime.Now;
                     context.SaveChanges();
                 }
             }
@@ -1006,6 +1058,10 @@ namespace SirmiumCommercial.Models
                 context.GroupUsers.Remove(dbEntry);
                 context.SaveChanges();
             }
+
+            Group group = context.Groups.FirstOrDefault(g => g.GroupId == groupId);
+            group.UpdatedAt = DateTime.Now;
+            context.SaveChanges();
         }
 
         public void RemoveCourseFromGroup (int groupId, int coursId)
@@ -1018,6 +1074,10 @@ namespace SirmiumCommercial.Models
                 context.GroupCourses.Remove(dbEntry);
                 context.SaveChanges();
             }
+
+            Group group = context.Groups.FirstOrDefault(g => g.GroupId == groupId);
+            group.UpdatedAt = DateTime.Now;
+            context.SaveChanges();
         }
     }
 }

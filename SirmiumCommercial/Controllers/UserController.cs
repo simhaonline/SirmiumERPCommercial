@@ -278,6 +278,7 @@ namespace SirmiumCommercial.Controllers
                 user.LastName = model.LastName;
                 user.Email = model.Email;
                 user.PhoneNumber = model.PhoneNumber;
+                user.UpdatedAt = DateTime.Now;
                 IdentityResult result = await userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
@@ -326,6 +327,8 @@ namespace SirmiumCommercial.Controllers
                     model.OldPassword, model.NewPassword);
                 if (result.Succeeded)
                 {
+                    user.UpdatedAt = DateTime.Now;
+                    result = await userManager.UpdateAsync(user);
                     return RedirectToAction("EditProfile", new { id = user.Id });
                 }
                 else
@@ -362,6 +365,8 @@ namespace SirmiumCommercial.Controllers
                     model.CurrentPassword, model.NewPassword);
                 if (result.Succeeded)
                 {
+                    user.UpdatedAt = DateTime.Now;
+                    result = await userManager.UpdateAsync(user);
                     TempData["SettingsMsg"] = "Success";
                     return RedirectToAction("Settings", new { id = user.Id });
                 }

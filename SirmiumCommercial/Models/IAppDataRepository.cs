@@ -23,6 +23,8 @@ namespace SirmiumCommercial.Models
 
         IQueryable<Video> Videos { get; }
 
+        IEnumerable<VideoShared> VideoShareds { get; }
+
         IQueryable<Comment> Comments { get; }
 
         IQueryable<Likes> Likes { get; }

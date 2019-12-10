@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SirmiumCommercial.Migrations
 {
-    public partial class NewAllIn1 : Migration
+    public partial class AllMigrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -49,7 +49,8 @@ namespace SirmiumCommercial.Migrations
                     UpdatedAt = table.Column<DateTime>(nullable: true),
                     Status = table.Column<string>(nullable: true),
                     ProfilePhotoUrl = table.Column<string>(nullable: true),
-                    Remark = table.Column<string>(nullable: true)
+                    Remark = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -65,7 +66,9 @@ namespace SirmiumCommercial.Migrations
                     User1Id = table.Column<string>(nullable: true),
                     User2Id = table.Column<string>(nullable: true),
                     User1Checkpoint = table.Column<DateTime>(nullable: false),
-                    User2Checkpoint = table.Column<DateTime>(nullable: false)
+                    User2Checkpoint = table.Column<DateTime>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -85,7 +88,9 @@ namespace SirmiumCommercial.Migrations
                     DateAdded = table.Column<DateTime>(nullable: false),
                     Likes = table.Column<int>(nullable: false),
                     Dislikes = table.Column<int>(nullable: false),
-                    CommentId = table.Column<int>(nullable: false)
+                    CommentId = table.Column<int>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -100,7 +105,9 @@ namespace SirmiumCommercial.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     For = table.Column<string>(nullable: true),
                     ForId = table.Column<int>(nullable: false),
-                    UserId = table.Column<string>(nullable: true)
+                    UserId = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -115,7 +122,9 @@ namespace SirmiumCommercial.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     CreatedBy = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true),
-                    ChatPhotoPath = table.Column<string>(nullable: true)
+                    ChatPhotoPath = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -130,7 +139,9 @@ namespace SirmiumCommercial.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     For = table.Column<string>(nullable: true),
                     ForId = table.Column<int>(nullable: false),
-                    UserId = table.Column<string>(nullable: true)
+                    UserId = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -146,7 +157,9 @@ namespace SirmiumCommercial.Migrations
                     Subject = table.Column<string>(nullable: true),
                     For = table.Column<string>(nullable: true),
                     ForId = table.Column<int>(nullable: false),
-                    NotificationDateAdded = table.Column<DateTime>(nullable: false)
+                    NotificationDateAdded = table.Column<DateTime>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -166,11 +179,28 @@ namespace SirmiumCommercial.Migrations
                     Status = table.Column<string>(nullable: true),
                     DateAdded = table.Column<DateTime>(nullable: false),
                     Views = table.Column<int>(nullable: false),
-                    VideoPath = table.Column<string>(nullable: true)
+                    VideoPath = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false),
+                    AllUserCanSee = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Videos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VideoShared",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    VideoId = table.Column<int>(nullable: false),
+                    UserId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VideoShared", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -293,7 +323,9 @@ namespace SirmiumCommercial.Migrations
                     AwardIcon = table.Column<string>(nullable: true),
                     Status = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
-                    VideoId = table.Column<int>(nullable: false)
+                    VideoId = table.Column<int>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -316,7 +348,9 @@ namespace SirmiumCommercial.Migrations
                     Description = table.Column<string>(nullable: true),
                     GroupPhotoPath = table.Column<string>(nullable: true),
                     CreatedById = table.Column<string>(nullable: true),
-                    CompanyName = table.Column<string>(nullable: true)
+                    CompanyName = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -340,6 +374,8 @@ namespace SirmiumCommercial.Migrations
                     MessageType = table.Column<string>(nullable: true),
                     MessageContent = table.Column<string>(nullable: true),
                     Seen = table.Column<bool>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false),
                     ChatId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -364,6 +400,8 @@ namespace SirmiumCommercial.Migrations
                     MessageType = table.Column<string>(nullable: true),
                     MessageContent = table.Column<string>(nullable: true),
                     Seen = table.Column<bool>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false),
                     GroupChatChatId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -384,6 +422,8 @@ namespace SirmiumCommercial.Migrations
                     id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false),
                     GroupChatChatId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -405,6 +445,8 @@ namespace SirmiumCommercial.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     CreatedBy = table.Column<string>(nullable: true),
                     Msg = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false),
                     NotificationId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -425,7 +467,9 @@ namespace SirmiumCommercial.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     CourseId = table.Column<int>(nullable: false),
-                    AppUserId = table.Column<string>(nullable: true)
+                    AppUserId = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -458,6 +502,8 @@ namespace SirmiumCommercial.Migrations
                     DateModified = table.Column<DateTime>(nullable: false),
                     Status = table.Column<string>(nullable: true),
                     VideoId = table.Column<int>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false),
                     CourseId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -484,7 +530,9 @@ namespace SirmiumCommercial.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     GroupId = table.Column<int>(nullable: false),
-                    CourseId = table.Column<int>(nullable: false)
+                    CourseId = table.Column<int>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -504,7 +552,9 @@ namespace SirmiumCommercial.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     GroupId = table.Column<int>(nullable: false),
-                    AppUserId = table.Column<string>(nullable: true)
+                    AppUserId = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -530,6 +580,8 @@ namespace SirmiumCommercial.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false),
                     GroupChatMessageMessageId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -550,6 +602,8 @@ namespace SirmiumCommercial.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false),
                     NotificationCardId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -575,6 +629,8 @@ namespace SirmiumCommercial.Migrations
                     Status = table.Column<string>(nullable: true),
                     VideoId = table.Column<int>(nullable: false),
                     Rating = table.Column<int>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false),
                     PresentationId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -771,6 +827,9 @@ namespace SirmiumCommercial.Migrations
 
             migrationBuilder.DropTable(
                 name: "Videos");
+
+            migrationBuilder.DropTable(
+                name: "VideoShared");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

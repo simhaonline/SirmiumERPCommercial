@@ -13,7 +13,6 @@ namespace SirmiumCommercial.Models
         public string LastName { get; set; }
         public string CompanyName { get; set; }
 
-        //CreatedAt
         public DateTime RegistrationDate { get; set; }
         //UpdatedAt
         public DateTime UpdatedAt { get; set; }
@@ -34,6 +33,9 @@ namespace SirmiumCommercial.Models
 
         //Remark
         public string Remark { get; set; }
+
+
+        public DateTime CreatedAt { get; set; }
     }
 
     public class Group
@@ -48,6 +50,10 @@ namespace SirmiumCommercial.Models
             = new List<GroupUsers>();
         public ICollection<GroupCourses> Courses { get; set; }
             = new List<GroupCourses>();
+
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
     public class Course
@@ -74,6 +80,9 @@ namespace SirmiumCommercial.Models
 
         public string Description { get; set; }
         public int VideoId { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
     public class Presentation
@@ -94,6 +103,9 @@ namespace SirmiumCommercial.Models
             = new List<Representation>();
 
         public int VideoId { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
     public class Representation
@@ -109,6 +121,9 @@ namespace SirmiumCommercial.Models
 
         public int VideoId { get; set; }
         public int Rating { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
     public class CourseUsers
@@ -116,6 +131,9 @@ namespace SirmiumCommercial.Models
         public int Id { get; set; }
         public int CourseId { get; set; }
         public string AppUserId { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
     public class GroupUsers
@@ -123,6 +141,9 @@ namespace SirmiumCommercial.Models
         public int Id { get; set; }
         public int GroupId { get; set; }
         public string AppUserId { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
     public class GroupCourses
@@ -130,6 +151,9 @@ namespace SirmiumCommercial.Models
         public int Id { get; set; }
         public int GroupId { get; set; }
         public int CourseId { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
     public class Video
@@ -148,6 +172,20 @@ namespace SirmiumCommercial.Models
         public int Views { get; set; }
         //video path
         public string VideoPath { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+
+        //video sharing
+        public bool AllUserCanSee { get; set; } = false;
+        public ICollection<VideoShared> UsersCanSee = new List<VideoShared>();
+    }
+
+    public class VideoShared
+    {
+        public int id { get; set; }
+        public int VideoId { get; set; }
+        public string UserId { get; set; }
     }
 
     public class Comment
@@ -170,6 +208,9 @@ namespace SirmiumCommercial.Models
 
         //if this is subcomment
         public int CommentId { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
     public class Likes
@@ -180,6 +221,10 @@ namespace SirmiumCommercial.Models
         //CourseId, PresentationId, VideoId, ...
         public int ForId { get; set; }
         public string UserId { get; set; }
+
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
     public class Dislikes
@@ -190,6 +235,9 @@ namespace SirmiumCommercial.Models
         //CourseId, PresentationId, VideoId, ...
         public int ForId { get; set; }
         public string UserId { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
 
@@ -209,6 +257,9 @@ namespace SirmiumCommercial.Models
         //after delete chat = current date (delete)
         public DateTime User1Checkpoint { get; set; }
         public DateTime User2Checkpoint { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
     //2 persons chat messages
@@ -227,6 +278,9 @@ namespace SirmiumCommercial.Models
 
         //the user saw message
         public bool Seen { get; set; } = false;
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
     public class GroupChat
@@ -242,6 +296,9 @@ namespace SirmiumCommercial.Models
 
         public ICollection<GroupChatMessage> Messages { get; set; }
             = new List<GroupChatMessage>();
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
     public class GroupChatUsers
@@ -249,6 +306,9 @@ namespace SirmiumCommercial.Models
         [Key]
         public int id { get; set; }
         public string UserId { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
     //group chat messages
@@ -271,6 +331,9 @@ namespace SirmiumCommercial.Models
 
         //if all users saw the massage: seen = true
         public bool Seen { get; set; } = false;
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
     //users who saw the message
@@ -279,6 +342,9 @@ namespace SirmiumCommercial.Models
         [Key]
         public int Id { get; set; }
         public string UserId { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
     //Notifications
@@ -299,6 +365,9 @@ namespace SirmiumCommercial.Models
         public DateTime NotificationDateAdded { get; set; }
         public ICollection<NotificationCard> NotificationCards { get; set; }
             = new List<NotificationCard>();
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
     public class NotificationCard
@@ -313,11 +382,17 @@ namespace SirmiumCommercial.Models
 
         public ICollection<NotificationViews> NotificationViews { get; set; }
             = new List<NotificationViews>();
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
     public class NotificationViews
     {
         public int Id { get; set; }
         public string UserId { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

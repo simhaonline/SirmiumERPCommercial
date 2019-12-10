@@ -126,7 +126,8 @@ namespace SirmiumCommercial.Controllers
                     RegistrationDate = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                     Remark = model.Remark,
-                    Status = "Inactive"
+                    Status = "Inactive",
+                    CreatedAt = DateTime.Now
                 };
                 IdentityResult result
                     = await userManager.CreateAsync(user, model.Password);
@@ -203,6 +204,8 @@ namespace SirmiumCommercial.Controllers
                 result = await userManager.AddPasswordAsync(user, password);
                 if (result.Succeeded)
                 {
+                    user.UpdatedAt = DateTime.Now;
+                    result = await userManager.UpdateAsync(user);
                     SendMailTmpPassword(user.Id, password);
                     return View("SuccessForgotPassword");
                 }

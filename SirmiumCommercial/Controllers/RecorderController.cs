@@ -208,6 +208,7 @@ namespace SirmiumCommercial.Controllers
                 }
 
                 string photoPath = user.Id + @"\profilePhoto.jpeg";
+                user.UpdatedAt = DateTime.Now;
                 user.ProfilePhotoUrl = photoPath;
                 IdentityResult result = await userManager.UpdateAsync(user);
 
@@ -246,6 +247,7 @@ namespace SirmiumCommercial.Controllers
                 //add photo path to AppUser/ProfilePhotoUrl
                 string photoPath = user.Id + @"\profilePhoto.jpeg";
                 ViewData["msg"] = photoPath;
+                user.UpdatedAt = DateTime.Now;
                 user.ProfilePhotoUrl = photoPath;
                 IdentityResult result = await userManager.UpdateAsync(user);
 
