@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace SirmiumCommercial.Components
 {
-    public class UserLeftNavigationViewComponent : ViewComponent
+    public class UserLeftNavigationManageViewComponent : ViewComponent
     {
         private UserManager<AppUser> userManager;
 
-        public UserLeftNavigationViewComponent(UserManager<AppUser> userMgr)
+        public UserLeftNavigationManageViewComponent(UserManager<AppUser> userMgr)
         {
             userManager = userMgr;
         }
@@ -25,9 +25,9 @@ namespace SirmiumCommercial.Components
                 UserId = user.Id
             };
 
-            if (await userManager.IsInRoleAsync(user, "Admin"))
+            if (await userManager.IsInRoleAsync(user, "Manager"))
             {
-                model.IsAdmin = true;
+                model.IsManager = true;
             }
 
             return View(model);

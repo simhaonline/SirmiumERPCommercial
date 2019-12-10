@@ -173,9 +173,115 @@ namespace SirmiumCommercial.Controllers
         }
 
         [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            AppUser user = await userManager.FindByNameAsync(model.UserName);
+
+            if (user != null)
+            {
+                return View(new LoginModel {
+                    UserName = user.UserName,
+                    PhotoPath = user.ProfilePhotoUrl
+                });
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> SendTmpPassword(string username)
+        {
+            AppUser user = await userManager.FindByNameAsync(username);
+
+            IdentityResult result = await userManager.RemovePasswordAsync(user);
+            if (result.Succeeded)
+            {
+                string password = GenerateTmpPassword();
+                result = await userManager.AddPasswordAsync(user, password);
+                if (result.Succeeded)
+                {
+                    SendMailTmpPassword(user.Id, password);
+                    return View("SuccessForgotPassword");
+                }
+                else
+                {
+                    TempData["Error"] = "new password";
+                    return View("ForgotPassword");
+                }
+            }
+            else
+            {
+                TempData["Error"] = "remove password";
+                return View("ForgotPassword");
+            }
+        }
+
+        [AllowAnonymous]
         public IActionResult FreeTrial()
         {
             return View();
+        }
+
+        //generate tmp password
+        private string GenerateTmpPassword()
+        {
+            Random random = new Random();
+
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuwxyz0123456789";
+            return new string(Enumerable.Repeat(chars, 50)
+                    .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        //send tmp password
+        private void SendMailTmpPassword(string userId, string password)
+        {
+            AppUser user = userManager.Users.FirstOrDefault(u => u.Id == userId);
+
+            try
+            {
+                String msgBody =
+                    "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px 'Helvetica Neue',Arial,Helvetica\">" +
+                    "<tbody>" +
+                    "<tr width=\"100%\">" +
+                    "<td valign=\"top\" align=\"left\" style=\"background:#f0f0f0;font-size:15px; font-family: 'Helvetica Neue',Arial,Helvetica\">" +
+                    "<table style=\"border:none;padding:0 18px;margin:50px auto;width:500px\">" +
+                    "<tbody>" +
+                    "<tr width=\"100%\" height=\"57\">" +
+                    "<td valign=\"top\" align=\"left\" style=\"border-top-left-radius:4px;border-top-right-radius:4px;background:#0079bf;padding:10px;text-align:center; font:700; font-size: 26px; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; color: #fff;\">" +
+                    "SirmiumERPCommercial</td></tr>" +
+                    "<tr style=\"width:100%\">" +
+                    "<td valign=\"top\" align=\"left\" style=\"background:#fff;padding:18px\">" +
+                    $"<p style=\"color:#333333;font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;font-weight:bold;line-height:20px;text-align:center;padding-left:56px;padding-right:56px\"> Hey {user.FirstName}! </p>" +
+                    $"<p style=\"color:#305496;font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;font-weight:bold;line-height:20px;text-align:center;padding-left:56px;padding-right:56px\"> Here's your temporary password: {password} </p>" +
+                    $"<p style=\"color:#e74c3c;font:12px/0.75em 'Helvetica Neue',Arial,Helvetica;font-weight:bold;line-height:20px;text-align:center;padding-left:56px;padding-right:56px\"> Please change your password after login! </p>" +
+                    "</td> </tr>" +
+                    "<tr style=\"width:100%\">" +
+                    "<td valign=\"top\" align=\"left\" style=\"background:#fff;padding:18px\">" +
+                    $"<p style=\"font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center\"> <a href='https://localhost:5001/' style=\"border-radius:3px;background:#5aac44;color:#fff;display:block;font-weight:600;font-size:20px;line-height:24px;margin:32px auto 24px;padding:11px 13px;text-decoration:none;width:152px\"> Login now </a> </p>" +
+                    "</td> </tr> </tbody> </table>" +
+                    "</td> </tr> </tbody> </table>";
+                MailMessage message = new MailMessage();
+                SmtpClient smtp = new SmtpClient();
+                message.From = new MailAddress("sirmiumcommercial@gmail.com");
+                message.To.Add(new MailAddress(user.Email));
+                message.Subject = "Temporary password";
+                message.IsBodyHtml = true; //to make message body as html  
+                message.Body = msgBody;
+                SmtpClient client = new SmtpClient();
+                client.Port = 587;
+                client.Host = "smtp.gmail.com"; //for gmail host  
+                client.EnableSsl = true;
+                client.UseDefaultCredentials = false;
+                client.Credentials = new NetworkCredential("sirmiumcommercial@gmail.com", "648768422SM");
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                client.Send(message);
+            }
+            catch (SmtpException ex)
+            {
+            }
         }
 
         //send email to admin

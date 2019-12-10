@@ -27,6 +27,9 @@
                                        action: "AllUsers")">My Company</span>
             </a>
         </li>
+
+        @await Component.InvokeAsync("UserLeftNavigationManage", new { userId = ViewData["Id"] })
+
         <li class="@Html.IsSelected(controller: "Courses")">
             <a href="@Url.Action("Courses", "User")">
                 <span class="fa fa-book @Html.IsSelected(controller: "Courses")"></span>
@@ -110,23 +113,5 @@
         </li>
 
         @await Component.InvokeAsync("UserLeftNavigation", new { userId = ViewData["Id"] })
-        @*
-        <li class="@Html.IsSelected(controller: "Manage")">
-            <a href="@Url.Action("Index", "Manage", new { id = ViewData["Id"] })">
-                <span class="fa fa-cogs @Html.IsSelected(controller: "Manage",
-                                       action: "Index")"></span>
-                <span class="nav-label @Html.IsSelected(controller: "Manage",
-                                       action: "Index")">Manage</span>
-            </a>
-        </li>
-        <li class="@Html.IsSelected(controller: "Admin")">
-            <a href="@Url.Action("Index", "Admin", new { id = ViewData["Id"] })">
-                <span class="fa fa-sliders @Html.IsSelected(controller: "Admin",
-                                       action: "Index")"></span>
-                <span class="nav-label @Html.IsSelected(controller: "Admin",
-                                       action: "Index")">Admin</span>
-            </a>
-        </li>
-        *@
     </ul>
 </div>

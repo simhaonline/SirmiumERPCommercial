@@ -44,6 +44,9 @@ namespace SirmiumCommercial.Models.ViewModels
         public string Password { get; set; }
 
         public bool RememberMe { get; set; }
+
+        //for forgot password
+        public string PhotoPath { get; set; }
     }
 
     public class ProfileModel
