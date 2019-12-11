@@ -70,11 +70,18 @@ namespace SirmiumCommercial.Models
         void AddRepresentation(ICollection<Representation> representations,
             Presentation presentation);
 
-        //-------- Comment---------
+        //--------Video------------
         void SaveVideo(Video video);
 
         Video DeleteVideo(int videoId);
 
+        void SaveVideoShared(int videoId, string userId);
+
+        void DeleteVideoSharedId(int id);
+
+        void DeleteVideoShared(int videoId, string userId);
+
+        //-------- Comment---------
         void SaveComment(Comment comment);
 
         Comment DeleteComment(int commentId);

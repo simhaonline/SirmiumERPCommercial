@@ -68,6 +68,12 @@
     <Content Update="Views\Recorder\Components\RepresentationRating\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Recorder\Components\VideoSettings\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Recorder\Index2.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Shared\Components\HeaderChat\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

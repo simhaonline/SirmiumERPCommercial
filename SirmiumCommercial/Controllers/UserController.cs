@@ -116,7 +116,9 @@ namespace SirmiumCommercial.Controllers
 
                         if (repository.CourseUsers
                             .FirstOrDefault(cu => cu.AppUserId == user.Id &&
-                                cu.CourseId == course.CourseId) != null)
+                                cu.CourseId == course.CourseId) != null
+                           || await userManager.IsInRoleAsync(user, "Admin")
+                           || await userManager.IsInRoleAsync(user, "Manager"))
                         {
                             //Representation
                             foreach (Representation representation in repository.Presentations
@@ -273,11 +275,22 @@ namespace SirmiumCommercial.Controllers
 
             if(user != null)
             {
-                user.UserName = model.UserName;
-                user.FirstName = model.FirstName;
-                user.LastName = model.LastName;
-                user.Email = model.Email;
-                user.PhoneNumber = model.PhoneNumber;
+                string username = (model.UserName == null || model.UserName.Trim() == "") ?
+                    user.UserName : model.UserName;
+                string firstName = (model.FirstName == null || model.FirstName.Trim() == "") ?
+                    user.FirstName : model.FirstName;
+                string lastName = (model.LastName == null || model.LastName.Trim() == "") ?
+                    user.LastName : model.LastName;
+                string email = (model.Email == null || model.Email.Trim() == "") ?
+                    user.Email : model.Email;
+                string phone = (model.PhoneNumber == null || model.PhoneNumber.Trim() == "") ?
+                    user.PhoneNumber : model.PhoneNumber;
+
+                await userManager.SetUserNameAsync(user, username);
+                user.FirstName = firstName;
+                user.LastName = lastName;
+                user.Email = email;
+                user.PhoneNumber = phone;
                 user.UpdatedAt = DateTime.Now;
                 IdentityResult result = await userManager.UpdateAsync(user);
                 if (result.Succeeded)

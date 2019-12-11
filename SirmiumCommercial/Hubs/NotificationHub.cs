@@ -22,11 +22,24 @@ namespace SirmiumCommercial.Hubs
 
         public void Participate(string userId, int courseId)
         {
-            //add user to course
-            repository.AddUserToCourse(userId, courseId);
+            CourseUsers courseUsers = repository.CourseUsers
+                .FirstOrDefault(c => c.AppUserId == userId && c.CourseId == courseId);
 
-            //notification
-            _ = ShowNewUserNotification(userId, courseId);
+            if (courseUsers == null)
+            {
+                //add user to course
+                repository.AddUserToCourse(userId, courseId);
+
+                //notification
+                _ = ShowNewUserNotification(userId, courseId);
+
+                _ = HideParticipateBtn(userId, courseId);
+            }
+        }
+
+        public async Task HideParticipateBtn(string userId, int courseId)
+        {
+            await Clients.All.SendAsync("HideParticipateBtn", userId, courseId);
         }
 
         public async Task ShowNewUserNotification(string userId, int courseId)

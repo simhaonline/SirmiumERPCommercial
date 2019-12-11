@@ -85,7 +85,7 @@
                     <a href="@Url.Action("Participate", "Courses",
                                 new { id = ViewData["Id"],
                                     courseId = Model.Course.CourseId})"
-                       class="m-b-sm pull-right btn"
+                       class="m-b-sm pull-right btn" id="participate-btn"
                        onclick="participateFunction('@ViewData["Id"]', @Model.Course.CourseId);">
                         <span class="fa fa-plus text-primary" style="font-size: 20px;"></span>
                         <span class="text-muted" style="font-size: 20px;">Participate</span>

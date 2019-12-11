@@ -344,6 +344,47 @@ namespace SirmiumCommercial.Models
             }
         }
 
+        public void SaveVideoShared(int videoId, string userId)
+        {
+            VideoShared shared = context.VideoShared
+                .FirstOrDefault(v => v.VideoId == videoId && v.UserId == userId);
+
+            if (shared == null)
+            {
+                VideoShared dbEntry = new VideoShared
+                {
+                    UserId = userId,
+                    VideoId = videoId
+                };
+                context.VideoShared.Add(dbEntry);
+            }
+            context.SaveChanges();
+        }
+
+        public void DeleteVideoShared(int videoId, string userId)
+        {
+            VideoShared dbEntry = context.VideoShared
+                .FirstOrDefault(v => v.VideoId == videoId && v.UserId == userId);
+
+            if (dbEntry != null)
+            {
+                context.VideoShared.Remove(dbEntry);
+                context.SaveChanges();
+            }
+        }
+
+        public void DeleteVideoSharedId(int id)
+        {
+            VideoShared dbEntry = context.VideoShared
+                .FirstOrDefault(v => v.id == id);
+
+            if (dbEntry != null)
+            {
+                context.VideoShared.Remove(dbEntry);
+                context.SaveChanges();
+            }
+        }
+
         public Video DeleteVideo(int videoId)
         {
             Video dbEntry = context.Videos
@@ -369,6 +410,14 @@ namespace SirmiumCommercial.Models
                     .Where(d => d.For == "Video" && d.ForId == dbEntry.Id))
                 {
                     DeleteDislike(dislike.Id);
+                }
+
+                //delete all videoshared
+                IQueryable<VideoShared> videoShared = context.VideoShared
+                    .Where(v => v.VideoId == dbEntry.Id);
+                foreach (VideoShared shared in videoShared)
+                {
+                    DeleteVideoSharedId(shared.id);
                 }
 
                 context.Videos.Remove(dbEntry);

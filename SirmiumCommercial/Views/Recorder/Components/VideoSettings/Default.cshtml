@@ -1,0 +1,29 @@
+﻿@model VideoSettingsViewComponentViewModel
+
+@if (Model.Show)
+{
+    <div class="dropdown pull-right">
+        <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+            <span class="text-primary pe-7s-more"
+                  style="font-size: 15px;"></span>
+        </a>
+        <div class="dropdown-menu hdropdown bigmenu animated fadeInDown"
+             style="padding: 10px 10px 0 10px;">
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="@Url.Action("RemoveAccess", "Recorder", new { id = Model.CreatedById, userId = Model.UserId, videoId = Model.VideoId })">
+                                <span class="pe-7s-delete-user text-danger"
+                                      style="font-size: 25px"></span>
+                                <strong class="text-muted">
+                                    Remove access
+                                </strong>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

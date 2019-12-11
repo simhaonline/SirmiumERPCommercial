@@ -1,0 +1,229 @@
+﻿@model VideoSettingsViewModel
+
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = "Video Settings";
+
+    string userPhoto(string path)
+    {
+        return (path == null) ? "/defaultAvatar.png" : $"/UsersData/{path}";
+    }
+
+    string firstLastNameExists(AppUser user)
+    {
+        return (user.FirstName == null || user.LastName == null) ?
+            user.UserName : user.FirstName + " " + user.LastName;
+    }
+}
+
+<!--Header-->
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <div class="row m-l-sm">
+                <span class="fa fa-cog"></span>
+                <span class="text-muted">Video Settings</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--change title-->
+<div class="row m-l-md m-r-md" style="padding-bottom: 30px;">
+    <div class="col-lg-12">
+        <div class="hpanel m-b-xs">
+            <div class="panel-body">
+                <div class="row">
+                    <form asp-action="ChangeVideoTitle" asp-controller="Recorder" method="post">
+                        <div asp-validation-summary="All" class="text-danger" style="font-size:20px"></div>
+                        <input asp-for="VideoId" value="@Model.VideoId" hidden />
+                        <input asp-for="UserId" value="@ViewData["Id"]" hidden />
+
+                        <div class="form-group col-lg-12 m-b-sm">
+                            <div class="col-lg-2">
+                                <h4>
+                                    <i class="pe-7s-film"></i>&nbsp; Video Title:
+                                </h4>
+                            </div>
+                            <div class="col-lg-6">
+                                <input asp-for="VideoTitle" value="@Model.VideoTitle"
+                                       class="form-control"
+                                       id="inputVideoTitle" disabled />
+                            </div>
+                            <button class="col-lg-2 m-l-lg btn"
+                                    id="editVideoTitle" type="button"
+                                    style="font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-edit text-warning"></span>
+                                <span class="text-muted">Edit</span>
+                            </button>
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="cancelVideoTitle" type="button" style="display:none;
+                                    font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-remove text-danger"></span>
+                                <span class="text-muted">Cancel</span>
+                            </button>
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="saveVideoTitle" type="submit" style="display:none;
+                                    font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-save text-success"></span>
+                                <span class="text-muted">Save</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row m-l-md m-r-md" style="padding-bottom: 30px;">
+    <div class="col-lg-12">
+        <div class="hpanel m-b-xs panel-collapse">
+            <div class="panel-heading">
+                <div class="panel-tools" style="font-size:20px">
+                    <span class="text-muted">Total Users:</span>
+                    @if (Model.CanSeeVideo.Count() == 0)
+                    {
+                        <span class="text-warning">0</span>
+                    }
+                    else
+                    {
+                        <span class="text-primary">@Model.CanSeeVideo.Count()</span>
+                    }
+                    <a class="showhide"><i class="fa fa-chevron-down" style="font-size:20px"></i></a>
+                </div>
+                <h3 class="m-n">
+                    <span class="fas fa-users text-success"></span>
+                    <span class="text-muted"> Users:</span>
+                </h3>
+            </div>
+            <div class="panel-body" style="display: none">
+                <div class="row">
+                    @foreach (AppUser user in Model.CanSeeVideo)
+                    {
+                        <div class="col-sm-3">
+                            <img class="img-circle" style="width: 40px; height: 40px"
+                                 src="@userPhoto(user.ProfilePhotoUrl)" />
+                            @firstLastNameExists(user)
+                            @await Component.InvokeAsync("VideoSettings", new { id = ViewData["Id"], userId = user.Id, videoId = Model.VideoId })
+                        </div>
+                    }
+                </div>
+                <div class="row text-center m-t-sm">
+                    @if (Model.AllUsers.Count() > 0)
+                    {
+                        <a class="btn btn-default"
+                           href="@Url.Action("RemoveAccessToAll", "Recorder", new { id = ViewData["Id"], videoId = Model.VideoId })">
+                            <span class="text-danger pe-7s-delete-user" style="font-size: 20px;"></span>
+                            Remove access to all users
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--share options-->
+<div class="row m-l-md m-r-md" style="padding-bottom: 30px;">
+    <div class="col-sm-12">
+        <div class="hpanel m-b-xs panel-collapse">
+            <div class="panel-heading">
+                <div class="panel-tools" style="font-size:20px">
+                    @if (Model.AllUsers.Count() > 1)
+                    {
+                        <a class="btn" style="font-size:18px; padding-top: 0px;"
+                           href="@Url.Action("ShareVideoAllUsers", "Recorder", new { id = ViewData["Id"], videoId = Model.VideoId })">
+                            <span class="fa fa-share text-success"></span>
+                            <span class="text-muted">Share with all users</span>
+                        </a>
+                    }
+                    <a class="showhide"><i class="fa fa-chevron-down" style="font-size:20px"></i></a>
+                </div>
+                <h3 class="m-n">
+                    <span class="fas fa-cogs text-primary"></span>
+                    <span class="text-muted"> Share options:</span>
+                </h3>
+            </div>
+            <div class="panel-body" style="display: none">
+                <form asp-action="ShareVideo" asp-controller="Recorder" method="post">
+                    <input asp-for="VideoId" value="@Model.VideoId" hidden />
+                    <input asp-for="UserId" value="@Model.UserId" hidden />
+                    <input asp-for="UsersIds" value="" id="users-ids" hidden />
+                    <div class="row">
+                        @foreach (AppUser user in Model.AllUsers)
+                        {
+                            <div class="col-sm-3">
+                                <input type="checkbox" value="@user.Id" id="check-@user.Id"
+                                       onchange="checkboxOnChange('@user.Id')" />
+                                <img class="img-circle" style="width: 40px; height: 40px"
+                                     src="@userPhoto(user.ProfilePhotoUrl)" />
+                                @firstLastNameExists(user)
+                            </div>
+                        }
+                    </div>
+                    <div class="row text-center m-t-sm">
+                        @if (Model.AllUsers.Count() > 0)
+                        {
+                            <button type="submit" class="btn btn-default">
+                                <span class="text-success fa fa-share"></span>
+                                Share
+                            </button>
+                        }
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        var inputVideoTitle = document.getElementById("inputVideoTitle");
+        var videoTitleOld = inputVideoTitle.value;
+        var videoTitleNew = "";
+        var editVideoTitle = document.getElementById("editVideoTitle");
+        var cancelVideoTitle = document.getElementById("cancelVideoTitle");
+        var saveVideoTitle = document.getElementById("saveVideoTitle");
+
+        editVideoTitle.addEventListener("click", () => {
+            editVideoTitle.style.display = "none";
+            saveVideoTitle.style.display = "inline-block";
+            cancelVideoTitle.style.display = "inline-block";
+            inputVideoTitle.disabled = false;
+
+            //cancel
+            cancelVideoTitle.addEventListener("click", () => {
+                editVideoTitle.style.display = "inline-block";
+                cancelVideoTitle.style.display = "none";
+
+                if (videoTitleOld != videoTitleNew) {
+                    saveVideoTitle.style.display = "none";
+                    inputVideoTitle.value = videoTitleOld;
+                    document.getElementById('new-username').value = videoTitleOld;
+                    inputVideoTitle.disabled = true;
+                    videoTitleNew = "";
+                }
+            });
+        });
+
+        //share
+        var checkedUsers = document.getElementById('users-ids').value;
+
+        function checkboxOnChange(userId) {
+            var checkboxId = "check-" + userId;
+            var checkbox = document.getElementById(checkboxId);
+
+            if (checkbox.checked == true) {
+                //add user to list
+                checkedUsers += checkbox.value + ";";
+                document.getElementById('users-ids').value = checkedUsers;
+            }
+            else {
+                //remove user from list
+                checkedUsers = checkedUsers.replace(checkbox.value + ";", "");
+                document.getElementById('users-ids').value = checkedUsers;
+            }
+        };
+    </script>
+}

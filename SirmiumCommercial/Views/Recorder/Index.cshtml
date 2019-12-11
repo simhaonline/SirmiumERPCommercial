@@ -141,6 +141,18 @@
         </span>
     }
     @await Component.InvokeAsync("RepresentationRating", new { videoFor = Model.Video.For, videoForId = Model.Video.ForId })
+
+    @if (Model.Video.For == "Representation")
+    {
+        @if (Model.Video.CreatedBy == ViewData["Id"].ToString())
+        {
+            <span>&emsp;</span><span>&emsp;</span>
+            <a class="btn" style="font-size: 18px"
+               href="@Url.Action("VideoSettings", "Recorder", new { id = ViewData["Id"], videoId = Model.Video.Id })">
+                <span class="fa fa-cog text-primary"></span>Settings
+            </a>
+        }
+    }
 </div>
 
 <div class="row m-t-sm m-l-md" style="font-size: 17px">

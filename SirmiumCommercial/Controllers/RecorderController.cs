@@ -28,15 +28,26 @@ namespace SirmiumCommercial.Controllers
             hostingEnvironment = hosting;
         }
 
-        public ViewResult Index(string id, int videoId)
+        public async Task<ViewResult> Index(string id, int videoId)
         {
             ViewData["Id"] = id;
 
+            AppUser user = userManager.Users
+                .FirstOrDefault(u => u.Id == id);
             Video video = repository.Videos
                 .FirstOrDefault(v => v.Id == videoId);
 
             if(video != null)
             {
+                if(repository.VideoShareds
+                    .FirstOrDefault(v => v.VideoId == videoId && v.UserId == id) == null
+                    && await userManager.IsInRoleAsync(user, "Admin") == false
+                    && await userManager.IsInRoleAsync(user, "Manager") == false
+                    && video.CreatedBy != user.Id)
+                {
+                    return View("Index2");
+                }
+
                 //likes
                 IQueryable<Likes> likes = repository.Likes
                     .Where(l => l.For == "Video" && l.ForId == video.Id);
@@ -474,5 +485,151 @@ namespace SirmiumCommercial.Controllers
 
             return RedirectToAction("Index", new { id = userId, videoId = representation.VideoId });
         }
+
+        public async Task<ViewResult> VideoSettings (string id, int videoId)
+        {
+            ViewData["Id"] = id;
+
+            AppUser videoCreatedBy = userManager.Users.FirstOrDefault(u => u.Id == id);
+            Video video = repository.Videos.FirstOrDefault(v => v.Id == videoId);
+
+            List<AppUser> usersShared = new List<AppUser>();
+            List<AppUser> userNotShared = new List<AppUser>();
+
+            foreach(AppUser appUser in userManager.Users
+                .Where(u => u.CompanyName == videoCreatedBy.CompanyName
+                        && u.Id != videoCreatedBy.Id))
+            {
+                if(repository.VideoShareds
+                    .FirstOrDefault(v => v.VideoId == video.Id && v.UserId == appUser.Id) != null)
+                {
+                    usersShared.Add(appUser);
+                }
+                else if (await userManager.IsInRoleAsync(appUser, "Admin"))
+                {
+                    usersShared.Add(appUser);
+                }
+                else if (await userManager.IsInRoleAsync(appUser, "Manager"))
+                {
+                    usersShared.Add(appUser);
+                }
+                else
+                {
+                    userNotShared.Add(appUser);
+                }
+            }
+
+            return View(new VideoSettingsViewModel
+            {
+                UserId = id,
+                VideoId = video.Id,
+                VideoTitle = video.Title,
+                CanSeeVideo = usersShared.AsQueryable(),
+                AllUsers = userNotShared.AsQueryable()
+            });
+        }
+
+        [HttpPost]
+        public IActionResult ChangeVideoTitle (VideoSettingsViewModel model)
+        {
+            Video video = repository.Videos.FirstOrDefault(v => v.Id == model.VideoId);
+
+            if(model.VideoTitle != null && model.VideoTitle != "" 
+                && model.VideoTitle.Trim() != video.Title)
+            {
+                video.Title = model.VideoTitle;
+                video.UpdatedAt = DateTime.Now;
+                repository.SaveVideo(video);
+            }
+            return RedirectToAction("VideoSettings", new { id = model.UserId, videoId = model.VideoId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ShareVideo(VideoSettingsViewModel model)
+        {
+            ViewData["Id"] = model.UserId;
+
+            AppUser user = await userManager.FindByIdAsync(model.UserId);
+            if (user != null)
+            {
+                Video video = repository.Videos.FirstOrDefault(v => v.Id == model.VideoId);
+
+                if (model.UsersIds != null && model.UsersIds.Trim() != "")
+                {
+                    //list of users id
+                    string userIdList = model.UsersIds.Trim();
+                    while (userIdList.Trim().Length > 0)
+                    {
+                        int index = userIdList.IndexOf(";");
+                        if (index != -1)
+                        {
+                            string newUserId = userIdList.Substring(0, index);
+
+                            repository.SaveVideoShared(video.Id, newUserId);
+
+                            userIdList = userIdList.Replace(newUserId + ";", "");
+                        }
+                    }
+                }
+                return RedirectToAction("VideoSettings", new { id = model.UserId, videoId = model.VideoId });
+            }
+
+            return RedirectToAction("Error", "UserNotFound");
+        }
+
+        public async Task<IActionResult> ShareVideoAllUsers(string id, int videoId)
+        {
+            Video video = repository.Videos
+                .FirstOrDefault(v => v.Id == videoId);
+            AppUser user = userManager.Users
+                .FirstOrDefault(u => u.Id == id);
+
+            List<AppUser> users = new List<AppUser>();
+            foreach (AppUser appUser in userManager.Users
+                .Where(u => u.CompanyName == user.CompanyName && u.Id != user.Id))
+            {
+                if (await userManager.IsInRoleAsync(appUser, "Admin") == false
+                    && await userManager.IsInRoleAsync(appUser, "Manager") == false
+                    && repository.VideoShareds
+                    .FirstOrDefault(v => v.VideoId == videoId && v.UserId == appUser.Id) == null)
+                {
+                    users.Add(appUser);
+                }
+            }
+
+            foreach (AppUser appUser in users)
+            {
+                repository.SaveVideoShared(video.Id, appUser.Id);
+            }
+
+            return RedirectToAction("VideoSettings", new { id = id, videoId = videoId });
+        }
+
+        public IActionResult RemoveAccess(string id, string userId,
+            int videoId)
+        {
+            repository.DeleteVideoShared(videoId, userId);
+            return RedirectToAction("VideoSettings", new { id = id, videoId = videoId });
+        }
+
+        public IActionResult RemoveAccessToAll(string id, int videoId)
+        {
+            List<AppUser> users = new List<AppUser>();
+            foreach (VideoShared shared in repository.VideoShareds
+                .Where(v => v.VideoId == videoId))
+            {
+                AppUser appUser = userManager.Users
+                    .FirstOrDefault(u => u.Id == shared.UserId);
+                users.Add(appUser);
+            }
+
+            foreach (AppUser user in users)
+            {
+                repository.DeleteVideoShared(videoId, user.Id);
+            }
+
+            return RedirectToAction("VideoSettings", new { id = id, videoId = videoId });
+        }
+
     }
 }
