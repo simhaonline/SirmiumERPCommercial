@@ -20,7 +20,7 @@ namespace SirmiumCommercial.Controllers
             userManager = userMgr;
         }
 
-        public async Task<ViewResult> MyFiles(string id)
+        /*public async Task<ViewResult> MyFiles(string id)
         {
             ViewData["Id"] = id;
             ViewData["Title"] = "My Files";
@@ -47,21 +47,36 @@ namespace SirmiumCommercial.Controllers
                 return View("Error");
             }
         }
-
-        public ViewResult SharedFiles(string id)
+        */
+        public async Task<ViewResult> SharedFiles(string id)
         {
             ViewData["Id"] = id;
-            ViewData["Title"] = "Shared Files";
+            AppUser user = userManager.Users.FirstOrDefault(u => u.Id == id);
 
             List<FilesViewModel> files = new List<FilesViewModel>();
-            foreach (Video video in repository.Videos
-                .Where(v => v.Status == "Public"))
+            foreach (Course course in repository.Courses
+                .Where(c => c.CreatedBy.CompanyName == user.CompanyName ||
+                        c.CreatedBy.CompanyName == ""))
             {
-                files.Add(new FilesViewModel
+                FilesViewModel viewModel = new FilesViewModel { Course = course };
+                if ((repository.CourseUsers.FirstOrDefault(cu => cu.CourseId == course.CourseId
+                    && cu.AppUserId == user.Id) != null) ||
+                    await userManager.IsInRoleAsync(user, "Admin") ||
+                    await userManager.IsInRoleAsync(user, "Manager"))
                 {
-                    Video = video,
-                    CreatedBy = userManager.Users.FirstOrDefault(u => u.Id == video.CreatedBy)
-                });
+                    List<PresentationFiles> presentationFiles = new List<PresentationFiles>();
+                    foreach(Presentation presentation in course.Presentations)
+                    {
+                        if (repository.PresentationFiles
+                            .Any(f => f.PresentationId == presentation.PresentationId))
+                        {
+                            presentationFiles.AddRange(repository.PresentationFiles
+                                .Where(f => f.PresentationId == presentation.PresentationId));
+                        }
+                    }
+                    viewModel.Files = presentationFiles.AsQueryable();
+                    files.Add(viewModel);
+                }
             }
 
             return View("Files", files.AsQueryable());

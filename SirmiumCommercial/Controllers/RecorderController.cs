@@ -39,11 +39,11 @@ namespace SirmiumCommercial.Controllers
 
             if(video != null)
             {
-                if(repository.VideoShareds
+                if((repository.VideoShareds
                     .FirstOrDefault(v => v.VideoId == videoId && v.UserId == id) == null
                     && await userManager.IsInRoleAsync(user, "Admin") == false
                     && await userManager.IsInRoleAsync(user, "Manager") == false
-                    && video.CreatedBy != user.Id)
+                    && video.CreatedBy != user.Id) && video.For == "Representation")
                 {
                     return View("Index2");
                 }
@@ -63,6 +63,34 @@ namespace SirmiumCommercial.Controllers
                 //users 
                 IQueryable<AppUser> users = userManager.Users;
 
+                //files if(for == representation || for == presentation)
+                List<PresentationFiles> files = new List<PresentationFiles>();
+                if(video.For == "Presentation" || video.For == "Representation")
+                {
+
+                    int presentationId = 0;
+                    if (video.For == "Presentation")
+                    {
+                        presentationId = video.ForId;
+                    }
+                    else
+                    {
+                        //video.for == representation
+                        foreach(Presentation presentation in repository.Presentations)
+                        {
+                            if(presentation.Representations
+                                .FirstOrDefault(r => r.RepresentationId == video.ForId) != null)
+                            {
+                                presentationId = presentation.PresentationId;
+                                break;
+                            }
+                        }
+                    }
+
+                    files.AddRange(repository.PresentationFiles
+                        .Where(f => f.PresentationId == presentationId));
+                }
+
                 ViewData["Title"] = video.Title;
 
                 return View(new PlayerViewModel
@@ -71,7 +99,8 @@ namespace SirmiumCommercial.Controllers
                     Likes = likes,
                     Dislikes = dislikes,
                     Comments = comments,
-                    Users = users
+                    Users = users,
+                    Files = files.AsQueryable()
                 });
             }
             else

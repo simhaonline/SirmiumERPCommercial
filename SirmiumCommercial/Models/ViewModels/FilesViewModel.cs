@@ -7,7 +7,7 @@ namespace SirmiumCommercial.Models.ViewModels
 {
     public class FilesViewModel
     {
-        public Video Video { get; set; }
-        public AppUser CreatedBy { get; set; }
+        public Course Course { get; set; }
+        public IQueryable<PresentationFiles> Files { get; set; }
     }
 }

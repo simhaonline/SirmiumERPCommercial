@@ -108,6 +108,20 @@ namespace SirmiumCommercial.Models
         public DateTime UpdatedAt { get; set; }
     }
 
+    public class PresentationFiles
+    {
+        [Key]
+        public int FileId { get; set; }
+
+        public int PresentationId { get; set; }
+        public string Title { get; set; }
+        public int Part { get; set; }
+        public string CreatedById { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public string FilePath { get; set; }
+    }
+
     public class Representation
     {
         public int RepresentationId { get; set; }

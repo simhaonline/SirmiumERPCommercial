@@ -150,7 +150,9 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <a onclick="NewPresentation.show()"
+                                    <a @*onclick="NewPresentation.show()"*@
+                                       href="@Url.Action("NewPresentation", "Manage",
+                                            new { id = ViewData["Id"], courseId = Model.Course.CourseId })"
                                        class="btn btn-outline btn-success m-t-md">
                                         Add Presentation <br /> <i class="fas fa-plus"></i>
                                     </a>

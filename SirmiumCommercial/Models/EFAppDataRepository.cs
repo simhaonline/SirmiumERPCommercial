@@ -26,6 +26,7 @@ namespace SirmiumCommercial.Models
             .ThenInclude(r => r.Representations);
         public IQueryable<Presentation> Presentations => context.Presentations
             .Include(r => r.Representations);
+        public IQueryable<PresentationFiles> PresentationFiles => context.PresentationFiles;
         public IQueryable<Representation> Representations => context.Representations
             .Include(u => u.CreatedBy);
         public IQueryable<CourseUsers> CourseUsers => context.CourseUsers;
@@ -91,7 +92,10 @@ namespace SirmiumCommercial.Models
                 //delete course video
                 Video courseVideo = context.Videos
                     .FirstOrDefault(v => v.Id == dbEntry.VideoId);
-                _ = DeleteVideo(courseVideo.Id);
+                if(courseVideo != null)
+                {
+                    _ = DeleteVideo(courseVideo.Id);
+                }
 
                 //delete presentation 
                 foreach (Presentation presentation in dbEntry.Presentations)
@@ -162,7 +166,17 @@ namespace SirmiumCommercial.Models
                 //delete presentation video
                 Video pVideo = context.Videos
                     .FirstOrDefault(v => v.Id == dbEntry.VideoId);
-                _ = DeleteVideo(pVideo.Id);
+                if (pVideo != null)
+                {
+                    _ = DeleteVideo(pVideo.Id);
+                }
+
+                //delete presentation files
+                foreach(PresentationFiles pFile in context.PresentationFiles
+                    .Where(f => f.PresentationId == dbEntry.PresentationId))
+                {
+                    DeleteFile(pFile.FileId);
+                }
 
                 //delete representations
                 foreach (Representation representation in dbEntry.Representations)
@@ -281,7 +295,10 @@ namespace SirmiumCommercial.Models
                 //delete representation video
                 Video rVideo = context.Videos
                     .FirstOrDefault(v => v.Id == dbEntry.VideoId);
-                _ = DeleteVideo(rVideo.Id);
+                if (rVideo != null)
+                {
+                    _ = DeleteVideo(rVideo.Id);
+                }
 
                 //delete all comments
                 foreach (Comment comment in context.Comments
@@ -412,13 +429,14 @@ namespace SirmiumCommercial.Models
                     DeleteDislike(dislike.Id);
                 }
 
-                //delete all videoshared
+                //*delete all videoshared
+                /*
                 IQueryable<VideoShared> videoShared = context.VideoShared
                     .Where(v => v.VideoId == dbEntry.Id);
                 foreach (VideoShared shared in videoShared)
                 {
                     DeleteVideoSharedId(shared.id);
-                }
+                }*/
 
                 context.Videos.Remove(dbEntry);
                 context.SaveChanges();
@@ -1127,6 +1145,40 @@ namespace SirmiumCommercial.Models
             Group group = context.Groups.FirstOrDefault(g => g.GroupId == groupId);
             group.UpdatedAt = DateTime.Now;
             context.SaveChanges();
+        }
+
+        //files
+        public void SaveFile (PresentationFiles file)
+        {
+            if (file.FileId == 0)
+            {
+                file.CreatedAt = DateTime.Now;
+                file.UpdatedAt = DateTime.Now;
+                context.PresentationFiles.Add(file);
+            }
+            else
+            {
+                PresentationFiles dbEntry = context.PresentationFiles
+                    .FirstOrDefault(f => f.FileId == file.FileId);
+                if (dbEntry != null)
+                {
+                    dbEntry.UpdatedAt = DateTime.Now;
+                    dbEntry.Title = file.Title;
+                    dbEntry.FilePath = file.FilePath;
+                }
+            }
+            context.SaveChanges();
+        }
+
+        public void DeleteFile(int FileId)
+        {
+            PresentationFiles dbEntry = context.PresentationFiles
+                .FirstOrDefault(f => f.FileId == FileId);
+            if (dbEntry != null)
+            {
+                context.PresentationFiles.Remove(dbEntry);
+                context.SaveChanges();
+            }
         }
     }
 }

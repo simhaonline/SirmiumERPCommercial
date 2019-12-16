@@ -1,0 +1,51 @@
+﻿using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace SirmiumCommercial.Models.ViewModels
+{
+    public class NewPresentationStep1ViewModel
+    {
+        public Presentation Presentation { get; set; }
+        public string UserId { get; set; }
+        public int CourseId { get; set; }
+        public int PresentationPart { get; set; }
+    }
+
+    public class NewPresentationStep2ViewModel
+    {
+        public int CourseId { get; set; }
+        public int PresentationId { get; set; }
+        public string VideoTitle { get; set; }
+        public string UserId { get; set; }
+        public string videoUrl { get; set; }
+
+        public string TitlePlaceholder { get; set; }
+    }
+
+    public class NewPresentationStep3ViewModel
+    {
+        public int CourseId { get; set; }
+        public int PresentationId { get; set; }
+        public string FileTitle { get; set; }
+        public string UserId { get; set; }
+        public int Part { get; set; }
+        public IFormFile File { get; set; }
+
+        //uploaded files
+        public IQueryable<PresentationFiles> PresentationFiles { get; set; }
+    }
+    /*
+     
+        public int FileId { get; set; }
+
+        public int PresentationId { get; set; }
+        public string Title { get; set; }
+        public int Part { get; set; }
+        public string CreatedById { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public string FilePath { get; set; } */
+}

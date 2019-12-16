@@ -99,7 +99,9 @@ namespace SirmiumCommercial.Models.ViewModels
     public class NewEditPresentation
     {
         public Presentation Presentation { get; set; }
+        public string UserId { get; set; }
         public int CourseId { get; set; }
+        public int PresentationPart { get; set; }
     }
 
     public class NewRepresentation

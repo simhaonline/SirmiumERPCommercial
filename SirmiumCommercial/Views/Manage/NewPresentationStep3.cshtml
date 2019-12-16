@@ -1,0 +1,118 @@
+﻿@model NewPresentationStep3ViewModel
+
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = "New Presentation";
+}
+
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <span class="fa fa-book-open"></span>
+            <strong>@ViewData["Title"] - Step 3</strong>
+            <span>&emsp;</span>
+        </div>
+    </div>
+</div>
+
+@if (Model.PresentationFiles != null && Model.PresentationFiles.Count() > 0)
+{
+<div class="row">
+    <div class="col-lg-12">
+        <div class="hpanel m-l-md m-r-md">
+            <div class="panel-heading">
+                Uploaded Files
+            </div>
+            <div class="panel-body">
+                @foreach (PresentationFiles pf in Model.PresentationFiles)
+                {
+                    <div class="col-lg-3">
+                        <embed src="@pf.FilePath" style="width: auto; height: auto" type="application/pdf" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="hpanel m-l-md m-r-md">
+            <div class="panel-body">
+                <div class="row text-center">
+                    <button class="btn btn-default">
+                        Step 1 - Create Presentation
+                    </button>
+                    <button class="btn btn-default">
+                        Step 2 - Record a Video
+                    </button>
+                    <button class="btn btn-primary">
+                        Step 3 - Add Files to Presentation
+                    </button>
+                </div>
+                <form asp-action="NewPresentationStep3" asp-controller="Manage" method="post"
+                      enctype="multipart/form-data">
+                    <input asp-for="CourseId" value="@Model.CourseId" hidden />
+                    <input asp-for="PresentationId" value="@Model.PresentationId" hidden />
+                    <input asp-for="UserId" value="@ViewData["Id"]" hidden />
+
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="form-group col-lg-6">
+                                <label>Title:</label>
+                                <input asp-for="FileTitle" class="form-control"
+                                       placeholder="default: @Model.FileTitle" />
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label>Part:</label>
+                                <input asp-for="Part" value="@Model.Part" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12">
+                        <div class="col-lg-2"></div>
+                        <div class="col-lg-6 text-center">
+                            <div class="text-center">
+                                <embed id="output" style="width: auto; height: auto;
+                                    border-radius: unset" />
+                            </div>
+                            <div class="m-t-sm m-b-sm text-center">
+                                <input asp-for="File" class="form-control" id="file"
+                                       onchange="loadFile(event)">
+                            </div>
+                        </div>
+                        <div class="col-lg-1 text-center">
+                            <button type="submit" class="btn btn-default text-success m-t-sm">
+                                <strong class="fa fa-plus"></strong>
+                                <strong>Add File</strong>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="text-right m-t-xs">
+                        <a href="@Url.Action("NewPresentationAbort", "Manage", new {
+                                id = ViewData["Id"], presentationId = Model.PresentationId,
+                                courseId = Model.CourseId })"
+                           class="btn btn-default text-danger">Cancel</a>
+                        <a href="@Url.Action("CourseManage", "Manage", new {
+                            id = ViewData["Id"], courseId = Model.CourseId })"
+                           type="submit" class="btn btn-default text-success">Finish</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var loadFile = function (event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('output');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    };
+</script>

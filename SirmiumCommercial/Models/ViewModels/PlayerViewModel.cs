@@ -12,6 +12,7 @@ namespace SirmiumCommercial.Models.ViewModels
         public IQueryable<Dislikes> Dislikes { get; set; }
         public IQueryable<Comment> Comments { get; set; }
         public IQueryable<AppUser> Users { get; set; }
+        public IQueryable<PresentationFiles> Files { get; set; }
     }
 
     public class VideoInfo

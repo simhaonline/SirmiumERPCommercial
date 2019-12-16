@@ -13,6 +13,8 @@ namespace SirmiumCommercial.Models
 
         IQueryable<Presentation> Presentations { get; }
 
+        IQueryable<PresentationFiles> PresentationFiles { get; }
+
         IQueryable<Representation> Representations { get; }
 
         IQueryable<CourseUsers> CourseUsers { get; }
@@ -140,6 +142,11 @@ namespace SirmiumCommercial.Models
         void RemoveUserFromGroup(int groupId, string userId);
 
         void RemoveCourseFromGroup(int groupId, int coursId);
+
+        //------ Files ---------
+        void SaveFile(PresentationFiles file);
+
+        void DeleteFile(int FileId);
 
         //void AddNotification(Notification notification);
 

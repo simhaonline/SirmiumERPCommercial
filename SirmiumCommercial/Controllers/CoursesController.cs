@@ -183,7 +183,7 @@ namespace SirmiumCommercial.Controllers
             IQueryable<AppUser> users = UsersOnCourse(course);
 
             //Course, presentations and representations videos
-            IQueryable<Video> videos = CprVideos(course);
+            IQueryable<Video> videos = CprVideos(course.CourseId);
 
             return View(new CourseViewModel
             {
@@ -196,7 +196,7 @@ namespace SirmiumCommercial.Controllers
             });
         }
 
-        public IActionResult CourseDetailsRepresentations(string id, int courseId)
+        /*public IActionResult CourseDetailsRepresentations(string id, int courseId)
         {
             ViewData["Id"] = id;
             Course course = repository.Courses
@@ -217,9 +217,9 @@ namespace SirmiumCommercial.Controllers
                 UsersOnCourse = users,
                 Videos = videos
             });
-        }
+        }*/
 
-        public IActionResult CourseDetailsUsers(string id, int courseId)
+        /*public IActionResult CourseDetailsUsers(string id, int courseId)
         {
             ViewData["Id"] = id;
             Course course = repository.Courses
@@ -240,9 +240,9 @@ namespace SirmiumCommercial.Controllers
                 UsersOnCourse = users,
                 Videos = videos
             });
-        }
+        }*/
 
-        public IActionResult CourseDetailsComments(string id, int courseId)
+       /* public IActionResult CourseDetailsComments(string id, int courseId)
         {
             ViewData["Id"] = id;
             Course course = repository.Courses
@@ -273,7 +273,7 @@ namespace SirmiumCommercial.Controllers
                 CommentUserInfo = userManager.Users
             });
         }
-
+        */
         public IActionResult Participate(string id, int courseId)
         {
             ViewData["Id"] = id;
@@ -306,24 +306,34 @@ namespace SirmiumCommercial.Controllers
             return users.AsQueryable();
         }
 
-        public IQueryable<Video> CprVideos (Course course)
+        private IQueryable<Video> CprVideos (int courseId)
         {
             List<Video> videos = new List<Video>();
-
+            Course course = repository.Courses
+                .FirstOrDefault(c => c.CourseId == courseId);
             //course video
-            videos.Add(repository.Videos.FirstOrDefault(v => v.Id == course.VideoId));
+            if(course.VideoId != 0)
+            {
+                videos.Add(repository.Videos.FirstOrDefault(v => v.Id == course.VideoId));
+            }
 
             foreach (Presentation p in course.Presentations)
             {
                 //presentation video
-                videos.Add(repository.Videos.
-                    FirstOrDefault(v => v.Id == p.VideoId));
+                if (p.VideoId != 0)
+                {
+                    videos.Add(repository.Videos.
+                        FirstOrDefault(v => v.Id == p.VideoId));
+                }
 
                 foreach (Representation r in p.Representations)
                 {
                     //representation video
-                    videos.Add(repository.Videos.
-                        FirstOrDefault(v => v.Id == r.VideoId));
+                    if (r.VideoId != 0)
+                    {
+                        videos.Add(repository.Videos.
+                            FirstOrDefault(v => v.Id == r.VideoId));
+                    }
                 }
             }
 

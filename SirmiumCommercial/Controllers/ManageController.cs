@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -14,12 +16,14 @@ namespace SirmiumCommercial.Controllers
     {
         private UserManager<AppUser> userManager;
         private IAppDataRepository repository;
+        private IHostingEnvironment hostingEnvironment;
 
         public ManageController(UserManager<AppUser> userMgr,
-            IAppDataRepository repo)
+            IAppDataRepository repo, IHostingEnvironment hosting)
         {
             userManager = userMgr;
             repository = repo;
+            hostingEnvironment = hosting;
         }
 
         public async Task<IActionResult> Index(string id, string status, 
@@ -252,37 +256,225 @@ namespace SirmiumCommercial.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> NewPresentation(string id, NewEditPresentation model)
+        public IActionResult NewPresentation (string id, int courseId)
         {
             ViewData["Id"] = id;
-            AppUser user = await userManager.FindByIdAsync(id);
 
-            if (user != null)
+            Course course = repository.Courses.FirstOrDefault(c => c.CourseId == courseId);
+
+            if(course != null)
             {
-                if (ModelState.IsValid)
+                if (course.CreatedBy.Id == id)
                 {
-                    Course course = repository.Courses
-                        .Where(c => c.CourseId == model.CourseId)
-                        .FirstOrDefault();
-                    Presentation presentation = model.Presentation;
-                    presentation.CreatedBy = user;
-                    presentation.DateAdded = DateTime.Now;
-                    presentation.DateModified = DateTime.Now;
-                    course.Presentations.Add(presentation);
-                    repository.SaveCourse(course);
-                    TempData["succMsgCM"] = "'" + presentation.Title + " 'has been saved!";
+                    return View(new NewPresentationStep1ViewModel
+                    {
+                        CourseId = course.CourseId,
+                        PresentationPart = course.Presentations.Count() + 1
+                    });
                 }
                 else
                 {
-                    TempData["errMsgCM"] = "Sorry, something went wrong!";
+                    return RedirectToAction("CourseManage", new
+                    {
+                        id,
+                        courseId
+                    });
                 }
             }
-            return RedirectToAction("CourseManage", new
+            else
             {
-                id,
+                return RedirectToAction("CourseManage", new
+                {
+                    id,
+                    courseId
+                });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult NewPresentation(NewPresentationStep1ViewModel model)
+        {
+            AppUser appUser = userManager.Users.FirstOrDefault(u => u.Id == model.UserId);
+            Course course = repository.Courses
+                .Where(c => c.CourseId == model.CourseId)
+                .FirstOrDefault();
+
+            string title = (model.Presentation.Title == null ||
+                model.Presentation.Title.Trim() == "") ?
+                course.Title + "_Presentation_" + model.Presentation.Part :
+                model.Presentation.Title;
+
+            Presentation presentation = model.Presentation;
+            presentation.CreatedBy = appUser;
+            presentation.DateAdded = DateTime.Now;
+            presentation.DateModified = DateTime.Now;
+            presentation.CreatedAt = DateTime.Now;
+            presentation.UpdatedAt = DateTime.Now;
+
+            course.UpdatedAt = DateTime.Now;
+            course.Presentations.Add(presentation);
+            repository.SaveCourse(course);
+
+            return RedirectToAction("NewPresentationStep2", new {
+                id = appUser.Id,
+                presentationId = presentation.PresentationId,
+                courseId = course.CourseId
+            });
+        }
+
+        public IActionResult NewPresentationStep2(string id, int presentationId, int courseId)
+        {
+            ViewData["Id"] = id;
+
+            Presentation presentation = repository.Presentations
+                .FirstOrDefault(p => p.PresentationId == presentationId);
+
+
+            return View(new NewPresentationStep2ViewModel
+            {
+                CourseId = courseId,
+                PresentationId = presentation.PresentationId,
+                TitlePlaceholder = presentation.Title + "_Video"
+            });
+        }
+
+        [HttpPost]
+        public IActionResult NewPresentationStep2(NewPresentationStep2ViewModel model)
+        {
+            AppUser user = userManager.Users
+                .FirstOrDefault(u => u.Id == model.UserId);
+            Presentation presentation = repository.Presentations
+                .FirstOrDefault(p => p.PresentationId == model.PresentationId);
+
+            string base64 = model.videoUrl.Substring(model.videoUrl.IndexOf(',') + 1);
+            byte[] data = Convert.FromBase64String(base64);
+
+            //Create video directory
+            string videoTitle = model.TitlePlaceholder;
+            if (model.VideoTitle != null)
+            {
+                videoTitle = (model.VideoTitle.Trim() == "") ?
+                    model.TitlePlaceholder :
+                    model.VideoTitle.Replace(" ", "_");
+            }
+
+            var dirPath = Path.Combine(hostingEnvironment.WebRootPath,
+                            $@"UsersData\{user.Id}\Presentations\");
+            System.IO.Directory.CreateDirectory(dirPath);
+            var fileName = $@"{presentation.PresentationId}.mp4";
+            var filePath = Path.Combine(dirPath, fileName);
+
+            //save presentation video 
+            Video video = new Video
+            {
+                Title = $"{presentation.Title}Video",
+                CreatedBy = model.UserId,
+                Status = "Public",
+                For = "Presentation",
+                ForId = presentation.PresentationId,
+                DateAdded = DateTime.Now,
+                VideoPath = $@"/UsersData/{user.Id}/Presentations/{presentation.PresentationId}.mp4"
+            };
+
+            repository.SaveVideo(video);
+            presentation.VideoId = repository.Videos
+                .FirstOrDefault(v => v.For == "Presentation" &&
+                v.ForId == presentation.PresentationId).Id;
+            presentation.UpdatedAt = DateTime.Now;
+            repository.SavePresentation(presentation);
+
+
+            using (var videoFile = new FileStream(filePath, FileMode.Create))
+            {
+                videoFile.Write(data, 0, data.Length);
+                videoFile.Flush();
+            }
+
+            return RedirectToAction("NewPresentationStep3", new
+            {
+                id = model.UserId,
+                presentationId = presentation.PresentationId,
                 courseId = model.CourseId
             });
+        }
+
+        public IActionResult NewPresentationStep3(string id, int presentationId, int courseId)
+        {
+            ViewData["Id"] = id;
+
+            Presentation presentation = repository.Presentations
+                .FirstOrDefault(p => p.PresentationId == presentationId);
+
+            int filePart = repository.PresentationFiles
+                .Where(f => f.PresentationId == presentationId).Count() + 1;
+
+            return View(new NewPresentationStep3ViewModel{
+                UserId = id,
+                PresentationId = presentationId,
+                FileTitle = presentation.Title + "_File_Part_" + filePart,
+                CourseId = courseId,
+                Part = filePart
+            });
+        }
+
+        [HttpPost]
+        public IActionResult NewPresentationStep3(NewPresentationStep3ViewModel model)
+        {
+            AppUser user = userManager.Users.FirstOrDefault(u => u.Id == model.UserId);
+            Presentation presentation = repository.Presentations
+                .FirstOrDefault(p => p.PresentationId == model.PresentationId);
+            int filePart = repository.PresentationFiles
+                .Where(f => f.PresentationId == model.PresentationId).Count() + 1;
+
+            //Create user directory
+            string dirPath = Path.Combine(hostingEnvironment.WebRootPath, $@"UsersData\{user.Id}\Presentations\");
+            System.IO.Directory.CreateDirectory(dirPath);
+
+            string fileName = (model.FileTitle == null || model.FileTitle.Trim() == "") ?
+                presentation.Title + "_File_Part_" + filePart : model.FileTitle;
+
+            //save presentation file 
+            PresentationFiles file = new PresentationFiles
+            {
+                Title = fileName,
+                CreatedById = user.Id,
+                Part = model.Part,
+                PresentationId = presentation.PresentationId,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
+            };
+            repository.SaveFile(file);
+            file.FilePath = $@"/UsersData/{user.Id}/Presentations/{file.FileId}.pdf";
+            repository.SaveFile(file);
+
+            string filePath = Path.Combine(dirPath, file.FileId.ToString()+".pdf");
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                model.File.CopyTo(stream);
+            }
+
+            ViewData["Id"] = user.Id;
+            filePart = repository.PresentationFiles
+                .Where(f => f.PresentationId == model.PresentationId).Count() + 1;
+
+            return View(new NewPresentationStep3ViewModel
+            {
+                UserId = user.Id,
+                PresentationId = presentation.PresentationId,
+                FileTitle = presentation.Title + "_File_Part_" + filePart,
+                CourseId = model.CourseId,
+                Part = filePart,
+                PresentationFiles = repository.PresentationFiles
+                .Where(f => f.PresentationId == presentation.PresentationId)
+            });
+        }
+
+        public IActionResult NewPresentationAbort(string id, int presentationId,
+            int courseId)
+        {
+            repository.DeletePresentation(presentationId);
+
+            return RedirectToAction("CourseManage", new { id, courseId });
         }
 
         public IActionResult EditPresentation(string id, NewEditPresentation model)
