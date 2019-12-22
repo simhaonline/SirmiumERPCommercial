@@ -27,7 +27,14 @@ namespace SirmiumCommercial.Components
             AppUser user = userManager.Users.FirstOrDefault(u => u.Id == userId);
 
             IQueryable<AppUser> users = userManager.Users
-                .Where(u => u.CompanyName == user.CompanyName && u.Id != userId);
+                    .Where(u => u.CompanyName == user.CompanyName || 
+                    u.CompanyName == null || u.CompanyName == "" && u.Id != userId);
+
+            if (user.CompanyName == null || user.CompanyName == "")
+            {
+                users = userManager.Users
+                .Where(u => u.Id != userId);
+            }
 
             List<IndexChat> chats = new List<IndexChat>();
             int totalNewMsg = 0;
