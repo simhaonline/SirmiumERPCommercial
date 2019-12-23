@@ -1,0 +1,12 @@
+﻿@model FileSearchViewModel
+
+    <form class="navbar-form-custom pull-right" asp-action="SearchFiles"
+          asp-controller="Files"
+          method="post">
+        <div class="form-group">
+            <input asp-for="UserId" value="@Model.UserId" hidden />
+            <input asp-for="KeyWord" type="text" placeholder="&#xF002; Search" class="form-control"
+                   style="font-family:Arial, FontAwesome; font-size: 20px">
+            <button type="submit" hidden></button>
+        </div>
+    </form>

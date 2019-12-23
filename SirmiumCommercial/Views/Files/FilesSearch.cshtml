@@ -1,0 +1,153 @@
+﻿@model FileSearchViewModel
+
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = "Files Search";
+}
+
+@section Styles {
+    <environment names="Development,Staging,Production">
+    </environment>
+    <style type="text/css">
+        .file-window {
+            width: 80%;
+            position: fixed;
+            top: 10%;
+            left: 5%;
+            background: #fff;
+            padding: 10px;
+            border: 1px solid rgba(0, 0, 0, .4);
+            opacity: 1;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, .6);
+            transition: all 0.3s linear 0s;
+            z-index: 2;
+        }
+
+        .file-window-header {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: left;
+            color: #6a6c6f;
+        }
+
+        .freeze-layer-files {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .3);
+            z-index: 1;
+        }
+    </style>
+}
+
+<style>
+</style>
+
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <span class="fa fa-search"></span>
+            <strong>@ViewData["Title"]</strong>
+            <span>&emsp;</span>
+            @await Component.InvokeAsync("FileSearch", new { id = ViewData["Id"] })
+        </div>
+    </div>
+</div>
+
+
+@if (Model.TotalFiles > 0)
+{
+    <div class="row m-l-md m-r-md">
+        <div class="col-lg-12">
+            <div class="hpanel m-b-xs">
+                <div class="panel-heading">
+                    <h4 class="text-muted font-bold">@Model.TotalFiles results found</h4>
+                </div>
+                <div class="panel-body" style="padding-bottom: 5px;">
+                    <div class="row">
+                        @foreach (PresentationFiles file in Model.Files)
+                        {
+                            <div class="col-lg-4">
+                                <div class="hpanel contact-panel hgreen">
+                                    <div class="panel-body" style="padding: 0px;">
+                                        <div class="row text-center">
+                                            <h5 class="text-muted">@file.Title</h5>
+                                            <a onclick="showFile('@file.FilePath')">
+                                                <span style="font-size: x-large" class="fa fa-expand"></span>
+                                            </a>
+                                        </div>
+
+                                        <div class="row text-center">
+                                            <embed src="@file.FilePath" style="width: 90%; height: 300px"
+                                                   type="application/pdf" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div search-page-model="@Model.PageInfo" user-id="@ViewData["Id"]" page-action="SearchFiles"
+         key-word="@ViewData["KeyWord"]"
+         page-classes-enabled="true"
+         page-class="btn" page-class-normal="btn-default"
+         page-class-selected="btn-primary" class="btn-group pull-left m-sm">
+    </div>
+}
+else
+{
+    <div class="row m-l-md m-r-md">
+        <div class="col-lg-12">
+            <div class="hpanel m-b-xs">
+                <div class="panel-heading">
+                    <h4 class="text-muted font-bold">0 results found</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<div id="freezeLayer" class="freeze-layer-files" style="display: none"></div>
+
+<div id="file-fullscreen" class="file-window" style="display: none">
+    <div class="file-window-header">
+        <a class="pull-right" onclick="closeFile();">
+            <span class="fa fa-close"></span>
+        </a>
+    </div>
+    <div id="file-window-body" style="background-color: none;">
+    </div>
+</div>
+<!--TODO: On click on file --- full screen-->
+
+<div>
+    <a onclick=""></a>
+    <embed id="file-embed" style="width: auto; height: auto" type="application/pdf" />
+</div>
+
+<script type="text/javascript">
+    function showFile(filePath) {
+        var freezeLayer = document.getElementById("freezeLayer");
+        var fullscreen = document.getElementById("file-fullscreen");
+        var fileWindowBody = $("#file-window-body");
+        fileWindowBody.html(`
+<embed id="file-embed" src="` + filePath + `"
+style="width: 100%; height: 400px" type="application/pdf" />
+`);
+        fullscreen.style.display = "";
+        freezeLayer.style.display = "";
+    };
+
+    function closeFile() {
+        var freezeLayer = document.getElementById("freezeLayer");
+        var fullscreen = document.getElementById("file-fullscreen");
+        fullscreen.style.display = "none";
+        freezeLayer.style.display = "none";
+    };
+</script>

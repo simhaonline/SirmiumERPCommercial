@@ -49,6 +49,7 @@
             <span class="fa fa-files-o"></span>
             <strong>@ViewData["Title"]</strong>
             <span>&emsp;</span>
+            @await Component.InvokeAsync("FileSearch", new { id = ViewData["Id"] })
         </div>
     </div>
 </div>
@@ -76,29 +77,31 @@
                         </a>
                     </div>
                     <div class="panel-body" style="padding-bottom: 5px;">
-                        <div class="row">
+                        <div class="row" id="moreFiles-@fvm.Course.CourseId">
                             @foreach (PresentationFiles pf in fvm.Files)
                             {
-                                @*@<div class="col-lg-3 m-b-sm m-l-xs">
-                                        <embed src="@pf.FilePath" style="width: auto; height: auto" type="application/pdf" />
-                                    </div>*@
-                            <div class="col-lg-4">
-                                <div class="hpanel contact-panel hgreen">
-                                    <div class="panel-body" style="padding: 0px;">
-                                        <div class="row text-center">
-                                            <a onclick="showFile('@pf.FilePath')">
-                                                <span style="font-size: x-large" class="fa fa-expand"></span>
-                                            </a>
-                                        </div>
+                                <div class="col-lg-4">
+                                    <div class="hpanel contact-panel hgreen">
+                                        <div class="panel-body" style="padding: 0px;">
+                                            <div class="row text-center">
+                                                <h5 class="text-muted">@pf.Title</h5>
+                                                <a onclick="showFile('@pf.FilePath')">
+                                                    <span style="font-size: x-large" class="fa fa-expand"></span>
+                                                </a>
+                                            </div>
 
-                                        <div class="row text-center">
-                                            <embed src="@pf.FilePath" style="width: 90%; height: 300px"
-                                                   type="application/pdf" />
+                                            <div class="row text-center">
+                                                <embed src="@pf.FilePath" style="width: 90%; height: 300px"
+                                                       type="application/pdf" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                             }
+                            <div page-model="@fvm.CoursePageInfo" course-id="@fvm.Course.CourseId" page-classes-enabled="true"
+                                 page-class="btn" page-class-normal="btn-default"
+                                 page-class-selected="btn-primary" class="btn-group pull-left m-sm">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -143,5 +146,11 @@
         var fullscreen = document.getElementById("file-fullscreen");
         fullscreen.style.display = "none";
         freezeLayer.style.display = "none";
+    };
+
+    function moreFiles(courseId, currentPage) {
+        var url = '@Url.Action("CourseFiles", "Files")';
+        var moreFilesId = "#moreFiles-" + courseId;
+        $(moreFilesId).load(url, { courseId: courseId, currentPage: currentPage });
     };
 </script>
