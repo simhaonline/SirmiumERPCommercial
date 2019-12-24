@@ -1,0 +1,25 @@
+﻿@model ReportingNavigationViewModel
+
+@if (Model.IsAdminOrManager)
+{
+    <li class="@Html.IsSelected(action: "Index")">
+        <a href="@Url.Action("Index", "Reporting", new { id = ViewData["Id"] })">
+            <span class="@Html.IsSelected(action: "Index")">
+                Company Reports
+            </span>
+        </a>
+    </li>
+}
+@if (Model.IsUser)
+{
+    <li class="@Html.IsSelected(action: "MyProgress")">
+        <a href="@Url.Action("MyProgress", "Reporting", new { id = ViewData["Id"] })">
+            <span class="@Html.IsSelected(action: "MyProgress")">
+                My Progress
+            </span>
+        </a>
+    </li>
+}
+
+
+

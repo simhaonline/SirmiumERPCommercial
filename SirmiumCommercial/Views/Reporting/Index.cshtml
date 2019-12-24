@@ -2,86 +2,44 @@
 
 @{
     Layout = "_UserLayout";
-    ViewData["Title"] = "Reporting";
+    ViewData["Title"] = "Course Reports";
 }
+
 @section Styles {
     <environment names="Development,Staging,Production">
-        <link rel="stylesheet" href="~/lib_local/circular_progress_bar/css-circular-prog-bar.css" />
+        <link rel="stylesheet" href="~/homer/lib_local/footable/css/footable.core.min.css" />
     </environment>
 }
 
-@await Component.InvokeAsync("ReportingAllCourses",
-    new { userId = ViewData["Id"] })
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <span class="fa fa-bar-chart"></span>
+            <strong>@ViewData["Title"]</strong>
+        </div>
+    </div>
+</div>
 
-<div class="content" style="padding-top: 0px">
-    <div class="row">
-        <div class="col-lg-7">
-            <div class="hpanel">
-                <div class="panel-heading">
-                    <div class="panel-tools">
-                        <a class="showhide"><i class="fa fa-chevron-up"></i></a>
-                        <a class="closebox"><i class="fa fa-times"></i></a>
-                    </div>
-                    Line type chart
-                </div>
-                <div class="panel-body">
-                    <div>
-                        <canvas id="lineOptions" height="200"></canvas>
-                    </div>
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel m-b-xs">
+            <div class="panel-heading">
+                <div class="panel-tools">
+                    <a class="showhide"><i class="fa fa-chevron-up"></i></a>
+                </div>@**
+                <a href="@Url.Action("CourseDetails", "Courses",
+                                    new { id = ViewData["Id"],
+                                    courseId = content.Course.CourseId})">
+                    <span style="font-size: 18px">
+                        <strong class="@content.Course.AwardIcon" style="font-size: 25px"></strong>&emsp;
+                        @content.Course.Title
+                    </span>
+                </a>*@
+            </div>
+            <div class="panel-body" style="padding-bottom: 5px;">
+                <div class="row">
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-@section Scripts {
-    <environment names="Development,Staging,Production">
-        <script src="~/homer/lib_local/Chart.js/Chart.min.js"></script>
-    </environment>
-
-    <script type="text/javascript">
-
-        $(function () {
-
-
-            /**
-             * Options for Line chart
-             */
-
-            var lineData = {
-                labels: ["Course1", "Course2"],
-                datasets: [
-
-                    {
-                        label: "Part 1",
-                        backgroundColor: 'rgba(98,203,49, 0.5)',
-                        pointBorderWidth: 1,
-                        pointBackgroundColor: "rgba(98,203,49,1)",
-                        pointRadius: 3,
-                        pointBorderColor: '#ffffff',
-                        borderWidth: 1,
-                        data: [5, 4]
-                    },
-                    {
-                        label: "Part 2",
-                        backgroundColor: 'rgba(220,220,220,0.5)',
-                        borderColor: "rgba(220,220,220,0.7)",
-                        pointBorderWidth: 1,
-                        pointBackgroundColor: "rgba(220,220,220,1)",
-                        pointRadius: 3,
-                        pointBorderColor: '#ffffff',
-                        borderWidth: 1,
-                        data: [5, 0]
-                    }
-                ]
-            };
-
-            var lineOptions = {
-                responsive: true
-            };
-
-            var ctx = document.getElementById("lineOptions").getContext("2d");
-            new Chart(ctx, { type: 'line', data: lineData, options: lineOptions });
-        })
-    </script>
-}

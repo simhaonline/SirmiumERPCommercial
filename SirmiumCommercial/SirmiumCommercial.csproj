@@ -83,7 +83,13 @@
     <Content Update="Views\Recorder\Index2.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Reporting\MyProgress.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Shared\Components\HeaderChat\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Shared\Components\UserLeftNavigationReporting\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Shared\Components\UserLeftNavigationManage\Default.cshtml">
@@ -117,6 +123,10 @@
 
   <ItemGroup>
     <None Include="wwwroot\UsersData\b6a0435b-8716-4479-8086-01f902b29097\profilePhoto.jpeg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Views\Reporting\Components\" />
   </ItemGroup>
 
 </Project>

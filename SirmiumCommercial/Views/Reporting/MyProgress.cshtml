@@ -1,0 +1,226 @@
+﻿@model MyProgressViewModel
+
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = "My Progress";
+}
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/homer/lib_local/footable/css/footable.core.min.css" />
+    </environment>
+}
+
+
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <span class="fa fa-tasks"></span>
+            <strong>@ViewData["Title"]</strong>
+        </div>
+    </div>
+</div>
+
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel m-b-xs">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-4 text-center">
+                        <h5 class="text-muted">Started courses:</h5>
+                        <h4>@Model.Courses.Count()</h4>
+                        <h5 class="text-muted">Finished courses: </h5>
+                        <h4>@Model.Courses.Where(c => c.CompletedPresentations > 0 &&
+                                c.CompletedPresentations == c.Presentations.Count()).Count()</h4>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <h5 class="text-muted">Views: </h5>
+                        <h4>@Model.Views</h4>
+                        <h5 class="text-muted">Representations: </h5>
+                        <h4>@Model.Representations</h4>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <h5 class="text-muted">Average rating:</h5>
+                        <h4>
+                            @Html.Raw(Model.Rating(Model.AvgRating))
+                        </h4>
+                        <h5 class="text-muted">Awards: </h5>
+                        @foreach (MyProgressCourseInfo course in Model.Courses.Where(c => c.CompletedPresentations > 0 &&
+                                c.CompletedPresentations == c.Presentations.Count()).Take(3))
+                            {
+                            <a href="@Url.Action("CourseDetails", "Courses",
+                                                 new { id = ViewData["Id"],
+                                                 courseId = course.Course.CourseId
+                                                 })" style="margin: 0px;">
+                                <span class="@course.Course.AwardIcon" style="font-size: 30px"
+                                      data-toggle='tooltip' data-placement='bottom'
+                                      title="@course.Course.Title"></span>
+                            </a>
+                            }
+                            @if (Model.Courses.Where(c => c.CompletedPresentations > 0 &&
+                                c.CompletedPresentations == c.Presentations.Count()).Count() > 3)
+                            {
+                            <span class="dropdown">
+                                <a class="dropdown-toggle btn btn-circle"
+                                   style="width: 30px; background: #bbbbbb"
+                                   data-toggle='dropdown' href="#">
+                                    <span class="pe-7s-more"></span>
+                                </a>
+                                <span class="dropdown-menu hdropdown
+                                                          bigmenu animated flipInX p-xs"
+                                      style="padding: 0px;" id="all-users">
+                                    @foreach (MyProgressCourseInfo course1 in Model.Courses.Where(c => c.CompletedPresentations > 0 &&
+                                c.CompletedPresentations == c.Presentations.Count()).Skip(3))
+                                        {
+
+                                    <a href="@Url.Action("CourseDetails", "Courses",
+                                                 new { id = ViewData["Id"],
+                                                 courseId = course1.Course.CourseId
+                                                 })" style="margin: 0px;">
+                                        <span class="@course1.Course.AwardIcon" style="font-size: 30px"
+                                              data-toggle='tooltip' data-placement='bottom'
+                                              title="@course1.Course.Title"></span>
+                                    </a>
+                                    <br />
+                                        }
+                                </span>
+                            </span>
+                            }
+                        <h4></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel m-b-xs">
+            <div class="panel-body">
+                <input type="text" class="form-control input-sm m-b-md" id="filter" placeholder="Search in table">
+                <table id="example1" class="footable table table-stripped toggle-arrow-tiny" data-page-size="8" data-filter=#filter>
+                    <thead>
+                        <tr>
+                            <th data-toggle="true">Course</th>
+                            <th>Progress</th>
+                            <th>Rating</th>
+                            <th></th>
+                            <th data-hide="all">Presentations</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (MyProgressCourseInfo course in Model.Courses)
+                        {
+                            <tr>
+                                <td>@course.Course.Title</td>
+                                <td style="font-size: 20px;">
+                                    <span id="sparkline-@course.Course.CourseId"></span>
+
+                                    <input value="@course.CompletedPresentations"
+                                           id="completed-@course.Course.CourseId" hidden />
+                                    <input value="@course.Presentations.Count()"
+                                           id="total-@course.Course.CourseId" hidden />
+                                    <input value="@course.Course.CourseId" class="courseId" hidden />
+                                </td>
+                                <td>
+                                    @Html.Raw(Model.Rating(course.AvgRating))
+                                </td>
+                                <td class="text-center">
+                                    <a href="@Url.Action("CourseDetails", "Courses",
+                                                new { id = ViewData["Id"],
+                                                    courseId = course.Course.CourseId })"
+                                       class="btn">
+                                        <span class="text-info fa fa-info"></span>
+                                        <span>Info</span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Part</th>
+                                                <th>Title</th>
+                                                <th>Complited</th>
+                                                <th>Rating</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (MyProgressPresentationsInfo p in course.Presentations)
+                                            {
+                                                <tr>
+                                                    <td class="text-center">@p.Presentation.Part</td>
+                                                    <td class="text-center">@p.Presentation.Title</td>
+                                                    <td class="text-center">
+                                                        <span class="@Model.IsPresentationCompleted(p.Rating)"></span>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @Html.Raw(Model.Rating(p.Rating))
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5">
+                                <ul class="pagination pull-right"></ul>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+        <script src="~/homer/lib_local/footable/dist/footable.all.min.js"></script>
+        <script src="~/homer/lib/jquery-flot/jquery.flot.js"></script>
+        <script src="~/homer/lib/jquery-flot/jquery.flot.resize.js"></script>
+        <script src="~/homer/lib/jquery-flot/jquery.flot.pie.js"></script>
+        <script src="~/homer/lib/flot.curvedlines/curvedLines.js"></script>
+        <script src="~/homer/lib/flot-spline/js/jquery.flot.spline.min.js"></script>
+        <script src="~/homer/lib/peity/jquery.peity.min.js"></script>
+    </environment>
+
+    <script type="text/javascript">
+
+        $(function () {
+
+            // Initialize Example 1
+            $('#example1').footable();
+
+            // Initialize Example 2
+            $('#example2').footable();
+
+        });
+
+            var courseIds = document.getElementsByClassName('courseId');
+            var i = 0;
+
+            while (courseIds[i] != null) {
+                console.log(courseIds[i].value);
+                var sparklineId = "#sparkline-" + courseIds[i].value;
+                var completedId = "completed-" + courseIds[i].value;
+                var totalId = "total-" + courseIds[i].value;
+
+                var completed = document.getElementById(completedId).value;
+                var total = document.getElementById(totalId).value;
+
+                $(sparklineId).sparkline([completed, total-completed], {
+                    type: 'pie',
+                    sliceColors: ['#62cb31', '#b3b3b3', '#e4f0fb']
+                });
+                i++;
+            }
+
+    </script>
+}

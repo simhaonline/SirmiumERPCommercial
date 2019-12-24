@@ -104,12 +104,14 @@
             </ul>
         </li>
         <li class="@Html.IsSelected(controller: "Reporting")">
-            <a href="@Url.Action("Index", "Reporting", new { id = ViewData["Id"] })">
-                <span class="fa fa-bar-chart @Html.IsSelected(controller: "Reporting",
-                                       action: "Index")"></span>
-                <span class="nav-label @Html.IsSelected(controller: "Reporting",
-                                       action: "Index")">Reporting</span>
+            <a href="#">
+                <span class="fa fa-bar-chart @Html.IsSelected(controller: "Reporting")"></span>
+                <span class="nav-label @Html.IsSelected(controller: "Reporting")">Reports</span>
+                <span class="fa arrow @Html.IsSelected(controller: "Reporting")"></span>
             </a>
+            <ul class="nav nav-second-level">
+                @await Component.InvokeAsync("UserLeftNavigationReporting", new { userId = ViewData["Id"] })
+            </ul>
         </li>
 
         @await Component.InvokeAsync("UserLeftNavigation", new { userId = ViewData["Id"] })
