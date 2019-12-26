@@ -83,6 +83,12 @@
     <Content Update="Views\Recorder\Index2.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Reporting\AllGroupsReports.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Reporting\GroupFullReport.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Reporting\UserProgress.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

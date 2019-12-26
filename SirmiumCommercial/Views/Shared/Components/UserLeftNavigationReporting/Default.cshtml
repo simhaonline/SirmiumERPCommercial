@@ -9,6 +9,13 @@
             </span>
         </a>
     </li>
+    <li class="@Html.IsSelected(action: "AllGroupsReports")">
+        <a href="@Url.Action("AllGroupsReports", "Reporting", new { id = ViewData["Id"] })">
+            <span class="@Html.IsSelected(action: "AllGroupsReports")">
+                Groups Reports
+            </span>
+        </a>
+    </li>
 }
 @if (Model.IsUser)
 {

@@ -213,4 +213,142 @@ namespace SirmiumCommercial.Models.ViewModels
         public int TotalPages =>
         (int)Math.Ceiling((decimal)TotalPresentations / PresentationsPerPage);
     }
+
+    //group reports
+    public class GroupCourseReportsPageViewModel
+    {
+        public IQueryable<CourseReportingViewModel> ViewModel { get; set; }
+        public Group Group { get; set; }
+        public CourseReportsPageInfo PageInfo { get; set; }
+
+        public string UserRating(double avgRating)
+        {
+            var returnStr = "";
+
+            if (avgRating == 0)
+            {
+                returnStr += "<strong style='color: #868686'>Not Rated Yet </strong>";
+            }
+            else
+            {
+                for (var i = 0; i < Math.Round(avgRating, MidpointRounding.ToEven); i++)
+                {
+                    returnStr += "<span class='fa fa-star text-warning'></span>";
+                }
+                if (avgRating < 5)
+                {
+                    for (var i = Math.Round(avgRating, MidpointRounding.ToEven); i < 5; i++)
+                    {
+                        returnStr += "<span class='fa fa-star text-muted'></span>";
+                    }
+                }
+                returnStr += $"<span>&emsp; {String.Format("{0:0.0}", avgRating)} / 5.0 </span>";
+            }
+
+            return returnStr;
+        }
+
+        public string UserProgress(double totalPresentation, double userReprese)
+        {
+            if (totalPresentation == 0)
+            {
+                return "No Presentation Yet";
+            }
+            else
+            {
+                double progress = 100 / totalPresentation * userReprese;
+                return progress.ToString("0.0") + "%";
+            }
+        }
+
+        public string userPhoto(string path)
+        {
+            return (path == null) ? "/defaultAvatar.png" : $"/UsersData/{path}";
+        }
+
+        public string groupPhoto(string path)
+        {
+            return (path == null) ? "/defaultGroup.png" : $"/UsersData/Groups/{path}";
+        }
+    }
+
+    public class GroupReportsPageViewModel
+    {
+        public IQueryable<GroupReportsInfo> GroupInfo { get; set; }
+        public AllGroupPageInfo PageInfo { get; set; }
+
+
+        public string groupPhoto(string path)
+        {
+            return (path == null) ? "/defaultGroup.png" : $"/UsersData/Groups/{path}";
+        }
+
+        public string UserRating(double avgRating)
+        {
+            var returnStr = "";
+
+            if (avgRating == 0)
+            {
+                returnStr += "<strong style='color: #868686'>Not Rated Yet </strong>";
+            }
+            else
+            {
+                for (var i = 0; i < Math.Round(avgRating, MidpointRounding.ToEven); i++)
+                {
+                    returnStr += "<span class='fa fa-star text-warning'></span>";
+                }
+                if (avgRating < 5)
+                {
+                    for (var i = Math.Round(avgRating, MidpointRounding.ToEven); i < 5; i++)
+                    {
+                        returnStr += "<span class='fa fa-star text-muted'></span>";
+                    }
+                }
+                returnStr += $"<span>&emsp; {String.Format("{0:0.0}", avgRating)} / 5.0 </span>";
+            }
+
+            return returnStr;
+        }
+
+        public string UserProgress(double totalPresentation, double userReprese)
+        {
+            if (totalPresentation == 0)
+            {
+                return "No Presentation Yet";
+            }
+            else
+            {
+                double progress = 100 / totalPresentation * userReprese;
+                return progress.ToString("0.0") + "%";
+            }
+        }
+
+        public string userPhoto(string path)
+        {
+            return (path == null) ? "/defaultAvatar.png" : $"/UsersData/{path}";
+        }
+    }
+
+    public class GroupReportsInfo
+    {
+        public Group Group { get; set; }
+        public IQueryable<GroupUsersInfo> UsersInfos { get; set; }
+    }
+
+    public class GroupUsersInfo
+    {
+        public AppUser User { get; set; }
+        public double AvgRating { get; set; }
+        public int TotalRepresentations { get; set; }
+        public int TotalPresentations { get; set; }
+    }
+
+    public class AllGroupPageInfo
+    {
+        public int TotalGroups { get; set; }
+        public int GroupsPerPage { get; set; }
+        public int CurrentPage { get; set; }
+        public int TotalPages =>
+        (int)Math.Ceiling((decimal)TotalGroups / GroupsPerPage);
+    }
 }

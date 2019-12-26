@@ -15,6 +15,7 @@ namespace SirmiumCommercial.Controllers
         private UserManager<AppUser> userManager;
         public int CourseReportsPageSize = 2;
         public int PresentationReportsPageSize = 2;
+        public int AllGroupsPageSize = 2;
 
         public ReportingController (UserManager<AppUser> userMgr, 
             IAppDataRepository repo)
@@ -214,6 +215,164 @@ namespace SirmiumCommercial.Controllers
 
 
             return View(myProgress);
+        }
+
+        public IActionResult AllGroupsReports (string id, int currentPage = 1)
+        {
+            ViewData["Id"] = id;
+
+            AppUser currentUser = userManager.Users
+                .FirstOrDefault(u => u.Id == id);
+
+            List<GroupReportsInfo> groups = new List<GroupReportsInfo>();
+            foreach(Group group in repository.Groups
+                .Where(g => g.CreatedBy.CompanyName == currentUser.CompanyName))
+            {
+                List<GroupUsersInfo> usersInfo = new List<GroupUsersInfo>();
+                foreach(GroupUsers gu in repository.GroupUsers
+                    .Where(g => g.GroupId == group.GroupId))
+                {
+                    AppUser user = userManager.Users.FirstOrDefault(u => u.Id == gu.AppUserId);
+                    GroupUsersInfo uInfo = new GroupUsersInfo
+                    {
+                        User = user
+                    };
+                    double totalRepresentations = 0;
+                    double rating = 0;
+                    int totalPresentation = 0;
+
+                    foreach (GroupCourses gc in repository.GroupCourses
+                        .Where(g => g.GroupId == group.GroupId))
+                    {
+                        Course course = repository.Courses.FirstOrDefault(c => c.CourseId == gc.CourseId);
+
+                        if(repository.CourseUsers.FirstOrDefault(c => c.CourseId == course.CourseId
+                                && c.AppUserId == user.Id) != null)
+                        {
+                            foreach (Presentation presentation in course.Presentations)
+                            {
+                                totalPresentation++;
+                                Representation repres = UserRepresentation(user.Id, presentation.PresentationId);
+                                if (repres != null)
+                                {
+                                    totalRepresentations += (repres.Rating > 0) ? 1 : 0;
+                                    rating += repres.Rating;
+                                }
+                            }
+
+                        }
+                    }
+
+                    double avgRating = (totalRepresentations > 0) ? rating / totalRepresentations : 0;
+                    uInfo.AvgRating = avgRating;
+                    uInfo.TotalPresentations = totalPresentation;
+                    uInfo.TotalRepresentations = (int)totalRepresentations;
+                    usersInfo.Add(uInfo);
+                }
+
+                GroupReportsInfo groupInfo = new GroupReportsInfo
+                {
+                    Group = group,
+                    UsersInfos = usersInfo.AsQueryable().OrderByDescending(u => u.AvgRating)
+                };
+                groups.Add(groupInfo);
+            }
+
+            return View(new GroupReportsPageViewModel
+            {
+                GroupInfo = groups.AsQueryable()
+                    .OrderBy(g => g.Group.Name)
+                    .Skip((currentPage - 1) * AllGroupsPageSize)
+                    .Take(AllGroupsPageSize),
+                PageInfo = new AllGroupPageInfo
+                {
+                    CurrentPage = currentPage,
+                    GroupsPerPage = AllGroupsPageSize,
+                    TotalGroups = groups.Count()
+                }
+            });
+        }
+
+        public IActionResult GroupFullReport(string id, int groupId, int currentPage = 1)
+        {
+            ViewData["Id"] = id;
+
+            Group group = repository.Groups.FirstOrDefault(g => g.GroupId == groupId);
+
+            AppUser currentUser = userManager.Users.FirstOrDefault(u => u.Id == id);
+
+            List<CourseReportingViewModel> courses = new List<CourseReportingViewModel>();
+            foreach (GroupCourses gc in repository.GroupCourses.Where(g => g.GroupId == groupId))
+            {
+                Course course = repository.Courses.FirstOrDefault(c => c.CourseId == gc.CourseId);
+                if (course.CreatedBy != null)
+                {
+                    if (course.CreatedBy.CompanyName == currentUser.CompanyName)
+                    {
+                        CourseReportingViewModel course1 = new CourseReportingViewModel
+                        {
+                            Course = course
+                        };
+
+                        //users on course
+                        List<UserRepresentationsInfo> usersInfo = new List<UserRepresentationsInfo>();
+                        foreach (CourseUsers courseUser in repository.CourseUsers
+                            .Where(cu => cu.CourseId == course.CourseId))
+                        {
+                            if(repository.GroupUsers.Any(gu => gu.GroupId == groupId &&
+                                gu.AppUserId == courseUser.AppUserId))
+                            {
+                                double userRating = 0;
+                                double userRepres = 0;
+                                foreach (Presentation presentation in course.Presentations)
+                                {
+                                    foreach (Representation representation in presentation.Representations)
+                                    {
+                                        if (representation.CreatedBy != null)
+                                        {
+                                            if (representation.CreatedBy.Id != null ||
+                                                representation.CreatedBy.Id != "")
+                                            {
+                                                if (representation.CreatedBy.Id == courseUser.AppUserId)
+                                                {
+                                                    userRating += (representation.Rating > 0) ?
+                                                        representation.Rating : 0;
+                                                    userRepres += (representation.Rating > 0) ? 1 : 0;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                double avgRating = (userRepres > 0) ? userRating / userRepres : 0;
+                                UserRepresentationsInfo userInfo = new UserRepresentationsInfo
+                                {
+                                    User = userManager.Users.FirstOrDefault(u => u.Id == courseUser.AppUserId),
+                                    AvgRating = avgRating,
+                                    TotalRepresentations = (int)userRepres
+                                };
+                                usersInfo.Add(userInfo);
+                            }
+                        }
+                        course1.UsersOnCourse = usersInfo.AsQueryable();
+                        courses.Add(course1);
+                    }
+                }
+            }
+
+            return View(new GroupCourseReportsPageViewModel
+            {
+                Group = group,
+                ViewModel = courses.AsQueryable()
+                    .OrderBy(c => c.Course.Title)
+                    .Skip((currentPage - 1) * CourseReportsPageSize)
+                    .Take(CourseReportsPageSize),
+                PageInfo = new CourseReportsPageInfo
+                {
+                    CurrentPage = currentPage,
+                    CoursesPerPage = CourseReportsPageSize,
+                    TotalCourses = courses.Count()
+                }
+            });
         }
 
         private Representation UserRepresentation (string id, int presentationId)

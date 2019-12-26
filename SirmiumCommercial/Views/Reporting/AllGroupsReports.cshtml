@@ -1,0 +1,202 @@
+﻿@model GroupReportsPageViewModel
+
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = "Groups Reports";
+    var tableNumber = 1;
+}
+
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/homer/lib_local/footable/css/footable.core.min.css" />
+    </environment>
+}
+
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <span class="fa fa-bar-chart"></span>
+            <strong>@ViewData["Title"]</strong>
+        </div>
+    </div>
+</div>
+
+@foreach (GroupReportsInfo viewModel in Model.GroupInfo)
+{
+    <div class="row m-l-md m-r-md">
+        <div class="col-lg-12">
+            <div class="hpanel m-b-xs">
+                <div class="panel-heading">
+                    <div class="panel-tools">
+                        <a class="btn" href="@Url.Action("GroupFullReport", "Reporting",
+                                            new { id = ViewData["Id"],
+                                            groupId = viewModel.Group.GroupId})">
+                            <span class="fa fa-bar-chart text-primary"></span>
+                            <span class="text-muted">Group Full Report</span>
+                        </a>
+                        <a class="showhide"><i class="fa fa-chevron-up"></i></a>
+                    </div>
+                    <a href="@Url.Action("GroupDetails", "Groups", new { id = ViewData["Id"],
+                            groupId = viewModel.Group.GroupId})">
+                        <img class="img-circle" style="width: 30px; height: 30px"
+                             src="@Model.groupPhoto(viewModel.Group.GroupPhotoPath)" />
+                        <span style="font-size: 20px">
+                            @viewModel.Group.Name
+                        </span>
+                    </a>
+                    <span>&emsp;</span>
+                </div>
+                <div class="panel-body" style="padding-bottom: 5px;">
+                    <div class="row p-xxs">
+                        <input type="text" class="form-control input-sm m-b-md" id="filter" placeholder="Search in table">
+                        <table id="table-@tableNumber" class="footable table table-stripped toggle-arrow-tiny" data-page-size="8" data-filter=#filter>
+
+                            <thead>
+                                <tr>
+                                    <th id="photo-@tableNumber"></th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>UserName</th>
+                                    <th>Progres</th>
+                                    <th>Rating</th>
+                                    <th id="info-@tableNumber"></th>
+                                </tr>
+                            </thead>
+                            @{
+                                tableNumber += 1;
+                            }
+                            <tbody>
+                                @foreach (GroupUsersInfo user in viewModel.UsersInfos)
+                                {
+                                    <tr>
+                                        <td>
+                                            <img class="img-circle" style="width: 30px; height: 30px"
+                                                 src="@Model.userPhoto(user.User.ProfilePhotoUrl)" />
+                                        </td>
+                                        <td>@user.User.FirstName</td>
+                                        <td>@user.User.LastName</td>
+                                        <td>@user.User.UserName</td>
+                                        <td>
+                                            <!-- id = sparkline-groupId-userId -->
+                                            <span style="font-size: 20px;"
+                                                  id="sparkline-@viewModel.Group.GroupId-@user.User.Id"></span>
+                                            @Model.UserProgress(user.TotalPresentations * 1.0, user.TotalRepresentations * 1.0)
+
+
+                                            <input value="@user.TotalRepresentations"
+                                                   id="completed-@viewModel.Group.GroupId-@user.User.Id" hidden />
+                                            <input value="@user.User.Id" class="userId-@viewModel.Group.GroupId" hidden />
+                                            <input value="@user.TotalPresentations"
+                                                   id="total-@viewModel.Group.GroupId-@user.User.Id" hidden />
+                                        </td>
+                                        <td>
+                                            @Html.Raw(Model.UserRating(user.AvgRating))
+                                        </td>
+                                        <td>
+                                            <a class="btn"
+                                                href="@Url.Action("UserProgress", "Reporting",
+                                                    new { id = ViewData["Id"],
+                                                    userId = user.User.Id})">
+                                                <span class="fa fa-tasks text-info"></span>
+                                                <span class="text-muted">More</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="7">
+                                        <ul class="pagination pull-right"></ul>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input value="@viewModel.Group.GroupId" class="groupId" hidden />
+}
+
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel m-b-xs">
+            <div class="panel-body" style="padding: 0px 0px 0px 15px;">
+                <div class="row">
+                    <div group-reports-page-model="@Model.PageInfo" user-id="@ViewData["Id"]"
+                         page-action="Index"
+                         page-classes-enabled="true"
+                         page-class="btn" page-class-normal="btn-default"
+                         page-class-selected="btn-primary" class="btn-group pull-left m-sm">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+        <script src="~/homer/lib_local/footable/dist/footable.all.min.js"></script>
+        <script src="~/homer/lib/jquery-flot/jquery.flot.js"></script>
+        <script src="~/homer/lib/jquery-flot/jquery.flot.resize.js"></script>
+        <script src="~/homer/lib/jquery-flot/jquery.flot.pie.js"></script>
+        <script src="~/homer/lib/flot.curvedlines/curvedLines.js"></script>
+        <script src="~/homer/lib/flot-spline/js/jquery.flot.spline.min.js"></script>
+        <script src="~/homer/lib/peity/jquery.peity.min.js"></script>
+    </environment>
+
+    <script type="text/javascript">
+
+       $(function () {
+
+            // Initialize Example 1
+            $('#table-1').footable();
+            $('#info-1').removeClass("footable-sortable");
+            $('#info-1').html('');
+            $('#photo-1').removeClass("footable-sortable");
+            $('#photo-1').html('');
+            
+
+            // Initialize Example 2
+            $('#table-2').footable();
+            $('#info-2').removeClass("footable-sortable");
+            $('#info-2').html('');
+            $('#photo-2').removeClass("footable-sortable");
+            $('#photo-2').html('');
+
+       });
+        
+        var groupIds = document.getElementsByClassName('groupId');
+        var i = 0;
+
+        while (groupIds[i] != null) {
+
+            var userIdsInputClassName = "userId-" + groupIds[i].value;
+            var userIds = document.getElementsByClassName(userIdsInputClassName);
+            var j = 0;
+
+            while (userIds[j] != null) {
+                var sparklineId = "#sparkline-" + groupIds[i].value + "-" + userIds[j].value;
+                var completedId = "completed-" + groupIds[i].value + "-" + userIds[j].value;
+                var totalId = "total-" + groupIds[i].value + "-" + userIds[j].value;
+
+                var completed = document.getElementById(completedId).value;
+                var total = document.getElementById(totalId).value;
+
+                $(sparklineId).sparkline([total-completed, completed], {
+                    type: 'pie',
+                    sliceColors: ['#ff0000', '#99ff66']
+                });
+                j++;
+            }
+            
+            i++;
+        }
+
+    </script>
+}
