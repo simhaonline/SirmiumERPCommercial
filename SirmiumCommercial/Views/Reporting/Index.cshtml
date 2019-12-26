@@ -1,8 +1,9 @@
-﻿
+﻿@model CourseReportsPageViewModel
 
 @{
     Layout = "_UserLayout";
     ViewData["Title"] = "Course Reports";
+    var tableNumber = 1;
 }
 
 @section Styles {
@@ -20,26 +21,183 @@
     </div>
 </div>
 
+@foreach (CourseReportingViewModel viewModel in Model.ViewModel)
+{
+    <div class="row m-l-md m-r-md">
+        <div class="col-lg-12">
+            <div class="hpanel m-b-xs">
+                <div class="panel-heading">
+                    <div class="panel-tools">
+                        <a class="btn" href="@Url.Action("PresentationReports", "Reporting",
+                                            new { id = ViewData["Id"],
+                                            courseId = viewModel.Course.CourseId})">
+                            <span class="fa fa-bar-chart text-primary"></span>
+                            <span class="text-muted">Full Report</span>
+                        </a>
+                        <a class="showhide"><i class="fa fa-chevron-up"></i></a>
+                    </div>
+                    <a href="@Url.Action("CourseDetails", "Courses",
+                                            new { id = ViewData["Id"],
+                                            courseId = viewModel.Course.CourseId})">
+                        <span style="font-size: 18px">
+                            <strong class="@viewModel.Course.AwardIcon" style="font-size: 25px"></strong>&emsp;
+                            @viewModel.Course.Title
+                        </span>
+                    </a>
+                    <span>&emsp;</span>
+                </div>
+                <div class="panel-body" style="padding-bottom: 5px;">
+                    <div class="row p-xxs">
+                        <input type="text" class="form-control input-sm m-b-md" id="filter" placeholder="Search in table">
+                        <table id="table-@tableNumber" class="footable table table-stripped toggle-arrow-tiny" data-page-size="8" data-filter=#filter>
+
+                            <thead>
+                                <tr>
+                                    <th id="photo-@tableNumber"></th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>UserName</th>
+                                    <th>Progres</th>
+                                    <th>Rating</th>
+                                    <th id="info-@tableNumber"></th>
+                                </tr>
+                            </thead>
+                            @{
+                                tableNumber += 1;
+                            }
+                            <tbody>
+                                @foreach (UserRepresentationsInfo user in viewModel.UsersOnCourse)
+                                {
+                                    <tr>
+                                        <td>
+                                            <img class="img-circle" style="width: 30px; height: 30px"
+                                                 src="@Model.userPhoto(user.User.ProfilePhotoUrl)" />
+                                        </td>
+                                        <td>@user.User.FirstName</td>
+                                        <td>@user.User.LastName</td>
+                                        <td>@user.User.UserName</td>
+                                        <td>
+                                            <!-- id = sparkline-courseId-userId -->
+                                            <span  style="font-size: 20px;"
+                                                  id="sparkline-@viewModel.Course.CourseId-@user.User.Id"></span>
+                                            @Model.UserProgress(viewModel.Course.Presentations.Count()*1.0, user.TotalRepresentations)
+
+
+                                            <input value="@user.TotalRepresentations"
+                                                   id="completed-@viewModel.Course.CourseId-@user.User.Id" hidden />
+                                            <input value="@user.User.Id" class="userId-@viewModel.Course.CourseId" hidden />
+
+                                        </td>
+                                        <td>
+                                            @Html.Raw(Model.UserRating(user.AvgRating))
+                                        </td>
+                                        <td>
+                                            <a class="btn"
+                                                href="@Url.Action("UserProgress", "Reporting",
+                                                    new { id = ViewData["Id"],
+                                                    userId = user.User.Id})">
+                                                <span class="fa fa-tasks text-info"></span>
+                                                <span class="text-muted">More</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="7">
+                                        <ul class="pagination pull-right"></ul>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input value="@viewModel.Course.CourseId" class="courseId" hidden />
+    <input value="@viewModel.Course.Presentations.Count()"
+           id="total-@viewModel.Course.CourseId" hidden />
+}
+
 <div class="row m-l-md m-r-md">
     <div class="col-lg-12">
         <div class="hpanel m-b-xs">
-            <div class="panel-heading">
-                <div class="panel-tools">
-                    <a class="showhide"><i class="fa fa-chevron-up"></i></a>
-                </div>@**
-                <a href="@Url.Action("CourseDetails", "Courses",
-                                    new { id = ViewData["Id"],
-                                    courseId = content.Course.CourseId})">
-                    <span style="font-size: 18px">
-                        <strong class="@content.Course.AwardIcon" style="font-size: 25px"></strong>&emsp;
-                        @content.Course.Title
-                    </span>
-                </a>*@
-            </div>
-            <div class="panel-body" style="padding-bottom: 5px;">
+            <div class="panel-body" style="padding: 0px 0px 0px 15px;">
                 <div class="row">
+                    <div course-reports-page-model="@Model.PageInfo" user-id="@ViewData["Id"]"
+                         page-action="Index"
+                         page-classes-enabled="true"
+                         page-class="btn" page-class-normal="btn-default"
+                         page-class-selected="btn-primary" class="btn-group pull-left m-sm">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+        <script src="~/homer/lib_local/footable/dist/footable.all.min.js"></script>
+        <script src="~/homer/lib/jquery-flot/jquery.flot.js"></script>
+        <script src="~/homer/lib/jquery-flot/jquery.flot.resize.js"></script>
+        <script src="~/homer/lib/jquery-flot/jquery.flot.pie.js"></script>
+        <script src="~/homer/lib/flot.curvedlines/curvedLines.js"></script>
+        <script src="~/homer/lib/flot-spline/js/jquery.flot.spline.min.js"></script>
+        <script src="~/homer/lib/peity/jquery.peity.min.js"></script>
+    </environment>
+
+    <script type="text/javascript">
+
+       $(function () {
+
+            // Initialize Example 1
+            $('#table-1').footable();
+            $('#info-1').removeClass("footable-sortable");
+            $('#info-1').html('');
+            $('#photo-1').removeClass("footable-sortable");
+            $('#photo-1').html('');
+            
+
+            // Initialize Example 2
+            $('#table-2').footable();
+            $('#info-2').removeClass("footable-sortable");
+            $('#info-2').html('');
+            $('#photo-2').removeClass("footable-sortable");
+            $('#photo-2').html('');
+
+       });
+        
+        var courseIds = document.getElementsByClassName('courseId');
+        var i = 0;
+
+        while (courseIds[i] != null) {
+
+            var userIdsInputClassName = "userId-" + courseIds[i].value;
+            var userIds = document.getElementsByClassName(userIdsInputClassName);
+            var j = 0;
+
+            while (userIds[j] != null) {
+                var sparklineId = "#sparkline-" + courseIds[i].value + "-" + userIds[j].value;
+                var completedId = "completed-" + courseIds[i].value + "-" + userIds[j].value;
+                var totalId = "total-" + courseIds[i].value;
+
+                var completed = document.getElementById(completedId).value;
+                var total = document.getElementById(totalId).value;
+
+                $(sparklineId).sparkline([total-completed, completed], {
+                    type: 'pie',
+                    sliceColors: ['#ff0000', '#99ff66']
+                });
+                j++;
+            }
+            
+            i++;
+        }
+
+    </script>
+}

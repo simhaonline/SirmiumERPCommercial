@@ -83,7 +83,10 @@
     <Content Update="Views\Recorder\Index2.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Reporting\MyProgress.cshtml">
+    <Content Update="Views\Reporting\UserProgress.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Reporting\PresentationReports.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Shared\Components\HeaderChat\Default.cshtml">

@@ -2,8 +2,11 @@
 
 @{
     Layout = "_UserLayout";
-    ViewData["Title"] = "My Progress";
+    string title = (Model.User.FirstName == null || Model.User.FirstName == "") ?
+        Model.User.UserName : Model.User.FirstName;
+    ViewData["Title"] = $"{title} Progress";
 }
+
 @section Styles {
     <environment names="Development,Staging,Production">
         <link rel="stylesheet" href="~/homer/lib_local/footable/css/footable.core.min.css" />
@@ -14,7 +17,8 @@
 <div class="normalheader p-sm">
     <div class="hpanel">
         <div class="panel-body" style="font-size: 30px;">
-            <span class="fa fa-tasks"></span>
+            <img class="img-circle" style="width: 30px; height: 30px; margin-bottom: 5px;"
+                 src="@Model.userPhoto(Model.User.ProfilePhotoUrl)" />
             <strong>@ViewData["Title"]</strong>
         </div>
     </div>
@@ -215,9 +219,9 @@
                 var completed = document.getElementById(completedId).value;
                 var total = document.getElementById(totalId).value;
 
-                $(sparklineId).sparkline([completed, total-completed], {
+                $(sparklineId).sparkline([total-completed, completed], {
                     type: 'pie',
-                    sliceColors: ['#62cb31', '#b3b3b3', '#e4f0fb']
+                    sliceColors: ['#ff0000', '#99ff66']
                 });
                 i++;
             }
