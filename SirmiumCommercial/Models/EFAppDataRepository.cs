@@ -582,6 +582,7 @@ namespace SirmiumCommercial.Models
             }
         }
 
+        // ---------CHAT--------------
         public void NewChat(Chat chat)
         {
             //if chat not exists create new else return this chat
@@ -619,6 +620,7 @@ namespace SirmiumCommercial.Models
         {
             GroupChatUsers dbEntry = new GroupChatUsers
             {
+                GroupChatId = chatId,
                 UserId = userId
             };
             GroupChat chat = context.GroupChats
@@ -676,24 +678,25 @@ namespace SirmiumCommercial.Models
             }
         }
 
-        public void AddViewToGroupMessage (int groupMsgId, string userId, int groupChatId)
+        public void AddViewToGroupMessage (List<int> ids, string userId, int groupChatId)
         {
-            GroupMessageView dbEntry = new GroupMessageView
+            foreach(int id in ids)
             {
-                UserId = userId
-            };
-            GroupChatMessage msg = context.GroupChatMessages
-                .FirstOrDefault(m => m.MessageId == groupMsgId);
-            context.Attach(msg);
-            dbEntry.CreatedAt = DateTime.Now;
-            dbEntry.UpdatedAt = DateTime.Now;
-            context.GroupMessageViews.Add(dbEntry);
+                GroupMessageView view = new GroupMessageView
+                {
+                    UserId = userId,
+                    MessageId = id,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
+                };
+                context.GroupMessageViews.Add(view);
+            }
             context.SaveChanges();
 
             //check: if all users saw the message
-            GroupChat chat = context.GroupChats
+            /*GroupChat chat = context.GroupChats
                 .FirstOrDefault(c => c.ChatId == groupChatId);
-            msg = context.GroupChatMessages
+            GroupChatMessage msg = context.GroupChatMessages
                 .FirstOrDefault(m => m.MessageId == groupMsgId);
 
             if (chat.Users.Count() == msg.Views.Count())
@@ -703,8 +706,8 @@ namespace SirmiumCommercial.Models
                 {
                     context.GroupMessageViews.Remove(view);
                 }
-                context.SaveChanges();
-            }
+                //context.SaveChanges();
+            }*/
         }
 
         public void DeleteChatMessage (int msgId)

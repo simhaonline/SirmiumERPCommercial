@@ -303,6 +303,69 @@
                      + n + `</span>` : "";
             };
 
+            //group chat
+            connectionChatHeader.on("UserHeaderNewGroupMsg", function (senderId, recipientId, cId, senderName,
+                date, msgContent, unseenMsgs, chatPhoto, chatTitle) {
+                if (recipientId == currentUser) {
+                    var chatId = "group-chat-header-" + cId;
+                    var chatExists = document.getElementById(chatId);
+                    if (chatExists != null) {
+                        var chatIdJQ = "#group-chat-header-" + cId;
+                        $(chatIdJQ).remove();
+                    }
+                    $('#chat-header-window').prepend(`
+                            <a href="/Chat/GroupChat/`+ currentUser + `?groupChatId=` + cId + `"
+                                    id="group-chat-header-` + cId + `">
+                                <div class="chat-message m-b-xs" id="chat-style-` + cId + `"
+                                        style="padding-left:0px; border-radius: 10px;
+                                        border:2px solid #007bff; background-color: #e6f2ff;
+                                        box-sizing: border-box">
+                                    <img class="message-avatar m-l-md m-t-sm"
+                                        src="` + chatPhoto + `" alt="">
+                                    <div class="message" style="background: none;">
+                                        <span class="message-author" style="color: #000000">` + chatTitle + `</span>
+                                        <span>&emsp;</span><span>` + date + `</span>
+                                        <span id='unseen-header-span-` + cId + `' class='badge badge-primary pull-right'
+                                            style='font-size:10px; background-color: #007bff;'>`
+                                                + unseenMsgs + `</span>
+                                        <span class="message-content">` + senderName + `: </span>
+                                        <span class="message-content">` +  msgLine(msgContent) + `</span>
+                                    </div>
+                                </div>
+                            </a>
+                    `);
+
+                    /*connectionChatHeader.invoke("TotalUnseenMsgHeader", currentUser)
+                        .catch(function (err) {
+                        return console.error(err.toString());
+                    });*/
+                }
+                if (senderId == currentUser) {
+                    var chatId = "group-chat-header-" + cId;
+                    var chatExists = document.getElementById(chatId);
+                    if (chatExists != null) {
+                        var chatIdJQ = "#group-chat-header-" + cId;
+                        $(chatIdJQ).remove();
+                    }
+                    $('#chat-header-window').prepend(`
+                            <a href="/Chat/GroupChat/`+ currentUser + `?groupChatId=` + cId + `"
+                                    id="group-chat-header-` + cId + `">
+                                <div class="chat-message m-b-xs" id="chat-style-` + cId + `"
+                                        style="padding-left:0px; border-radius: 10px;
+                                        border:1px solid #99caff;
+                                        box-sizing: border-box">
+                                    <img class="message-avatar m-l-md m-t-sm"
+                                        src="` + chatPhoto + `" alt="">
+                                    <div class="message" style="background: none;">
+                                        <span class="message-author" style="color: #000000">` + chatTitle + `</span>
+                                        <span>&emsp;</span><span>` + date + `</span>
+                                        <span class="message-content">Me: ` + msgLine(msgContent) + `</span>
+                                    </div>
+                                </div>
+                            </a>
+                    `);
+                }
+            });
 
             //functions for notifications
             //like & dislike comment

@@ -1,0 +1,77 @@
+﻿@model NewGroupChatStep1ViewModel
+
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = "New Group Chat";
+}
+
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <span class="fa fa-users-cog"></span>
+            <strong>@ViewData["Title"]</strong>
+            <span>&emsp;</span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="hpanel m-l-md m-r-md">
+            <div class="panel-body">
+                <div class="row text-center">
+                    <button class="btn btn-primary">
+                        Step 1 - Create Group Chat
+                    </button>
+                    <button class="btn btn-default">
+                        Step 2 - Add Users To Group Chat
+                    </button>
+                </div>
+                <form asp-action="NewGroupChatStep1" asp-controller="Chat" method="post"
+                      enctype="multipart/form-data">
+                    <input asp-for="CreatedBy" value="@ViewData["Id"]" hidden />
+                    <div class="col-lg-12">
+                        <div class="col-lg-3"></div>
+                        <div class="col-lg-6 text-center">
+                            <div class="text-center">
+                                <img id="output" style="width: 80%; height: auto;
+                                    border-radius: unset" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="form-group col-lg-6">
+                            <label>Group Name:</label>
+                            <input asp-for="Name" class="form-control"
+                                   placeholder="Name">
+                        </div>
+                        <div class="col-lg-6 form-group">
+                            <label>Group Photo:</label>
+                            <div class="m-b-sm text-center" >
+                                <input asp-for="Photo" class="form-control" id="photo"
+                                       onchange="loadFile(event)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-right m-t-xs">
+                        <a href="@Url.Action("Index", "Chat", new { id = ViewData["Id"] })"
+                           class="btn btn-default text-danger">Cancel</a>
+                        <button type="submit" class="btn btn-default">Next</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var loadFile = function (event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('output');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    };
+</script>

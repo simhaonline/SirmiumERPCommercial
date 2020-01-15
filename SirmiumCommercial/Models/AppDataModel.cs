@@ -319,6 +319,7 @@ namespace SirmiumCommercial.Models
     {
         [Key]
         public int id { get; set; }
+        public int GroupChatId { get; set; }
         public string UserId { get; set; }
 
         public DateTime CreatedAt { get; set; }
@@ -330,6 +331,7 @@ namespace SirmiumCommercial.Models
     {
         [Key]
         public int MessageId { get; set; }
+        public int GroupChatId { get; set; }
         public string UserId { get; set; }
         public DateTime DateAdded { get; set; }
 
@@ -355,6 +357,7 @@ namespace SirmiumCommercial.Models
     {
         [Key]
         public int Id { get; set; }
+        public int MessageId { get; set; }
         public string UserId { get; set; }
 
         public DateTime CreatedAt { get; set; }

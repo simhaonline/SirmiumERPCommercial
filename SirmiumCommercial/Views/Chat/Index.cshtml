@@ -1,4 +1,4 @@
-﻿@model ChatViewModel
+﻿@model FullChatViewModel
 
 @{
     Layout = "_UserLayout";
@@ -70,14 +70,34 @@
             return (br == -1) ? msg : msg.Substring(0, br) + "...";
         }
     }
+
+    string chatImg(string path)
+    {
+        return (path != null) ? $"/UsersData/{path}" : "/defaultGroup.png";
+    }
+
+    string groupMsgSender(string id)
+    {
+        if(id == ViewData["Id"].ToString())
+        {
+            return "Me: ";
+        }
+        else
+        {
+            AppUser user = Model.Users.FirstOrDefault(u => u.Id == id);
+
+            return (user.FirstName != null) ? user.FirstName : user.UserName;
+        }
+    }
 }
 
 <div class="normalheader" style="padding-top: 10px">
     <div class="hpanel">
         <div class="panel-body">
             <strong style="font-size:30px">Chat</strong>
-            <a class="btn btn-info m-l-md pull-right">
-                New Group <span class="fa fa-group"></span>
+            <a class="btn btn-info m-l-md pull-right"
+               href="@Url.Action("NewGroupChatStep1", "Chat", new { id = ViewData["Id"] })">
+                New Group Chat <span class="fa fa-group"></span>
             </a>
         </div>
     </div>
@@ -98,12 +118,31 @@
                                                 new { id = ViewData["Id"], user2Id = user.Id })">
                                             <div class="chat-user m-l-lg">
                                                 <!--TODO: User online
-                                                <span class="pull-right label label-success">Online</span>
-                                                -->
+                <span class="pull-right label label-success">Online</span>
+                -->
                                                 <img class="chat-avatar" src="@imgSrc(user.ProfilePhotoUrl)" alt="Photo">
                                                 <div class="chat-user-name">
                                                     <span>
                                                         @firstLastNameNull(user.FirstName, user.LastName, user.UserName)
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    }
+                                    @foreach (HeaderChatViewModel chat in Model.Chats.Where(c => c.GroupChat == true))
+                                    {
+                                        <a href="@Url.Action("GroupChat", "Chat", new {
+                                                id = ViewData["Id"].ToString(),
+                                                groupChatId = chat.GChat.ChatId
+                                            })">
+                                            <div class="chat-user m-l-lg">
+                                                <!--TODO: User online
+                <span class="pull-right label label-success">Online</span>
+                -->
+                                                <img class="chat-avatar" src="@chatImg(chat.GChat.ChatPhotoPath)" alt="Photo">
+                                                <div class="chat-user-name">
+                                                    <span>
+                                                        @chat.GChat.Title
                                                     </span>
                                                 </div>
                                             </div>
@@ -114,31 +153,59 @@
                         </div>
                         <div class="col-md-9">
                             <div class="chat-discussion" id="chat-window">
-                                @foreach (IndexChat chat in Model.Chats)
+                                @foreach (HeaderChatViewModel chat in Model.Chats)
                                 {
-                                    <a href="@Url.Action("Chat", "Chat", new {
+                                    if (chat.GroupChat == false)
+                                    {
+                                        <a href="@Url.Action("Chat", "Chat", new {
                                         id = ViewData["Id"].ToString(),
                                         user2Id = (ViewData["Id"].ToString() == chat.chat.User1Id) ?
                                             chat.chat.User2Id : chat.chat.User1Id
                                     })" id="chat-@chat.chat.ChatId">
-                                        <div class="chat-message m-r-md m-b-xs"
-                                             style="padding-left:0px; border-radius: 10px;
+                                            <div class="chat-message m-r-md m-b-xs"
+                                                 style="padding-left:0px; border-radius: 10px;
                                             @unseenBorder(chat.UnseenMsg)
                                             box-sizing: border-box">
-                                            <img class="message-avatar m-l-md m-t-sm" src="@msgImgSrc(chat.chat, ViewData["Id"].ToString())" alt="">
+                                                <img class="message-avatar m-l-md m-t-sm" src="@msgImgSrc(chat.chat, ViewData["Id"].ToString())" alt="">
+                                                <div class="message" style="background: none;">
+                                                    <span class="message-author" style="color: #000000">
+                                                        @msgUserName(chat.chat, ViewData["Id"].ToString())
+                                                    </span>
+                                                    <span>&emsp;</span><span>@chat.MsgSentDate(chat.LastMessageDate)</span>
+                                                    @Html.Raw(unseenSpan(chat.UnseenMsg))
+                                                    <span class="message-content">
+                                                        @lastMessageSender(chat.LastMessage.UserId)
+                                                        @lastMsg(chat.LastMessage.MessageContent)
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                    <a href="@Url.Action("GroupChat", "Chat", new {
+                                                id = ViewData["Id"].ToString(),
+                                                groupChatId = chat.GChat.ChatId
+                                            })" id="group-chat-@chat.GChat.ChatId">
+                                        <div class="chat-message m-r-md m-b-xs" id="chat-style-@chat.GChat.ChatId"
+                                             style="padding-left:0px; padding-top:10px; border-radius: 10px;
+                                                    @unseenBorder(chat.UnseenMsg)
+                                                    box-sizing: border-box;">
+                                            <img class="message-avatar m-l-md m-t-sm" src="@chatImg(chat.GChat.ChatPhotoPath)" alt="">
                                             <div class="message" style="background: none;">
                                                 <span class="message-author" style="color: #000000">
-                                                    @msgUserName(chat.chat, ViewData["Id"].ToString())
+                                                    @chat.GChat.Title
                                                 </span>
                                                 <span>&emsp;</span><span>@chat.MsgSentDate(chat.LastMessageDate)</span>
                                                 @Html.Raw(unseenSpan(chat.UnseenMsg))
                                                 <span class="message-content">
-                                                    @lastMessageSender(chat.LastMessage.UserId)
-                                                    @lastMsg(chat.LastMessage.MessageContent)
+                                                    @groupMsgSender(chat.LastGroupMessage.UserId)
+                                                    @lastMsg(chat.LastGroupMessage.MessageContent)
                                                 </span>
                                             </div>
                                         </div>
                                     </a>
+                                    }
                                 }
                             </div>
                         </div>
@@ -225,6 +292,38 @@
                                 <span class="message-author" style="color: #000000">` + senderName + `</span>
                                 <span>&emsp;</span><span>` + date + `</span>`
                                 + unseenExistsSpan(unseenMsgs) + `
+                                <span class="message-content">` + lastMsgContent.post(msgContent) + `</span>
+                            </div>
+                        </div>
+                    </a>
+                `);
+            }
+        });
+
+        connection.on("ChatIndexNewGroupMsg", function (senderId, recipientId, cId, senderName,
+                date, msgContent, unseenMsgs, chatPhoto, chatTitle) {
+            if (recipientId == currentUser) {
+                var chatId = "group-chat-" + cId;
+                var chatExists = document.getElementById(chatId);
+                if (chatExists != null) {
+                    var chatIdJQ = "#group-chat-" + cId;
+                    $(chatIdJQ).remove();
+                }
+                $('#chat-window').prepend(`
+                    <a href="/Chat/GroupChat/`+ currentUser + `?groupChatId=` + cId + `"
+                            id="group-chat-` + cId + `">
+                        <div class="chat-message m-r-md m-b-xs"
+                                style="padding-left:0px; border-radius: 10px;
+                                border:2px solid #007bff; background-color: #e6f2ff;
+                                box-sizing: border-box">
+                            <img class="message-avatar m-l-md m-t-sm"
+                                src="` + chatPhoto + `" alt="">
+                            <div class="message" style="background: none;">
+                                <span class="message-author" style="color: #000000">` + chatTitle + `</span>
+                                <span>&emsp;</span><span>` + date + `</span>
+                                <span id='unseen-span' class='badge badge-primary pull-right' 
+                                    style='font-size:10px; background-color: #007bff;'>`
+                                    + unseenMsgs + `</span>
                                 <span class="message-content">` + lastMsgContent.post(msgContent) + `</span>
                             </div>
                         </div>
