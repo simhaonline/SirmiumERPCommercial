@@ -164,7 +164,8 @@ namespace SirmiumCommercial.Models.ViewModels
         public AppUser CurrentUser { get; set; }
         public GroupChat Chat { get; set; }
         public IQueryable<AppUser> AllUsers { get; set; }
-        public IQueryable<GroupChatMessage> AllMessages { get; set; }
+        //public IQueryable<GroupChatMessage> AllMessages { get; set; }
+        public IQueryable<GroupMsgInfo> AllMessages { get; set; }
 
         public string MsgSentDate(DateTime dateAdded)
         {
@@ -225,6 +226,13 @@ namespace SirmiumCommercial.Models.ViewModels
             }
             return msg;
         }
+    }
+
+
+    public class GroupMsgInfo
+    {
+        public GroupChatMessage Message { get; set; }
+        public IQueryable<GroupMessageView> Views { get; set; }
     }
 }
 

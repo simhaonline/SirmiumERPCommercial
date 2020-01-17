@@ -33,11 +33,20 @@
             $"<span class='label' style='background-color: #007bff;'>{totalNewMsg}</span>";
     }
 
-    string unseenSpan(int unseenMsg, int chatId)
+    string unseenSpan(int unseenMsg, int chatId, bool groupChat = false)
     {
-        return (unseenMsg == 0) ? "" :
-            $"<span id='unseen-header-span-{chatId}' class='badge badge-primary" +
-            $" pull-right' style='font-size:10px; background-color: #007bff;'>{unseenMsg}</span>";
+        if (groupChat == true)
+        {
+            return (unseenMsg == 0) ? "" :
+                $"<span id='group-unseen-header-span-{chatId}' class='badge badge-primary" +
+                $" pull-right' style='font-size:10px; background-color: #007bff;'>{unseenMsg}</span>";
+        }
+        else
+        {
+            return (unseenMsg == 0) ? "" :
+                $"<span id='unseen-header-span-{chatId}' class='badge badge-primary" +
+                $" pull-right' style='font-size:10px; background-color: #007bff;'>{unseenMsg}</span>";
+        }
     }
 
     string unseenBorder(int unseenMsg)
@@ -113,7 +122,7 @@
                                         @msgUserName(chat.chat, ViewData["Id"].ToString())
                                     </span>
                                     <span>&emsp;</span><span>@chat.MsgSentDate(chat.LastMessageDate)</span>
-                                    @Html.Raw(unseenSpan(chat.UnseenMsg, chat.chat.ChatId))
+                                    @Html.Raw(unseenSpan(chat.UnseenMsg, chat.chat.ChatId, true))
                                     <span class="message-content">
                                         @lastMessageSender(@chat.LastMessage.UserId)
                                         @lastMsg(chat.LastMessage.MessageContent)
@@ -128,7 +137,7 @@
                                         id = ViewData["Id"].ToString(),
                                         groupChatId = chat.GChat.ChatId
                                     })" id="group-chat-header-@chat.GChat.ChatId">
-                            <div class="chat-message m-b-xs" id="chat-style-@chat.GChat.ChatId"
+                            <div class="chat-message m-b-xs" id="group-chat-style-@chat.GChat.ChatId"
                                  style="padding-left:0px; padding-top:10px; border-radius: 10px;
                                             @unseenBorder(chat.UnseenMsg)
                                             box-sizing: border-box;">
@@ -138,7 +147,7 @@
                                         @chat.GChat.Title
                                     </span>
                                     <span>&emsp;</span><span>@chat.MsgSentDate(chat.LastMessageDate)</span>
-                                    @Html.Raw(unseenSpan(chat.UnseenMsg, chat.GChat.ChatId))
+                                    @Html.Raw(unseenSpan(chat.UnseenMsg, chat.GChat.ChatId, true))
                                     <span class="message-content">
                                         @groupMsgSender(chat.LastGroupMessage.UserId)
                                         @lastMsg(chat.LastGroupMessage.MessageContent)

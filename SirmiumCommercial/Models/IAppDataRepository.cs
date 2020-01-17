@@ -114,6 +114,8 @@ namespace SirmiumCommercial.Models
 
         void AddViewToGroupMessage(List<int> ids, string userId, int groupChatId);
 
+        void AddViewToGroupMsg(GroupMessageView view);
+
         void DeleteChatMessage(int msgId);
 
         void DeleteGroupChatMessage(int msgId);

@@ -332,6 +332,32 @@
             }
         });
 
+        connection.on("ChatIndexNewLastGroupMsg", function (senderId, recipientId, cId, senderName,
+                date, msgContent, unseenMsgs, chatPhoto, chatTitle) {
+            if (recipientId == currentUser) {
+                var chatDivIdJQ = "#group-chat-" + cId;
+                $(chatDivIdJQ).empty();
+                $(chatDivIdJQ).append(`
+                    <a href="/Chat/GroupChat/`+ currentUser + `?groupChatId=` + cId + `"
+                            id="group-chat-` + cId + `">
+                        <div class="chat-message m-r-md m-b-xs"
+                                style="padding-left:0px; border-radius: 10px;`
+                                + unseenExistsBorder(unseenMsgs) +
+                                `box-sizing: border-box">
+                            <img class="message-avatar m-l-md m-t-sm"
+                                src="` + chatPhoto + `" alt="">
+                            <div class="message" style="background: none;">
+                                <span class="message-author" style="color: #000000">` + chatTitle + `</span>
+                                <span>&emsp;</span><span>` + date + `</span>`
+                                + unseenExistsSpan(unseenMsgs) + `
+                                <span class="message-content">` + lastMsgContent.post(msgContent) + `</span>
+                            </div>
+                        </div>
+                    </a>
+                `);
+            }
+        });
+
         var lastMsgContent = new function () {
             this.post = function (msgCont) {
                 var br = msgCont.indexOf("</br>");

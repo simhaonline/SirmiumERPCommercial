@@ -14,13 +14,13 @@ namespace SirmiumCommercial.Hubs
         private IAppDataRepository repository;
         private UserManager<AppUser> userManager;
 
-        public ChatHub (IAppDataRepository repo, UserManager<AppUser> userMgr)
+        public ChatHub(IAppDataRepository repo, UserManager<AppUser> userMgr)
         {
             repository = repo;
             userManager = userMgr;
         }
 
-        public async Task NewMessage(string senderId, string recipientId, int chatId, 
+        public async Task NewMessage(string senderId, string recipientId, int chatId,
             string content)
         {
             AppUser sender = userManager.Users
@@ -91,8 +91,8 @@ namespace SirmiumCommercial.Hubs
 
             await Clients.All.SendAsync("PostNewMessage", msgId, recipientId,
                 senderId, senderName, date, content);
-            await Clients.All.SendAsync("ChatIndexNewMsg", senderId, recipientId, 
-                chat.ChatId, senderName, date, content, 
+            await Clients.All.SendAsync("ChatIndexNewMsg", senderId, recipientId,
+                chat.ChatId, senderName, date, content,
                 chat.Messages.Where(m => m.Seen == false).Count(), senderPhoto);
 
             await Clients.All.SendAsync("UserHeaderNewMsg", senderId, recipientId,
@@ -105,7 +105,7 @@ namespace SirmiumCommercial.Hubs
         {
             Chat chat = repository.Chats
                 .FirstOrDefault(c => c.ChatId == chatId);
-            
+
             if (chat != null)
             {
                 ChatMessage msg = chat.Messages
@@ -113,7 +113,7 @@ namespace SirmiumCommercial.Hubs
                 repository.AddSeenChat(msg);
 
                 await Clients.All.SendAsync("MsgSeen", chatId, msgId);
-                await Clients.All.SendAsync("CheckTotalUnseenHeader", 
+                await Clients.All.SendAsync("CheckTotalUnseenHeader",
                     chat.User1Id, chat.User2Id);
                 await Clients.All.SendAsync("HeaderMsgSeen", chatId, currentUserId);
             }
@@ -126,8 +126,20 @@ namespace SirmiumCommercial.Hubs
             {
                 if (chat.User1Id == userId || chat.User2Id == userId)
                 {
-                    totalUnseenMsg  += chat.Messages
+                    totalUnseenMsg += chat.Messages
                         .Where(m => m.Seen == false && m.UserId != userId).Count();
+                }
+            }
+
+            foreach(GroupChatUsers groupChat in repository.GroupChatUsers.Where(g => g.UserId == userId))
+            {
+                foreach(GroupChatMessage msg in repository.GroupChatMessages.Where(m => m.GroupChatId == groupChat.GroupChatId))
+                {
+                    if(repository.GroupMessageViews.Any(v => v.UserId == userId && v.MessageId == msg.MessageId) == false
+                        && msg.UserId != userId)
+                    {
+                        totalUnseenMsg++;
+                    }
                 }
             }
 
@@ -182,7 +194,7 @@ namespace SirmiumCommercial.Hubs
                     chat.Messages.Where(m => m.Seen == false).Count(), senderPhoto,
                     recipientPhoto, recipientName);
             }
-            
+
             //delete msg from chat view
             await Clients.All.SendAsync("DeleteMsgChat", msgId, chatId);
         }
@@ -219,7 +231,7 @@ namespace SirmiumCommercial.Hubs
             return val;
         }
 
-        public async Task NewGroupMessage(string userId, int chatId, string content)
+        public async Task NewGroupMessage(string userId, int chatId, string content, string msgType = "")
         {
             AppUser sender = userManager.Users
                 .FirstOrDefault(u => u.Id == userId);
@@ -238,19 +250,20 @@ namespace SirmiumCommercial.Hubs
                 {
                     GroupChatId = groupChat.ChatId,
                     UserId = sender.Id,
-                    MessageContent = content
+                    MessageContent = content,
+                    MessageType = msgType
                 };
 
                 repository.NewGroupChatMessage(newMsg, groupChat);
 
                 await Clients.All.SendAsync("PostNewGroupMessage", newMsg.MessageId, groupChat.ChatId,
-                    sender.Id, senderName, DateTime.Now.ToShortTimeString(), content, senderPhoto);
+                    sender.Id, senderName, DateTime.Now.ToShortTimeString(), content, senderPhoto, msgType);
 
-                foreach(GroupChatUsers chatUser in repository.GroupChatUsers
+                foreach (GroupChatUsers chatUser in repository.GroupChatUsers
                     .Where(g => g.GroupChatId == groupChat.ChatId))
                 {
                     int userUnseenMsgs = 0;
-                    foreach(GroupChatMessage msg in repository.GroupChatMessages
+                    foreach (GroupChatMessage msg in repository.GroupChatMessages
                         .Where(m => m.GroupChatId == groupChat.ChatId))
                     {
                         if (msg.UserId != chatUser.UserId)
@@ -269,6 +282,105 @@ namespace SirmiumCommercial.Hubs
                     await Clients.All.SendAsync("ChatIndexNewGroupMsg", sender.Id, chatUser.UserId,
                         groupChat.ChatId, senderName, DateTime.Now.ToShortTimeString(), content,
                         userUnseenMsgs, chatPhoto, groupChat.Title);
+                }
+            }
+        }
+
+        public async Task DeleteGroupMessage(int msgId, int chatId)
+        {
+            repository.DeleteGroupChatMessage(msgId);
+
+            await Clients.All.SendAsync("DeleteGroupMsgChat", msgId, chatId);
+
+            GroupChat chat = repository.GroupChats.FirstOrDefault(c => c.ChatId == chatId);
+            string chatPhoto = (chat.ChatPhotoPath != null) ?
+                $"/UsersData/{chat.ChatPhotoPath}" : "/defaultGroup.png";
+            GroupChatMessage lastMsg = repository.GroupChatMessages.LastOrDefault(m => m.GroupChatId == chatId);
+            AppUser sender = userManager.Users.FirstOrDefault(u => u.Id == lastMsg.UserId);
+            string senderPhoto = (sender.ProfilePhotoUrl != null) ?
+                $"/UsersData/{sender.ProfilePhotoUrl}" : "/defaultAvatar.png";
+            string senderName = (sender.FirstName == null && sender.LastName == null) ?
+                sender.UserName : $"{sender.FirstName} {sender.LastName}";
+
+            foreach (GroupChatUsers user in repository.GroupChatUsers.Where(u => u.GroupChatId == chatId))
+            {
+                int userUnseenMsgs = 0;
+                foreach (GroupChatMessage msg in repository.GroupChatMessages
+                    .Where(m => m.GroupChatId == chat.ChatId))
+                {
+                    if (msg.UserId != user.UserId)
+                    {
+                        if (repository.GroupMessageViews.Any(m => m.MessageId == msg.MessageId
+                             && m.UserId == user.UserId) == false)
+                        {
+                            userUnseenMsgs++;
+                        }
+                    }
+                }
+
+                await Clients.All.SendAsync("ChatIndexNewLastGroupMsg", sender.Id, user.UserId,
+                        chat.ChatId, senderName, DateTime.Now.ToShortTimeString(), lastMsg.MessageContent,
+                        userUnseenMsgs, chatPhoto, chat.Title);
+
+                await Clients.All.SendAsync("UserHeaderNewLastGroupMsg", sender.Id, user.UserId,
+                        chat.ChatId, senderName, DateTime.Now.ToShortTimeString(), lastMsg.MessageContent,
+                        userUnseenMsgs, chatPhoto, chat.Title);
+            }
+        }
+
+        public async Task GroupMessageSeen(int chatId, int msgId, string currentUserId)
+        {
+            GroupChat chat = repository.GroupChats.FirstOrDefault(g => g.ChatId == chatId);
+            AppUser currentUser = userManager.Users.FirstOrDefault(u => u.Id == currentUserId);
+            string userName = (currentUser.FirstName == null || currentUser.LastName == null) ?
+                currentUser.UserName : currentUser.FirstName + " " + currentUser.LastName;
+            string userPhoto = (currentUser.ProfilePhotoUrl != null) ?
+                $"/UsersData/{currentUser.ProfilePhotoUrl}" : "/defaultAvatar.png";
+
+            GroupMessageView view = new GroupMessageView
+            {
+                UserId = currentUser.Id,
+                MessageId = msgId
+            };
+            repository.AddViewToGroupMsg(view);
+
+            await Clients.All.SendAsync("GroupMsgSeen", chatId, msgId, userName, userPhoto);
+
+            await Clients.All.SendAsync("CheckTotalUnseenHeader", currentUserId, currentUserId);
+
+            await Clients.All.SendAsync("HeaderGroupMsgSeen", chatId, currentUserId);
+        }
+
+        public async Task GroupChatNewUsers(string currentUserId, int chatId, string userIds)
+        {
+            if(userIds != null && userIds.Trim() != "")
+            {
+                string userIdList = userIds.Trim();
+                while (userIdList.Trim().Length > 0)
+                {
+                    int index = userIdList.IndexOf(";");
+                    if (index != -1)
+                    {
+                        string newUserId = userIdList.Substring(0, index);
+
+                        repository.AddUserToGroupChat(chatId, newUserId);
+
+                        userIdList = userIdList.Replace(newUserId + ";", "");
+
+                        //create system msg
+                        AppUser admin = userManager.Users.FirstOrDefault(u => u.Id == currentUserId);
+                        string adminName = (admin.FirstName == null || admin.LastName == null) ?
+                            admin.UserName : $"{admin.FirstName} {admin.LastName}";
+                        AppUser user = userManager.Users.FirstOrDefault(u => u.Id == newUserId);
+                        string userName = (user.FirstName == null && user.LastName == null) ?
+                            user.UserName : $"{user.FirstName} {user.LastName}";
+                        string userPhoto = (user.ProfilePhotoUrl != null) ?
+                                 $"/UsersData/{user.ProfilePhotoUrl}" : "/defaultAvatar.png";
+                        string msgContent = $"{admin} added {userName}";
+                        await NewGroupMessage(currentUserId, chatId, msgContent, "SystemMsg");
+
+                        await Clients.All.SendAsync("AddedUsersList", chatId, user.Id, userName, userPhoto);
+                    }
                 }
             }
         }

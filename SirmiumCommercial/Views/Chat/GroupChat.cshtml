@@ -36,6 +36,33 @@
         return (userFirstName == null && userLastName == null) ?
            userName : $"{userFirstName} {userLastName}";
     }
+
+    string MsgViews(IQueryable<GroupMessageView> views)
+    {
+        string returnStr = "";
+        foreach (GroupMessageView view in views)
+        {
+            AppUser user = Model.AllUsers.FirstOrDefault(u => u.Id == view.UserId);
+            returnStr += "<div class='chat-user m-l-lg'>";
+            returnStr += $"<img class='chat-avatar' src='{imgSrc(user.ProfilePhotoUrl)}' alt='Photo'>";
+            returnStr += "<div class='chat-user-name'><span>";
+            returnStr += firstLastNameNull(user.FirstName, user.LastName, user.UserName);
+            returnStr += "</span></div></div>";
+        }
+        return returnStr;
+    }
+
+    string unSeenMsgId(string userId, IQueryable<GroupMessageView> views, int msgId)
+    {
+        if (views.Any(v => v.UserId == userId && v.MessageId == msgId) == false)
+        {
+            return $"<input class='unseen-msg' value='{msgId}' hidden />";
+        }
+        else
+        {
+            return "";
+        }
+    }
 }
 
 <div class="normalheader" style="padding-top: 10px">
@@ -56,15 +83,14 @@
                 </li>
                 <li>
                     <div class="chat-users">
-                        <div class="users-list">
+                        <div class="users-list" id="added-users-list">
                             @foreach (AppUser user in Model.AllUsers)
                             {
-                                <a href="@Url.Action("Chat", "Chat",
-                                                new { id = ViewData["Id"], user2Id = user.Id })">
+                                <a href="#">
                                     <div class="chat-user m-l-lg">
                                         <!--TODO: User online
-                                        <span class="pull-right label label-success">Online</span>
-                                        -->
+                                <span class="pull-right label label-success">Online</span>
+                                -->
                                         <img class="chat-avatar" src="@imgSrc(user.ProfilePhotoUrl)" alt="Photo">
                                         <div class="chat-user-name">
                                             <span>
@@ -78,6 +104,15 @@
                     </div>
                 </li>
             </ul>
+
+            <span class="pull-right">&emsp;&emsp;</span>
+            @if (Model.Chat.CreatedBy == ViewData["Id"].ToString())
+            {
+                <a class="pull-right m-t-sm" onclick="chatNewUsers.show()" style="font-size:20px">
+                    <span class="text-muted"> Add </span>
+                    <span class="fas fa-user-plus text-success"></span>
+                </a>
+            }
         </div>
     </div>
 </div>
@@ -104,78 +139,144 @@
                             }
                             else
                             {
-                                <div class="chat-discussion" id="all-messages">
-                                    @foreach (GroupChatMessage msg in Model.AllMessages)
+                        <div class="chat-discussion" id="all-messages">
+                            @foreach (GroupMsgInfo msg in Model.AllMessages)
+                            {
+                                if (msg.Message.MessageType == "SystemMsg")
+                                {
+                                    <div class="chat-message pull-right text-center m-t-xs"
+                                         style="width: auto; background: #577284;
+                                            margin-right: 40%; margin-bottom: 5px;
+                                            border-radius: 10px; box-sizing: border-box">
+                                        <div class="message" style="background: none;
+                                             padding: 0px; margin-left: 0px; color: #e6f2ff;">
+                                            <span class="message-content">
+                                                @Html.Raw(Model.MessageNewLine(msg.Message.MessageContent))
+                                            </span>
+
+                                            @Html.Raw(unSeenMsgId(ViewData["Id"].ToString(), msg.Views, msg.Message.MessageId))
+                                        </div>
+                                    </div>
+                                }
+                                else {
+                                    if (msg.Message.UserId == ViewData["Id"].ToString())
                                     {
-                                        if (msg.UserId == ViewData["Id"].ToString())
-                                        {
-                                            <div class="chat-message pull-right m-t-xs"
-                                                 style="width: 80%; background: #e6f2ff;
+                                    <div class="chat-message pull-right m-t-xs"
+                                         style="width: 80%; background: #e6f2ff;
                                             margin-right: 20px; margin-bottom: 5px;
                                             border-radius: 10px; border:1px solid #e6f2ff;
-                                            box-sizing: border-box" id="msg-@msg.MessageId">
-                                                <div class="message" style="background: none;
+                                            box-sizing: border-box" id="msg-@msg.Message.MessageId">
+                                        <div class="message" style="background: none;
                                              padding: 0px; margin-left: 0px">
-                                                    <span class="message-author"> Me </span>
-                                                    <div class="dropdown pull-right">
-                                                        <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-                                                            <i class="pe-7s-more"></i>
-                                                        </a>
-                                                        <div class="dropdown-menu hdropdown bigmenu animated fadeIn"
-                                                             style="padding: 10px 10px 0 10px;">
-                                                            <table>
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <a onclick="newMessage.delete('@msg.MessageId', '@Model.Chat.ChatId');">
-                                                                                <i class="pe pe-7s-trash text-error"></i>
-                                                                                Remove
-                                                                            </a>
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                    <button type="button" class="message-date"
-                                                            style="border:none; background: none;"
-                                                            data-container="body" data-toggle="popover"
-                                                            data-placement="left"
-                                                            data-content="@msg.DateAdded.ToString("dd.mm.yyyy. HH:mm")">
-                                                        @Model.MsgSentDate(msg.DateAdded)
-                                                    </button>
-                                                    <span style="color: #000" class="message-content">
-                                                        @Html.Raw(Model.MessageNewLine(msg.MessageContent))
-                                                    </span>
+                                            <span class="message-author"> Me </span>
+                                            <div class="dropdown pull-right">
+                                                <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                                                    <i class="pe-7s-more"></i>
+                                                </a>
+                                                <div class="dropdown-menu hdropdown bigmenu animated fadeIn"
+                                                     style="padding: 10px 10px 0 10px;">
+                                                    <table>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <a onclick="newMessage.delete('@msg.Message.MessageId', '@Model.Chat.ChatId');">
+                                                                        <i class="pe pe-7s-trash text-error"></i>
+                                                                        Remove
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
                                                 </div>
-                                                @*Html.Raw(msgSeen(msg.Seen, msg.Id))*@
                                             </div>
-                                        }
-                                        else
-                                        {
-                                            <div class="chat-message left pull-left"
-                                                 style="width: 80%; padding-top: 5px; padding-bottom: 5px;" id="msg-@msg.MessageId">
-                                                <img class="message-avatar" src="@msgImgSrc(msg.UserId)" alt="">
-                                                <div class="message">
-                                                    <span class="message-author">
-                                                        @msgUserName(msg.UserId)
-                                                    </span>
-                                                    <button class="message-date"
-                                                            style="border:none; background: none;"
-                                                            data-container="body" data-toggle="popover"
-                                                            data-placement="right"
-                                                            data-content="@msg.DateAdded.ToString("dd.mm.yyyy. HH:mm")">
-                                                        @Model.MsgSentDate(msg.DateAdded)
-                                                    </button>
-                                                    <span style="color: #000" class="message-content">
-                                                        @Html.Raw(Model.MessageNewLine(msg.MessageContent))
-                                                    </span>
+                                            <button type="button" class="message-date"
+                                                    style="border:none; background: none;"
+                                                    data-container="body" data-toggle="popover"
+                                                    data-placement="left"
+                                                    data-content="@msg.Message.DateAdded.ToString("dd.mm.yyyy. HH:mm")">
+                                                @Model.MsgSentDate(msg.Message.DateAdded)
+                                            </button>
+                                            <span style="color: #000" class="message-content">
+                                                @Html.Raw(Model.MessageNewLine(msg.Message.MessageContent))
+                                            </span>
+                                        </div>
+
+                                        <div id="@msg.Message.MessageId-seen-sent">
+                                            @if (msg.Views == null || msg.Views.Count() == 0)
+                                            {
+                                                <strong class='text-muted pull-right' style='font-size: 10px' id='@msg.Message.MessageId-msg-sent'>
+                                                    sent <span class='fa fa-check'></span>
+                                                </strong>
+                                            }
+                                            else
+                                            {
+                                                <div class="dropdown pull-right" id="@msg.Message.MessageId-msg-seen">
+                                                    <a class="dropdown-toggle label-menu-corner" href="#" id='total-unseen-label'
+                                                       data-toggle="dropdown" style="font-size:20px">
+                                                        <strong class='text-muted' style='font-size: 10px'>
+                                                            seen <span class='fa fa-check-double'></span>
+                                                        </strong>
+                                                    </a>
+                                                    <ul class="dropdown-menu hdropdown animated flipInX" style="width: 390px">
+                                                        <li>
+                                                            <div class="chat-users">
+                                                                <div class="users-list" id="@msg.Message.MessageId-view-list">
+                                                                    @Html.Raw(MsgViews(msg.Views))
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
                                                 </div>
-                                                @*Html.Raw(unSeenMsgId(msg))*@
-                                            </div>
-                                        }
+                                            }
+                                        </div>
+                                    </div>
                                     }
-                                </div>
+                                    else
+                                    {
+                                    <div class="chat-message left pull-left"
+                                         style="width: 80%; padding-top: 5px; padding-bottom: 5px;" id="msg-@msg.Message.MessageId">
+                                        <img class="message-avatar" src="@msgImgSrc(msg.Message.UserId)" alt="">
+                                        <div class="message">
+                                            <span class="message-author">
+                                                @msgUserName(msg.Message.UserId)
+                                            </span>
+                                            <button class="message-date"
+                                                    style="border:none; background: none;"
+                                                    data-container="body" data-toggle="popover"
+                                                    data-placement="right"
+                                                    data-content="@msg.Message.DateAdded.ToString("dd.mm.yyyy. HH:mm")">
+                                                @Model.MsgSentDate(msg.Message.DateAdded)
+                                            </button>
+                                            <span style="color: #000" class="message-content">
+                                                @Html.Raw(Model.MessageNewLine(msg.Message.MessageContent))
+                                            </span>
+                                            @Html.Raw(unSeenMsgId(ViewData["Id"].ToString(), msg.Views, msg.Message.MessageId))
+                                            @if (msg.Views != null)
+                                            {
+                                                <div id="@msg.Message.MessageId-seen-sent">
+                                                    <a class="dropdown-toggle label-menu-corner" href="#" id='total-unseen-label'
+                                                       data-toggle="dropdown" style="font-size:20px; padding: 1px 1px 1px 1px;">
+                                                        <strong class='text-muted pull-right' style='font-size: 10px'>
+                                                            seen <span class='fa fa-check-double'></span>
+                                                        </strong>
+                                                    </a>
+                                                    <ul class="dropdown-menu hdropdown animated flipInX pull-right" style="width: 390px;">
+                                                        <li>
+                                                            <div class="chat-users">
+                                                                <div class="users-list" id="@msg.Message.MessageId-view-list">
+                                                                    @Html.Raw(MsgViews(msg.Views))
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                    }
+                                }
+                            }
+                        </div>
                             }
                         </div>
                     </div>
@@ -201,12 +302,50 @@
 <input id="currentUser" value="@ViewData["Id"].ToString()" hidden />
 <input id="chatId" value="@Model.Chat.ChatId" hidden />
 
+<!--Group Chat new users window-->
+<div id="chat-new-users-window" style="display: none;">
+    @await Component.InvokeAsync("ChatNewUsers", new { userId = ViewData["Id"], chatId = Model.Chat.ChatId })
+</div>
+
 @section Scripts {
     <environment names="Development,Staging,Production">
     </environment>
 
     <script type="text/javascript">
+        //chat new users
+        var chatNewUsersWindow = document.getElementById('chat-new-users-window');
+    
+        var checkedUsers = "";
+        var chatNewUsers = new function () {
+            this.show = function () {
+                chatNewUsersWindow.style.display = '';
+            };
+            this.close = function () {
+                chatNewUsersWindow.style.display = 'none';
+                console.log("Before: " + checkedUsers);
+                checkedUsers = "";
+                
+                console.log("After: " + checkedUsers);
+            };
+        };
 
+
+        function checkboxOnChange(userId) {
+            var checkboxId = "check-" + userId;
+            var checkbox = document.getElementById(checkboxId);
+
+            if (checkbox.checked == true) {
+                //add user to list
+                checkedUsers += checkbox.value + ";";
+                console.log("radi");
+            }
+            else {
+                //remove user from list
+                checkedUsers = checkedUsers.replace(checkbox.value + ";", "");
+            }
+         };
+
+        //chat hub
         var currentUser = document.getElementById('currentUser').value;
         var chatId = document.getElementById('chatId').value;
 
@@ -220,33 +359,89 @@
             return console.error(err.toString());
         });
 
-        connection.on("MsgSeen", function (cId, msgId) {
+        connection.on("GroupMsgSeen", function (cId, msgId, userName, userPhoto) {
             if (cId == chatId) {
-                var seenSpanJQ = "#" + msgId + "-msg-seen";
-                var seenSpanJS = msgId + "-msg-seen";
+                var viewListJQ = "#" + msgId + "-view-list";
+                var viewListJS = msgId + "-view-list";
+                var viewList = document.getElementById(viewListJS);
 
-                var cleanSeenSpan = document.getElementById(seenSpanJS);
-                if (cleanSeenSpan != null) {
-                    cleanSeenSpan.innerHTML = "";
+                if (viewList != null) {
+                    $(viewListJQ).append(`
+                        <div class='chat-user m-l-lg'>
+                            <img class='chat-avatar' src='` + userPhoto + `' alt='Photo'>
+                            <div class='chat-user-name'>
+                                <span>` + userName + `</span>
+                            </div>
+                        </div>
+                    `);
+                } else {
+                    var sentSpanJS = msgId + "-msg-sent";
+                    var sentSpanJQ = "#" + msgId + "-msg-sent";
+                    var sentSpan = document.getElementById(sentSpanJS);
 
-                    $(seenSpanJQ).append(`
-                    seen <span class='fa fa-check-double'></span>
-                `);
+                    if (sentSpan != null) {
+                        $(sentSpanJQ).remove();
+                    }
+
+                    var seenSentDivJQ = "#" + msgId + "-seen-sent";
+                    $(seenSentDivJQ).append(`
+                        <div class="dropdown pull-right">
+                            <a class="dropdown-toggle label-menu-corner" href="#" id='total-unseen-label'
+                               data-toggle="dropdown" style="font-size:20px">
+                                <strong class='text-muted' style='font-size: 10px'>
+                                    seen <span class='fa fa-check-double'></span>
+                                </strong>
+                            </a>
+                            <ul class="dropdown-menu hdropdown animated flipInX" style="width: 390px">
+                                <li>
+                                    <div class="chat-users">
+                                        <div class="users-list" id="` + msgId + `-view-list">
+                                            <div class='chat-user m-l-lg'>
+                                                <img class='chat-avatar' src='` + userPhoto + `' alt='Photo'>
+                                                <div class='chat-user-name'>
+                                                    <span>` + userName + `</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    `);
                 }
             }
         });
 
         connection.on("PostNewGroupMessage", function (msgId, cId, senderId,
-            senderName, date, content, senderPhoto) {
+            senderName, date, content, senderPhoto, msgType) {
 
             if (chatId == cId) {
-            var msgContent = document.getElementById('msg-content').value = "";
+                var msgContent = document.getElementById('msg-content').value = "";
 
-            //if exists message before this msg
-            var msgExists = document.getElementById('all-messages');
-            if (msgExists != null) {
-                if (currentUser == senderId) {
-                    $('#all-messages').append(`
+                //if exists message before this msg
+                var msgExists = document.getElementById('all-messages');
+                if (msgExists != null) {
+                    if (msgType == "SystemMsg") {
+                        $('#all-messages').append(`
+                            <div class="chat-message pull-right text-center m-t-xs"
+                               style="width: auto; background: #577284;
+                               margin-right: 40%; margin-bottom: 5px;
+                               border-radius: 10px; box-sizing: border-box">
+                                 <div class="message" style="background: none;
+                                   padding: 0px; margin-left: 0px; color: #e6f2ff;">
+                                 <span class="message-content">
+                                     ` + content + `
+                                 </span>
+                                </div>
+                            </div>
+                        `);
+                        connection.invoke("GroupMessageSeen", chatId, msgId, currentUser).catch(function (err) {
+                                return console.error(err.toString());
+                            });
+                    }
+                    else {
+                        if (currentUser == senderId) {
+                            $('#all-messages').append(`
                 <div class="chat-message pull-right m-t-xs" style="width: 80%;
                         background: #e6f2ff; margin-bottom: 5px; margin-right: 20px; border-radius: 10px;
                         border:1px solid #e6f2ff; box-sizing: border-box"
@@ -274,15 +469,17 @@
                          ` + content + `
                         </span>
                     </div>
-                    <strong class='text-muted pull-right' style='font-size: 10px'
-                            id='` + msgId + `-msg-seen'>
-                        sent <span class='fa fa-check'></span>
-                    </strong>
+                    <div id="` + msgId + `-seen-sent">
+                        <strong class='text-muted pull-right' style='font-size: 10px'
+                                id='` + msgId + `-msg-sent'>
+                            sent <span class='fa fa-check'></span>
+                        </strong>
+                    </div>
                 </div>
                 `);
-                }
-                else {
-                    $('#all-messages').append(`
+                        }
+                        else {
+                            $('#all-messages').append(`
                 <div class="chat-message left pull-left" style="width: 80%;
                         padding-top: 0px; padding-bottom: 5px;" id="msg-` + msgId + `">
                     <img class="message-avatar" src="` + senderPhoto + `" alt="">
@@ -292,20 +489,54 @@
                         <span style="color: #000" class="message-content">
                             ` + content + `
                         </span>
+                        <div id="` + msgId + `-seen-sent"></div>
                     </div>
                 </div>
                 `);
-                   /* connection.invoke("MessageSeen", chatId, msgId, currentUser).catch(function (err) {
-                        return console.error(err.toString());
-                    });*/
+                            connection.invoke("GroupMessageSeen", chatId, msgId, currentUser).catch(function (err) {
+                                return console.error(err.toString());
+                            });
+                        }
+                    }
                 }
-            }
-            else {
-                var isFirstMsg = document.getElementById('first-msg');
-                if (currentUser == senderId) {
-                    isFirstMsg.innerHTML = "";
-                    isFirstMsg.style.marginBottom = "";
-                    $('#first-msg').append(`
+                else {
+                    var isFirstMsg = document.getElementById('first-msg');
+                    if (msgType == "SystemMsg") {
+                        $('#all-messages').append(`
+                <div class="panel-heading hbuilt">
+                    <!--TODO: settings-->
+                    <div class="panel-tools">
+                        <a class="closebox"><i class="fa fa-times"></i></a>
+                    </div>
+                    Chat room
+                </div>
+                <div class="panel-body no-padding">
+                    <div class="row">
+                        <div class="chat-discussion" id="all-messages">
+                            <div class="chat-message pull-right text-center m-t-xs"
+                               style="width: auto; background: #577284;
+                               margin-right: 40%; margin-bottom: 5px;
+                               border-radius: 10px; box-sizing: border-box">
+                                 <div class="message" style="background: none;
+                                   padding: 0px; margin-left: 0px; color: #e6f2ff;">
+                                 <span class="message-content">
+                                     ` + content + `
+                                 </span>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                        `);
+                        connection.invoke("GroupMessageSeen", chatId, msgId, currentUser).catch(function (err) {
+                                return console.error(err.toString());
+                            });
+                    }
+                    else {
+                        if (currentUser == senderId) {
+                            isFirstMsg.innerHTML = "";
+                            isFirstMsg.style.marginBottom = "";
+                            $('#first-msg').append(`
                 <div class="panel-heading hbuilt">
                     <!--TODO: settings-->
                     <div class="panel-tools">
@@ -343,20 +574,22 @@
                                  ` + content + `
                                 </span>
                             </div>
-                            <strong class='text-muted pull-right' style='font-size: 10px'
-                                    id='` + msgId + `-msg-seen'>
-                                sent <span class='fa fa-check'></span>
-                            </strong>
+                            <div id="` + msgId + `-seen-sent">
+                                <strong class='text-muted pull-right' style='font-size: 10px'
+                                        id='` + msgId + `-msg-sent'>
+                                    sent <span class='fa fa-check'></span>
+                                </strong>
+                            </div>
                         </div>
                         </div>
                     </div>
                 </div>
                 `);
-                }
-                else {
-                    isFirstMsg.innerHTML = "";
-                    isFirstMsg.style.marginBottom = "";
-                    $('#all-messages').append(`
+                        }
+                        else {
+                            isFirstMsg.innerHTML = "";
+                            isFirstMsg.style.marginBottom = "";
+                            $('#all-messages').append(`
                 <div class="panel-heading hbuilt">
                     <!--TODO: settings-->
                     <div class="panel-tools">
@@ -377,26 +610,56 @@
                                 <span style="color: #000" class="message-content">
                                     ` + content + `
                                 </span>
+                                <div id="` + msgId + `-seen-sent"></div>
                             </div>
                         </div>
                         </div>
                     </div>
                 </div>
                 `);
-                   /* connection.invoke("MessageSeen", chatId, msgId, currentUser).catch(function (err) {
-                        return console.error(err.toString());
-                    });*/
+                            connection.invoke("GroupMessageSeen", chatId, msgId, currentUser).catch(function (err) {
+                                return console.error(err.toString());
+                            });
+                        }
+                    }
                 }
-            }
             }
         });
 
-        connection.on("DeleteMsgChat", function (msgId, cId) {
+        connection.on("DeleteGroupMsgChat", function (msgId, cId) {
             if (chatId == cId) {
                 var msgDivId = "#msg-" + msgId;
                 $(msgDivId).remove();
             }
         });
+
+        connection.on("AddedUsersList", function (cId, uId, uName, uPhoto) {
+            if (chatId == cId) {
+                var addUserList = "#add-user-list-" + uId;
+                $(addUserList).remove();
+
+                $("#added-users-list").prepend(`
+                    <a href="#">
+                        <div class="chat-user m-l-lg">
+                            <img class="chat-avatar" src="` + uPhoto + `" alt="Photo">
+                            <div class="chat-user-name">
+                                <span>` + uName + `</span>
+                            </div>
+                        </div>
+                    </a>
+                `);
+            }
+        });
+
+        var addUsers = new function () {
+            this.save = function () {
+                chatNewUsersWindow.style.display = 'none';
+                connection.invoke("GroupChatNewUsers", currentUser, chatId, checkedUsers)
+                        .catch(function (err) {
+                            return console.error(err.toString());
+                        });
+            };
+        };
 
         var newMessage = new function () {
             this.send = function (userId, cId) {
@@ -404,12 +667,12 @@
                 var msgTmp = msgContent.split(/\n|\s\n/);
                 msgContent = msgTmp.join(" </br>\n");
                 connection.invoke("NewGroupMessage", userId, cId,
-                    msgContent).catch(function (err) {
+                    msgContent, "").catch(function (err) {
                         return console.error(err.toString());
                     });
             };
             this.delete = function (msgId, cId) {
-                connection.invoke("DeleteMessage", msgId, cId).catch(function (err) {
+                connection.invoke("DeleteGroupMessage", msgId, cId).catch(function (err) {
                     return console.error(err.toString());
                 });
             }
@@ -420,7 +683,7 @@
                 var unSeenMsgId = document.getElementsByClassName('unseen-msg');
                 var i = 0;
                 while (unSeenMsgId[i] != null) {
-                    connection.invoke("MessageSeen", chatId, unSeenMsgId[i].value, currentUser)
+                    connection.invoke("GroupMessageSeen", chatId, unSeenMsgId[i].value, currentUser)
                         .catch(function (err) {
                             return console.error(err.toString());
                         });

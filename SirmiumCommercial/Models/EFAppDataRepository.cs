@@ -692,22 +692,17 @@ namespace SirmiumCommercial.Models
                 context.GroupMessageViews.Add(view);
             }
             context.SaveChanges();
+        }
 
-            //check: if all users saw the message
-            /*GroupChat chat = context.GroupChats
-                .FirstOrDefault(c => c.ChatId == groupChatId);
-            GroupChatMessage msg = context.GroupChatMessages
-                .FirstOrDefault(m => m.MessageId == groupMsgId);
-
-            if (chat.Users.Count() == msg.Views.Count())
+        public void AddViewToGroupMsg (GroupMessageView view)
+        {
+            if (view.Id == 0)
             {
-                msg.Seen = true;
-                foreach (GroupMessageView view in msg.Views)
-                {
-                    context.GroupMessageViews.Remove(view);
-                }
-                //context.SaveChanges();
-            }*/
+                view.CreatedAt = DateTime.Now;
+                view.UpdatedAt = DateTime.Now;
+                context.Add(view);
+                context.SaveChanges();
+            }
         }
 
         public void DeleteChatMessage (int msgId)

@@ -1,0 +1,44 @@
+﻿@model NewGroupChatStep2ViewModel
+
+@{ 
+    string userPhoto(string path)
+    {
+        return (path == null) ? "/defaultAvatar.png" : $"/UsersData/{path}";
+    }
+
+    string firstLastNameExists(AppUser user)
+    {
+        return (user.FirstName == null || user.LastName == null) ?
+            user.UserName : user.FirstName + " " + user.LastName;
+    }
+}
+
+<div class="dlg-container">
+    <div class="text-center" style="font-size:30px;">
+        <span class="fa fa-user-plus text-muted"></span>
+        <span class="text-muted">Add Users</span>
+    </div>
+    <div class="dlg-body">
+            <div style="width: 350px; max-height:300px; overflow-y: scroll;">
+                @foreach (AppUser user in Model.Users)
+                {
+                    <div class="form-group" id="add-user-list-@user.Id">
+                        <img class="img-circle" style="width: 40px; height: 40px"
+                                 src="@userPhoto(user.ProfilePhotoUrl)" />
+                        <span style="font-size: 15px">
+                            @firstLastNameExists(user)
+                        </span>
+                        <input type="checkbox" value="@user.Id" id="check-@user.Id"
+                           onchange="checkboxOnChange('@user.Id')" />
+                    </div>
+                }
+            </div>
+            <div class="dlg-footer">
+                <a onclick="chatNewUsers.close();" class="">Cancel</a>
+                <a onclick="addUsers.save()" style="background: #62cb31; color: #fff">
+                    Save
+                </a>
+            </div>
+    </div>
+</div>
+

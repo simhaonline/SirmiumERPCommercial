@@ -310,6 +310,7 @@ namespace SirmiumCommercial.Controllers
                 .Where(g => g.GroupChatId == chat.ChatId);
             IQueryable<GroupMessageView> views = repository.GroupMessageViews
                 .Where(g => g.UserId == currentUser.Id);
+            List<GroupMsgInfo> allMsgs = new List<GroupMsgInfo>();
             List<int> msgIds = new List<int>();
             foreach (GroupChatMessage chatMessage in chatMessages)
             {
@@ -320,9 +321,17 @@ namespace SirmiumCommercial.Controllers
                         msgIds.Add(chatMessage.MessageId);
                     }
                 }
-            }
-            repository.AddViewToGroupMessage(msgIds, currentUser.Id, chat.ChatId);
 
+                GroupMsgInfo msgInfo = new GroupMsgInfo
+                {
+                    Message = chatMessage,
+                    Views = repository.GroupMessageViews.Where(v => v.MessageId == chatMessage.MessageId)
+                };
+                allMsgs.Add(msgInfo);
+            }
+            //repository.AddViewToGroupMessage(msgIds, currentUser.Id, chat.ChatId);
+
+            //chat users
             List<AppUser> users = new List<AppUser>();
             foreach(GroupChatUsers chatUsers in repository.GroupChatUsers
                 .Where(g => g.GroupChatId == groupChatId))
@@ -330,12 +339,14 @@ namespace SirmiumCommercial.Controllers
                 users.Add(userManager.Users.FirstOrDefault(u => u.Id == chatUsers.UserId));
             }
 
+
+
             return View(new GroupChatViewModel
             {
                 CurrentUser = currentUser,
                 Chat = chat,
                 AllUsers = users.AsQueryable().OrderBy(u => u.LastName),
-                AllMessages = repository.GroupChatMessages.Where(g => g.GroupChatId == chat.ChatId)
+                AllMessages = allMsgs.AsQueryable()
             });
         }
 
@@ -358,7 +369,7 @@ namespace SirmiumCommercial.Controllers
             }
 
             //add photo path to Group/GroupPhotoPath
-            string photoPath = groupChat.ChatId + @"\profilePhoto.jpeg";
+            string photoPath = @"GroupChats/" + groupChat.ChatId + @"/chatPhoto.jpeg";
             groupChat.ChatPhotoPath = photoPath;
             repository.EditGroupChat(groupChat);
         }
