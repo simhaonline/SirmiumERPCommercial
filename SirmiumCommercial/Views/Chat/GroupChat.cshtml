@@ -44,9 +44,9 @@
         {
             AppUser user = Model.AllUsers.FirstOrDefault(u => u.Id == view.UserId);
             returnStr += "<div class='chat-user m-l-lg'>";
-            returnStr += $"<img class='chat-avatar' src='{imgSrc(user.ProfilePhotoUrl)}' alt='Photo'>";
+//returnStr += $"<img class='chat-avatar' src='{imgSrc(user.ProfilePhotoUrl)}' alt='Photo'>";
             returnStr += "<div class='chat-user-name'><span>";
-            returnStr += firstLastNameNull(user.FirstName, user.LastName, user.UserName);
+ //           returnStr += firstLastNameNull(user.FirstName, user.LastName, user.UserName);
             returnStr += "</span></div></div>";
         }
         return returnStr;
@@ -72,33 +72,63 @@
             <strong style="font-size:30px">@Model.Chat.Title</strong>
             <span>&emsp;&emsp;</span>
 
+            @if (Model.Chat.CreatedBy == ViewData["Id"].ToString())
+            {
+                <span>
+                    <a class="dropdown-toggle label-menu-corner pull-right m-t-sm" href="#" id='total-unseen-label'
+                       data-toggle="dropdown" style="font-size:20px">
+                        <span class="text-muted">Settings </span>
+                        <span class="fa fa-cog text-info"></span>
+                    </a>
+                    <ul class="dropdown-menu hdropdown animated flipInX pull-right" style="width: 390px">
+                        <li style="font-size:20px" class="text-right">
+                            <a onclick="chatNewPhoto.show();">
+                                <span class="fa fa-camera text-success"></span>
+                                <span class="text-muted"> Change a Photo</span>
+                            </a>
+                        </li>
+                        <li style="font-size:20px" class="text-right">
+                            <a onclick="deleteChat();">
+                                <span class="fa fa-trash text-danger"></span>
+                                <span class="text-muted"> Delete Chat</span>
+                            </a>
+                        </li>
+                    </ul>
+                </span>
+            }
+
+            <span class="pull-right">&emsp;&emsp;</span>
             <a class="dropdown-toggle label-menu-corner pull-right m-t-sm" href="#" id='total-unseen-label'
                data-toggle="dropdown" style="font-size:20px">
-                <span class="fa fa-users text-info"></span>
-                <span class="text-muted"> Users</span>
+                <span class="text-muted">Users </span>
+                <span class="fa fa-users text-primary"></span>
             </a>
             <ul class="dropdown-menu hdropdown animated flipInX pull-right" style="width: 390px">
-                <li class="title">
-                    <a class="text-muted">Add User</a>
-                </li>
                 <li>
                     <div class="chat-users">
                         <div class="users-list" id="added-users-list">
                             @foreach (AppUser user in Model.AllUsers)
                             {
-                                <a href="#">
+                                <div id="user-list-@user.Id">
                                     <div class="chat-user m-l-lg">
                                         <!--TODO: User online
-                                <span class="pull-right label label-success">Online</span>
-                                -->
-                                        <img class="chat-avatar" src="@imgSrc(user.ProfilePhotoUrl)" alt="Photo">
+                                        <span class="pull-right label label-success">Online</span>
+                                        -->
+                                        <img class="chat-avatar" src="@imgSrc(user.ProfilePhotoUrl)" alt="Photo" id="chat-photo">
                                         <div class="chat-user-name">
                                             <span>
                                                 @firstLastNameNull(user.FirstName, user.LastName, user.UserName)
                                             </span>
+                                            @if (Model.Chat.CreatedBy == ViewData["Id"].ToString()
+                                                    && Model.Chat.CreatedBy != user.Id)
+                                            {
+                                                <a class="pull-right" onclick="removeUser('@user.Id');">
+                                                    <span class="fas fa-user-times text-danger"></span>
+                                                </a>
+                                            }
                                         </div>
                                     </div>
-                                </a>
+                                </div>
                             }
                         </div>
                     </div>
@@ -117,7 +147,7 @@
     </div>
 </div>
 
-<div class="content" style="padding-top: 10px">
+<div class="content" style="padding-top: 10px" id="chat-content">
     <div class="row">
         <div class="col-md-12">
             <div class="hpanel ">
@@ -139,144 +169,145 @@
                             }
                             else
                             {
-                        <div class="chat-discussion" id="all-messages">
-                            @foreach (GroupMsgInfo msg in Model.AllMessages)
-                            {
-                                if (msg.Message.MessageType == "SystemMsg")
-                                {
-                                    <div class="chat-message pull-right text-center m-t-xs"
-                                         style="width: auto; background: #577284;
+                                <div class="chat-discussion" id="all-messages">
+                                    @foreach (GroupMsgInfo msg in Model.AllMessages)
+                                    {
+                                        if (msg.Message.MessageType == "SystemMsg")
+                                        {
+                                            <div class="chat-message pull-right text-center m-t-xs"
+                                                 style="width: auto; background: #577284;
                                             margin-right: 40%; margin-bottom: 5px;
                                             border-radius: 10px; box-sizing: border-box">
-                                        <div class="message" style="background: none;
+                                                <div class="message" style="background: none;
                                              padding: 0px; margin-left: 0px; color: #e6f2ff;">
-                                            <span class="message-content">
-                                                @Html.Raw(Model.MessageNewLine(msg.Message.MessageContent))
-                                            </span>
+                                                    <span class="message-content">
+                                                        @Html.Raw(Model.MessageNewLine(msg.Message.MessageContent))
+                                                    </span>
 
-                                            @Html.Raw(unSeenMsgId(ViewData["Id"].ToString(), msg.Views, msg.Message.MessageId))
-                                        </div>
-                                    </div>
-                                }
-                                else {
-                                    if (msg.Message.UserId == ViewData["Id"].ToString())
-                                    {
-                                    <div class="chat-message pull-right m-t-xs"
-                                         style="width: 80%; background: #e6f2ff;
+                                                    @Html.Raw(unSeenMsgId(ViewData["Id"].ToString(), msg.Views, msg.Message.MessageId))
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            if (msg.Message.UserId == ViewData["Id"].ToString())
+                                            {
+                                                <div class="chat-message pull-right m-t-xs"
+                                                     style="width: 80%; background: #e6f2ff;
                                             margin-right: 20px; margin-bottom: 5px;
                                             border-radius: 10px; border:1px solid #e6f2ff;
                                             box-sizing: border-box" id="msg-@msg.Message.MessageId">
-                                        <div class="message" style="background: none;
+                                                    <div class="message" style="background: none;
                                              padding: 0px; margin-left: 0px">
-                                            <span class="message-author"> Me </span>
-                                            <div class="dropdown pull-right">
-                                                <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-                                                    <i class="pe-7s-more"></i>
-                                                </a>
-                                                <div class="dropdown-menu hdropdown bigmenu animated fadeIn"
-                                                     style="padding: 10px 10px 0 10px;">
-                                                    <table>
-                                                        <tbody>
-                                                            <tr>
-                                                                <td>
-                                                                    <a onclick="newMessage.delete('@msg.Message.MessageId', '@Model.Chat.ChatId');">
-                                                                        <i class="pe pe-7s-trash text-error"></i>
-                                                                        Remove
-                                                                    </a>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                            <button type="button" class="message-date"
-                                                    style="border:none; background: none;"
-                                                    data-container="body" data-toggle="popover"
-                                                    data-placement="left"
-                                                    data-content="@msg.Message.DateAdded.ToString("dd.mm.yyyy. HH:mm")">
-                                                @Model.MsgSentDate(msg.Message.DateAdded)
-                                            </button>
-                                            <span style="color: #000" class="message-content">
-                                                @Html.Raw(Model.MessageNewLine(msg.Message.MessageContent))
-                                            </span>
-                                        </div>
+                                                        <span class="message-author"> Me </span>
+                                                        <div class="dropdown pull-right">
+                                                            <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                                                                <i class="pe-7s-more"></i>
+                                                            </a>
+                                                            <div class="dropdown-menu hdropdown bigmenu animated fadeIn"
+                                                                 style="padding: 10px 10px 0 10px;">
+                                                                <table>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td>
+                                                                                <a onclick="newMessage.delete('@msg.Message.MessageId', '@Model.Chat.ChatId');">
+                                                                                    <i class="pe pe-7s-trash text-error"></i>
+                                                                                    Remove
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <button type="button" class="message-date"
+                                                                style="border:none; background: none;"
+                                                                data-container="body" data-toggle="popover"
+                                                                data-placement="left"
+                                                                data-content="@msg.Message.DateAdded.ToString("dd.mm.yyyy. HH:mm")">
+                                                            @Model.MsgSentDate(msg.Message.DateAdded)
+                                                        </button>
+                                                        <span style="color: #000" class="message-content">
+                                                            @Html.Raw(Model.MessageNewLine(msg.Message.MessageContent))
+                                                        </span>
+                                                    </div>
 
-                                        <div id="@msg.Message.MessageId-seen-sent">
-                                            @if (msg.Views == null || msg.Views.Count() == 0)
-                                            {
-                                                <strong class='text-muted pull-right' style='font-size: 10px' id='@msg.Message.MessageId-msg-sent'>
-                                                    sent <span class='fa fa-check'></span>
-                                                </strong>
+                                                    <div id="@msg.Message.MessageId-seen-sent">
+                                                        @if (msg.Views == null || msg.Views.Count() == 0)
+                                                        {
+                                                            <strong class='text-muted pull-right' style='font-size: 10px' id='@msg.Message.MessageId-msg-sent'>
+                                                                sent <span class='fa fa-check'></span>
+                                                            </strong>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="dropdown pull-right" id="@msg.Message.MessageId-msg-seen">
+                                                                <a class="dropdown-toggle label-menu-corner" href="#" id='total-unseen-label'
+                                                                   data-toggle="dropdown" style="font-size:20px">
+                                                                    <strong class='text-muted' style='font-size: 10px'>
+                                                                        seen <span class='fa fa-check-double'></span>
+                                                                    </strong>
+                                                                </a>
+                                                                <ul class="dropdown-menu hdropdown animated flipInX" style="width: 390px">
+                                                                    <li>
+                                                                        <div class="chat-users">
+                                                                            <div class="users-list" id="@msg.Message.MessageId-view-list">
+                                                                                @Html.Raw(MsgViews(msg.Views))
+                                                                            </div>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
                                             }
                                             else
                                             {
-                                                <div class="dropdown pull-right" id="@msg.Message.MessageId-msg-seen">
-                                                    <a class="dropdown-toggle label-menu-corner" href="#" id='total-unseen-label'
-                                                       data-toggle="dropdown" style="font-size:20px">
-                                                        <strong class='text-muted' style='font-size: 10px'>
-                                                            seen <span class='fa fa-check-double'></span>
-                                                        </strong>
-                                                    </a>
-                                                    <ul class="dropdown-menu hdropdown animated flipInX" style="width: 390px">
-                                                        <li>
-                                                            <div class="chat-users">
-                                                                <div class="users-list" id="@msg.Message.MessageId-view-list">
-                                                                    @Html.Raw(MsgViews(msg.Views))
-                                                                </div>
+                                                <div class="chat-message left pull-left"
+                                                     style="width: 80%; padding-top: 5px; padding-bottom: 5px;" id="msg-@msg.Message.MessageId">
+                                                    <img class="message-avatar" src="@msgImgSrc(msg.Message.UserId)" alt="">
+                                                    <div class="message">
+                                                        <span class="message-author">
+                                                            @msgUserName(msg.Message.UserId)
+                                                        </span>
+                                                        <button class="message-date"
+                                                                style="border:none; background: none;"
+                                                                data-container="body" data-toggle="popover"
+                                                                data-placement="right"
+                                                                data-content="@msg.Message.DateAdded.ToString("dd.mm.yyyy. HH:mm")">
+                                                            @Model.MsgSentDate(msg.Message.DateAdded)
+                                                        </button>
+                                                        <span style="color: #000" class="message-content">
+                                                            @Html.Raw(Model.MessageNewLine(msg.Message.MessageContent))
+                                                        </span>
+                                                        @Html.Raw(unSeenMsgId(ViewData["Id"].ToString(), msg.Views, msg.Message.MessageId))
+                                                        @if (msg.Views != null)
+                                                        {
+                                                            <div id="@msg.Message.MessageId-seen-sent">
+                                                                <a class="dropdown-toggle label-menu-corner" href="#" id='total-unseen-label'
+                                                                   data-toggle="dropdown" style="font-size:20px; padding: 1px 1px 1px 1px;">
+                                                                    <strong class='text-muted pull-right' style='font-size: 10px'>
+                                                                        seen <span class='fa fa-check-double'></span>
+                                                                    </strong>
+                                                                </a>
+                                                                <ul class="dropdown-menu hdropdown animated flipInX pull-right" style="width: 390px;">
+                                                                    <li>
+                                                                        <div class="chat-users">
+                                                                            <div class="users-list" id="@msg.Message.MessageId-view-list">
+                                                                                @Html.Raw(MsgViews(msg.Views))
+                                                                            </div>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
                                                             </div>
-                                                        </li>
-                                                    </ul>
+                                                        }
+                                                    </div>
                                                 </div>
                                             }
-                                        </div>
-                                    </div>
+                                        }
                                     }
-                                    else
-                                    {
-                                    <div class="chat-message left pull-left"
-                                         style="width: 80%; padding-top: 5px; padding-bottom: 5px;" id="msg-@msg.Message.MessageId">
-                                        <img class="message-avatar" src="@msgImgSrc(msg.Message.UserId)" alt="">
-                                        <div class="message">
-                                            <span class="message-author">
-                                                @msgUserName(msg.Message.UserId)
-                                            </span>
-                                            <button class="message-date"
-                                                    style="border:none; background: none;"
-                                                    data-container="body" data-toggle="popover"
-                                                    data-placement="right"
-                                                    data-content="@msg.Message.DateAdded.ToString("dd.mm.yyyy. HH:mm")">
-                                                @Model.MsgSentDate(msg.Message.DateAdded)
-                                            </button>
-                                            <span style="color: #000" class="message-content">
-                                                @Html.Raw(Model.MessageNewLine(msg.Message.MessageContent))
-                                            </span>
-                                            @Html.Raw(unSeenMsgId(ViewData["Id"].ToString(), msg.Views, msg.Message.MessageId))
-                                            @if (msg.Views != null)
-                                            {
-                                                <div id="@msg.Message.MessageId-seen-sent">
-                                                    <a class="dropdown-toggle label-menu-corner" href="#" id='total-unseen-label'
-                                                       data-toggle="dropdown" style="font-size:20px; padding: 1px 1px 1px 1px;">
-                                                        <strong class='text-muted pull-right' style='font-size: 10px'>
-                                                            seen <span class='fa fa-check-double'></span>
-                                                        </strong>
-                                                    </a>
-                                                    <ul class="dropdown-menu hdropdown animated flipInX pull-right" style="width: 390px;">
-                                                        <li>
-                                                            <div class="chat-users">
-                                                                <div class="users-list" id="@msg.Message.MessageId-view-list">
-                                                                    @Html.Raw(MsgViews(msg.Views))
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            }
-                                        </div>
-                                    </div>
-                                    }
-                                }
-                            }
-                        </div>
+                                </div>
                             }
                         </div>
                     </div>
@@ -307,14 +338,31 @@
     @await Component.InvokeAsync("ChatNewUsers", new { userId = ViewData["Id"], chatId = Model.Chat.ChatId })
 </div>
 
+<!--Change Chat Photo-->
+<div id="chat-new-photo-window" style="display: none;">
+    @await Component.InvokeAsync("ChatNewPhoto", new { chatId = Model.Chat.ChatId })
+</div>
+
 @section Scripts {
     <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/profilePhoto/profilePhoto.css" />
     </environment>
 
     <script type="text/javascript">
+        //chat new photo
+        var chatNewPhotoWindow = document.getElementById('chat-new-photo-window');
+        var chatNewPhoto = new function () {
+            this.show = function () {
+                chatNewPhotoWindow.style.display = '';
+            };
+            this.hide = function () {
+                chatNewPhotoWindow.style.display = 'none';
+            };
+        };
+
         //chat new users
         var chatNewUsersWindow = document.getElementById('chat-new-users-window');
-    
+
         var checkedUsers = "";
         var chatNewUsers = new function () {
             this.show = function () {
@@ -324,7 +372,7 @@
                 chatNewUsersWindow.style.display = 'none';
                 console.log("Before: " + checkedUsers);
                 checkedUsers = "";
-                
+
                 console.log("After: " + checkedUsers);
             };
         };
@@ -343,7 +391,7 @@
                 //remove user from list
                 checkedUsers = checkedUsers.replace(checkbox.value + ";", "");
             }
-         };
+        };
 
         //chat hub
         var currentUser = document.getElementById('currentUser').value;
@@ -436,8 +484,8 @@
                             </div>
                         `);
                         connection.invoke("GroupMessageSeen", chatId, msgId, currentUser).catch(function (err) {
-                                return console.error(err.toString());
-                            });
+                            return console.error(err.toString());
+                        });
                     }
                     else {
                         if (currentUser == senderId) {
@@ -529,8 +577,8 @@
                 </div>
                         `);
                         connection.invoke("GroupMessageSeen", chatId, msgId, currentUser).catch(function (err) {
-                                return console.error(err.toString());
-                            });
+                            return console.error(err.toString());
+                        });
                     }
                     else {
                         if (currentUser == senderId) {
@@ -651,14 +699,63 @@
             }
         });
 
+        connection.on("ChatAddPhoto", function (cId, path) {
+            if (chatId == cId) {
+                window.location.href = currentUser + "?groupChatId=" + cId;
+            }
+        });
+
+        connection.on("ExitChat", function (cId, uId) {
+            if (chatId == cId && uId == currentUser) {
+                window.location.href = uId + "?groupChatId=" + cId;
+            }
+        });
+    
+        connection.on("DeleteGroupChat-ExitChat", function (cId) {
+            if (chatId == cId) {
+                window.location.href = currentUser + "?groupChatId=" + cId;
+            }
+        });
+
+        connection.on("DeleteUserFromList", function (cId, uId) {
+            if (chatId == cId)
+            {
+                var userDiv = "#user-list-" + uId;
+                $(userDiv).remove();
+            }
+        });
+
         var addUsers = new function () {
             this.save = function () {
                 chatNewUsersWindow.style.display = 'none';
                 connection.invoke("GroupChatNewUsers", currentUser, chatId, checkedUsers)
+                    .catch(function (err) {
+                        return console.error(err.toString());
+                    });
+            };
+        };
+
+        var newPhoto = new function () {
+            this.save = function () {
+                connection.invoke("GroupChatAddNewPhoto", currentUser, chatId)
+                    .catch(function (err) {
+                        return console.error(err.toString());
+                    });
+            };
+        };
+
+        function removeUser(uId) {
+            connection.invoke("GroupChatRemoveUser", chatId, uId)
                         .catch(function (err) {
                             return console.error(err.toString());
                         });
-            };
+        };
+
+        function deleteChat() {
+            connection.invoke("DeleteGroupChat", chatId)
+                        .catch(function (err) {
+                            return console.error(err.toString());
+                        });
         };
 
         var newMessage = new function () {

@@ -1,0 +1,20 @@
+﻿@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = "Chat-Error";
+}
+
+
+    <div class="content" style="padding-top: 10px" id="chat-content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="hpanel ">
+                    <div class="panel-body no-padding">
+                        <div class="row text-center">
+                            <h1 class="fa fa-exclamation-triangle text-danger" style="font-size: 40px;"></h1>
+                            <h4 class="text-warning">@ViewData["ChatError"]</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

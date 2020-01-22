@@ -358,6 +358,21 @@
             }
         });
 
+        connectionChatHeader.on("DeleteChatFromIndex", function (cId, userId) {
+                if (currentUser == userId) {
+                    var chatDiv = "#group-chat-" + cId;
+                    $(chatDiv).remove();
+                }
+        });
+
+        connectionChatHeader.on("DeleteGroupChat-DeleteChatFromIndex", function (cId) {
+            var chatJS = "group-chat-" + cId;
+            var chatJQ = "#group-chat-" + cId;
+            if (document.getElementById(chatJS) != null) {
+                $(chatJQ).remove();
+            }
+        });
+
         var lastMsgContent = new function () {
             this.post = function (msgCont) {
                 var br = msgCont.indexOf("</br>");

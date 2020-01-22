@@ -633,12 +633,38 @@ namespace SirmiumCommercial.Models
             context.SaveChanges();
         }
 
-        public void RemoveUserFromGroupChat (int id)
+        public void RemoveUserFromGroupChat (int chatId, string userId)
         {
             GroupChatUsers dbEntry = context.GroupChatUsers
-                .FirstOrDefault(cu => cu.id == id);
-            context.GroupChatUsers.Remove(dbEntry);
-            context.SaveChanges();
+                .FirstOrDefault(cu => cu.GroupChatId == chatId && cu.UserId == userId);
+
+            if (dbEntry != null)
+            {
+                foreach (GroupChatMessage msg in context.GroupChatMessages.Where(m => m.GroupChatId == chatId))
+                {
+                    if (msg.UserId == dbEntry.UserId)
+                    {
+                        //delete message views
+                        foreach (GroupMessageView view in context.GroupMessageViews.Where(v => v.MessageId == msg.MessageId))
+                        {
+                            context.GroupMessageViews.Remove(view);
+                        }
+                        context.GroupChatMessages.Remove(msg);
+                    }
+                    else
+                    {
+                        GroupMessageView view = context.GroupMessageViews.FirstOrDefault(v => v.MessageId == msg.MessageId
+                            && v.UserId == dbEntry.UserId);
+                        if (view != null)
+                        {
+                            context.GroupMessageViews.Remove(view);
+                        }
+                    }
+                }
+
+                context.GroupChatUsers.Remove(dbEntry);
+                context.SaveChanges();
+            }
         }
 
         public void NewChatMessage (ChatMessage msg, Chat chat)
@@ -726,7 +752,6 @@ namespace SirmiumCommercial.Models
                 foreach (GroupMessageView view in dbEntry.Views)
                 {
                     context.GroupMessageViews.Remove(view);
-                    context.SaveChanges();
                 }
 
                 context.GroupChatMessages.Remove(dbEntry);
@@ -741,15 +766,20 @@ namespace SirmiumCommercial.Models
             if(dbEntry != null)
             {
                 //delete all chat users
-                foreach (GroupChatUsers user in dbEntry.Users)
+                foreach (GroupChatUsers user in context.GroupChatUsers.Where(u => u.GroupChatId == chatId))
                 {
-                    RemoveUserFromGroupChat(user.id);
+                    context.GroupChatUsers.Remove(user);
                 }
 
                 //delete all chat messages
-                foreach (GroupChatMessage msg in dbEntry.Messages)
+                foreach (GroupChatMessage msg in context.GroupChatMessages.Where(m => m.GroupChatId == chatId))
                 {
-                    DeleteGroupChatMessage(msg.MessageId);
+                    //delete message views
+                    foreach (GroupMessageView view in context.GroupMessageViews.Where(v => v.MessageId == msg.MessageId))
+                    {
+                        context.GroupMessageViews.Remove(view);
+                    }
+                    context.GroupChatMessages.Remove(msg);
                 }
                     
                 context.GroupChats.Remove(dbEntry);

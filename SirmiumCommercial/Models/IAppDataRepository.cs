@@ -104,7 +104,7 @@ namespace SirmiumCommercial.Models
 
         void AddUserToGroupChat(int chatId, string userId);
 
-        void RemoveUserFromGroupChat(int id);
+        void RemoveUserFromGroupChat(int chatId, string userId);
 
         void NewChatMessage(ChatMessage msg, Chat chat);
 

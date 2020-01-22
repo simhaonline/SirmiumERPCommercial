@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SignalR;
 
 namespace SirmiumCommercial.Controllers
 {
@@ -27,43 +28,6 @@ namespace SirmiumCommercial.Controllers
             hostingEnvironment = hosting;
         }
 
-        /*public async Task<ViewResult> Index(string id)
-        {
-            ViewData["Id"] = id;
-
-            AppUser user = await userManager.FindByIdAsync(id);
-
-            IQueryable<AppUser> users = userManager.Users
-                .Where(u => u.CompanyName == user.CompanyName && u.Id != user.Id);
-
-            List<IndexChat> chats = new List<IndexChat>();
-            foreach (Chat chat in repository.Chats)
-            {
-                if (chat.User1Id == id || chat.User2Id == id)
-                {
-                    if (chat.Messages.LastOrDefault() != null)
-                    {
-                        int unseenMsg = chat.Messages
-                            .Where(m => m.Seen == false && m.UserId != id).Count();
-
-                        IndexChat ci = new IndexChat
-                        {
-                            chat = chat,
-                            LastMessage = chat.Messages.LastOrDefault(),
-                            LastMessageDate = chat.Messages.LastOrDefault().DateAdded,
-                            UnseenMsg = unseenMsg
-                        };
-                        chats.Add(ci);
-                    }
-                }
-            }
-
-            return View(new ChatViewModel
-            {
-                Chats = chats.AsQueryable().OrderByDescending(c => c.LastMessageDate),
-                Users = users
-            });
-        }*/
         public async Task<ViewResult> Index(string id)
         {
             ViewData["Id"] = id;
@@ -297,7 +261,7 @@ namespace SirmiumCommercial.Controllers
             return RedirectToAction("Index", new { id });
         }
 
-        public ViewResult GroupChat(string id, int groupChatId)
+        public IActionResult GroupChat(string id, int groupChatId)
         {
             ViewData["Id"] = id;
 
@@ -305,6 +269,16 @@ namespace SirmiumCommercial.Controllers
                 .FirstOrDefault(u => u.Id == id);
             GroupChat chat = repository.GroupChats
                 .FirstOrDefault(g => g.ChatId == groupChatId);
+
+            if(chat == null)
+            {
+                return RedirectToAction("NoPermission", new { userId = id, chatId = groupChatId });
+            }
+
+            if(repository.GroupChatUsers.Any(u => u.UserId == currentUser.Id && u.GroupChatId == chat.ChatId) == false)
+            {
+                return RedirectToAction("NoPermission", new { userId = id, chatId = groupChatId } );
+            }
 
             IQueryable<GroupChatMessage> chatMessages = repository.GroupChatMessages
                 .Where(g => g.GroupChatId == chat.ChatId);
@@ -348,6 +322,38 @@ namespace SirmiumCommercial.Controllers
                 AllUsers = users.AsQueryable().OrderBy(u => u.LastName),
                 AllMessages = allMsgs.AsQueryable()
             });
+        }
+
+        public IActionResult GroupChatNewPhoto(NewGroupChatPhotoViewModel model)
+        {
+            AppUser user = userManager.Users.FirstOrDefault(u => u.Id == model.CreatedBy);
+
+            if (model.Photo != null)
+            {
+                AddGroupChatPhoto(model.ChatId, model.Photo);
+            }
+
+            return RedirectToAction("GroupChat", new { id = model.CreatedBy, groupChatId = model.ChatId });
+        }
+
+        public ViewResult NoPermission (string userId, int chatId)
+        {
+            ViewData["Id"] = userId;
+
+            GroupChat chat = repository.GroupChats.FirstOrDefault(c => c.ChatId == chatId);
+            string msg = "";
+
+            if (chat != null)
+            {
+                msg = "You do not have permission to access this chat!";
+            }
+            else
+            {
+                msg = "Sorry, this chat not exist!";
+            }
+
+            ViewData["ChatError"] = msg;
+            return View();
         }
 
         private void AddGroupChatPhoto(int groupChatId, IFormFile photo)

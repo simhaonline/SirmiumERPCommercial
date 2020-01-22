@@ -29,6 +29,9 @@
     <Content Update="Views\Chat\Components\ChatNewUsers\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Chat\Components\ChatNewPhoto\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Chat\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

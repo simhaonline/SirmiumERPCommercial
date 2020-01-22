@@ -384,6 +384,54 @@ namespace SirmiumCommercial.Hubs
                 }
             }
         }
+
+        public async Task GroupChatAddNewPhoto(string userId, int chatId)
+        {
+            AppUser user = userManager.Users.FirstOrDefault(u => u.Id == userId);
+            GroupChat chat = repository.GroupChats.FirstOrDefault(c => c.ChatId == chatId);
+
+            string msg = ((user.FirstName == null && user.LastName == null) ?
+                user.UserName : $"{user.FirstName} {user.LastName}") + " change chat photo";
+
+            await NewGroupMessage(userId, chatId, msg, "SystemMsg");
+            await Clients.All.SendAsync("ChatAddPhoto", chatId, chat.ChatPhotoPath);
+
+        }
+
+        public async Task GroupChatRemoveUser(int chatId, string userId)
+        {
+            AppUser user = userManager.Users.FirstOrDefault(u => u.Id == userId);
+            GroupChat chat = repository.GroupChats.FirstOrDefault(c => c.ChatId == chatId);
+            AppUser chatAdmin = userManager.Users.FirstOrDefault(u => u.Id == chat.CreatedBy);
+
+            GroupChatUsers chatUser = repository.GroupChatUsers.FirstOrDefault(cu => cu.GroupChatId == chatId 
+                                                            && cu.UserId == userId);
+            repository.RemoveUserFromGroupChat(chatId, user.Id);
+
+            string msg = ((user.FirstName == null && user.LastName == null) ?
+                user.UserName : $"{user.FirstName} {user.LastName}") + " has left the conversation";
+
+            await NewGroupMessage(chatAdmin.Id, chatId, msg, "SystemMsg");
+
+            await Clients.All.SendAsync("DeleteChatFromHeader", chatId, userId);
+            await Clients.All.SendAsync("DeleteChatFromIndex", chatId, userId);
+            await Clients.All.SendAsync("DeleteUserFromList", chatId, userId);
+
+            await Clients.All.SendAsync("ExitChat", chatId, userId);
+        }
+
+        public async Task DeleteGroupChat(int chatId)
+        {
+            GroupChat chat = repository.GroupChats.FirstOrDefault(c => c.ChatId == chatId);
+
+            IQueryable<string> chatUsers = repository.GroupChatUsers.Where(cu => cu.GroupChatId == chatId).Select(c => c.UserId);
+
+            repository.DeleteGroupChat(chatId);
+
+            await Clients.All.SendAsync("DeleteGroupChat-DeleteChatFromHeader", chatId);
+            await Clients.All.SendAsync("DeleteGroupChat-DeleteChatFromIndex", chatId);
+            await Clients.All.SendAsync("DeleteGroupChat-ExitChat", chatId);
+        }
     }
 }
 

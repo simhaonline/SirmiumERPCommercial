@@ -1,0 +1,40 @@
+﻿@model NewGroupChatPhotoViewModel
+
+<div id="uploadPhoto" class="form-container">
+    <div class="form-header">
+        <span>Upload a Photo</span>
+        <a onclick="chatNewPhoto.hide();"
+           class="pull-right text-muted fa fa-close"
+           id="closePhotoWindow"></a>
+    </div>
+    <form asp-action="GroupChatNewPhoto" asp-controller="Chat"
+          enctype="multipart/form-data" id="profilePhotoForm" method="post">
+        <input asp-for="ChatId" value="@Model.ChatId" hidden />
+        <input asp-for="CreatedBy" value="@Model.CreatedBy" hidden />
+        <div class="text-center">
+            <img id="output" style="width: 80%; height: auto;
+            border-radius: unset" />
+        </div>
+        <div class="m-t-sm m-b-sm text-center col-md-12">
+            <input asp-for="Photo" class="form-control" id="photo"
+                   onchange="loadFile(event)">
+        </div>
+        <div class="text-center col-md-12">
+            <button class="btn btn-outline btn-success" type="submit"
+                    onclick="newPhoto.save();">
+                Save
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    var loadFile = function (event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('output');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    };
+</script>

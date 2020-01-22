@@ -234,5 +234,12 @@ namespace SirmiumCommercial.Models.ViewModels
         public GroupChatMessage Message { get; set; }
         public IQueryable<GroupMessageView> Views { get; set; }
     }
+
+    public class NewGroupChatPhotoViewModel
+    {
+        public string CreatedBy { get; set; }
+        public int ChatId { get; set; }
+        public IFormFile Photo { get; set; }
+    }
 }
 
