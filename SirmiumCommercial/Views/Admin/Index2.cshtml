@@ -16,20 +16,20 @@
         <div class="panel-body" style="font-size: 30px;">
             <span class="fa fa-users"></span>
             <strong>All Users</strong>
-            <span>&emsp;</span>
+            @**<span>&emsp;</span>
             <a href="#" class="pull-right btn"
                data-toggle="collapse" data-target="#collapseExample"
                aria-expanded="false" aria-controls="collapseExample">
                 <span class="pe-7s-edit" style="font-size: 25px; color: #000000"></span>
                 <span class="text-muted" style="font-size: 20px;">Filter</span>
-            </a>
+            </a>*@
             <span>&emsp;</span>
             <a href="@Url.Action("InviteByEmail", "Admin", new { id = ViewData["Id"] })"
                class="pull-right btn">
                 <span class="fa fa-user-plus text-success" style="font-size: 20px;"></span>
                 <span class="text-muted" style="font-size: 20px;">Invite by email</span>
             </a>
-        </div>
+        </div>@**
         <div class="collapse " id="collapseExample">
             <div class="well well-lg row m-l-xs m-r-xs">
                 <div class="col-sm-3">
@@ -179,9 +179,84 @@
                 </div>
             </div>
         </div>
+        *@
     </div>
 </div>
 
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel m-b-xs">
+            <div class="panel-body" style="padding-bottom: 5px;">
+                <div class="row p-xxs">
+                    <input type="text" class="form-control input-sm m-b-md" id="filter" placeholder="Search in table">
+                    <table id="table" class="footable table table-stripped toggle-arrow-tiny" data-page-size="8" data-filter=#filter>
+
+                        <thead>
+                            <tr>
+                                <th id="photo-table"></th>
+                                <th class="text-center">Username</th>
+                                <th class="text-center">Last Name</th>
+                                <th class="text-center">Full Name</th>
+                                <th class="text-center">Email</th>
+                                <th class="text-center">User Status</th>
+                                <th class="text-center">Registration Date</th>
+                                <th class="text-center" id="info">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (AppUser user in Model)
+                            {
+                            <tr>
+                                <td valign="middle" align="center">
+                                    <a href="@Url.Action("UserProfile", "User",
+                                                    new { id = ViewData["Id"], userId = user.Id })">
+                                        @if (user.ProfilePhotoUrl == null)
+                                        {
+                                            <img src="~/defaultAvatar.png" class="img-circle img-small" />
+                                        }
+                                        else
+                                        {
+                                            <img src="~/UsersData/@user.ProfilePhotoUrl" class="img-circle img-small" />
+                                        }
+                                    </a>
+                                </td>
+                                <td align="center" style="padding-top: 25px;">@user.UserName</td>
+                                <td style="padding-top: 25px;" align="center">@user.FirstName</td>
+                                <td style="padding-top: 25px;" align="center">@user.LastName</td>
+                                <td style="padding-top: 25px;" align="center">@user.Email</td>
+                                @if (user.Status == "Active")
+                                {
+                                    <td style="padding-top: 25px;" align="center" class="text-success">@user.Status</td>
+                                }
+                                else
+                                {
+                                    <td style="padding-top: 25px;" align="center" class="text-danger">@user.Status</td>
+                                }
+                                <td style="padding-top: 25px;" align="center">@user.RegistrationDate</td>
+                                <td style="padding-top: 25px;" align="center">
+                                    <a class="btn btn-sm btn-info" asp-action="Details"
+                                       asp-route-id="@ViewData["Id"]" asp-route-detailsId="@user.Id">
+                                        <span class="fa fa-info" style="font-size: 15px"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                            }
+
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="8">
+                                    <ul class="pagination pull-right"></ul>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@**
 <div class="content" style="padding-top: 0px;">
     <div class="row">
         <div class="col-lg-12">
@@ -252,3 +327,27 @@
         </div>
     </div>
 </div>
+*@
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+        <script src="~/homer/lib_local/footable/dist/footable.all.min.js"></script>
+        <script src="~/homer/lib/jquery-flot/jquery.flot.js"></script>
+        <script src="~/homer/lib/jquery-flot/jquery.flot.resize.js"></script>
+        <script src="~/homer/lib/jquery-flot/jquery.flot.pie.js"></script>
+        <script src="~/homer/lib/flot.curvedlines/curvedLines.js"></script>
+        <script src="~/homer/lib/flot-spline/js/jquery.flot.spline.min.js"></script>
+        <script src="~/homer/lib/peity/jquery.peity.min.js"></script>
+    </environment>
+
+    <script type="text/javascript">
+
+       $(function () {
+            $('#table').footable();
+            $('#info').removeClass("footable-sortable");
+            $('#info').html('');
+            $('#photo-table').removeClass("footable-sortable");
+            $('#photo-table').html('');
+       });
+    </script>
+}

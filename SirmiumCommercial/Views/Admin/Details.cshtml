@@ -10,151 +10,163 @@
     </environment>
 }
 
-<div class="row">
-    <h2 class="col-sm-10"><span class="text-info">&#64;@Model.User.UserName</span> Details:</h2>
-    <div class="col-sm-2">
-        <a class="btn btn-danger btn-outline m-t-sm" asp-action="Delete"
-           asp-controller="Admin" asp-route-deleteId="@Model.User.Id"
-           asp-route-id="@ViewData["Id"]" >
-            <span class="fa fa-minus"></span>  Delete User
-        </a>
-    </div>
-</div>
 
-<div class="col-5" style="margin:auto">
-    <div class="bg-primary m-1 p-1">
-        <h4></h4>
-    </div>
-
-    <table class="table table-sm table-bordered">
-        <tr>
-            <th>ID:</th>
-            <td>@Model.User.Id</td>
-        </tr>
-        <tr>
-            <th>Username:</th>
-            <td>@Model.User.UserName</td>
-        </tr>
-        <tr>
-            <th>First Name:</th>
-            <td>@Model.User.FirstName</td>
-        </tr>
-        <tr>
-            <th>Last Name:</th>
-            <td>@Model.User.LastName</td>
-        </tr>
-        <tr>
-            <th>Email:</th>
-            <td>@Model.User.Email</td>
-        </tr>
-        <tr>
-            <th>Company Name:</th>
-            <td>@Model.User.CompanyName</td>
-        </tr>
-        <tr>
-            <th>Phone Number:</th>
-            <td>@Model.User.PhoneNumber</td>
-        </tr>
-        <tr>
-            <th>Registration Date:</th>
-            <td>@Model.User.RegistrationDate</td>
-        </tr>
-        <tr>
-            <th>Status:</th>
-            <form asp-action="ChangeStatust" asp-route-id="@ViewData["Id"]"
-                  asp-route-changeId="@Model.User.Id" method="post">
-                @if (Model.User.Status == "Active")
-                {
-                    <td class="text-success">@Model.User.Status</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline btn-danger" type="submit">
-                            Inactive
-                        </button>
-                    </td>
-                }
-                else
-                {
-                    <td class="text-danger">@Model.User.Status</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline btn-success" type="submit">
-                            Active
-                        </button>
-                    </td>
-                }
-            </form>
-        </tr>
-        <tr>
-            <th>Role:</th>
-            <td user-role="@Model.User.Id" id="roleTd"></td>
-            <td colspan="2" id="roleForm" class="row" hidden>
-                <form asp-action="EditRole" method="post">
-                    <input asp-for="@Model.User.Id" type="hidden" />
-                    <div class="form-group col-sm-8">
-                        <select asp-for="@Model.Role.Id" class="form-control">
-                            <option value="">Set</option>
-                            @foreach (IdentityRole role in Model.Roles)
-                            {
-                                <option value="@role.Id">@role.Name</option>
-                            }
-                        </select>
-                    </div>
-                    <button class="btn btn-sm btn-success btn-outline" type="submit">Save</button>
-                    <a href="@Url.Action("Details", "Admin",
-                         new { id = ViewData["Id"], detailsId = Model.User.Id })" 
-                       class="btn btn-sm btn-danger btn-outline">Cancel</a>
-                </form>
-            </td>
-            <td id="editBtnTd">
-                <button class="btn btn-sm btn-outline btn-info" id="editBtn">
-                    Edit
-                </button>
-            </td>
-        </tr>
-    </table>
-
-    <div class="row text-center">
-        <a href="@Url.Action("Index", "Admin",
-                    new { id = ViewData["Id"] })"
-           class="btn btn-outline btn-danger">Cancel</a>
-    </div>
-</div>
-@*
-<div id="roleForm" class="col-12"
-     style="position:fixed; top:0; bottom:0; background-color:black; margin-left:0;
-        opacity:0.9" hidden>
-    <div class="col-2" style="margin-left:500px; margin-top:100px;
-            background-color:white; border: 3px solid #007bff; box-sizing:border-box;
-            opacity:1">
-        <div class="bg-primary m-1 p-1">
-            <h6>Edit role:</h6>
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <span class="fa fa-user text-info"></span>
+            <strong class="text-muted">@Model.User.UserName Details:</strong>
+            <span>&emsp;</span>
+            <a class="btn m-t-sm pull-right" asp-action="Delete"
+               asp-controller="Admin" asp-route-deleteId="@Model.User.Id"
+               asp-route-id="@ViewData["Id"]">
+                <span class="fa fa-user-times text-danger" style="font-size: 20px;"></span>
+                <span class="text-muted" style="font-size: 20px;">Delete User</span>
+            </a>
         </div>
-        <form asp-action="EditRole" method="post">
-            <input asp-for="@Model.User.Id" type="hidden" />
-            <div class="form-group">
-                <label class="form-control">Role:</label>
-                <select asp-for="@Model.Role.Id" class="form-control">
-                    <option value="">Set</option>
-                    @foreach (IdentityRole role in Model.Roles)
-                    {
-                        <option value="@role.Id">@role.Name</option>
-                    }
-                </select>
-            </div>
-            <button class="btn btn-sm btn-success" type="submit">Save</button>
-            <a asp-action="Details" class="btn btn-sm btn-danger">Cancel</a>
-        </form>
     </div>
-</div>*@
+</div>
 
-<script type="text/javascript">
-    var editBtn = document.getElementById("editBtn");
-    var editBtnTd = document.getElementById("editBtnTd");
-    var roleTd = document.getElementById("roleTd");
-    var roleForm = document.getElementById("roleForm");
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel m-b-xs">
+            <div class="panel-body" style="padding-bottom: 5px;">
+                <div class="row p-xxs">
+                    <table cellpadding="1" cellspacing="1" class="table table-bordered table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Username:</th>
+                                <td>@Model.User.UserName</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>First Name:</th>
+                                <td>@Model.User.FirstName</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>Last Name:</th>
+                                <td>@Model.User.LastName</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>Email:</th>
+                                <td>@Model.User.Email</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>Company Name:</th>
+                                <td>@Model.User.CompanyName</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>Phone Number:</th>
+                                <td>@Model.User.PhoneNumber</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>Registration Date:</th>
+                                <td>@Model.User.RegistrationDate</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>Status:</th>
+                                <form asp-action="ChangeStatust" asp-route-id="@ViewData["Id"]"
+                                      asp-route-changeId="@Model.User.Id" method="post">
+                                    @if (Model.User.Status == "Active")
+                                    {
+                                        <td class="text-success">@Model.User.Status</td>
+                                        <td class="text-center">
+                                            <button class="btn" type="submit">
+                                                <i class="far fa-times-circle text-danger"></i>
+                                                Inactive
+                                            </button>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td class="text-danger">@Model.User.Status</td>
+                                        <td class="text-center">
+                                            <button class="btn" type="submit">
+                                                <i class="far fa-check-circle text-success"></i>
+                                                Active
+                                            </button>
+                                        </td>
+                                    }
+                                </form>
+                            </tr>
+                            <tr>
+                                <th>Role:</th>
+                                <td user-role="@Model.User.Id" id="roleTd"></td>
+                                <td colspan="2" id="roleForm" class="row" hidden>
+                                    <form asp-action="EditRole" method="post">
+                                        <input asp-for="@Model.User.Id" type="hidden" />
+                                        <div class="form-group col-sm-8">
+                                            <select asp-for="@Model.Role.Id" class="form-control">
+                                                <option value="">Set</option>
+                                                @foreach (IdentityRole role in Model.Roles)
+                                                {
+                                                    <option value="@role.Id">@role.Name</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <button class="btn btn-sm btn-success btn-outline" type="submit">Save</button>
+                                        <a href="@Url.Action("Details", "Admin",
+                                                new { id = ViewData["Id"], detailsId = Model.User.Id })"
+                                           class="btn btn-sm btn-danger btn-outline">Cancel</a>
+                                    </form>
+                                </td>
+                                <td id="editBtnTd" class="text-center">
+                                    <button class="btn" type="submit" id="editBtn">
+                                        <i class="fas fa-edit text-warning"></i>
+                                        Edit
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        @*
+            <div id="roleForm" class="col-12"
+                 style="position:fixed; top:0; bottom:0; background-color:black; margin-left:0;
+                    opacity:0.9" hidden>
+                <div class="col-2" style="margin-left:500px; margin-top:100px;
+                        background-color:white; border: 3px solid #007bff; box-sizing:border-box;
+                        opacity:1">
+                    <div class="bg-primary m-1 p-1">
+                        <h6>Edit role:</h6>
+                    </div>
+                    <form asp-action="EditRole" method="post">
+                        <input asp-for="@Model.User.Id" type="hidden" />
+                        <div class="form-group">
+                            <label class="form-control">Role:</label>
+                            <select asp-for="@Model.Role.Id" class="form-control">
+                                <option value="">Set</option>
+                                @foreach (IdentityRole role in Model.Roles)
+                                {
+                                    <option value="@role.Id">@role.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <button class="btn btn-sm btn-success" type="submit">Save</button>
+                        <a asp-action="Details" class="btn btn-sm btn-danger">Cancel</a>
+                    </form>
+                </div>
+            </div>*@
 
-    editBtn.onclick = function () {
-        roleTd.hidden = true;
-        editBtnTd.hidden = true;
-        roleForm.hidden = false;
-    }
-</script>
+        <script type="text/javascript">
+            var editBtn = document.getElementById("editBtn");
+            var editBtnTd = document.getElementById("editBtnTd");
+            var roleTd = document.getElementById("roleTd");
+            var roleForm = document.getElementById("roleForm");
+
+            editBtn.onclick = function () {
+                roleTd.hidden = true;
+                editBtnTd.hidden = true;
+                roleForm.hidden = false;
+            }
+        </script>
