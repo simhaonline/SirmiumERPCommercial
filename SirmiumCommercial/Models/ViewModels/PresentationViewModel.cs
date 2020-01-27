@@ -37,6 +37,21 @@ namespace SirmiumCommercial.Models.ViewModels
         //uploaded files
         public IQueryable<PresentationFiles> PresentationFiles { get; set; }
     }
+
+    public class EditPresentation
+    {
+        public Presentation Presentation { get; set; }
+        public Video Video { get; set; }
+        public IQueryable<PresentationFiles> Files { get; set; }
+
+        //-----
+        public string UserId { get; set; }
+        public int CourseId { get; set; }
+        public int PresentationId { get; set; }
+        public string Title { get; set; }
+        public int Part { get; set; }
+        public string Description { get; set; }
+    }
     /*
      
         public int FileId { get; set; }

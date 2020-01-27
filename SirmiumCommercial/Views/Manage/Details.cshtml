@@ -1,0 +1,265 @@
+﻿@model CourseViewModel
+
+@{
+
+    string userPhoto(string path)
+    {
+        return (path == null) ? "/defaultAvatar.png" : $"/UsersData/{path}";
+    }
+
+
+    string firstLastNameExists(AppUser user)
+    {
+        return (user.FirstName == null || user.LastName == null) ?
+            user.UserName : user.FirstName + " " + user.LastName;
+    }
+}
+<style type="text/css">
+    .videoBtn {
+        display: none;
+        position: absolute;
+        top: 38%;
+        left: 2%;
+    }
+
+    .img-video:hover + .videoBtn {
+        display: inline;
+    }
+
+    .videoBtn:hover {
+        display: inline;
+    }
+
+    #video-video:hover {
+        opacity: 0.4;
+    }
+
+    #video-videoBtn:hover > #video-video {
+        opacity: 0.4;
+    }
+
+    #all-users {
+        height: 200px;
+        width: 200px;
+        overflow-y: scroll;
+    }
+</style>
+
+<div class="panel-body" style="padding-bottom: 5px;">
+    <div class="row">
+        @if (Model.Course.VideoId != 0)
+        {
+            <div class="col-lg-3">
+                <div id="video-videoBtn"
+                     style="background-color: #0c0830; padding:0px">
+                    <video src="@Model.Videos.FirstOrDefault(v => v.Id == Model.Course.VideoId).VideoPath" class="img-video"
+                           style="z-index: 1" id="video-video"></video>
+                    <div class="text-center img-video videoBtn" style="z-index: 1">
+                        <a href="@Url.Action("Index", "Recorder",
+                                    new { id = ViewData["Id"], videoId = Model.Course.VideoId })"
+                           class="btn btn-sm btn-primary2 p-xs">
+                            <span style="font-weight: 400; font-size: 18px">Watch</span>
+                            <span class="fa fa-play" style="font-size: 18px"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-lg-3">
+                <div class="text-center p-sm" style="width: 100%; height: 80%;
+                                    background-color: #bbbbbb;">
+                    <strong style="color:#34495e; font-size:20px;
+                                            font-family: 'Open Sans','Helvetica Neue',
+                                            Helvetica,Arial,sans-serif; ">
+                        SirmiumCommercial
+                    </strong>
+                    <br />
+                    <br />
+                    <i style="font-size: 45px; color:#5b80a4;" class="fas fa-video-slash"></i>
+                    <br />
+                    <strong style="font-size: 25px; color:#5b80a4;">NO VIDEO</strong>
+                    <br />
+                    <a class="btn btn-primary" onclick="NewVideo.show('Course', @Model.Course.CourseId); Camera.active('Course', @Model.Course.CourseId)">
+                        Create a Video <span class="far fa-dot-circle-o text-danger"></span>
+                    </a>
+                </div>
+            </div>
+        }
+        <div class="col-lg-4">
+            <h5 class="text-muted">Created by:</h5>
+            <h4 class="text-info font-bold">
+                <img class="img-circle" style="width: 30px; height: 30px"
+                     src="@userPhoto(Model.Course.CreatedBy.ProfilePhotoUrl)" />
+                <a href="@Url.Action("UserProfile", "User",
+                                    new { id = ViewData["Id"], userId = Model.Course.CreatedBy.Id })">
+                    @firstLastNameExists(Model.Course.CreatedBy)
+                </a>
+            </h4>
+            <h5 class="text-muted">Published on: </h5>
+            <h4>@Model.Course.DateAdded.ToLongDateString()</h4>
+            <h5 class="text-muted">End in: </h5>
+            <h4>@Html.Raw(Model.DateDifference(Model.Course.EndDate))</h4>
+        </div>
+        <div class="col-lg-3">
+            <h5 class="text-muted">Last Modification: </h5>
+            <h4>@Model.Course.DateModified.ToLongDateString()</h4>
+            <h5 class="text-muted">End Date: </h5>
+            @if (Model.Course.EndDate == DateTime.MinValue)
+            {
+                <h5>NO END DATE</h5>
+            }
+            else
+            {
+                <h4>@Model.Course.EndDate.ToLongDateString()</h4>
+            }
+            <h5 class="text-muted">Average rating: </h5>
+            <h4>Average rating</h4>
+        </div>
+        <div class="col-lg-1">
+            <h5 class="text-muted">Status: </h5>
+            @if (Model.Course.Status == "Private")
+            {
+                <h4 class="text-danger">PRIVATE</h4>
+            }
+            else
+            {
+                <h4 class="text-success">PUBLIC</h4>
+            }
+        </div>
+    </div>
+</div>
+
+@if (Model.Course.Description != null)
+{
+    <div class="panel-body m-t-xs" style="padding-top:0px">
+        <div class="row m-l-sm">
+            <h4 class="text-info">Description:</h4>
+            <span>@Model.Course.Description</span>
+        </div>
+    </div>
+}
+
+@**
+    <div class="col-lg-12">
+        <div class="col-lg-2 text-center">
+            @if (Model.Course.VideoId != 0)
+            {
+                var videoPath = Model.Videos.FirstOrDefault(v => v.Id == Model.Course.VideoId).VideoPath;
+                <div style="position: relative;">
+                    <video src="@videoPath" class="img-video"
+                           style="z-index: 1"></video>
+                    <div class="text-center img-video videoBtnCD" style="z-index: 1;">
+                        <a href="@Url.Action("Index", "Recorder", new { id = ViewData["Id"], videoId = Model.Course.VideoId })"
+                           class="btn btn-sm btn-primary2 p-xs">
+                            <span style="font-weight: 400; font-size: 18px">Watch</span>
+                            <span class="fa fa-play" style="font-size: 18px"></span>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-lg-3">
+            <h2>
+                @Model.Course.Title
+            </h2>
+            <h4>
+                by:
+                @if (Model.User != null)
+                {
+                    <span class="text-info">
+                        &#64;@Model.User.UserName
+                    </span>
+                }
+                else
+                {
+                    <span class="text-info"> &#64;SirmiumCommercial</span>
+                }
+            </h4>
+            <h5><span class="fa fa-plus-circle"></span> Added: @Model.Course.DateAdded.ToString()</h5>
+            <h5><span class="fa fa-pencil-square-o"></span> Date modified: @Model.Course.DateAdded.ToString()</h5>
+        </div>
+        <div class="col-lg-2">
+            @if (Model.Course.Presentations.Count() > 0)
+            {
+                <h4>Parts: <span class="text-warning">@Model.Course.Presentations.Count()</span>   </h4>
+            }
+            else
+            {
+                <h4>Parts: <span class="text-danger">0</span></h4>
+            }
+            <h5>
+                <span class="fa fa-clock-o"></span>End Date:
+                @if (Model.Course.EndDate != DateTime.MinValue)
+                {
+                    <span class="text-danger">
+                        @Model.Course.EndDate.ToShortDateString()
+                    </span>
+                }
+                else
+                {
+                    <span class="text-success">
+                        NO END DATE
+                    </span>
+                }
+            </h5>
+            @if ((DateTime.Now > Model.Course.EndDate) &&
+    (Model.Course.EndDate != DateTime.MinValue))
+            {
+                <h4>
+                    <span class="badge badge-danger text-warning" style="font-size:16px">
+                        <b>FINISHED</b>
+                    </span>
+                </h4>
+            }
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-2 text-center">
+            @if (Model.UsersOnCourse.FirstOrDefault(u => u.Id == ViewData["Id"].ToString())
+             != null)
+            {
+                <a href="@Url.Action("MyCourses", "Courses",
+                                            new { id = ViewData["Id"], sort = "Date Added",
+                                                order = "desc"})"
+                   class="btn btn-primary m-b-sm">
+                    <span class="fas fa-check"></span> My course
+                </a>
+            }
+            else
+            {
+                if ((DateTime.Now > Model.Course.EndDate) &&
+                    (Model.Course.EndDate != DateTime.MinValue))
+                {
+                    <button class="btn btn-primary" disabled>
+                        <span class="fa fa-plus"></span>
+                        Participate
+                    </button>
+                }
+                else
+                {
+                    <a href="@Url.Action("Participate", "Courses",
+                                    new { id = ViewData["Id"],
+                                        courseId = Model.Course.CourseId})"
+                       class="btn btn-primary"
+                       onclick="participateFunction('@ViewData["Id"]', @Model.Course.CourseId);">
+                        <span class="fa fa-plus"></span>Participate
+                    </a>
+                }
+            }
+        </div>
+    </div>
+
+    @if (Model.Course.Description != null)
+    {
+        <div class="row m-sm p-sm">
+            <div class="col-md-1"></div>
+            <div class="col-md-10 borderDashed" style="">
+                <h4>Description:</h4>
+                <span class="text-info">@Model.Course.Description</span>
+                <br />
+                <br />
+            </div>
+        </div>
+    }
+*@

@@ -156,12 +156,33 @@ namespace SirmiumCommercial.Controllers
         public IActionResult CourseManage(string id, int courseId)
         {
             ViewData["Id"] = id;
+
+            List<Video> videos = new List<Video>();
+            Course course = repository.Courses
+                .FirstOrDefault(c => c.CourseId == courseId);
+            //course video
+            if (course.VideoId != 0)
+            {
+                videos.Add(repository.Videos.FirstOrDefault(v => v.Id == course.VideoId));
+            }
+
+            foreach (Presentation p in course.Presentations)
+            {
+                //presentation video
+                if (p.VideoId != 0)
+                {
+                    videos.Add(repository.Videos.
+                        FirstOrDefault(v => v.Id == p.VideoId));
+                }
+            }
+
             return View(new CourseViewModel {
                 Course = repository.Courses
                         .FirstOrDefault(c => c.CourseId == courseId),
                 User = repository.Courses.Where(c => c.CreatedBy != null
                     && c.CourseId == courseId).Select(u => u.CreatedBy)
-                    .FirstOrDefault()
+                    .FirstOrDefault(),
+                Videos = videos.AsQueryable()
             });
         }
         
@@ -354,8 +375,8 @@ namespace SirmiumCommercial.Controllers
             if (model.VideoTitle != null)
             {
                 videoTitle = (model.VideoTitle.Trim() == "") ?
-                    model.TitlePlaceholder :
-                    model.VideoTitle.Replace(" ", "_");
+                    model.TitlePlaceholder.Replace(" ", "_") :
+                    model.VideoTitle;
             }
 
             var dirPath = Path.Combine(hostingEnvironment.WebRootPath,
@@ -367,7 +388,7 @@ namespace SirmiumCommercial.Controllers
             //save presentation video 
             Video video = new Video
             {
-                Title = $"{presentation.Title}Video",
+                Title = videoTitle,
                 CreatedBy = model.UserId,
                 Status = "Public",
                 For = "Presentation",
@@ -477,7 +498,173 @@ namespace SirmiumCommercial.Controllers
             return RedirectToAction("CourseManage", new { id, courseId });
         }
 
-        public IActionResult EditPresentation(string id, NewEditPresentation model)
+        public ViewResult EditPresentation (string id, int presentationId, int courseId)
+        {
+            ViewData["Id"] = id;
+
+            Presentation presentation = repository.Presentations.FirstOrDefault(p => p.PresentationId == presentationId);
+            Video video = repository.Videos.FirstOrDefault(v => v.Id == presentation.VideoId);
+            IQueryable<PresentationFiles> files = repository.PresentationFiles.Where(f => f.PresentationId == presentation.PresentationId);
+
+            return View(new EditPresentation
+            {
+                Presentation = presentation,
+                Video = video,
+                CourseId = courseId,
+                Files = repository.PresentationFiles.Where(f => f.PresentationId == presentation.PresentationId)
+            });
+        }
+
+        [HttpPost]
+        public IActionResult EditPresentation(EditPresentation model)
+        {
+            Presentation presentation = repository.Presentations.FirstOrDefault(p => p.PresentationId == model.PresentationId);
+
+            if(model.Title != null)
+            {
+                if (model.Title.Trim() != "" && model.Title.Trim() != presentation.Title)
+                {
+                    presentation.Title = model.Title;
+                    repository.SavePresentation(presentation);
+                }
+            }
+
+            if(model.Part != presentation.Part && model.Part > 0)
+            {
+                presentation.Part = model.Part;
+                repository.SavePresentation(presentation);
+            }
+
+            if (model.Description != null && presentation.Description != null)
+            {
+                if (model.Description.Trim() != "" && model.Description.Trim() != presentation.Description)
+                {
+                    presentation.Description = model.Description;
+                    repository.SavePresentation(presentation);
+                }
+            }
+            else if (model.Description != null && presentation.Description == null)
+            {
+                if (model.Description.Trim() != "")
+                {
+                    presentation.Description = model.Description;
+                    repository.SavePresentation(presentation);
+                }
+            }
+
+            return RedirectToAction("EditPresentation", new {
+                id = model.UserId,
+                presentationId = model.PresentationId,
+                courseId = model.CourseId
+            });
+        }
+
+        public ViewResult NewPresentationVideo(string id, int presentationId, int courseId)
+        {
+            ViewData["Id"] = id;
+
+            Presentation presentation = repository.Presentations
+                .FirstOrDefault(p => p.PresentationId == presentationId);
+
+
+            return View(new NewPresentationStep2ViewModel
+            {
+                CourseId = courseId,
+                PresentationId = presentation.PresentationId,
+                TitlePlaceholder = presentation.Title + "_Video"
+            });
+        }
+
+        [HttpPost]
+        public IActionResult NewPresentationVideo(NewPresentationStep2ViewModel model)
+        {
+            AppUser user = userManager.Users
+                .FirstOrDefault(u => u.Id == model.UserId);
+            Presentation presentation = repository.Presentations
+                .FirstOrDefault(p => p.PresentationId == model.PresentationId);
+
+            string base64 = model.videoUrl.Substring(model.videoUrl.IndexOf(',') + 1);
+            byte[] data = Convert.FromBase64String(base64);
+
+            //Create video directory
+            string videoTitle = model.TitlePlaceholder;
+            if (model.VideoTitle != null)
+            {
+                videoTitle = (model.VideoTitle.Trim() == "") ?
+                    model.TitlePlaceholder.Replace(" ", "_") :
+                    model.VideoTitle;
+            }
+
+            var dirPath = Path.Combine(hostingEnvironment.WebRootPath,
+                            $@"UsersData\{user.Id}\Presentations\");
+            System.IO.Directory.CreateDirectory(dirPath);
+            var fileName = $@"{presentation.PresentationId}.mp4";
+            var filePath = Path.Combine(dirPath, fileName);
+
+            //save presentation video 
+            if(presentation.VideoId != 0)
+            {
+                Video presVideo = repository.Videos.FirstOrDefault(v => v.Id == presentation.VideoId);
+                presVideo.Title = videoTitle;
+                presVideo.Views = 0;
+                repository.SaveVideo(presVideo);
+
+                //delete video likes & dislikes
+                repository.DeleteVideoLikes(presVideo.Id);
+                repository.DeleteVideoDislikes(presVideo.Id);
+            }
+            else
+            {
+                Video video = new Video
+                {
+                    Title = videoTitle,
+                    CreatedBy = model.UserId,
+                    Status = "Public",
+                    For = "Presentation",
+                    ForId = presentation.PresentationId,
+                    DateAdded = DateTime.Now,
+                    VideoPath = $@"/UsersData/{user.Id}/Presentations/{presentation.PresentationId}.mp4"
+                };
+
+                repository.SaveVideo(video);
+                presentation.VideoId = repository.Videos
+                    .FirstOrDefault(v => v.For == "Presentation" &&
+                    v.ForId == presentation.PresentationId).Id;
+                presentation.UpdatedAt = DateTime.Now;
+                repository.SavePresentation(presentation);
+            }
+
+            using (var videoFile = new FileStream(filePath, FileMode.Create))
+            {
+                videoFile.Write(data, 0, data.Length);
+                videoFile.Flush();
+            }
+
+            return RedirectToAction("EditPresentation", new
+            {
+                id = model.UserId,
+                presentationId = presentation.PresentationId,
+                courseId = model.CourseId
+            });
+        }
+
+        public ViewResult ChangePresentationVideo(string id, int presentationId, int courseId)
+        {
+            ViewData["Id"] = id;
+
+            Presentation presentation = repository.Presentations
+                .FirstOrDefault(p => p.PresentationId == presentationId);
+
+
+            return View(new NewPresentationStep2ViewModel
+            {
+                CourseId = courseId,
+                PresentationId = presentation.PresentationId,
+                TitlePlaceholder = presentation.Title + "_Video"
+            });
+        }
+
+        /*public IActionResult EditPresentation(string id, NewEditPresentation model)
         {
             ViewData["Id"] = id;
 
@@ -498,7 +685,7 @@ namespace SirmiumCommercial.Controllers
             }
             return RedirectToAction("CourseManage",
                 new { id, courseId = model.CourseId });
-        }
+        }*/
 
         public IActionResult DeletePresentation(string id, int courseId, int presentationId)
         {

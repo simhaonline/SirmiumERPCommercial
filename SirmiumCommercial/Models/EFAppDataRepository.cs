@@ -146,7 +146,7 @@ namespace SirmiumCommercial.Models
                     dbEntry.Part = presentation.Part;
                     dbEntry.CreatedBy = presentation.CreatedBy;
                     dbEntry.DateAdded = presentation.DateAdded;
-                    dbEntry.DateModified = presentation.DateModified;
+                    dbEntry.DateModified = DateTime.Now;
                     dbEntry.Description = presentation.Description;
                     dbEntry.Status = presentation.Status;
                     AddRepresentation(presentation.Representations, presentation);
@@ -541,6 +541,15 @@ namespace SirmiumCommercial.Models
             }
         }
 
+        public void DeleteVideoLikes(int videoId)
+        {
+            foreach(Likes dbEntry in context.Likes.Where(l => l.For == "Video" && l.ForId == videoId))
+            {
+                context.Likes.Remove(dbEntry);
+            }
+            context.SaveChanges();
+        }
+
         public void AddDislike(Dislikes dislike)
         {
             if(dislike.Id == 0)
@@ -580,6 +589,15 @@ namespace SirmiumCommercial.Models
                 context.Dislikes.Remove(dbEntry);
                 context.SaveChanges();
             }
+        }
+
+        public void DeleteVideoDislikes(int videoId)
+        {
+            foreach (Dislikes dbEntry in context.Dislikes.Where(d => d.For == "Video" && d.ForId == videoId))
+            {
+                context.Dislikes.Remove(dbEntry);
+            }
+            context.SaveChanges();
         }
 
         // ---------CHAT--------------

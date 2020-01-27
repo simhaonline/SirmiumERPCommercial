@@ -93,9 +93,13 @@ namespace SirmiumCommercial.Models
 
         void DeleteLike(int likeId);
 
+        void DeleteVideoLikes(int videoId);
+
         void AddDislike(Dislikes dislike);
 
         void DeleteDislike(int dislikeId);
+
+        void DeleteVideoDislikes(int videoId);
 
         //-------- Chat -------
         void NewChat(Chat chat);

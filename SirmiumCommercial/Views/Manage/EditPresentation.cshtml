@@ -1,0 +1,351 @@
+﻿@model EditPresentation
+
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = "Edit - " + Model.Presentation.Title;
+}
+
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+    </environment>
+}
+
+<style type="text/css">
+    .videoBtn {
+        display: none;
+        position: absolute;
+        top: 38%;
+        left: 2%;
+    }
+
+    .img-video:hover + .videoBtn {
+        display: inline;
+    }
+
+    .videoBtn:hover {
+        display: inline;
+    }
+
+    #video-video:hover {
+        opacity: 0.4;
+    }
+
+    #video-videoBtn:hover > #video-video {
+        opacity: 0.4;
+    }
+
+    #all-users {
+        height: 200px;
+        width: 200px;
+        overflow-y: scroll;
+    }
+</style>
+
+<!--Header-->
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <div class="row m-l-sm">
+                <span class="fa fa-edit text-warning"></span>
+                <span class="text-muted">Edit @Model.Presentation.Title</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Basic Info-->
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel m-b-xs">
+            <div class="panel-heading">
+                <div class="panel-tools">
+                    <a class="showhide"><i class="fa fa-chevron-up" style="font-size:20px"></i></a>
+                </div>
+                <h3 class="m-n">
+                    <span class="fas fa-info text-info"></span>
+                    <span class="text-muted"> Basic Info:</span>
+                </h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <form asp-action="EditPresentation" asp-controller="Manage" method="post">
+                        <div asp-validation-summary="All" class="text-danger" style="font-size:20px"></div>
+                        <input value="@Model.Presentation.PresentationId" asp-for="PresentationId" hidden />
+                        <input value="@Model.CourseId" asp-for="CourseId" hidden />
+                        <input value="@ViewData["Id"].ToString()" asp-for="UserId" hidden />
+                        <div class="form-group col-lg-12 m-b-sm">
+                            <div class="col-lg-2">
+                                <h4>
+                                    <i class="fa fa-pen-nib"></i>&nbsp; Title:
+                                </h4>
+                            </div>
+                            <div class="col-lg-6">
+                                <input class="form-control" value="@Model.Presentation.Title"
+                                       id="input-title" asp-for="Title" disabled />
+                            </div>
+                            <button class="col-lg-2 m-l-lg btn"
+                                    id="edit-title" type="button"
+                                    style="font-size: 20px; background-color: #ffffff"
+                                    onclick="edit('title');">
+                                <span class="fa fa-edit text-warning"></span>
+                                <span class="text-muted">Edit</span>
+                            </button>
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="cancel-title" type="button" style="display:none;
+                                    font-size: 20px; background-color: #ffffff"
+                                    onclick="cancel('title');">
+                                <span class="fa fa-remove text-danger"></span>
+                                <span class="text-muted">Cancel</span>
+                            </button>
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="save-title" type="submit" style="display:none;
+                                    font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-save text-success"></span>
+                                <span class="text-muted">Save</span>
+                            </button>
+                        </div>
+
+                        <div class="form-group col-lg-12  m-b-sm">
+                            <div class="col-lg-2">
+                                <h4>
+                                    <span class="fas fa-sort-numeric-up"></span>&nbsp; Part:
+                                </h4>
+                            </div>
+                            <div class="col-lg-6">
+                                <input class="form-control" value="@Model.Presentation.Part"
+                                       id="input-part" asp-for="Part" disabled />
+                            </div>
+                            <button class="btn col-lg-2 m-l-lg"
+                                    id="edit-part" type="button"
+                                    style="font-size: 20px; background-color: #ffffff"
+                                    onclick="edit('part');">
+                                <span class="fa fa-edit text-warning"></span>
+                                <span class="text-muted">Edit</span>
+                            </button>
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="cancel-part" type="button" style="display:none;
+                                    font-size: 20px; background-color: #ffffff"
+                                    onclick="cancel('part');">
+                                <span class="fa fa-remove text-danger"></span>
+                                <span class="text-muted">Cancel</span>
+                            </button>
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="save-part" type="submit" style="display:none;
+                                    font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-save text-success"></span>
+                                <span class="text-muted">Save</span>
+                            </button>
+                        </div>
+
+                        <div class="form-group col-lg-12  m-b-sm">
+                            <div class="col-lg-2">
+                                <h4>
+                                    <span class="far fa-file-alt"></span>&nbsp; Description:
+                                </h4>
+                            </div>
+                            <div class="col-lg-6">
+                                @{ var textAreaPlaceholder = (Model.Presentation.Description != null) ?
+                                        Model.Presentation.Description : "No description!";}
+                                <input value="@textAreaPlaceholder" id="description-init" hidden />
+                                <textarea class="form-control" placeholder="@textAreaPlaceholder"
+                                          disabled id="input-description"
+                                           asp-for="Description"></textarea>
+                            </div>
+                            <button class="btn col-lg-2 m-l-lg"
+                                    id="edit-description" type="button"
+                                    style="font-size: 20px; background-color: #ffffff"
+                                    onclick="edit('description');">
+                                <span class="fa fa-edit text-warning"></span>
+                                <span class="text-muted">Edit</span>
+                            </button>
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="cancel-description" type="button" style="display:none;
+                                    font-size: 20px; background-color: #ffffff"
+                                    onclick="cancel('description');">
+                                <span class="fa fa-remove text-danger"></span>
+                                <span class="text-muted">Cancel</span>
+                            </button>
+                            <button class="col-lg-1 m-l-lg btn"
+                                    id="save-description" type="submit" style="display:none;
+                                    font-size: 20px; background-color: #ffffff">
+                                <span class="fa fa-save text-success"></span>
+                                <span class="text-muted">Save</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Video-->
+<div class="row m-l-md m-r-md ">
+    <div class="col-lg-12">
+        <div class="hpanel m-b-xs">
+            <div class="panel-heading">
+                <div class="panel-tools">
+                    <a class="showhide"><i class="fa fa-chevron-up" style="font-size:20px"></i></a>
+                </div>
+                <h3 class="m-n">
+                    <span class="fas fa-camera text-primary-2"></span>
+                    <span class="text-muted"> Video settings:</span>
+                </h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    @if (Model.Presentation.VideoId != 0)
+                    {
+                        <div class="col-lg-2"></div>
+                        <div class="col-lg-4 text-center">
+                            <div id="video-videoBtn"
+                                 style="background-color: #0c0830; padding:0px">
+                                <video src="@Model.Video.VideoPath" class="img-video"
+                                       style="z-index: 1" id="video-video"></video>
+                                <div class="text-center img-video videoBtn" style="z-index: 1">
+                                    <a href="@Url.Action("Index", "Recorder",
+                                    new { id = ViewData["Id"], videoId = Model.Presentation.VideoId })"
+                                       class="btn btn-sm btn-primary2 p-xs">
+                                        <span style="font-weight: 400; font-size: 18px">Watch</span>
+                                        <span class="fa fa-play" style="font-size: 18px"></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 m-l-md m-t-lg text-center">
+                            <a class="btn" style="font-size: 20px;"
+                               href="@Url.Action("NewPresentationVideo", "Manage", new {
+                                        id = ViewData["Id"],
+                                        presentationId = Model.Presentation.PresentationId,
+                                        courseId = Model.CourseId
+                                    })">
+                                <span class="fa fa-dot-circle-o text-danger"></span>
+                                <strong> New Video</strong>
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-lg-2"></div>
+                        <div class="col-lg-4 text-center">
+                            <div class="text-center p-sm" style="width: 100%; height: 80%;
+                                        background-color: #bbbbbb;">
+                                <strong style="color:#34495e; font-size:20px;
+                                                font-family: 'Open Sans','Helvetica Neue',
+                                                Helvetica,Arial,sans-serif; ">
+                                    SirmiumCommercial
+                                </strong>
+                                <br />
+                                <br />
+                                <i style="font-size: 45px; color:#5b80a4;" class="fas fa-video-slash"></i>
+                                <br />
+                                <strong style="font-size: 25px; color:#5b80a4;">NO VIDEO</strong>
+                                <br />
+                            </div>
+                        </div>
+                        <div class="col-lg-4 m-l-md m-t-lg text-center">
+                            <a class="btn" style="font-size: 20px;"
+                               href="@Url.Action("NewPresentationVideo", "Manage", new {
+                                        id = ViewData["Id"],
+                                        presentationId = Model.Presentation.PresentationId,
+                                        courseId = Model.CourseId
+                                    })">
+                                <span class="fa fa-dot-circle-o text-danger"></span>
+                                <strong> Create a Video</strong>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Files-->
+<div class="row m-l-md m-r-md m-b-lg">
+    <div class="col-lg-12">
+        <div class="hpanel m-b-xs">
+            <div class="panel-heading">
+                <div class="panel-tools">
+                    <a class="showhide"><i class="fa fa-chevron-up"></i></a>
+                </div>
+                <h3 class="m-n">
+                    <span class="fas fa-folder-open text-success"></span>
+                    <span class="text-muted"> Files settings:</span>
+                </h3>
+            </div>
+            <div class="panel-body" style="padding-bottom: 5px;">
+                @foreach (PresentationFiles file in Model.Files)
+                {
+                    <div class="row">
+                            <div class="col-lg-4">
+                                <div class="hpanel contact-panel hgreen">
+                                    <div class="panel-body" style="padding: 0px;">
+                                        <div class="row text-center">
+                                            <h5 class="text-muted">@file.Title</h5>
+                                            <a onclick="showFile('@file.FilePath')">
+                                                <span style="font-size: x-large" class="fa fa-expand"></span>
+                                            </a>
+                                        </div>
+
+                                        <div class="row text-center">
+                                            <embed src="@file.FilePath" style="width: 90%; height: 300px"
+                                                   type="application/pdf" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                }
+                @if (Model.Files.Count() == 0)
+                {
+                    <div class="row text-center">
+                        <h3><strong class="text-muted">No Files</strong></h3>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var titleInitial = document.getElementById('input-title').value;
+    var partInitial = document.getElementById('input-part').value;
+    var descriptionInitial = document.getElementById('description-init').value;
+
+    function edit(type) {
+        var inputId = "input-" + type;
+        var editId = "edit-" + type;
+        var saveId = "save-" + type;
+        var cancelId = "cancel-" + type;
+        document.getElementById(inputId).disabled = false;
+        document.getElementById(editId).style.display = "none";
+        document.getElementById(saveId).style.display = "";
+        document.getElementById(cancelId).style.display = "";
+     };
+
+    function cancel(type) {
+        var inputId = "input-" + type;
+        var editId = "edit-" + type;
+        var saveId = "save-" + type;
+        var cancelId = "cancel-" + type;
+
+        if (type == "description") {
+            document.getElementById(inputId).placeholder = descriptionInitial;
+            document.getElementById(inputId).value = "";
+        }
+        else if (type == "title") {
+            document.getElementById(inputId).value = titleInitial;
+        }
+        else {
+            document.getElementById(inputId).value = partInitial;
+        }
+        document.getElementById(inputId).disabled = true;
+        document.getElementById(editId).style.display = "";
+        document.getElementById(saveId).style.display = "none";
+        document.getElementById(cancelId).style.display = "none";
+    };
+</script>
