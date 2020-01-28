@@ -42,7 +42,7 @@ namespace SirmiumCommercial.Models.ViewModels
     {
         public Presentation Presentation { get; set; }
         public Video Video { get; set; }
-        public IQueryable<PresentationFiles> Files { get; set; }
+        public EditPresentationFiles Files { get; set; }
 
         //-----
         public string UserId { get; set; }
@@ -51,6 +51,31 @@ namespace SirmiumCommercial.Models.ViewModels
         public string Title { get; set; }
         public int Part { get; set; }
         public string Description { get; set; }
+        public int VideoId { get; set; }
+        public string VideoTitle { get; set; }
+    }
+
+    public class EditPresentationFiles
+    {
+        public IQueryable<PresentationFiles> Files { get; set; }
+        public EditPresentationFilesPageInfo PageInfo { get; set; }
+
+        //.
+        public string UserId { get; set; }
+        public int CourseId { get; set; }
+        public int PresentationId { get; set; }
+        public int FileId { get; set; }
+        public string FileTitle { get; set; }
+        public int FilePart { get; set; }
+    }
+
+    public class EditPresentationFilesPageInfo
+    {
+        public int TotalFiles { get; set; }
+        public int FilesPerPage { get; set; }
+        public int CurrentPage { get; set; }
+        public int TotalPages =>
+        (int)Math.Ceiling((decimal)TotalFiles / FilesPerPage);
     }
     /*
      

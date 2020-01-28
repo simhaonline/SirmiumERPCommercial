@@ -1,0 +1,124 @@
+﻿@model EditPresentationFiles
+
+@{
+    var i = 0;
+}
+
+@if (Model.PageInfo.TotalFiles != 0)
+{
+    <div id="edit-presentation-more-files">
+        @foreach (PresentationFiles file in Model.Files)
+        {
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="hpanel">
+                        <div class="panel-body" style="padding: 0px;">
+                            <div class="col-lg-4 text-center">
+                                <embed src="@file.FilePath" style="width: 90%; height: 350px"
+                                       type="application/pdf" />
+                            </div>
+
+                            <div class="col-lg-8 m-t-lg ">
+                                <form asp-action="ChangeVideoName" asp-controller="Manage" method="post">
+                                    <input value="@Model.PresentationId" asp-for="PresentationId" hidden />
+                                    <input value="@Model.CourseId" asp-for="CourseId" hidden />
+                                    <input value="@Model.UserId" asp-for="UserId" hidden />
+                                    <input value="@file.FileId" asp-for="FileId" hidden />
+                                    <div class="form-group col-lg-12 m-b-sm">
+                                        <div class="col-lg-12">
+                                            <h4>
+                                                <i class="fa fa-pen-nib"></i>&nbsp; File Title:
+                                            </h4>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <input class="form-control" value="@file.Title"
+                                                   id="input-file-title-@i" asp-for="FileTitle" disabled />
+                                        </div>
+                                        <button class="col-lg-2 m-l-lg btn"
+                                                id="edit-file-title-@i" type="button"
+                                                style="font-size: 20px; background-color: #ffffff"
+                                                onclick="edit('file-title-@i');">
+                                            <span class="fa fa-edit text-warning"></span>
+                                            <span class="text-muted">Edit</span>
+                                        </button>
+                                        <button class="col-lg-2 m-l-sm btn"
+                                                id="cancel-file-title-@i" type="button" style="display:none;
+                                                            font-size: 20px; background-color: #ffffff"
+                                                onclick="cancel('file-title-@i');">
+                                            <span class="fa fa-remove text-danger"></span>
+                                            <span class="text-muted">Cancel</span>
+                                        </button>
+                                        <button class="col-lg-1 m-l-sm btn"
+                                                id="save-file-title-@i" type="submit" style="display:none;
+                                                            font-size: 20px; background-color: #ffffff">
+                                            <span class="fa fa-save text-success"></span>
+                                            <span class="text-muted">Save</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="form-group col-lg-12 m-b-sm">
+                                        <div class="col-lg-12">
+                                            <h4>
+                                                <i class="fa fa-sort-numeric-up"></i>&nbsp; File Part:
+                                            </h4>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <input class="form-control" value="@file.Part"
+                                                   id="input-file-part-@i" asp-for="FilePart" disabled />
+                                        </div>
+                                        <button class="col-lg-2 m-l-lg btn"
+                                                id="edit-file-part-@i" type="button"
+                                                style="font-size: 20px; background-color: #ffffff"
+                                                onclick="edit('file-part-@i');">
+                                            <span class="fa fa-edit text-warning"></span>
+                                            <span class="text-muted">Edit</span>
+                                        </button>
+                                        <button class="col-lg-2 m-l-sm btn"
+                                                id="cancel-file-part-@i" type="button" style="display:none;
+                                                            font-size: 20px; background-color: #ffffff"
+                                                onclick="cancel('file-part-@i');">
+                                            <span class="fa fa-remove text-danger"></span>
+                                            <span class="text-muted">Cancel</span>
+                                        </button>
+                                        <button class="col-lg-1 m-l-sm btn"
+                                                id="save-file-part-@i" type="submit" style="display:none;
+                                                            font-size: 20px; background-color: #ffffff">
+                                            <span class="fa fa-save text-success"></span>
+                                            <span class="text-muted">Save</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-lg-12 m-b-sm">
+                                        <a class="btn" style="font-size: 20px;"
+                                           onclick="showFile('@file.FilePath')">
+                                            <span class="fa fa-expand-arrows-alt text-primary"></span>
+                                            <span class="text-muted">Full Screen</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-lg-12 m-b-sm">
+                                        <a class="btn" style="font-size: 20px;"
+                                           href="#">
+                                            <span class="fa fa-trash text-danger"></span>
+                                            <span class="text-muted">Delete File</span>
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            i++;
+        }
+        <div edit-presentation-page-model="@Model.PageInfo" page-classes-enabled="true"
+             page-class="btn" page-class-normal="btn-default"
+             page-class-selected="btn-primary" class="btn-group pull-left m-sm">
+        </div>
+    </div>
+}
+else
+{
+    <div class="row text-center">
+        <h3><strong class="text-muted">No Files</strong></h3>
+    </div>
+}

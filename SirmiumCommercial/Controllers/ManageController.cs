@@ -17,6 +17,7 @@ namespace SirmiumCommercial.Controllers
         private UserManager<AppUser> userManager;
         private IAppDataRepository repository;
         private IHostingEnvironment hostingEnvironment;
+        public int MaxFilesPerPage = 2;
 
         public ManageController(UserManager<AppUser> userMgr,
             IAppDataRepository repo, IHostingEnvironment hosting)
@@ -504,14 +505,54 @@ namespace SirmiumCommercial.Controllers
 
             Presentation presentation = repository.Presentations.FirstOrDefault(p => p.PresentationId == presentationId);
             Video video = repository.Videos.FirstOrDefault(v => v.Id == presentation.VideoId);
-            IQueryable<PresentationFiles> files = repository.PresentationFiles.Where(f => f.PresentationId == presentation.PresentationId);
+            EditPresentationFiles files = new EditPresentationFiles
+            {
+                Files = repository.PresentationFiles
+                    .Where(f => f.PresentationId == presentation.PresentationId)
+                    .OrderBy(f => f.Part)
+                    .Take(MaxFilesPerPage),
+                PresentationId = presentation.PresentationId,
+                CourseId = courseId,
+                PageInfo = new EditPresentationFilesPageInfo
+                {
+                    CurrentPage = 1,
+                    FilesPerPage = MaxFilesPerPage,
+                    TotalFiles = repository.PresentationFiles
+                        .Where(f => f.PresentationId == presentation.PresentationId)
+                        .Count()
+                }
+            };
 
             return View(new EditPresentation
             {
                 Presentation = presentation,
                 Video = video,
                 CourseId = courseId,
-                Files = repository.PresentationFiles.Where(f => f.PresentationId == presentation.PresentationId)
+                Files = files
+            });
+        }
+
+        public ActionResult EditPresentationFilesPartial (int presentationId, int courseId,
+            string userId, int currentPage)
+        {
+            return PartialView("EditPresentationFilesPartial", new EditPresentationFiles
+            {
+                Files = repository.PresentationFiles
+                    .Where(f => f.PresentationId == presentationId)
+                    .OrderBy(f => f.Part)
+                    .Skip((currentPage - 1) * MaxFilesPerPage)
+                    .Take(MaxFilesPerPage),
+                PresentationId = presentationId,
+                UserId = userId,
+                CourseId = courseId,
+                PageInfo = new EditPresentationFilesPageInfo
+                {
+                    CurrentPage = currentPage,
+                    FilesPerPage = MaxFilesPerPage,
+                    TotalFiles = repository.PresentationFiles
+                        .Where(f => f.PresentationId == presentationId)
+                        .Count()
+                }
             });
         }
 
@@ -664,28 +705,24 @@ namespace SirmiumCommercial.Controllers
             });
         }
 
-        /*public IActionResult EditPresentation(string id, NewEditPresentation model)
+        [HttpPost]
+        public IActionResult ChangeVideoName(EditPresentation model)
         {
-            ViewData["Id"] = id;
+            Video video = repository.Videos.FirstOrDefault(v => v.Id == model.VideoId);
 
-            if (ModelState.IsValid)
+            if (model.VideoTitle != null && model.VideoTitle.Trim() != "" && model.VideoTitle.Trim() != video.Title)
             {
-                Presentation presentation = repository.Presentations
-                .FirstOrDefault(p => p.PresentationId == model.Presentation.PresentationId);
-                presentation.Title = model.Presentation.Title;
-                presentation.Part = model.Presentation.Part;
-                presentation.Description = model.Presentation.Description;
-                presentation.DateModified = DateTime.Now;
-                repository.SavePresentation(presentation);
-                TempData["succMsgCM"] = "The changes have been saved.";
+                video.Title = model.VideoTitle;
+                repository.SaveVideo(video);
             }
-            else
+
+            return RedirectToAction("EditPresentation", new
             {
-                TempData["errMsgCM"] = "Sorry, something went wrong!";
-            }
-            return RedirectToAction("CourseManage",
-                new { id, courseId = model.CourseId });
-        }*/
+                id = model.UserId,
+                presentationId = model.PresentationId,
+                courseId = model.CourseId
+            });
+        }
 
         public IActionResult DeletePresentation(string id, int courseId, int presentationId)
         {

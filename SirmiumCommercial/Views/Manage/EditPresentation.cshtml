@@ -40,7 +40,40 @@
         width: 200px;
         overflow-y: scroll;
     }
+
+    .file-window {
+        width: 80%;
+        height: 80%;
+        position: fixed;
+        top: 10%;
+        left: 5%;
+        background: #fff;
+        padding: 10px;
+        border: 1px solid rgba(0, 0, 0, .4);
+        opacity: 1;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, .6);
+        transition: all 0.3s linear 0s;
+        z-index: 2;
+    }
+
+    .file-window-header {
+        font-size: 18px;
+        font-weight: bold;
+        text-align: left;
+        color: #6a6c6f;
+    }
+
+    .freeze-layer-files {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, .3);
+        z-index: 1;
+    }
 </style>
+}
 
 <!--Header-->
 <div class="normalheader p-sm">
@@ -147,11 +180,11 @@
                             </div>
                             <div class="col-lg-6">
                                 @{ var textAreaPlaceholder = (Model.Presentation.Description != null) ?
-                                        Model.Presentation.Description : "No description!";}
+                                          Model.Presentation.Description : "No description!";}
                                 <input value="@textAreaPlaceholder" id="description-init" hidden />
                                 <textarea class="form-control" placeholder="@textAreaPlaceholder"
                                           disabled id="input-description"
-                                           asp-for="Description"></textarea>
+                                          asp-for="Description"></textarea>
                             </div>
                             <button class="btn col-lg-2 m-l-lg"
                                     id="edit-description" type="button"
@@ -196,10 +229,9 @@
             </div>
             <div class="panel-body">
                 <div class="row">
-                    @if (Model.Presentation.VideoId != 0)
-                    {
-                        <div class="col-lg-2"></div>
-                        <div class="col-lg-4 text-center">
+                    <div class="col-lg-4 text-center">
+                        @if (Model.Presentation.VideoId != 0)
+                        {
                             <div id="video-videoBtn"
                                  style="background-color: #0c0830; padding:0px">
                                 <video src="@Model.Video.VideoPath" class="img-video"
@@ -213,23 +245,9 @@
                                     </a>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-lg-4 m-l-md m-t-lg text-center">
-                            <a class="btn" style="font-size: 20px;"
-                               href="@Url.Action("NewPresentationVideo", "Manage", new {
-                                        id = ViewData["Id"],
-                                        presentationId = Model.Presentation.PresentationId,
-                                        courseId = Model.CourseId
-                                    })">
-                                <span class="fa fa-dot-circle-o text-danger"></span>
-                                <strong> New Video</strong>
-                            </a>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="col-lg-2"></div>
-                        <div class="col-lg-4 text-center">
+                        }
+                        else
+                        {
                             <div class="text-center p-sm" style="width: 100%; height: 80%;
                                         background-color: #bbbbbb;">
                                 <strong style="color:#34495e; font-size:20px;
@@ -244,19 +262,73 @@
                                 <strong style="font-size: 25px; color:#5b80a4;">NO VIDEO</strong>
                                 <br />
                             </div>
-                        </div>
-                        <div class="col-lg-4 m-l-md m-t-lg text-center">
-                            <a class="btn" style="font-size: 20px;"
-                               href="@Url.Action("NewPresentationVideo", "Manage", new {
-                                        id = ViewData["Id"],
-                                        presentationId = Model.Presentation.PresentationId,
-                                        courseId = Model.CourseId
-                                    })">
-                                <span class="fa fa-dot-circle-o text-danger"></span>
-                                <strong> Create a Video</strong>
-                            </a>
-                        </div>
-                    }
+                        }
+                    </div>
+                    <div class="col-lg-8 m-t-lg ">
+                        <form asp-action="ChangeVideoName" asp-controller="Manage" method="post">
+                            <input value="@Model.Presentation.PresentationId" asp-for="PresentationId" hidden />
+                            <input value="@Model.CourseId" asp-for="CourseId" hidden />
+                            <input value="@ViewData["Id"].ToString()" asp-for="UserId" hidden />
+                            <input value="@Model.Video.Id" asp-for="VideoId" hidden />
+                            <div class="form-group col-lg-12 m-b-sm">
+                                <div class="col-lg-12">
+                                    <h4>
+                                        <i class="fa fa-pen-nib"></i>&nbsp; Video Title:
+                                    </h4>
+                                </div>
+                                <div class="col-lg-8">
+                                    <input class="form-control" value="@Model.Video.Title"
+                                           id="input-video-title" asp-for="VideoTitle" disabled />
+                                </div>
+                                <button class="col-lg-2 m-l-lg btn"
+                                        id="edit-video-title" type="button"
+                                        style="font-size: 20px; background-color: #ffffff"
+                                        onclick="edit('video-title');">
+                                    <span class="fa fa-edit text-warning"></span>
+                                    <span class="text-muted">Edit</span>
+                                </button>
+                                <button class="col-lg-2 m-l-sm btn"
+                                        id="cancel-video-title" type="button" style="display:none;
+                                    font-size: 20px; background-color: #ffffff"
+                                        onclick="cancel('video-title');">
+                                    <span class="fa fa-remove text-danger"></span>
+                                    <span class="text-muted">Cancel</span>
+                                </button>
+                                <button class="col-lg-1 m-l-sm btn"
+                                        id="save-video-title" type="submit" style="display:none;
+                                    font-size: 20px; background-color: #ffffff">
+                                    <span class="fa fa-save text-success"></span>
+                                    <span class="text-muted">Save</span>
+                                </button>
+                            </div>
+                            <div class="col-lg-12 m-b-sm">
+                                @if (Model.Presentation.VideoId != 0)
+                                {
+                                    <a class="btn" style="font-size: 20px;"
+                                       href="@Url.Action("NewPresentationVideo", "Manage", new {
+                                                id = ViewData["Id"],
+                                                presentationId = Model.Presentation.PresentationId,
+                                                courseId = Model.CourseId
+                                        })">
+                                        <span class="fa fa-dot-circle-o text-danger"></span>
+                                        <strong> New Video</strong>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="btn" style="font-size: 20px;"
+                                       href="@Url.Action("NewPresentationVideo", "Manage", new {
+                                                    id = ViewData["Id"],
+                                                    presentationId = Model.Presentation.PresentationId,
+                                                    courseId = Model.CourseId
+                                        })">
+                                        <span class="fa fa-dot-circle-o text-danger"></span>
+                                        <strong> Create a Video</strong>
+                                    </a>
+                                }
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -272,49 +344,66 @@
                     <a class="showhide"><i class="fa fa-chevron-up"></i></a>
                 </div>
                 <h3 class="m-n">
-                    <span class="fas fa-folder-open text-success"></span>
+                    <span class="fas fa-folder-open text-primary"></span>
                     <span class="text-muted"> Files settings:</span>
+
+                    <strong class="text-muted pull-right" style="font-size: 18px; margin-top: 4px;">
+                        Total Files:
+                        <span class="text-primary">@Model.Files.PageInfo.TotalFiles</span>
+                    </strong>
+                    <span>&emsp;</span>
+                    <a class="btn pull-right" style="padding-top: 0px; font-size: 18px;"
+                       href="#">
+                        <span class="fa fa-upload text-success"></span>
+                        <strong class="text-muted">New File</strong>
+                    </a>
                 </h3>
             </div>
             <div class="panel-body" style="padding-bottom: 5px;">
-                @foreach (PresentationFiles file in Model.Files)
-                {
-                    <div class="row">
-                            <div class="col-lg-4">
-                                <div class="hpanel contact-panel hgreen">
-                                    <div class="panel-body" style="padding: 0px;">
-                                        <div class="row text-center">
-                                            <h5 class="text-muted">@file.Title</h5>
-                                            <a onclick="showFile('@file.FilePath')">
-                                                <span style="font-size: x-large" class="fa fa-expand"></span>
-                                            </a>
-                                        </div>
-
-                                        <div class="row text-center">
-                                            <embed src="@file.FilePath" style="width: 90%; height: 300px"
-                                                   type="application/pdf" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    </div>
-                }
-                @if (Model.Files.Count() == 0)
-                {
-                    <div class="row text-center">
-                        <h3><strong class="text-muted">No Files</strong></h3>
-                    </div>
-                }
+                @await Html.PartialAsync("EditPresentationFilesPartial", Model.Files)
             </div>
         </div>
     </div>
 </div>
 
+
+<div id="freezeLayer" class="freeze-layer-files" style="display: none"></div>
+
+<div id="file-fullscreen" class="file-window" style="display: none">
+    <div class="file-window-header">
+        <a class="pull-right" onclick="closeFile();">
+            <span class="fa fa-close"></span>
+        </a>
+    </div>
+    <div id="file-window-body" style="background-color: none; height: 95%;">
+    </div>
+</div>
+
+<input id="presentation-id" value="@Model.Presentation.PresentationId" hidden />
+<input id="course-id" value="@Model.CourseId" hidden />
+<input id="user-id" value="@ViewData["Id"]" hidden />
+
 <script type="text/javascript">
+    var presentationId = document.getElementById("presentation-id").value;
+    var courseId = document.getElementById("course-id").value;
+    var userId = document.getElementById("user-id").value;
 
     var titleInitial = document.getElementById('input-title').value;
     var partInitial = document.getElementById('input-part').value;
     var descriptionInitial = document.getElementById('description-init').value;
+    var videoTitleInitial = document.getElementById('input-video-title').value;
+    if (document.getElementById('input-file-title-0') != null) {
+        var fileTitle0Initial = document.getElementById('input-file-title-0').value;
+    }
+    if (document.getElementById('input-file-title-1') != null) {
+        var fileTitle1Initial = document.getElementById('input-file-title-1').value;
+    }
+    if (document.getElementById('input-file-part-0') != null) {
+        var filePart0Initial = document.getElementById('input-file-part-0').value;
+    }
+    if (document.getElementById('input-file-part-1') != null) {
+        var filePart1Initial = document.getElementById('input-file-part-1').value;
+    }
 
     function edit(type) {
         var inputId = "input-" + type;
@@ -325,6 +414,18 @@
         document.getElementById(editId).style.display = "none";
         document.getElementById(saveId).style.display = "";
         document.getElementById(cancelId).style.display = "";
+        if (document.getElementById('input-file-title-0') != null) {
+            fileTitle0Initial = document.getElementById('input-file-title-0').value;
+        }
+        if (document.getElementById('input-file-title-1') != null) {
+            fileTitle1Initial = document.getElementById('input-file-title-1').value;
+        }
+        if (document.getElementById('input-file-part-0') != null) {
+            filePart0Initial = document.getElementById('input-file-part-0').value;
+        }
+        if (document.getElementById('input-file-part-1') != null) {
+            filePart1Initial = document.getElementById('input-file-part-1').value;
+        }
      };
 
     function cancel(type) {
@@ -340,12 +441,59 @@
         else if (type == "title") {
             document.getElementById(inputId).value = titleInitial;
         }
-        else {
+        else if (type == "part") {
             document.getElementById(inputId).value = partInitial;
         }
+        else if (type == "file-title-0") {
+            document.getElementById(inputId).value = fileTitle0Initial;
+        }
+        else if (type == "file-title-1") {
+            document.getElementById(inputId).value = fileTitle1Initial;
+        }
+        else if (type == "file-part-0") {
+            document.getElementById(inputId).value = filePart0Initial;
+        }
+        else if (type == "file-part-1") {
+            document.getElementById(inputId).value = filePart1Initial;
+        }
+        else {
+            document.getElementById(inputId).value = videoTitleInitial;
+        }
+
         document.getElementById(inputId).disabled = true;
         document.getElementById(editId).style.display = "";
         document.getElementById(saveId).style.display = "none";
         document.getElementById(cancelId).style.display = "none";
+    };
+
+
+    //files
+    function showFile(filePath) {
+        var freezeLayer = document.getElementById("freezeLayer");
+        var fullscreen = document.getElementById("file-fullscreen");
+        var fileWindowBody = $("#file-window-body");
+        fileWindowBody.html(`
+        <embed id="file-embed" src="` + filePath + `"
+        style="width: 100%; height: inherit" type="application/pdf" />
+        `);
+        fullscreen.style.display = "";
+        freezeLayer.style.display = "";
+    };
+
+    function closeFile() {
+        var freezeLayer = document.getElementById("freezeLayer");
+        var fullscreen = document.getElementById("file-fullscreen");
+        fullscreen.style.display = "none";
+        freezeLayer.style.display = "none";
+    };
+
+    function moreFiles(currentPage) {
+        var url = '@Url.Action("EditPresentationFilesPartial", "Manage")';
+        $("#edit-presentation-more-files").load(url, {
+            presentationId: presentationId,
+            courseId: courseId,
+            userId: userId,
+            currentPage: currentPage
+        });
     };
 </script>
