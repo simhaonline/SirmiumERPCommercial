@@ -13,6 +13,10 @@ namespace SirmiumCommercial.Models.ViewModels
         public IQueryable<Video> Videos { get; set; }
         public IQueryable<Comment> Comments { get; set; }
         public IQueryable<AppUser> CommentUserInfo { get; set; }
+
+        //For CourseManage
+        public CourseManagePresentations AllPresentations { get; set; }
+
         public string DateDifference(DateTime date1)
         {
             DateTime currentDateTime = DateTime.Now;
@@ -82,6 +86,25 @@ namespace SirmiumCommercial.Models.ViewModels
 
             return val;
         }
+    }
+
+    public class CourseManagePresentations
+    {
+        public IQueryable<Presentation> Presentations { get; set; }
+        public IQueryable<Video> Videos { get; set; }
+        public CoursePresentationsPageInfo PageInfo { get; set; }
+
+        public int CourseId { get; set; }
+        public string UserId { get; set; }
+    }
+
+    public class CoursePresentationsPageInfo
+    {
+        public int TotalPresentations { get; set; }
+        public int PresentationsPerPage { get; set; }
+        public int CurrentPage { get; set; }
+        public int TotalPages =>
+        (int)Math.Ceiling((decimal)TotalPresentations / PresentationsPerPage);
     }
 
     public class CourseNavViewModel

@@ -53,6 +53,12 @@ namespace SirmiumCommercial.Models.ViewModels
         public string Description { get; set; }
         public int VideoId { get; set; }
         public string VideoTitle { get; set; }
+
+        //---new file (change file)
+        public int NewFileId { get; set; }
+        public string NewFileTitle { get; set; }
+        public int NewFilePart { get; set; }
+        public IFormFile NewFile { get; set; }
     }
 
     public class EditPresentationFiles

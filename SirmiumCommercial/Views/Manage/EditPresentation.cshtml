@@ -3,6 +3,17 @@
 @{
     Layout = "_UserLayout";
     ViewData["Title"] = "Edit - " + Model.Presentation.Title;
+
+    int newFilePart()
+    {
+        return Model.Files.PageInfo.TotalFiles + 1;
+    }
+
+    string newFilePlaceholder()
+    {
+        var filePart = newFilePart();
+        return Model.Presentation.Title + "_File_Part_" + filePart.ToString();
+    }
 }
 
 @section Styles {
@@ -72,6 +83,28 @@
         background: rgba(0, 0, 0, .3);
         z-index: 1;
     }
+
+    .file-upload-window {
+        font-family: 'Arial Rounded MT';
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+        background: #fff;
+        padding: 10px;
+        border: 1px solid rgba(0, 0, 0, .4);
+        opacity: 1;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, .6);
+        transition: all 0.3s linear 0s;
+        z-index: 2;
+    }
+
+    .form-header {
+        font-size: 35px;
+        font-weight: bold;
+        text-align: left;
+        color: #6a6c6f;
+    }
 </style>
 }
 
@@ -82,6 +115,16 @@
             <div class="row m-l-sm">
                 <span class="fa fa-edit text-warning"></span>
                 <span class="text-muted">Edit @Model.Presentation.Title</span>
+
+                <a class="btn pull-right" style="font-size: 20px;"
+                   href="@Url.Action("DeletePresentation", "Manage", new {
+                        id = ViewData["Id"],
+                        presentationId = Model.Presentation.PresentationId,
+                        courseId = Model.CourseId,
+                    })">
+                    <span class="fa fa-trash text-danger"></span>
+                    <span class="text-muted">Delete Presentation</span>
+                </a>
             </div>
         </div>
     </div>
@@ -180,7 +223,7 @@
                             </div>
                             <div class="col-lg-6">
                                 @{ var textAreaPlaceholder = (Model.Presentation.Description != null) ?
-                                          Model.Presentation.Description : "No description!";}
+                                           Model.Presentation.Description : "No description!";}
                                 <input value="@textAreaPlaceholder" id="description-init" hidden />
                                 <textarea class="form-control" placeholder="@textAreaPlaceholder"
                                           disabled id="input-description"
@@ -231,7 +274,7 @@
                 <div class="row">
                     <div class="col-lg-4 text-center">
                         @if (Model.Presentation.VideoId != 0)
-                        {
+                       {
                             <div id="video-videoBtn"
                                  style="background-color: #0c0830; padding:0px">
                                 <video src="@Model.Video.VideoPath" class="img-video"
@@ -353,7 +396,7 @@
                     </strong>
                     <span>&emsp;</span>
                     <a class="btn pull-right" style="padding-top: 0px; font-size: 18px;"
-                       href="#">
+                       onclick="UploadFile.openNewFileWindow();">
                         <span class="fa fa-upload text-success"></span>
                         <strong class="text-muted">New File</strong>
                     </a>
@@ -379,9 +422,95 @@
     </div>
 </div>
 
+<div id="file-newfile-window" class="file-upload-window" style="display: none">
+    <div class="form-header">
+        <span>Upload New File</span>
+        <a onclick="UploadFile.closeNewFileWindow()"
+           class="pull-right text-muted fa fa-close"
+           id="closePhotoWindow"></a>
+    </div>
+    <form asp-action="UploadNewFile" asp-controller="Manage"
+          enctype="multipart/form-data" method="post">
+        <input asp-for="CourseId" value="@Model.CourseId" hidden />
+        <input asp-for="PresentationId" value="@Model.Presentation.PresentationId" hidden />
+        <input asp-for="UserId" value="@ViewData["Id"].ToString()" hidden />
+        <input asp-for="NewFileId" value="0" hidden />
+
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="form-group col-lg-6">
+                    <label>Title:</label>
+                    <input asp-for="NewFileTitle" class="form-control"
+                           placeholder="@newFilePlaceholder()" />
+                </div>
+                <div class="form-group col-lg-6">
+                    <label>Part:</label>
+                    <input asp-for="NewFilePart" value="@newFilePart()" class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-6 text-center">
+                <div class="text-center">
+                    <embed id="output" style="width: auto; height: auto;
+                                    border-radius: unset" />
+                </div>
+                <div class="m-t-sm m-b-sm text-center">
+                    <input asp-for="NewFile" class="form-control" id="file"
+                           onchange="loadFile(event)">
+                </div>
+            </div>
+            <div class="col-lg-1 text-center">
+                <button type="submit" class="btn btn-default text-success m-t-sm">
+                    <strong class="fa fa-plus"></strong>
+                    <strong>Add File</strong>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="file-editfile-window" class="file-upload-window" style="display: none">
+    <div class="form-header">
+        <span>Change File</span>
+        <a onclick="UploadFile.closeEditFileWindow()"
+           class="pull-right text-muted fa fa-close"
+           id="closePhotoWindow"></a>
+    </div>
+    <form asp-action="UploadNewFile" asp-controller="Manage"
+          enctype="multipart/form-data" method="post">
+        <input asp-for="CourseId" value="@Model.CourseId" hidden />
+        <input asp-for="PresentationId" value="@Model.Presentation.PresentationId" hidden />
+        <input asp-for="UserId" value="@ViewData["Id"].ToString()" hidden />
+        <input asp-for="NewFileId" id="input-new-file-id" hidden />
+
+        <div class="col-lg-12">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-6 text-center">
+                <div class="text-center">
+                    <embed id="output" style="width: auto; height: auto;
+                                    border-radius: unset" />
+                </div>
+                <div class="m-t-sm m-b-sm text-center">
+                    <input asp-for="NewFile" class="form-control" id="file"
+                           onchange="loadFile(event)">
+                </div>
+            </div>
+            <div class="col-lg-1 text-center">
+                <button type="submit" class="btn btn-default text-success m-t-sm">
+                    <strong class="fa fa-plus"></strong>
+                    <strong>Add File</strong>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
 <input id="presentation-id" value="@Model.Presentation.PresentationId" hidden />
 <input id="course-id" value="@Model.CourseId" hidden />
-<input id="user-id" value="@ViewData["Id"]" hidden />
+<input id="user-id" value="@ViewData["Id"].ToString()" hidden />
 
 <script type="text/javascript">
     var presentationId = document.getElementById("presentation-id").value;
@@ -489,11 +618,36 @@
 
     function moreFiles(currentPage) {
         var url = '@Url.Action("EditPresentationFilesPartial", "Manage")';
-        $("#edit-presentation-more-files").load(url, {
-            presentationId: presentationId,
-            courseId: courseId,
-            userId: userId,
-            currentPage: currentPage
-        });
+        $("#edit-presentation-more-files").load(url, { presentationId: presentationId, courseId: courseId, userId: userId, currentPage: currentPage });
+    };
+
+    var loadFile = function (event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('output');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    };
+
+    var UploadFile = new function () {
+        this.openNewFileWindow = function () {
+            document.getElementById("file-newfile-window").style.display = "";
+            document.getElementById("freezeLayer").style.display = "";
+        };
+        this.openEditFileWindow = function (fId) {
+            document.getElementById("file-editfile-window").style.display = "";
+            document.getElementById("freezeLayer").style.display = "";
+            document.getElementById("input-new-file-id").value = fId;
+        }
+        this.closeNewFileWindow = function () {
+            document.getElementById("file-newfile-window").style.display = "none";
+            document.getElementById("freezeLayer").style.display = "none";
+        };
+        this.closeEditFileWindow = function () {
+            document.getElementById("file-editfile-window").style.display = "none";
+            document.getElementById("freezeLayer").style.display = "none";
+            document.getElementById("input-new-file-id").value = 0;
+        };
     };
 </script>

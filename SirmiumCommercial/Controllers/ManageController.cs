@@ -18,6 +18,7 @@ namespace SirmiumCommercial.Controllers
         private IAppDataRepository repository;
         private IHostingEnvironment hostingEnvironment;
         public int MaxFilesPerPage = 2;
+        public int MaxPresentationsPerPage = 2;
 
         public ManageController(UserManager<AppUser> userMgr,
             IAppDataRepository repo, IHostingEnvironment hosting)
@@ -183,7 +184,54 @@ namespace SirmiumCommercial.Controllers
                 User = repository.Courses.Where(c => c.CreatedBy != null
                     && c.CourseId == courseId).Select(u => u.CreatedBy)
                     .FirstOrDefault(),
-                Videos = videos.AsQueryable()
+                Videos = videos.AsQueryable(),
+                AllPresentations = new CourseManagePresentations
+                {
+                    Presentations = course.Presentations.AsQueryable()
+                        .OrderBy(p => p.Part)
+                        .Take(MaxPresentationsPerPage),
+                    CourseId = courseId,
+                    Videos = videos.AsQueryable(),
+                    UserId = id,
+                    PageInfo = new CoursePresentationsPageInfo
+                    {
+                        CurrentPage = 1,
+                        PresentationsPerPage = MaxPresentationsPerPage,
+                        TotalPresentations = course.Presentations.Count()
+                    }
+                }
+            });
+        }
+
+        public ActionResult CourseManagePresentationsPartial (string id, int courseId, 
+            int currentPage)
+        {
+            Course course = repository.Courses.FirstOrDefault(c => c.CourseId == courseId);
+
+            List<Video> videos = new List<Video>();
+            foreach(Presentation p in course.Presentations)
+            {
+                if(p.VideoId != 0)
+                {
+                    videos.Add(repository.Videos.FirstOrDefault(v => v.Id == p.VideoId));
+                }
+            }
+
+            return PartialView("CourseManagePresentationsPartial", new CourseManagePresentations
+            {
+                Presentations = course.Presentations.AsQueryable()
+                    .OrderBy(p => p.Part)
+                    .Skip((currentPage - 1) * MaxPresentationsPerPage)
+                    .Take(MaxPresentationsPerPage),
+                Videos = videos.AsQueryable(),
+                CourseId = courseId,
+                UserId = id,
+                PageInfo = new CoursePresentationsPageInfo
+                {
+                    CurrentPage = currentPage,
+                    PresentationsPerPage = MaxPresentationsPerPage,
+                    TotalPresentations = course.Presentations.Count()
+                }
             });
         }
         
@@ -513,6 +561,7 @@ namespace SirmiumCommercial.Controllers
                     .Take(MaxFilesPerPage),
                 PresentationId = presentation.PresentationId,
                 CourseId = courseId,
+                UserId = id,
                 PageInfo = new EditPresentationFilesPageInfo
                 {
                     CurrentPage = 1,
@@ -724,9 +773,115 @@ namespace SirmiumCommercial.Controllers
             });
         }
 
+        [HttpPost]
+        public IActionResult ChangeFileInfo(EditPresentationFiles model)
+        {
+            PresentationFiles file = repository.PresentationFiles.FirstOrDefault(f => f.FileId == model.FileId);
+
+            if(file != null)
+            {
+                if(model.FileTitle != null && model.FileTitle.Trim() != "" && model.FileTitle.Trim() != file.Title)
+                {
+                    file.Title = model.FileTitle;
+                    repository.SaveFile(file);
+                }
+                else if(model.FilePart > 0 && model.FilePart != file.Part)
+                {
+                    file.Part = model.FilePart;
+                    repository.SaveFile(file);
+                }
+            }
+
+            return RedirectToAction("EditPresentation", new
+            {
+                id = model.UserId,
+                presentationId = model.PresentationId,
+                courseId = model.CourseId
+            });
+        }
+
+        [HttpPost]
+        public IActionResult UploadNewFile(EditPresentation model)
+        {
+            if (model.NewFile != null)
+            {
+                AppUser user = userManager.Users.FirstOrDefault(u => u.Id == model.UserId);
+                Presentation presentation = repository.Presentations
+                    .FirstOrDefault(p => p.PresentationId == model.PresentationId);
+                int filePart = repository.PresentationFiles
+                    .Where(f => f.PresentationId == model.PresentationId).Count() + 1;
+
+                //Create user directory
+                string dirPath = Path.Combine(hostingEnvironment.WebRootPath, $@"UsersData\{user.Id}\Presentations\");
+                System.IO.Directory.CreateDirectory(dirPath);
+
+                PresentationFiles file = repository.PresentationFiles.FirstOrDefault(f => f.FileId == model.NewFileId);
+                //file exists
+                if(file != null)
+                {
+                    repository.SaveFile(file);
+                }
+                else
+                {
+                    string fileName = "";
+                    if (model.NewFileTitle == null)
+                    {
+                        fileName = presentation.Title + "_File_Part_" + filePart;
+                    }
+                    else
+                    {
+                        fileName = (model.NewFileTitle.Trim() == "") ?
+                            presentation.Title + "_File_Part_" + filePart : model.NewFileTitle;
+                    }
+
+                    //save presentation file 
+                    file = new PresentationFiles
+                    {
+                        Title = fileName,
+                        CreatedById = user.Id,
+                        Part = model.NewFilePart,
+                        PresentationId = presentation.PresentationId,
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now
+                    };
+                    repository.SaveFile(file);
+                    file.FilePath = $@"/UsersData/{user.Id}/Presentations/{file.FileId}.pdf";
+                    repository.SaveFile(file);
+                }
+
+                string filePath = Path.Combine(dirPath, file.FileId.ToString() + ".pdf");
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    model.NewFile.CopyTo(stream);
+                }
+            }
+
+            return RedirectToAction("EditPresentation", new
+            {
+                id = model.UserId,
+                presentationId = model.PresentationId,
+                courseId = model.CourseId
+            });
+        }
+        
+        public IActionResult DeleteFile (string id, int presentationId, int courseId, int fileId)
+        {
+            PresentationFiles file = repository.PresentationFiles.FirstOrDefault(f => f.FileId == fileId);
+            string dirPath = Path.Combine(hostingEnvironment.WebRootPath, $@"UsersData\{id}\Presentations\");
+            string filePath = Path.Combine(dirPath, file.FileId.ToString() + ".pdf");
+
+            //delete file if exists
+            System.IO.File.Delete(filePath);
+
+            repository.DeleteFile(file.FileId);
+
+            return RedirectToAction("EditPresentation", new { id, presentationId, courseId });
+        }
+
         public IActionResult DeletePresentation(string id, int courseId, int presentationId)
         {
             ViewData["Id"] = id;
+
             Presentation deletedPre = repository.DeletePresentation(presentationId);
             if (deletedPre != null)
             {

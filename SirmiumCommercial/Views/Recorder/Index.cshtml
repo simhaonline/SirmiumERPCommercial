@@ -107,10 +107,8 @@
                     <video src="@Model.Video.VideoPath" id="videoPlayer"></video>
                     <div id="videoControls">
                     </div>
-                    <span class="fa fa-play videoControlsBtn" id="videoControlsPlay"
-                          onclick="player.play();"></span>
-                    <span class="fa fa-redo videoControlsBtn" id="videoControlsReplay" style="display: none"
-                          onclick=""></span>
+                    <span class="fa fa-play videoControlsBtn" id="videoControlsPlay"></span>
+                    <span class="fa fa-redo videoControlsBtn" id="videoControlsReplay" style="display: none"></span>
                 </div>
                 <div class="col-lg-5">
                     <select onchange="showFile()" id="selectFile"
@@ -134,10 +132,9 @@
                 <video src="@Model.Video.VideoPath" id="videoPlayer"></video>
                 <div id="videoControls">
                 </div>
-                <span class="fa fa-play videoControlsBtn" id="videoControlsPlay"
-                      onclick="player.play();"></span>
-                <span class="fa fa-redo videoControlsBtn" id="videoControlsReplay" style="display: none"
-                      onclick="player.replay();"></span>
+                <span class="fa fa-play videoControlsBtn" id="videoControlsPlay"></span>
+                <span class="fa fa-redo videoControlsBtn" id="videoControlsReplay" 
+                      style="display: none;"></span>
             </div>
         }
 
@@ -319,23 +316,6 @@
         var videoId = document.getElementById('videoId').value;
         var userId = document.getElementById('userId').value;
 
-        var player = new function () {
-            this.play = function () {
-                videoPlayer.play();
-                videoPlayer.controls = true;
-
-                videoControls.style.display = "none";
-                videoControlsPlay.style.display = "none";
-            };
-            this.replay = function () {
-                videoPlayer.play();
-                videoPlayer.controls = true;
-
-                videoControls.style.display = "none";
-                videoControlsReplay.style.display = "none";
-            };
-        };
-
         videoPlayer.onended = function () {
             videoPlayer.controls = false;
             videoControls.style.display = "";
@@ -391,6 +371,12 @@
 
             //add video view (btn-Play)
             document.getElementById('videoControlsPlay').addEventListener("click", function (event) {
+                videoPlayer.play();
+                videoPlayer.controls = true;
+
+                videoControls.style.display = "none";
+                videoControlsPlay.style.display = "none";
+
                 connection.invoke("VideoViews", videoId).catch(function (err) {
                     return console.error(err.toString());
                 });
@@ -399,6 +385,12 @@
 
             //add video view (btn-Replay)
             document.getElementById('videoControlsReplay').addEventListener("click", function (event) {
+                videoPlayer.play();
+                videoPlayer.controls = true;
+
+                videoControls.style.display = "none";
+                videoControlsReplay.style.display = "none";
+
                 connection.invoke("VideoViews", videoId).catch(function (err) {
                     return console.error(err.toString());
                 });

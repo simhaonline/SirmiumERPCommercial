@@ -175,7 +175,7 @@ namespace SirmiumCommercial.Models
                 foreach(PresentationFiles pFile in context.PresentationFiles
                     .Where(f => f.PresentationId == dbEntry.PresentationId))
                 {
-                    DeleteFile(pFile.FileId);
+                    context.PresentationFiles.Remove(pFile);
                 }
 
                 //delete representations
@@ -1210,6 +1210,7 @@ namespace SirmiumCommercial.Models
                 {
                     dbEntry.UpdatedAt = DateTime.Now;
                     dbEntry.Title = file.Title;
+                    dbEntry.Part = file.Part;
                     dbEntry.FilePath = file.FilePath;
                 }
             }

@@ -17,9 +17,8 @@
                                 <embed src="@file.FilePath" style="width: 90%; height: 350px"
                                        type="application/pdf" />
                             </div>
-
                             <div class="col-lg-8 m-t-lg ">
-                                <form asp-action="ChangeVideoName" asp-controller="Manage" method="post">
+                                <form asp-action="ChangeFileInfo" asp-controller="Manage" method="post">
                                     <input value="@Model.PresentationId" asp-for="PresentationId" hidden />
                                     <input value="@Model.CourseId" asp-for="CourseId" hidden />
                                     <input value="@Model.UserId" asp-for="UserId" hidden />
@@ -97,7 +96,19 @@
                                     </div>
                                     <div class="col-lg-12 m-b-sm">
                                         <a class="btn" style="font-size: 20px;"
-                                           href="#">
+                                           onclick="UploadFile.openEditFileWindow(@file.FileId)">
+                                            <span class="fa fa-file-upload text-warning"></span>
+                                            <span class="text-muted">Change File</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-lg-12 m-b-sm">
+                                        <a class="btn" style="font-size: 20px;"
+                                           href="@Url.Action("DeleteFile", "Manage", new {
+                                                id = Model.UserId,
+                                                presentationId = Model.PresentationId,
+                                                courseId = Model.CourseId,
+                                                fileId = file.FileId
+                                            })">
                                             <span class="fa fa-trash text-danger"></span>
                                             <span class="text-muted">Delete File</span>
                                         </a>

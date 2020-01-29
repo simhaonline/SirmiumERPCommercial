@@ -24,7 +24,7 @@
             CustomSuccessWindow.show(msg);
         };
 
-                                /**/</script>
+                                    /**/</script>
 }
 
 <!--Warning Window-->
@@ -163,9 +163,9 @@
 
 
 <!--Course presentations-->
-<div class="row m-l-md m-r-md">
+<div class="row m-l-md m-r-md m-b-md">
     <div class="col-lg-12">
-        <div class="hpanel m-b-xs panel-collapse">
+        <div class="hpanel m-b-xs">
             <div class="panel-heading">
                 <div class="panel-tools" style="font-size:20px">
                     <span class="text-muted">Total parts:</span>
@@ -177,7 +177,7 @@
                     {
                         <span class="text-primary">@Model.Course.Presentations.Count</span>
                     }
-                    <a class="showhide"><i class="fa fa-chevron-down"></i></a>
+                    <a class="showhide"><i class="fa fa-chevron-up"></i></a>
                 </div>
                 <h3 class="m-n">
                     <span class="fas fa-book-open text-primary"></span>
@@ -186,7 +186,7 @@
             </div>
             @if (Model.Course.Presentations.Count() == 0)
             {
-                <div class="panel-body" style="display: none">
+                <div class="panel-body">
                     <div class="col-lg-12 navbar bg-info">
                         <span class="navbar-brand">No Presentation</span>
                     </div>
@@ -194,6 +194,8 @@
             }
             else
             {
+                @await Html.PartialAsync("CourseManagePresentationsPartial", Model.AllPresentations)
+                /*
                 var i = 0;
                 foreach (Presentation p in Model.Course.Presentations.OrderBy(p => p.Part))
                 {
@@ -279,15 +281,26 @@
                             </div>
                         </div>
                     </div>
-                }
+                }*/
             }
         </div>
     </div>
 </div>
+
+<input id="c-manage-current-user" value="@ViewData["Id"].ToString()" hidden />
 
 @section Scripts {
     <environment names="Development,Staging,Production">
         <script src="~/lib_local/presentationForms/presentationForm.js"></script>
         <script src="~/lib_local/videoRec/videoRec.js"></script>
     </environment>
+
+    <script>
+        var cUser = document.getElementById("c-manage-current-user").value;
+
+        function morePresentations(cId, currentPage) {
+            var url = '@Url.Action("CourseManagePresentationsPartial", "Manage")';
+            $("#all-course-presentations").load(url, { id: cUser, courseId: cId, currentPage: currentPage });
+        };
+    </script>
 }
