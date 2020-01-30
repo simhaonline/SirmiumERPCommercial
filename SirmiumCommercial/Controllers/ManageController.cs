@@ -144,8 +144,8 @@ namespace SirmiumCommercial.Controllers
                         model.Course.EndDate = DateTime.MinValue;
                     }
                     repository.SaveCourse(model.Course);
-                    TempData["messageCM"] = "'" + model.Course.Title + " 'has been saved!";
-                    return RedirectToAction("CourseManage", new
+                   
+                    return RedirectToAction("NewCourseStep2", new
                     {
                         id,
                         model.Course.CourseId
@@ -153,6 +153,85 @@ namespace SirmiumCommercial.Controllers
                 }
             }
             return View();
+        }
+
+        public ViewResult NewCourseStep2(string id, int courseId)
+        {
+            ViewData["Id"] = id;
+
+            Course course = repository.Courses.FirstOrDefault(c => c.CourseId == courseId);
+
+            string videoTitlePlaceholder = course.Title + "_Video";
+
+            return View("NewCourseStep2", new NewCourseStep2ViewModel {
+                CourseId = courseId,
+                TitlePlaceholder = videoTitlePlaceholder
+            });
+        }
+
+        [HttpPost]
+        public IActionResult NewCourseStep2(NewCourseStep2ViewModel model)
+        {
+            Course course = repository.Courses.FirstOrDefault(c => c.CourseId == model.CourseId);
+
+            string base64 = model.videoUrl.Substring(model.videoUrl.IndexOf(',') + 1);
+            byte[] data = Convert.FromBase64String(base64);
+
+            string videoTitle = model.TitlePlaceholder;
+            if (model.VideoTitle != null)
+            {
+                videoTitle = (model.VideoTitle.Trim() == "") ?
+                    model.TitlePlaceholder.Replace(" ", "_") :
+                    model.VideoTitle;
+            }
+
+            var dirPath = Path.Combine(hostingEnvironment.WebRootPath,
+                            $@"UsersData\{model.UserId}\Courses\{course.CourseId}");
+            System.IO.Directory.CreateDirectory(dirPath);
+            var fileName = $@"{course.CourseId}.mp4";
+            var filePath = Path.Combine(dirPath, fileName);
+
+            //save course video
+            Video video = new Video
+            {
+                Title = videoTitle,
+                CreatedBy = model.UserId,
+                Status = "Public",
+                For = "Course",
+                ForId = course.CourseId,
+                DateAdded = DateTime.Now,
+                VideoPath = $@"/UsersData/{model.UserId}/Courses/{course.CourseId}/{course.CourseId}.mp4"
+            };
+            repository.SaveVideo(video);
+            course.VideoId = repository.Videos
+                .FirstOrDefault(v => v.ForId == course.CourseId).Id;
+            repository.SaveCourse(course);
+
+            using (var videoFile = new FileStream(filePath, FileMode.Create))
+            {
+                videoFile.Write(data, 0, data.Length);
+                videoFile.Flush();
+            }
+
+            TempData["messageCM"] = "'" + course.Title + " 'has been saved!";
+
+            return RedirectToAction("CourseManage", new { id = model.UserId, courseId = model.CourseId });
+        }
+
+        public ActionResult NewCourseNoVideo (string id, int courseId)
+        {
+            Course course = repository.Courses.FirstOrDefault(c => c.CourseId == courseId);
+
+            TempData["messageCM"] = "'" + course.Title + " 'has been saved!";
+
+            return RedirectToAction("CourseManage", new { id, courseId });
+        }
+
+        public ActionResult NewCourseAbort(string id, int courseId)
+        {
+            repository.DeleteCourse(courseId);
+
+            return RedirectToAction("Index", new { id });
         }
 
         public IActionResult CourseManage(string id, int courseId)
@@ -261,11 +340,15 @@ namespace SirmiumCommercial.Controllers
         {
             ViewData["Id"] = id;
             ViewData["Title"] = "Edit Course";
+
+            Course course = repository.Courses.FirstOrDefault(c => c.CourseId == courseId);
+
             return View(new NewEditCourse
             {
                     Course = repository.Courses.Where(c => c.CourseId == courseId)
                                         .FirstOrDefault(),
-                    NoEndDate = false
+                    NoEndDate = (course.EndDate == DateTime.MinValue) ? true : false,
+                    Video = repository.Videos.FirstOrDefault(v => v.Id == course.VideoId)
             });
         }
 

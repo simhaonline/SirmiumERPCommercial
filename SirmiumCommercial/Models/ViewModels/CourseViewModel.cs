@@ -117,6 +117,27 @@ namespace SirmiumCommercial.Models.ViewModels
     {
         public Course Course { get; set; }
         public bool NoEndDate { get; set; }
+        public Video Video { get; set; }
+
+        //Edit
+        public int CourseId { get; set; }
+        public string UserId { get; set; }
+        public string NewTitle { get; set; }
+        public DateTime NewEndDate { get; set; }
+        public bool NewNoEndDate { get; set; }
+        public string NewDescription { get; set; }
+        public string VideoTitle { get; set; }
+        public int VideoId { get; set; }
+    }
+
+    public class NewCourseStep2ViewModel
+    {
+        public int CourseId { get; set; }
+        public string VideoTitle { get; set; }
+        public string UserId { get; set; }
+        public string videoUrl { get; set; }
+
+        public string TitlePlaceholder { get; set; }
     }
 
     public class NewEditPresentation

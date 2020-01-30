@@ -2,6 +2,7 @@
 
 @{
     Layout = "_UserLayout";
+    ViewData["Title"] = "New Course - step 1";
 }
 
 @section Styles {
@@ -11,148 +12,178 @@
 }
 
 
-<div id="topNav" class="nav navbar">
-    <div class="smalltitle col-md-3">
-        <h3><strong>@ViewData["Title"]</strong></h3>
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <span class="fa fa-book-open"></span>
+            <strong>@ViewData["Title"]</strong>
+            <span>&emsp;</span>
+        </div>
     </div>
 </div>
 
-<form asp-action="NewCourse" asp-route-id="@ViewData["Id"]" method="post">
-    <div asp-validation-summary="All"></div>
-    <div class="row m-l-md m-b-md">
-        <label class="col-sm-1 text-right">Title: </label>
-        <input asp-for="Course.Title" class="form-input col-sm-5" />
+<div class="row">
+    <div class="col-lg-12">
+        <div class="hpanel m-l-md m-r-md">
+            <div class="panel-body">
+                <div class="row text-center">
+                    <button class="btn btn-primary">
+                        Step 1 - Create Course
+                    </button>
+                    <button class="btn btn-default">
+                        Step 2 - Record a Video
+                    </button>
+                </div>
+
+                <form asp-action="NewCourse" asp-route-id="@ViewData["Id"]" method="post">
+                    <div asp-validation-summary="All"></div>
+                    <div class="row m-l-md m-b-md text-center">
+                        <div class="col-sm-2"></div>
+                        <label class="col-sm-1 text-right">Title: </label>
+                        <input asp-for="Course.Title" class="form-input col-sm-5" />
+                    </div>
+                    <div class="row m-l-md m-b-md" id="endDateGroup">
+                        <div class="col-sm-2"></div>
+                        <label class="col-sm-1 text-right">End Date: </label>
+                        <input asp-for="Course.EndDate" class="form-input col-sm-5" type="date" />
+                    </div>
+                    <div class="row m-l-md m-b-md">
+                        <div class="col-sm-2"></div>
+                        <input asp-for="NoEndDate" type="checkbox" class="big-checkbox col-sm-1 text-right"
+                               onclick="endDateChecked()" id="noEndDate" />
+                        <label class="text-uppercase text-info">No End Date</label>
+                    </div>
+                    <div class="row m-l-md m-b-md">
+                        <div class="col-sm-2"></div>
+                        <label class="col-sm-1 text-right">Description: </label>
+                        <textarea asp-for="Course.Description" class="form-input col-sm-5"
+                                  placeholder="Add Course Description..."></textarea>
+                    </div>
+                    <div class="row m-l-md m-b-md">
+                        <div class="col-sm-2"></div>
+                        <input asp-for="Course.AwardIcon" id="awardInput" hidden />
+                        <table class="row m-l-md m-r-md">
+                            <tr>
+                                <th colspan="6" class="text-center">Choose Award Icon:</th>
+                                <th rowspan="2" class="text-center">
+                                    Icon Preview:
+                                    <h1><span class="@Model.Course.AwardIcon" id="iconPreview"></span></h1>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1 awardTd text-center" id="award11">
+                                    <h3><span class="fa fa-fire-alt"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award12">
+                                    <h3><span class="fa fa-shield"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award13">
+                                    <h3><span class="fa fa-star"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award14">
+                                    <h3><span class="fa fa-star-o"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award15">
+                                    <h3><span class="fa fa-star-half-alt"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award16">
+                                    <h3><span class="pe pe-7s-star"></span></h3>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1 awardTd text-center" id="award21">
+                                    <h3><span class="fa fa-award"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award22">
+                                    <h3><span class="fa fa-medal"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award23">
+                                    <h3><span class="pe pe-7s-medal"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award24">
+                                    <h3><span class="fa fa-trophy"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award25">
+                                    <h3><span class="pe pe-7s-cup"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award26">
+                                    <h3><span class="fa fa-crown"></span></h3>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1 awardTd text-center" id="award31">
+                                    <h3><span class="fa fa-chess-rook"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award32">
+                                    <h3><span class="fa fa-chess-queen"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award33">
+                                    <h3><span class="fa fa-chess-pawn"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award34">
+                                    <h3><span class="fa fa-chess-king"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award35">
+                                    <h3><span class="fa fa-chess-bishop"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award36">
+                                    <h3><span class="fa fa-chess"></span></h3>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1 awardTd text-center" id="award41">
+                                    <h3><span class="fa fa-graduation-cap"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award42">
+                                    <h3><span class="fas fa-heart"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award43">
+                                    <h3><span class="fa fa-atom"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award44">
+                                    <h3><span class="pe pe-7s-light"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award45">
+                                    <h3><span class="pe pe-7s-gleam"></span></h3>
+                                </td>
+                                <td class="col-md-1 awardTd text-center" id="award46">
+                                    <h3><span class="pe pe-7s-sun"></span></h3>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th colspan="6" class="text-center">
+                                    Choose Award Color:
+                                </th>
+                            </tr>
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    <h3>
+                                        <span class="fa fa-square-full text-error awardTd" id="awardError"></span>
+                                        <span class="fa fa-square-full text-primary awardTd" id="awardPrimary"></span>
+                                        <span class="fa fa-square-full text-primary-2 awardTd" id="awardPrimary2"></span>
+                                        <span class="fa fa-square-full text-info awardTd" id="awardInfo"></span>
+                                        <span class="fa fa-square-full text-success awardTd" id="awardSuccess"></span>
+                                        <span class="fa fa-square-full text-warning awardTd" id="awardWarning"></span>
+                                        <span class="fa fa-square-full text-danger awardTd" id="awardDanger"></span>
+                                    </h3>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-12 text-center">
+                        <a class="btn btn-default text-danger"
+                                href="@Url.Action("Index", "Manage", new { id = ViewData["Id"].ToString() })">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-default ">
+                            Next
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-    <div class="row m-l-md m-b-md" id="endDateGroup">
-        <label class="col-sm-1 text-right">End Date: </label>
-        <input asp-for="Course.EndDate" class="form-input col-sm-5" type="date" />
-    </div>
-    <div class="row m-l-md m-b-md">
-        <input asp-for="NoEndDate" type="checkbox" class="big-checkbox col-sm-1 text-right"
-               onclick="endDateChecked()" id="noEndDate" />
-        <label class="text-uppercase text-info">No End Date</label>
-    </div>
-    <div class="row m-l-md m-b-md">
-        <label class="col-sm-1 text-right">Description: </label>
-        <textarea asp-for="Course.Description" class="form-input col-sm-5"
-                  placeholder="Add Course Description..."></textarea>
-    </div>
-    <div class="row m-l-md m-b-md">
-        <input asp-for="Course.AwardIcon" id="awardInput" hidden />
-        <table class="row m-l-md m-r-md">
-            <tr>
-                <th colspan="6" class="text-center">Choose Award Icon:</th>
-                <th rowspan="2" class="text-center">
-                    Icon Preview:
-                    <h1><span class="@Model.Course.AwardIcon" id="iconPreview"></span></h1>
-                </th>
-            </tr>
-            <tr>
-                <td class="col-md-1 awardTd text-center" id="award11">
-                    <h3><span class="fa fa-fire-alt"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award12">
-                    <h3><span class="fa fa-shield"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award13">
-                    <h3><span class="fa fa-star"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award14">
-                    <h3><span class="fa fa-star-o"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award15">
-                    <h3><span class="fa fa-star-half-alt"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award16">
-                    <h3><span class="pe pe-7s-star"></span></h3>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-1 awardTd text-center" id="award21">
-                    <h3><span class="fa fa-award"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award22">
-                    <h3><span class="fa fa-medal"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award23">
-                    <h3><span class="pe pe-7s-medal"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award24">
-                    <h3><span class="fa fa-trophy"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award25">
-                    <h3><span class="pe pe-7s-cup"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award26">
-                    <h3><span class="fa fa-crown"></span></h3>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-1 awardTd text-center" id="award31">
-                    <h3><span class="fa fa-chess-rook"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award32">
-                    <h3><span class="fa fa-chess-queen"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award33">
-                    <h3><span class="fa fa-chess-pawn"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award34">
-                    <h3><span class="fa fa-chess-king"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award35">
-                    <h3><span class="fa fa-chess-bishop"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award36">
-                    <h3><span class="fa fa-chess"></span></h3>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-1 awardTd text-center" id="award41">
-                    <h3><span class="fa fa-graduation-cap"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award42">
-                    <h3><span class="fas fa-heart"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award43">
-                    <h3><span class="fa fa-atom"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award44">
-                    <h3><span class="pe pe-7s-light"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award45">
-                    <h3><span class="pe pe-7s-gleam"></span></h3>
-                </td>
-                <td class="col-md-1 awardTd text-center" id="award46">
-                    <h3><span class="pe pe-7s-sun"></span></h3>
-                </td>
-            </tr>
-            <tr>
-                <th colspan="6" class="text-center">
-                    Choose Award Color:
-                </th>
-            </tr>
-            <tr>
-                <td colspan="6" class="text-center">
-                    <h3>
-                        <span class="fa fa-square-full text-error awardTd" id="awardError"></span>
-                        <span class="fa fa-square-full text-primary awardTd" id="awardPrimary"></span>
-                        <span class="fa fa-square-full text-primary-2 awardTd" id="awardPrimary2"></span>
-                        <span class="fa fa-square-full text-info awardTd" id="awardInfo"></span>
-                        <span class="fa fa-square-full text-success awardTd" id="awardSuccess"></span>
-                        <span class="fa fa-square-full text-warning awardTd" id="awardWarning"></span>
-                        <span class="fa fa-square-full text-danger awardTd" id="awardDanger"></span>
-                    </h3>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div class="col-md-8 text-center">
-        <button type="submit" class="btn btn-info btn-outline">
-            Create
-        </button>
-    </div>
-</form>
+</div>
 
 <script>
     function endDateChecked() {

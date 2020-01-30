@@ -1,0 +1,122 @@
+﻿@model NewCourseStep2ViewModel
+
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = "New Course - step 1";
+}
+
+@section Styles {
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+    </environment>
+}
+
+
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <span class="fa fa-book-open"></span>
+            <strong>@ViewData["Title"]</strong>
+            <span>&emsp;</span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="hpanel m-l-md m-r-md">
+            <div class="panel-body">
+                <div class="row text-center">
+                    <button class="btn btn-default">
+                        Step 1 - Create Course
+                    </button>
+                    <button class="btn btn-primary">
+                        Step 2 - Record a Video
+                    </button>
+                </div>
+            </div>
+
+            <form asp-action="NewCourseStep2" asp-controller="Manage" method="post">
+                <input asp-for="CourseId" value="@Model.CourseId" hidden />
+                <input asp-for="UserId" value="@ViewData["Id"].ToString()" hidden />
+                <input asp-for="TitlePlaceholder" value="@Model.TitlePlaceholder" hidden />
+                <div class="form-group col-lg-12">
+                    <label>Video Title:</label>
+                    <input asp-for="VideoTitle" value="" id="video-title"
+                           class="form-control" placeholder="@Model.TitlePlaceholder" />
+                </div>
+
+                <div class="col-lg-12">
+                    <div id="video-representation-1" class="video-container">
+                        <div class="contents text-center">
+                            <div class="video">
+                                <video id="recorder-representation-1" class="text-center"></video>
+                                <div class="controls" id="controls-representation-1">
+                                    <div class="btnC row text-center">
+                                        <a id="recBtn-representation-1" class="btn btn-outline btn-default">
+                                            <i class="far fa-dot-circle-o text-danger text-big"></i>
+                                            <span style="font-size:20px">Rec</span>
+                                        </a>
+                                        <a id="stopBtn-representation-1" class="btn btn-outline btn-default" style="display: none">
+                                            <i class="far fa-stop-circle text-primary text-big"></i>
+                                            <span style="font-size:20px">Stop</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <input asp-for="UserId" value="@ViewData["Id"]" hidden />
+                                <input asp-for="videoUrl" id="videoUrl-representation-1" hidden />
+                                <video id="player-representation-1" controls style="display: none"></video>
+                                <div class="playerControls" id="controls2-representation-1" style="display: none">
+                                    <div class="playerBtn">
+                                        <a id="replayBtn-representation-1" class="btn btn-outline btn-default">
+                                            <i class="fas fa-redo text-primary text-big"></i>
+                                            <span style="font-size:20px">Replay</span>
+                                        </a>
+                                        <button id="downloadBtn-representation-1" class="btn btn-outline btn-default"
+                                                type="submit">
+                                            <i class="fa fa-save text-success text-big"></i>
+                                            <span style="font-size:20px">Save</span>
+                                        </button>
+                                        <a id="newVideoBtn-representation-1" class="btn btn-outline btn-default">
+                                            <i class="far fa-dot-circle-o text-danger text-big"></i>
+                                            <span style="font-size:20px">Try Again</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="text-right m-t-xs">
+                <a href="@Url.Action("NewCourseAbort", "Manage", new {
+                                id = ViewData["Id"],
+                                courseId = Model.CourseId })"
+                   class="btn btn-default text-error">Cancel</a>
+                <a href="@Url.Action("NewCourseNoVideo", "Manage",
+                                            new { id = ViewData["Id"], courseId = Model.CourseId })"
+                   class="btn btn-default text-danger">Skip</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+        <script src="~/lib_local/videoRec/videoRec.js"></script>
+    </environment>
+    <script>
+        $(document).ready(function () {
+            Camera.active('representation', '1');
+
+            var recorderDiv = document.getElementById('recorder-representation-1');
+            var playerDiv = document.getElementById('player-representation-1');
+
+            var width = document.getElementById('form-title-div').offsetWidth + "px";
+            recorderDiv.style.maxWidth = width;
+            playerDiv.style.maxWidth = width;
+
+        });
+    </script>
+}
