@@ -100,6 +100,19 @@
     }
 </style>
 
+<div id="customSuccessWindow"></div>
+@if (TempData["messageCM"] != null)
+{
+    <input value="@TempData["messageCM"].ToString()" id="msgText" hidden />
+    <script>
+        var msg = document.getElementById('msgText').value;
+        window.onload = function () {
+            CustomSuccessWindow.show(msg);
+        };
+
+
+/**/</script>
+}
 
 <!--Header-->
 <div class="normalheader p-sm">
@@ -131,7 +144,7 @@
                 <div class="row">
                     <form asp-action="EditCourse" asp-route-id="@ViewData["Id"]" method="post">
                         <div asp-validation-summary="All"></div>
-                        <input asp-for="Course.CourseId" hidden />
+                        <input asp-for="CourseId" value="@Model.Course.CourseId" hidden />
                         <div class="form-group col-lg-12 m-b-sm">
                             <div class="col-lg-2">
                                 <h4>
@@ -170,11 +183,46 @@
                                     <span class="fas fa-calendar-alt"></span>&nbsp; End Date:
                                 </h4>
                             </div>
-                            <div class="col-lg-6">
-                                <input class="form-control"
-                                       id="input-date" asp-for="Course.EndDate"
-                                       type="date" disabled />
-                            </div>
+                            @if (Model.Course.EndDate == DateTime.MinValue)
+                            {
+                                <input id="noEndDate-initial" value="true" hidden />
+                                <div class="col-lg-6" style="padding-left: 0px;">
+                                    <div class="col-lg-6" id="endDateGroup" style="display: none;">
+                                        <input class="form-control" value="@Model.Course.EndDate.Date"
+                                               id="input-date" asp-for="NewEndDate"
+                                               type="date" disabled />
+                                    </div>
+                                    <div class="col-lg-6" id="enddate-checkbox">
+                                        <input asp-for="NewNoEndDate" checked disabled
+                                               type="checkbox" class="big-checkbox col-sm-1 text-right"
+                                               onclick="endDateChecked()" id="noEndDate" />
+                                        <label class="text-uppercase text-muted">No End Date</label>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <input id="noEndDate-initial" value="false" hidden />
+                                <div class="col-lg-6" style="padding-left: 0px;">
+                                    <div class="col-lg-6" id="endDateGroup-tmp">
+                                        <input class="form-control"
+                                               value="@Model.Course.EndDate.ToString("dd.MM.yyyy.")"
+                                               disabled />
+                                    </div>
+                                    <div class="col-lg-6" id="endDateGroup" style="display: none;">
+                                        <input class="form-control"
+                                               id="input-date" asp-for="NewEndDate"
+                                               value="@Model.Course.EndDate.Date"
+                                               type="date" disabled />
+                                    </div>
+                                    <div class="col-lg-3" id="enddate-checkbox" style="display: none;">
+                                        <input asp-for="NewNoEndDate"
+                                               type="checkbox" class="big-checkbox col-sm-1 text-right"
+                                               onclick="endDateChecked()" id="noEndDate" />
+                                        <label class="text-uppercase text-muted">No End Date</label>
+                                    </div>
+                                </div>
+                            }
                             <button class="btn col-lg-2 m-l-lg"
                                     id="edit-date" type="button"
                                     style="font-size: 20px; background-color: #ffffff"
@@ -197,13 +245,6 @@
                             </button>
                         </div>
 
-                        <div class="form-group col-lg-12  m-b-sm" id="enddate-checkbox" style="display: none;">
-                            <input asp-for="NewNoEndDate" value="@Model.NoEndDate"
-                                   type="checkbox" class="big-checkbox col-sm-1 text-right"
-                                   onclick="endDateChecked()" id="noEndDate" />
-                            <label class="text-uppercase text-info">No End Date</label>
-                        </div>
-
                         <div class="form-group col-lg-12  m-b-sm">
                             <div class="col-lg-2">
                                 <h4>
@@ -212,7 +253,7 @@
                             </div>
                             <div class="col-lg-6">
                                 @{ var textAreaPlaceholder = (Model.Course.Description != null) ?
-                                                 Model.Course.Description : "No description!";}
+                                                   Model.Course.Description : "No description!";}
                                 <input value="@textAreaPlaceholder" id="description-init" hidden />
                                 <textarea class="form-control" placeholder="@textAreaPlaceholder"
                                           disabled id="input-description"
@@ -314,67 +355,71 @@
                             </div>
                         }
                     </div>
+
                     <div class="col-lg-8 m-t-lg ">
-                        <form asp-action="ChangeVideoName" asp-controller="Manage" method="post">
-                            <input value="@Model.Course.CourseId" asp-for="CourseId" hidden />
-                            <input value="@ViewData["Id"].ToString()" asp-for="UserId" hidden />
-                            <input value="@Model.Video.Id" asp-for="VideoId" hidden />
-                            <div class="form-group col-lg-12 m-b-sm">
-                                <div class="col-lg-12">
-                                    <h4>
-                                        <i class="fa fa-pen-nib"></i>&nbsp; Video Title:
-                                    </h4>
-                                </div>
-                                <div class="col-lg-8">
-                                    <input class="form-control" value="@Model.Video.Title"
-                                           id="input-video-title" asp-for="VideoTitle" disabled />
-                                </div>
-                                <button class="col-lg-2 m-l-lg btn"
-                                        id="edit-video-title" type="button"
-                                        style="font-size: 20px; background-color: #ffffff"
-                                        onclick="edit('video-title');">
-                                    <span class="fa fa-edit text-warning"></span>
-                                    <span class="text-muted">Edit</span>
-                                </button>
-                                <button class="col-lg-2 m-l-sm btn"
-                                        id="cancel-video-title" type="button" style="display:none;
+                        @if (Model.Course.VideoId != 0)
+                        {
+                            <form asp-action="ChangeCourseVideoName" asp-controller="Manage" method="post">
+                                <input value="@Model.Course.CourseId" asp-for="CourseId" hidden />
+                                <input value="@ViewData["Id"].ToString()" asp-for="UserId" hidden />
+                                <input value="@Model.Video.Id" asp-for="VideoId" hidden />
+                                <div class="form-group col-lg-12 m-b-sm">
+                                    <div class="col-lg-12">
+                                        <h4>
+                                            <i class="fa fa-pen-nib"></i>&nbsp; Video Title:
+                                        </h4>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input class="form-control" value="@Model.Video.Title"
+                                               id="input-video-title" asp-for="VideoTitle" disabled />
+                                    </div>
+                                    <button class="col-lg-2 m-l-lg btn"
+                                            id="edit-video-title" type="button"
+                                            style="font-size: 20px; background-color: #ffffff"
+                                            onclick="edit('video-title');">
+                                        <span class="fa fa-edit text-warning"></span>
+                                        <span class="text-muted">Edit</span>
+                                    </button>
+                                    <button class="col-lg-2 m-l-sm btn"
+                                            id="cancel-video-title" type="button" style="display:none;
                                     font-size: 20px; background-color: #ffffff"
-                                        onclick="cancel('video-title');">
-                                    <span class="fa fa-remove text-danger"></span>
-                                    <span class="text-muted">Cancel</span>
-                                </button>
-                                <button class="col-lg-1 m-l-sm btn"
-                                        id="save-video-title" type="submit" style="display:none;
+                                            onclick="cancel('video-title');">
+                                        <span class="fa fa-remove text-danger"></span>
+                                        <span class="text-muted">Cancel</span>
+                                    </button>
+                                    <button class="col-lg-1 m-l-sm btn"
+                                            id="save-video-title" type="submit" style="display:none;
                                     font-size: 20px; background-color: #ffffff">
-                                    <span class="fa fa-save text-success"></span>
-                                    <span class="text-muted">Save</span>
-                                </button>
-                            </div>
-                            <div class="col-lg-12 m-b-sm">
-                                @if (Model.Course.VideoId != 0)
-                                {
-                                    <a class="btn" style="font-size: 20px;"
-                                       href="@Url.Action("NewCourseVideo", "Manage", new {
+                                        <span class="fa fa-save text-success"></span>
+                                        <span class="text-muted">Save</span>
+                                    </button>
+                                </div>
+                            </form>
+                        }
+                        <div class="col-lg-12 m-b-sm">
+                            @if (Model.Course.VideoId != 0)
+                            {
+                                <a class="btn" style="font-size: 20px;"
+                                   href="@Url.Action("NewCourseVideo", "Manage", new {
                                                     id = ViewData["Id"],
                                                     courseId = Model.Course.CourseId
                                         })">
-                                        <span class="fa fa-dot-circle-o text-danger"></span>
-                                        <strong> New Video</strong>
-                                    </a>
-                                }
-                                else
-                                {
-                                    <a class="btn" style="font-size: 20px;"
-                                       href="@Url.Action("NewCourseVideo", "Manage", new {
+                                    <span class="fa fa-dot-circle-o text-danger"></span>
+                                    <strong> New Video</strong>
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="btn" style="font-size: 20px;"
+                                   href="@Url.Action("NewCourseVideo", "Manage", new {
                                                     id = ViewData["Id"],
                                                     courseId = Model.Course.CourseId
                                         })">
-                                        <span class="fa fa-dot-circle-o text-danger"></span>
-                                        <strong> Create a Video</strong>
-                                    </a>
-                                }
-                            </div>
-                        </form>
+                                    <span class="fa fa-dot-circle-o text-danger"></span>
+                                    <strong> Create a Video</strong>
+                                </a>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -393,10 +438,10 @@
     </div>
     <form asp-action="EditCourse" asp-route-id="@ViewData["Id"]" method="post">
         <div asp-validation-summary="All"></div>
-        <input asp-for="Course.CourseId" hidden />
+        <input asp-for="CourseId" value="@Model.Course.CourseId" hidden id="mcid"/>
 
         <div class="row m-l-md m-b-md">
-            <input asp-for="Course.AwardIcon" id="awardInput" hidden />
+            <input asp-for="NewAwardIcon" value="" id="awardInput" hidden />
             <input value="@Model.Course.AwardIcon" id="default-award-icon" hidden />
             <table class="row m-l-md m-r-md">
                 <tr>
@@ -545,6 +590,7 @@
     var dateInitial = document.getElementById('input-date').value;
     var descriptionInitial = document.getElementById('description-init').value;
     var videoTitleInitial = document.getElementById('input-video-title').value;
+    var noEndDateInitial = document.getElementById('noEndDate-initial').value;
 
     function edit(type) {
         var inputId = "input-" + type;
@@ -553,7 +599,13 @@
         var cancelId = "cancel-" + type;
 
         if (type == "date") {
+            if (noEndDateInitial == "false") {
+                document.getElementById("endDateGroup-tmp").style.display = "none";
+            }
             document.getElementById("enddate-checkbox").style.display = "";
+            document.getElementById("endDateGroup").style.display = "";
+            document.getElementById("noEndDate").disabled = false;
+            document.getElementById("noEndDate").checked = false;
         }
 
         document.getElementById(inputId).disabled = false;
@@ -567,7 +619,7 @@
         var editId = "edit-" + type;
         var saveId = "save-" + type;
         var cancelId = "cancel-" + type;
-
+        
         if (type == "description") {
             document.getElementById(inputId).placeholder = descriptionInitial;
             document.getElementById(inputId).value = "";
@@ -577,7 +629,20 @@
         }
         else if (type == "date") {
             document.getElementById(inputId).value = dateInitial;
-            document.getElementById("enddate-checkbox").style.display = "none";
+
+            if (noEndDateInitial == "true") {
+                document.getElementById("enddate-checkbox").style.display = "";
+                document.getElementById("endDateGroup").style.display = "none";
+                document.getElementById("noEndDate").disabled = true;
+                document.getElementById("noEndDate").checked = true;
+            }
+            else {
+                document.getElementById("endDateGroup-tmp").style.display = "";
+                document.getElementById("enddate-checkbox").style.display = "none";
+                document.getElementById("endDateGroup").style.display = "none";
+                document.getElementById("noEndDate").disabled = true;
+                document.getElementById("noEndDate").checked = false;
+            }
         }
         else {
             document.getElementById(inputId).value = videoTitleInitial;

@@ -204,7 +204,7 @@ namespace SirmiumCommercial.Controllers
             };
             repository.SaveVideo(video);
             course.VideoId = repository.Videos
-                .FirstOrDefault(v => v.ForId == course.CourseId).Id;
+                .FirstOrDefault(v => v.For == "Course" && v.ForId == course.CourseId).Id;
             repository.SaveCourse(course);
 
             using (var videoFile = new FileStream(filePath, FileMode.Create))
@@ -232,6 +232,102 @@ namespace SirmiumCommercial.Controllers
             repository.DeleteCourse(courseId);
 
             return RedirectToAction("Index", new { id });
+        }
+
+        public ActionResult NewCourseVideo (string id, int courseId)
+        {
+            ViewData["Id"] = id;
+
+            Course course = repository.Courses
+                .FirstOrDefault(c => c.CourseId == courseId);
+
+
+            return View(new NewCourseStep2ViewModel
+            {
+                CourseId = courseId,
+                TitlePlaceholder = course.Title + "_Video"
+            });
+        }
+
+        [HttpPost]
+        public ActionResult NewCourseVideo(NewCourseStep2ViewModel model)
+        {
+            Course course = repository.Courses
+                .FirstOrDefault(c => c.CourseId == model.CourseId);
+            Video video = repository.Videos.FirstOrDefault(v => v.For == "Course" && v.ForId == course.CourseId);
+
+            string base64 = model.videoUrl.Substring(model.videoUrl.IndexOf(',') + 1);
+            byte[] data = Convert.FromBase64String(base64);
+
+            string videoTitle = model.TitlePlaceholder;
+            if (model.VideoTitle != null)
+            {
+                videoTitle = (model.VideoTitle.Trim() == "") ?
+                    model.TitlePlaceholder.Replace(" ", "_") :
+                    model.VideoTitle;
+            }
+
+            var dirPath = Path.Combine(hostingEnvironment.WebRootPath,
+                            $@"UsersData\{model.UserId}\Courses\{course.CourseId}");
+            System.IO.Directory.CreateDirectory(dirPath);
+            var fileName = $@"{course.CourseId}.mp4";
+            var filePath = Path.Combine(dirPath, fileName);
+
+            //save course video
+            if (video != null)
+            {
+                video.Title = videoTitle;
+                video.Views = 0;
+                repository.SaveVideo(video);
+                repository.SaveCourse(course);
+
+                //delete video likes & dislikes
+                repository.DeleteVideoLikes(video.Id);
+                repository.DeleteVideoDislikes(video.Id);
+            }
+            else
+            {
+                video = new Video
+                {
+                    Title = videoTitle,
+                    CreatedBy = model.UserId,
+                    Status = "Public",
+                    For = "Course",
+                    ForId = course.CourseId,
+                    DateAdded = DateTime.Now,
+                    VideoPath = $@"/UsersData/{model.UserId}/Courses/{course.CourseId}/{course.CourseId}.mp4"
+                };
+                repository.SaveVideo(video);
+                course.VideoId = repository.Videos
+                    .FirstOrDefault(v => v.For == "Course" && v.ForId == course.CourseId).Id;
+                repository.SaveCourse(course);
+            }
+
+            using (var videoFile = new FileStream(filePath, FileMode.Create))
+            {
+                videoFile.Write(data, 0, data.Length);
+                videoFile.Flush();
+            }
+
+            TempData["messageCM"] = "'" + course.Title + " 'has been saved!";
+
+            return RedirectToAction("EditCourse", new { id = model.UserId, courseId = model.CourseId });
+        }
+
+        [HttpPost]
+        public IActionResult ChangeCourseVideoName(NewEditCourse model)
+        {
+            Video video = repository.Videos.FirstOrDefault(v => v.Id == model.VideoId);
+            Course course = repository.Courses.FirstOrDefault(c => c.CourseId == model.CourseId);
+
+            if (model.VideoTitle != null && model.VideoTitle.Trim() != "" && model.VideoTitle.Trim() != video.Title)
+            {
+                video.Title = model.VideoTitle;
+                repository.SaveVideo(video);
+                TempData["messageCM"] = "'" + course.Title + " 'has been saved!";
+            }
+
+            return RedirectToAction("EditCourse", new { id = model.UserId, courseId = model.CourseId });
         }
 
         public IActionResult CourseManage(string id, int courseId)
@@ -347,7 +443,7 @@ namespace SirmiumCommercial.Controllers
             {
                     Course = repository.Courses.Where(c => c.CourseId == courseId)
                                         .FirstOrDefault(),
-                    NoEndDate = (course.EndDate == DateTime.MinValue) ? true : false,
+                    NoEndDate = ((course.EndDate == DateTime.MinValue) ? true : false),
                     Video = repository.Videos.FirstOrDefault(v => v.Id == course.VideoId)
             });
         }
@@ -357,29 +453,85 @@ namespace SirmiumCommercial.Controllers
         {
             ViewData["Id"] = id;
             ViewData["Title"] = "Edit Course";
-            if (ModelState.IsValid)
-            {
-                Course course = repository.Courses
-                    .Where(c => c.CourseId == model.Course.CourseId)
+
+            Course course = repository.Courses
+                    .Where(c => c.CourseId == model.CourseId)
                     .FirstOrDefault();
-                course.AwardIcon = model.Course.AwardIcon;
-                course.Description = model.Course.Description;
-                course.EndDate = model.Course.EndDate;
-                course.Title = model.Course.Title;
-                course.DateModified = DateTime.Now;
-                if (model.NoEndDate)
+            bool ind = false;
+
+            if (model.NewTitle != null)
+            {
+                if (course.Title == null)
                 {
-                    course.EndDate = DateTime.MinValue;
+                    course.Title = model.NewTitle;
+                    ind = true;
                 }
+                else if (model.NewTitle.Trim() != "" && model.NewTitle.Trim() != course.Title)
+                {
+                    course.Title = model.NewTitle;
+                    ind = true;
+                }
+            }
+
+            if (model.NewNoEndDate && (course.EndDate > DateTime.MinValue))
+            {
+                course.EndDate = DateTime.MinValue;
+                ind = true;
+            }
+
+            if(model.NewEndDate != null)
+            {
+                if(model.NewEndDate != DateTime.MinValue && model.NewEndDate != course.EndDate)
+                {
+                    course.EndDate = model.NewEndDate;
+                    ind = true;
+                }
+            }
+
+            if (model.NewDescription != null && course.Description != null)
+            {
+                if (model.NewDescription.Trim() != "" && model.NewDescription.Trim() != course.Description)
+                {
+                    course.Description = model.NewDescription;
+                    ind = true;
+                }
+            }
+            else if (model.NewDescription != null && course.Description == null)
+            {
+                if (model.NewDescription.Trim() != "")
+                {
+                    course.Description = model.NewDescription;
+                    ind = true;
+                }
+            }
+
+            if(model.NewAwardIcon != null && course.AwardIcon == null)
+            {
+                course.AwardIcon = model.NewAwardIcon;
+                ind = true;
+            }
+            if(model.NewAwardIcon != null)
+            {
+                if(model.NewAwardIcon.Trim() != "" && model.NewAwardIcon.Trim() != course.AwardIcon.Trim())
+                {
+                    course.AwardIcon = model.NewAwardIcon;
+                    ind = true;
+                }
+            }
+
+
+            //if something has changed
+            if (ind)
+            {
                 repository.SaveCourse(course);
                 TempData["messageCM"] = "'" + course.Title + " 'has been saved!";
-                return RedirectToAction("CourseManage", new
-                {
-                    id,
-                    model.Course.CourseId
-                });
             }
-            return View();
+
+            return RedirectToAction("EditCourse", new
+            {
+                id,
+                model.CourseId
+            });
         }
 
         public IActionResult ChangeCourseStatus(string id, int courseId)

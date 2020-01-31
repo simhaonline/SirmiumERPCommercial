@@ -72,7 +72,7 @@ namespace SirmiumCommercial.Models
                     dbEntry.CreatedBy = course.CreatedBy;
                     dbEntry.EndDate = course.EndDate;
                     dbEntry.DateAdded = course.DateAdded;
-                    dbEntry.DateModified = course.DateModified;
+                    dbEntry.DateModified = DateTime.Now;
                     dbEntry.AwardIcon = course.AwardIcon;
                     dbEntry.Status = course.Status;
                     AddPresentation(course.Presentations, course);

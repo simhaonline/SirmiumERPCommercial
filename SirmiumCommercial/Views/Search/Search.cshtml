@@ -1,0 +1,45 @@
+﻿@model SearchViewModel
+
+@{
+    Layout = "_UserLayout";
+    ViewData["Title"] = "Search";
+}
+
+@if (Model.Users.UserPageInfo.TotalUsers > 0)
+{
+    <h2 class="text-primary">ALL USERS</h2>
+    foreach (AppUser user in Model.Users.AllUsers)
+    {
+        <h4>@user.UserName</h4>
+    }
+}
+else
+{
+    <h2 class="text-danger">0 user found</h2>
+}
+
+@if (Model.Courses.CoursePageInfo.TotalCourses > 0)
+{
+    <h2 class="text-primary">ALL USERS</h2>
+    foreach (SearchCourse course in Model.Courses.AllCourses)
+    {
+        <h4>@course.Course.Title</h4>
+    }
+}
+else
+{
+    <h2 class="text-danger">0 course found</h2>
+}
+
+@if (Model.Presentations.PresentationPageInfo.TotalPresentations > 0)
+{
+    <h2 class="text-primary">ALL USERS</h2>
+    foreach (SearchPresentation presentation in Model.Presentations.AllPresentations)
+    {
+        <h4>@presentation.Presentation.Title</h4>
+    }
+}
+else
+{
+    <h2 class="text-danger">0 presentation found</h2>
+}

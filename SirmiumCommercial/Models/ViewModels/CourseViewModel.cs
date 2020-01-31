@@ -126,6 +126,7 @@ namespace SirmiumCommercial.Models.ViewModels
         public DateTime NewEndDate { get; set; }
         public bool NewNoEndDate { get; set; }
         public string NewDescription { get; set; }
+        public string NewAwardIcon { get; set; }
         public string VideoTitle { get; set; }
         public int VideoId { get; set; }
     }

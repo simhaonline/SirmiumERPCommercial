@@ -81,7 +81,11 @@
                     <br />
                     <strong style="font-size: 25px; color:#5b80a4;">NO VIDEO</strong>
                     <br />
-                    <a class="btn btn-primary" onclick="NewVideo.show('Course', @Model.Course.CourseId); Camera.active('Course', @Model.Course.CourseId)">
+                    <a class="btn btn-primary"
+                       href="@Url.Action("NewCourseVideo", "Manage", new {
+                                        id = ViewData["Id"],
+                                        courseId = Model.Course.CourseId
+                    })">
                         Create a Video <span class="far fa-dot-circle-o text-danger"></span>
                     </a>
                 </div>

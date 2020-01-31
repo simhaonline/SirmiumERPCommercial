@@ -12,9 +12,10 @@
             <span class="text-primary">SirmiumERPCommercial</span>
         </a>
     </div>
-    <form role="search" class="navbar-form-custom" method="post" action="#">
+    <form role="search" class="navbar-form-custom" asp-action="Search" asp-controller="Search"
+          asp-route-id="@ViewData["Id"].ToString()" method="post">
         <div class="form-group">
-            <input type="text" placeholder="&#xF002; Search" class="form-control" name="search" style="font-family:Arial, FontAwesome">
+            <input type="text" placeholder="&#xF002; Search" class="form-control" name="KeyWord" style="font-family:Arial, FontAwesome">
         </div>
     </form>
     <div class="mobile-menu">
