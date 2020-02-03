@@ -1,0 +1,59 @@
+﻿@model  SearchAllVideos
+
+    <div id="all-videos-search">
+        <div class="row">
+            @foreach (SearchVideo video in Model.AllVideos)
+            {
+                <div class="col-lg-3">
+                    <div class="hpanel contact-panel hred">
+                        <div class="panel-body">
+                            <div class="col-lg-12">
+                                <div id="video-videoBtn"
+                                     style="background-color: #0c0830; padding:0px">
+                                    <video src="@video.Video.VideoPath" class="img-video"
+                                           style="width:100%; z-index: 1;" id="video-video"></video>
+                                    <div class="text-center img-video videoBtn" style="z-index: 1">
+                                        <a href="@Url.Action("Index", "Recorder",
+                                                            new { id = ViewData["Id"], videoId = video.Video.Id })"
+                                           class="btn btn-sm btn-primary2 p-xs">
+                                            <span style="font-weight: 400; font-size: 18px">Watch</span>
+                                            <span class="fa fa-play" style="font-size: 18px"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 text-center">
+                                    <span class="text-muted" style="font-size: 18px;">
+                                        @video.Video.Title
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2">
+                                    <a href="@Url.Action("UserProfile", "User",
+                                                    new { id = ViewData["Id"], userId = video.CreatedBy.Id })">
+                                        <img src="@Model.userImgSrc(video.CreatedBy.ProfilePhotoUrl)"
+                                             style="width: 30px; height: 30px; border-radius: 15px"
+                                             alt="profile photo" />
+                                    </a>
+                                </div>
+                                <div class="col-lg-10" style="margin-left: 0px; font-size: 15px;">
+                                    <span class="text-muted">@Model.courseCreatedBy(video.CreatedBy)</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                @Html.Raw(video.VideoForInfo)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="row m-l-sm">
+            <div search-video-page-model="@Model.VideoPageInfo" page-classes-enabled="true"
+                 page-class="btn" page-class-normal="btn-default"
+                 page-class-selected="btn-danger" class="btn-group pull-left m-sm">
+            </div>
+        </div>
+    </div>

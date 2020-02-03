@@ -83,15 +83,31 @@ namespace SirmiumCommercial.Models.ViewModels
         public int TotalPages =>
         (int)Math.Ceiling((decimal)TotalFiles / FilesPerPage);
     }
-    /*
-     
-        public int FileId { get; set; }
+   
+    public class PresentationDetailsRepres
+    {
+        public Representation Representation { get; set; }
+        public AppUser CreatedBy { get; set; }
+        public Video Video { get; set; }
+    }
 
-        public int PresentationId { get; set; }
-        public string Title { get; set; }
-        public int Part { get; set; }
-        public string CreatedById { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public string FilePath { get; set; } */
+    public class PresentationDetailsRepresPageInfo
+    {
+        public int TotalRepres { get; set; }
+        public int RepresPerPage { get; set; }
+        public int CurrentPage { get; set; }
+        public int TotalPages =>
+        (int)Math.Ceiling((decimal)TotalRepres / RepresPerPage);
+    }
+
+    public class PresentationDetailsViewModel
+    {
+        public Presentation Presentation { get; set; }
+        public AppUser CreatedBy { get; set; }
+        public Video Video { get; set; }
+        public IQueryable<PresentationFiles> Files { get; set; }
+        public EditPresentationFilesPageInfo PresentationFilesPageInfo { get; set; }
+        public IQueryable<PresentationDetailsRepres> Representations { get; set; }
+        public PresentationDetailsRepresPageInfo RepresPageInfo { get; set; }
+    }
 }

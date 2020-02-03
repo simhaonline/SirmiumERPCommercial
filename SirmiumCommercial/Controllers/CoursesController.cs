@@ -17,6 +17,9 @@ namespace SirmiumCommercial.Controllers
         private IAppDataRepository repository;
         private IHostingEnvironment hostingEnvironment;
 
+        public int MaxPresentationDetailsFiles = 4;
+        public int MaxPresentationDetailsRepresentations = 4;
+
         public CoursesController(UserManager<AppUser> userMgr,
             IAppDataRepository repo, IHostingEnvironment hosting)
         {
@@ -449,6 +452,56 @@ namespace SirmiumCommercial.Controllers
             {
                 id = model.UserId,
                 courseId = model.CourseId
+            });
+        }
+
+        public ViewResult PresentationDetails(string id, int courseId, int presentationId)
+        {
+            ViewData["Id"] = id;
+
+            Course course = repository.Courses.FirstOrDefault(c => c.CourseId == courseId);
+            Presentation presentation = repository.Presentations
+                .FirstOrDefault(p => p.PresentationId == presentationId);
+            AppUser PresentationCreatedBy = userManager.Users.FirstOrDefault(u => u.Id == course.CreatedBy.Id);
+
+            List<PresentationDetailsRepres> representations = new List<PresentationDetailsRepres>();
+            foreach (Representation representation in presentation.Representations)
+            {
+                Representation repTmp = repository.Representations
+                    .FirstOrDefault(r => r.RepresentationId == representation.RepresentationId);
+                PresentationDetailsRepres rep = new PresentationDetailsRepres
+                {
+                    Representation = repTmp,
+                    CreatedBy = userManager.Users.FirstOrDefault(u => u.Id == repTmp.CreatedBy.Id),
+                    Video = repository.Videos.FirstOrDefault(v => v.Id == repTmp.VideoId)
+                };
+                representations.Add(rep);
+            }
+
+            IQueryable<PresentationFiles> presentationFiles = repository.PresentationFiles
+                .Where(f => f.PresentationId == presentation.PresentationId);
+
+            return View("PresentationDetails", new PresentationDetailsViewModel
+            {
+                Presentation = presentation,
+                CreatedBy = PresentationCreatedBy,
+                Video = repository.Videos.FirstOrDefault(v => v.Id == presentation.VideoId),
+                Files = presentationFiles.OrderBy(f => f.Part).Take(MaxPresentationDetailsFiles),
+                PresentationFilesPageInfo = new EditPresentationFilesPageInfo
+                {
+                    CurrentPage = 1,
+                    FilesPerPage = MaxPresentationDetailsFiles,
+                    TotalFiles = presentationFiles.Count()
+                },
+                Representations = representations.AsQueryable()
+                    .OrderBy(r => r.Representation.Rating)
+                    .Take(MaxPresentationDetailsRepresentations),
+                RepresPageInfo = new PresentationDetailsRepresPageInfo
+                {
+                    CurrentPage = 1,
+                    RepresPerPage = MaxPresentationDetailsRepresentations,
+                    TotalRepres = representations.Count()
+                }
             });
         }
 

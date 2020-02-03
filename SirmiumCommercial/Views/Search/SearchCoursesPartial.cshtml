@@ -1,0 +1,56 @@
+﻿@model SearchAllCourses
+
+
+<div id="all-courses-search">
+    <div class="row">
+        @foreach (SearchCourse course in Model.AllCourses)
+        {
+            <div class="col-lg-3">
+                <div class="hpanel contact-panel hgreen">
+                    <div class="panel-body">
+                        <a href="@Url.Action("CourseDetails", "Courses",
+                            new { id = ViewData["Id"], courseId = course.Course.CourseId })"
+                           style="font-size: 30px;"
+                           data-toggle="tooltip" data-placement="bottom" title="@course.Course.Title">
+                            <span class="@course.Course.AwardIcon"></span>
+                            <span class="text-muted">@Model.courseTitle(course.Course.Title)</span>
+                        </a>
+                        <br />
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <a href="@Url.Action("UserProfile", "User",
+                            new { id = ViewData["Id"], userId = course.CreatedBy.Id })">
+                                    <img src="@Model.userImgSrc(course.CreatedBy.ProfilePhotoUrl)"
+                                         style="width: 30px; height: 30px; border-radius: 15px"
+                                         alt="profile photo" />
+                                </a>
+                            </div>
+                            <div class="col-lg-6" style="margin-left: 0px; font-size: 15px;">
+                                <span class="text-muted">@Model.courseCreatedBy(course.CreatedBy)</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <span class="text-muted">Date added: </span>
+                                <strong class="text-muted">@course.Course.DateAdded.ToString("dd.MM.yyyy.")</strong>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <span class="text-muted">End date: </span>
+                                @Html.Raw(@Model.courseEndDate(course.Course.EndDate))
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row m-l-sm">
+        <div search-courses-page-model="@Model.CoursePageInfo" page-classes-enabled="true"
+             page-class="btn" page-class-normal="btn-default"
+             page-class-selected="btn-success" class="btn-group pull-left m-sm">
+        </div>
+    </div>
+</div>
+

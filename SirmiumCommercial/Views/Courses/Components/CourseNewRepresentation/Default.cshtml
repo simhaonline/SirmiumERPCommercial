@@ -2,7 +2,7 @@
 
 @if (Model.UserRepresentation == false)
 {
-    <a class="btn btn-primary m-t-sm"
+    <a class="btn m-t-sm" style="font-size: 20px;"
        href="@Url.Action("NewRepresentation", "Courses",
                             new
                             {
@@ -10,6 +10,7 @@
                                 courseId = Model.CourseId,
                                 presentationId = Model.PresentationId
                             })">
-        Respond <span class="fa fa-reply-all"></span>
+        <span class="fa fa-reply-all text-primary"></span>
+        <span class="text-muted"> Respond</span>
     </a>
 }

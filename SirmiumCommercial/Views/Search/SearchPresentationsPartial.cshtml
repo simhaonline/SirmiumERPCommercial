@@ -1,0 +1,61 @@
+﻿@model SearchAllPresentation
+
+<div id="all-presentations-search">
+    <div class="row">
+        @foreach (SearchPresentation presentation in Model.AllPresentations)
+        {
+            <div class="col-lg-3">
+                <div class="hpanel contact-panel hnavyblue">
+                    <div class="panel-body">
+                        <a href="@Url.Action("CourseDetails", "Courses",
+                                            new { id = ViewData["Id"], courseId = presentation.Course.CourseId })"
+                           style="font-size: 30px;"
+                           data-toggle="tooltip" data-placement="bottom" title="@presentation.Presentation.Title">
+                            <span class="text-muted">@Model.presentationTitle(presentation.Presentation.Title)</span>
+                        </a>
+                        <br />
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <a href="@Url.Action("UserProfile", "User",
+                                                    new { id = ViewData["Id"], userId = presentation.CreatedBy.Id })">
+                                    <img src="@Model.userImgSrc(presentation.CreatedBy.ProfilePhotoUrl)"
+                                         style="width: 30px; height: 30px; border-radius: 15px"
+                                         alt="profile photo" />
+                                </a>
+                            </div>
+                            <div class="col-lg-10" style="margin-left: 0px; font-size: 15px;">
+                                <span class="text-muted">@Model.courseCreatedBy(presentation.CreatedBy)</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <strong>Part @presentation.Presentation.Part</strong>
+                                <span> of </span>
+                                <span class="@presentation.Course.AwardIcon"></span>
+                                <strong> @presentation.Course.Title</strong>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <span class="text-muted">Date added: </span>
+                                <strong class="text-muted">@presentation.Course.DateAdded.ToString("dd.MM.yyyy.")</strong>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <span class="text-muted">End date: </span>
+                                @Html.Raw(Model.courseEndDate(presentation.Course.EndDate))
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row m-l-sm">
+        <div search-presentations-page-model="@Model.PresentationPageInfo" page-classes-enabled="true"
+             page-class="btn" page-class-normal="btn-default"
+             page-class-selected="btn-primary" class="btn-group pull-left m-sm">
+        </div>
+    </div>
+</div>

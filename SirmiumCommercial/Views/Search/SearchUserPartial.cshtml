@@ -1,0 +1,40 @@
+﻿@model SearchAllUsers
+
+<div id="all-users-search">
+    <div class="row">
+        @foreach (AppUser user in Model.AllUsers)
+        {
+            <div class="col-lg-3">
+                <div class="hpanel contact-panel hblue">
+                    <div class="panel-body">
+                        <a href="@Url.Action("UserProfile", "User",
+                        new { id = ViewData["Id"], userId = user.Id })">
+                            <img src="@Model.userImgSrc(user.ProfilePhotoUrl)"
+                                 style="width: 100px; height: 100px; border-radius: 50px"
+                                 alt="profile photo" />
+                        </a>
+
+                        <h3>@Html.Raw(Model.firstLastNameNull(user))</h3>
+                        <span class="text-muted font-bold m-b-xs text-info">
+                            @user.UserName
+                        </span>
+                        <br />
+                        <div class="row">
+                            <a href="@Url.Action("Chat", "Chat",
+                            new { id = ViewData["Id"], user2Id = user.Id})"
+                               class="btn btn-primary pull-right m-r-sm">
+                                Message <span class="pe pe-7s-chat"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row m-l-sm">
+        <div search-users-page-model="@Model.UserPageInfo" page-classes-enabled="true"
+             page-class="btn" page-class-normal="btn-default"
+             page-class-selected="btn-info" class="btn-group pull-left m-sm">
+        </div>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+﻿@model SearchAllFiles
+
+<div id="all-files-search">
+    <div class="row">
+        @foreach (SearchFiles file in Model.AllFiles)
+        {
+            <div class="col-lg-3">
+                <div class="hpanel contact-panel hviolet">
+                    <div class="panel-body">
+                        <div class="row text-center">
+                            <embed src="@file.File.FilePath" style="width: 90%; height: 300px"
+                                   type="application/pdf" />
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 text-center">
+                                <a onclick="showFile('@file.File.FilePath')"
+                                   class="btn" style="font-size: 20px;">
+                                    <span class="fa fa-expand-arrows-alt text-primary" aria-hidden="true"></span>
+                                    <span class="text-muted">Full Screen</span>
+                                </a>
+                            </div>
+                            <div class="col-lg-12 text-center">
+                                <span class="text-muted" style="font-size: 18px;">
+                                    @file.File.Title
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <a href="@Url.Action("UserProfile", "User",
+                                                    new { id = ViewData["Id"], userId = file.CreatedBy.Id })">
+                                    <img src="@Model.userImgSrc(file.CreatedBy.ProfilePhotoUrl)"
+                                         style="width: 30px; height: 30px; border-radius: 15px"
+                                         alt="profile photo" />
+                                </a>
+                            </div>
+                            <div class="col-lg-10" style="margin-left: 0px; font-size: 15px;">
+                                <span class="text-muted">@Model.courseCreatedBy(file.CreatedBy)</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            @Html.Raw(file.FileForInfo)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row m-l-sm">
+        <div search-file-page-model="@Model.FilePageInfo" page-classes-enabled="true"
+             page-class="btn" page-class-normal="btn-default"
+             page-class-selected="btn-primary2" class="btn-group pull-left m-sm">
+        </div>
+    </div>
+</div>

@@ -3,43 +3,397 @@
 @{
     Layout = "_UserLayout";
     ViewData["Title"] = "Search";
-}
 
-@if (Model.Users.UserPageInfo.TotalUsers > 0)
-{
-    <h2 class="text-primary">ALL USERS</h2>
-    foreach (AppUser user in Model.Users.AllUsers)
+    string panelHeader(int n)
     {
-        <h4>@user.UserName</h4>
+        string returnStr = "";
+
+        if (n > 0)
+        {
+            returnStr += $"<span class='text-muted'><strong class='text-success'>{n}</strong> found</span>";
+            returnStr += "<a class='showhide'><i class='fa fa-chevron-up'></i></a>";
+        }
+        else
+        {
+            returnStr += "<span class='text-muted'><strong class='text-danger'>0</strong> found</span>";
+        }
+
+        return returnStr;
+    }
+
+    string collapsePanel(int n)
+    {
+        return (n > 0) ? "" : "panel-collapse";
+    }
+
+    string userImgSrc(string path)
+    {
+        return (path == null && path == "") ? $"/UsersData/{path}" : "/defaultAvatar.png";
+    }
+
+    string firstLastNameNull(AppUser user)
+    {
+        string returnStr = "";
+
+        if (user.FirstName != null && user.LastName != null)
+        {
+            returnStr += user.FirstName + "</br>" + user.LastName;
+        }
+        else if (user.FirstName != null)
+        {
+            returnStr += user.FirstName;
+        }
+        else if (user.LastName != null)
+        {
+            returnStr += user.LastName;
+        }
+
+        return returnStr;
+    }
+
+    string courseCreatedBy(AppUser user)
+    {
+        return (user.FirstName == null || user.LastName == null) ? user.UserName :
+            $"{user.FirstName} {user.LastName}";
+    }
+
+    string courseEndDate(DateTime date)
+    {
+        string returnStr = "";
+
+        if (date == DateTime.MinValue)
+        {
+            returnStr += "<strong class='text-success'>NO End Date</strong>";
+        }
+        else if (date < DateTime.Now)
+        {
+            returnStr += "<strong class='text-danger'>FINISHED</strong>";
+        }
+        else
+        {
+            returnStr += $"<strong class='text-warning'>{date.ToString("dd.MM.yyyy.")}</strong>";
+        }
+
+        return returnStr;
+    }
+
+    string courseTitle(string title)
+    {
+        return (title.Length > 12) ? title.Substring(0, 11) + "..." : title;
+    }
+
+    string presentationTitle(string title)
+    {
+        return (title.Length > 18) ? title.Substring(0, 18) + "..." : title;
+    }
+
+    string representationRating(double rating)
+    {
+        string returnStr = "";
+
+        if (rating == 0)
+        {
+            returnStr = "<strong class='text-muted'>Not Rated Yet</strong>";
+        }
+        else
+        {
+            for (var i = 0; i < rating; i++)
+            {
+                returnStr += "<span class='fa fa-star text-warning'></span>";
+            }
+            if (rating < 5)
+            {
+                for (var i = 0; i < 5 - rating; i++)
+                {
+                    returnStr += "<span class='fa fa-star text-muted'></span>";
+                }
+            }
+            returnStr += $"<span>&emsp; {String.Format("{0:0.0}", rating)} / 5.0 </span>";
+        }
+
+        return returnStr;
     }
 }
-else
-{
-    <h2 class="text-danger">0 user found</h2>
-}
 
-@if (Model.Courses.CoursePageInfo.TotalCourses > 0)
-{
-    <h2 class="text-primary">ALL USERS</h2>
-    foreach (SearchCourse course in Model.Courses.AllCourses)
-    {
-        <h4>@course.Course.Title</h4>
-    }
-}
-else
-{
-    <h2 class="text-danger">0 course found</h2>
-}
 
-@if (Model.Presentations.PresentationPageInfo.TotalPresentations > 0)
-{
-    <h2 class="text-primary">ALL USERS</h2>
-    foreach (SearchPresentation presentation in Model.Presentations.AllPresentations)
-    {
-        <h4>@presentation.Presentation.Title</h4>
+<style type="text/css">
+    .videoBtn {
+        display: none;
+        position: absolute;
+        top: 38%;
+        left: 30%;
     }
-}
-else
-{
-    <h2 class="text-danger">0 presentation found</h2>
-}
+
+    .img-video:hover + .videoBtn {
+        display: inline;
+    }
+
+    .videoBtn:hover {
+        display: inline;
+    }
+
+    #video-video:hover {
+        opacity: 0.4;
+    }
+
+    #video-videoBtn:hover > #video-video {
+        opacity: 0.4;
+    }
+
+    #all-users {
+        height: 200px;
+        width: 200px;
+        overflow-y: scroll;
+    }
+    
+    .file-window {
+        width: 80%;
+        height: 80%;
+        position: fixed;
+        top: 10%;
+        left: 5%;
+        background: #fff;
+        padding: 10px;
+        border: 1px solid rgba(0, 0, 0, .4);
+        opacity: 1;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, .6);
+        transition: all 0.3s linear 0s;
+        z-index: 2;
+    }
+
+    .file-window-header {
+        font-size: 18px;
+        font-weight: bold;
+        text-align: left;
+        color: #6a6c6f;
+    }
+
+    .freeze-layer-files {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, .3);
+        z-index: 1;
+    }
+</style>
+
+
+<!--Header-->
+<div class="normalheader p-sm">
+    <div class="hpanel">
+        <div class="panel-body" style="font-size: 30px;">
+            <span class="fa fa-search text-muted"></span>
+            <span class="text-muted">Search for <strong class="text-primary">@Model.KeyWord</strong></span>
+        </div>
+    </div>
+</div>
+
+<!--Users-->
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel @collapsePanel(Model.Users.UserPageInfo.TotalUsers) m-b-xs">
+            <div class="panel-heading">
+                <div class="panel-tools" style='font-size:20px'>
+                    @Html.Raw(panelHeader(Model.Users.UserPageInfo.TotalUsers))
+                </div>
+                <h3 class="m-n">
+                    <span class="fas fa-users text-info"></span>
+                    <span class="text-muted"> Users</span>
+                </h3>
+            </div>
+            @if (Model.Users.UserPageInfo.TotalUsers > 0)
+            {
+                <div class="panel-body">
+                    @await Html.PartialAsync("SearchUserPartial", Model.Users)
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!--Courses-->
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel @collapsePanel(Model.Courses.CoursePageInfo.TotalCourses) m-b-xs">
+            <div class="panel-heading">
+                <div class="panel-tools" style='font-size:20px'>
+                    @Html.Raw(panelHeader(Model.Courses.CoursePageInfo.TotalCourses))
+                </div>
+                <h3 class="m-n">
+                    <span class="fas fa-book text-success"></span>
+                    <span class="text-muted"> Courses</span>
+                </h3>
+            </div>
+            @if (Model.Courses.CoursePageInfo.TotalCourses > 0)
+            {
+                <div class="panel-body">
+                    @await Html.PartialAsync("SearchCoursesPartial", Model.Courses)
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!--Presentations-->
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel @collapsePanel(Model.Presentations.PresentationPageInfo.TotalPresentations) m-b-xs">
+            <div class="panel-heading">
+                <div class="panel-tools" style='font-size:20px'>
+                    @Html.Raw(panelHeader(Model.Presentations.PresentationPageInfo.TotalPresentations))
+                </div>
+                <h3 class="m-n">
+                    <span class="fas fa-book-open text-primary"></span>
+                    <span class="text-muted"> Presentations</span>
+                </h3>
+            </div>
+            @if (Model.Presentations.PresentationPageInfo.TotalPresentations > 0)
+            {
+                <div class="panel-body">
+                    @await Html.PartialAsync("SearchPresentationsPartial", Model.Presentations)
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!--Representations-->
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel @collapsePanel(Model.Representations.RepresentationPageInfo.TotalRepresentation) m-b-xs">
+            <div class="panel-heading">
+                <div class="panel-tools" style='font-size:20px'>
+                    @Html.Raw(panelHeader(Model.Representations.RepresentationPageInfo.TotalRepresentation))
+                </div>
+                <h3 class="m-n">
+                    <span class="fas fa-book-reader text-warning"></span>
+                    <span class="text-muted"> Representations</span>
+                </h3>
+            </div>
+            @if (Model.Representations.RepresentationPageInfo.TotalRepresentation > 0)
+            {
+                <div class="panel-body">
+                    @await Html.PartialAsync("SearchRepresentationsPartial", Model.Representations)
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!--Videos-->
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel @collapsePanel(Model.Videos.VideoPageInfo.TotalVideos) m-b-xs">
+            <div class="panel-heading">
+                <div class="panel-tools" style='font-size:20px'>
+                    @Html.Raw(panelHeader(Model.Videos.VideoPageInfo.TotalVideos))
+                </div>
+                <h3 class="m-n">
+                    <span class="fas fa-camera text-danger"></span>
+                    <span class="text-muted"> Videos</span>
+                </h3>
+            </div>
+            @if (Model.Videos.VideoPageInfo.TotalVideos > 0)
+            {
+                <div class="panel-body">
+                    @await Html.PartialAsync("SearchVideoPartial", Model.Videos)
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!--Files-->
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel @collapsePanel(Model.Files.FilePageInfo.TotalFiles) m-b-xs">
+            <div class="panel-heading">
+                <div class="panel-tools" style='font-size:20px'>
+                    @Html.Raw(panelHeader(Model.Files.FilePageInfo.TotalFiles))
+                </div>
+                <h3 class="m-n">
+                    <span class="fas fa-files-o text-primary-2"></span>
+                    <span class="text-muted"> Files</span>
+                </h3>
+            </div>
+            @if (Model.Files.FilePageInfo.TotalFiles > 0)
+            {
+                <div class="panel-body">
+                     @await Html.PartialAsync("SearchFilePartial", Model.Files)
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div id="freezeLayer" class="freeze-layer-files" style="display: none"></div>
+
+<div id="file-fullscreen" class="file-window" style="display: none">
+    <div class="file-window-header">
+        <a class="pull-right" onclick="closeFile();">
+            <span class="fa fa-close"></span>
+        </a>
+    </div>
+    <div id="file-window-body" style="background-color: none; height: 95%">
+    </div>
+</div>
+
+<input value="@ViewData["Id"].ToString()" id="current-user-id" hidden />
+<input value="@Model.KeyWord" id="key-word" hidden />
+
+<script type="text/javascript">
+    var userId = document.getElementById('current-user-id').value;
+    var keyWord = document.getElementById('key-word').value;
+
+    function showFile(filePath) {
+        var freezeLayer = document.getElementById("freezeLayer");
+        var fullscreen = document.getElementById("file-fullscreen");
+        var fileWindowBody = $("#file-window-body");
+        fileWindowBody.html(`
+        <embed id="file-embed" src="` + filePath + `"
+        style="width: 100%; height: inherit" type="application/pdf" />
+        `);
+        fullscreen.style.display = "";
+        freezeLayer.style.display = "";
+    };
+
+    function closeFile() {
+        var freezeLayer = document.getElementById("freezeLayer");
+        var fullscreen = document.getElementById("file-fullscreen");
+        fullscreen.style.display = "none";
+        freezeLayer.style.display = "none";
+    };
+
+    
+    function moreUsers(currentPage) {
+        var url = '@Url.Action("SearchUsersPartial", "Search")';
+        $("#all-users-search").load(url, { userId: userId, keyWord: keyWord, currentPage: currentPage });
+    };
+    
+    function moreCourses(currentPage) {
+        var url = '@Url.Action("SearchCoursesPartial", "Search")';
+        $("#all-courses-search").load(url, { userId: userId, keyWord: keyWord, currentPage: currentPage });
+    };
+    
+    function morePresentations(currentPage) {
+        var url = '@Url.Action("SearchPresentationsPartial", "Search")';
+        $("#all-presentations-search").load(url, { userId: userId, keyWord: keyWord, currentPage: currentPage });
+    };
+    
+    function moreRepresentations(currentPage) {
+        var url = '@Url.Action("SearchRepresentationsPartial", "Search")';
+        $("#all-representations-search").load(url, { userId: userId, keyWord: keyWord, currentPage: currentPage });
+    };
+    
+    function moreVideos(currentPage) {
+        var url = '@Url.Action("SearchVideoPartial", "Search")';
+        $("#all-videos-search").load(url, { userId: userId, keyWord: keyWord, currentPage: currentPage });
+    };
+    
+    function moreFiles(currentPage) {
+        var url = '@Url.Action("SearchFilePartial", "Search")';
+        $("#all-files-search").load(url, { userId: userId, keyWord: keyWord, currentPage: currentPage });
+    };
+</script>

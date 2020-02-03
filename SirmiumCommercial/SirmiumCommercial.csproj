@@ -107,6 +107,12 @@
     <Content Update="Views\Reporting\PresentationReports.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Search\SearchRepresentationsPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Search\SearchPresentationsPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Shared\Components\HeaderChat\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

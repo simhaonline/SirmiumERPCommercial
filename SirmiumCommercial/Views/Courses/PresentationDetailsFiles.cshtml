@@ -1,0 +1,39 @@
+﻿@model IQueryable<PresentationFiles>
+
+<div id="all-files-search">
+    <div class="row">
+        @foreach (PresentationFiles file in Model)
+        {
+            <div class="col-lg-3">
+                <div class="hpanel contact-panel hviolet">
+                    <div class="panel-body">
+                        <div class="row text-center">
+                            <embed src="@file.FilePath" style="width: 90%; height: 300px"
+                                   type="application/pdf" />
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 text-center">
+                                <a onclick="showFile('@file.FilePath')"
+                                   class="btn" style="font-size: 20px;">
+                                    <span class="fa fa-expand-arrows-alt text-primary" aria-hidden="true"></span>
+                                    <span class="text-muted">Full Screen</span>
+                                </a>
+                            </div>
+                            <div class="col-lg-12 text-center">
+                                <span class="text-muted" style="font-size: 18px;">
+                                    @file.Title
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row m-l-sm">
+  @*@      <div search-file-page-model="@Model.FilePageInfo" page-classes-enabled="true"
+             page-class="btn" page-class-normal="btn-default"
+             page-class-selected="btn-primary2" class="btn-group pull-left m-sm">
+        </div>*@
+    </div>
+</div>

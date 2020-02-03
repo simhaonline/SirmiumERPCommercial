@@ -224,21 +224,22 @@
                                 @if (Model.UsersOnCourse
                        .FirstOrDefault(u => u.Id == ViewData["Id"].ToString()) != null)
                                 {
-                                    @if (p.VideoId != 0)
-                                    {
-                                        <a class="btn btn-primary2"
-                                           href="@Url.Action("Index", "Recorder",
-                                new { id = ViewData["Id"], videoId = p.VideoId })">
-                                            Watch <span class="pe pe-7s-play"></span>
-                                        </a>
-                                    }
+                                    <a class="btn" style="font-size: 20px;"
+                                       href="@Url.Action("PresentationDetails", "Courses",
+                                                new {
+                                                    id = ViewData["Id"].ToString(),
+                                                    courseId = Model.Course.CourseId,
+                                                    presentationId = p.PresentationId
+                                                })">
+                                        <span class="fa fa-info text-info"></span>
+                                        <span class="text-muted"> Info</span>
+                                    </a>
                                     @await Component.InvokeAsync("CourseNewRepresentation",
-                                                    new
-                                                         {
-                                                             courseId = Model.Course.CourseId,
-                                                        presentationId = p.PresentationId,
-                                                        userId = ViewData["Id"]
-                                                         })
+                                            new{
+                                                courseId = Model.Course.CourseId,
+                                                presentationId = p.PresentationId,
+                                                userId = ViewData["Id"]
+                                            })
                                 }
                             </div>
                         </div>
@@ -257,7 +258,7 @@
                 <div class="panel-tools" style="font-size:20px">
                     <span class="text-muted">Total Users:</span>
                     @if (Model.UsersOnCourse.Count() == 0)
-                    {
+                                               {
                         <span class="text-warning">0</span>
                     }
                     else
@@ -276,15 +277,15 @@
                     @{
                         var borderTop = new List<String>{"hviolet", "hred", "hgreen", "hyellow",
                             "hblue", "hnavyblue", "horange", "hreddeep"};
-                        var j = 0;
+                                       var j = 0;
                     }
                     @foreach (AppUser user in Model.UsersOnCourse)
-                    {
+                                       {
                         <div class="col-lg-3">
                             <div class="hpanel contact-panel @borderTop[j]">
                                 <div class="panel-body" style="display: none">
                                     @if (user.ProfilePhotoUrl == null)
-                                    {
+                                       {
                                         <img src="~/defaultAvatar.png" class="img-circle m-b"
                                              alt="logo" />
                                     }
