@@ -1,8 +1,8 @@
-﻿@model IQueryable<PresentationFiles>
+﻿@model PresentationDetailsFilesModel
 
-<div id="all-files-search">
+<div id="all-files-presentation-details">
     <div class="row">
-        @foreach (PresentationFiles file in Model)
+        @foreach (PresentationFiles file in Model.Files)
         {
             <div class="col-lg-3">
                 <div class="hpanel contact-panel hviolet">
@@ -31,9 +31,9 @@
         }
     </div>
     <div class="row m-l-sm">
-  @*@      <div search-file-page-model="@Model.FilePageInfo" page-classes-enabled="true"
+        <div presentation-details-files-page-model="@Model.PresentationFilesPageInfo" page-classes-enabled="true"
              page-class="btn" page-class-normal="btn-default"
              page-class-selected="btn-primary2" class="btn-group pull-left m-sm">
-        </div>*@
+        </div>
     </div>
 </div>

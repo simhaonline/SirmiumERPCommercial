@@ -176,18 +176,103 @@
                     <a class="showhide"><i class="fa fa-chevron-up"></i></a>
                 </div>
                 <h3 class="m-n">
-                    <span class="fas fa-files-o text-primary2"></span>
+                    <span class="fas fa-files-o text-primary-2"></span>
                     <span class="text-muted"> Files</span>
 
                     <strong class="text-muted pull-right" style="font-size: 18px; margin-top: 4px;">
                         Total Files:
-                        <span class="text-primary">@Model.PresentationFilesPageInfo.TotalFiles</span>
+                        <span class="text-primary">@Model.Files.PresentationFilesPageInfo.TotalFiles</span>
                     </strong>
                 </h3>
             </div>
             <div class="panel-body" style="padding-bottom: 5px;">
-                @await Html.PartialAsync("PresentationDetailsFiles", Model.Files)
+                @if (Model.Files.PresentationFilesPageInfo.TotalFiles > 0)
+                {
+                    @await Html.PartialAsync("PresentationDetailsFilesPartial", Model.Files)
+                }
+                else
+                {
+                    <div class="row text-center">
+                        <h3><strong class="text-muted">No Files</strong></h3>
+                    </div>
+                }
             </div>
         </div>
     </div>
 </div>
+
+<!--Representations-->
+<div class="row m-l-md m-r-md">
+    <div class="col-lg-12">
+        <div class="hpanel m-b-xs">
+            <div class="panel-heading">
+                <div class="panel-tools" style='font-size:20px'>
+                    <a class="showhide"><i class="fa fa-chevron-up"></i></a>
+                </div>
+                <h3 class="m-n">
+                    <span class="fas fa-book-reader text-warning"></span>
+                    <span class="text-muted"> Representations</span>
+                </h3>
+            </div>
+            <div class="panel-body" style="padding-bottom: 5px;">
+                @if (Model.Representations.RepresPageInfo.TotalRepres > 0)
+                {
+                    @await Html.PartialAsync("PresentationDetailsRepresentationsPartial", Model.Representations)
+                }
+                else
+                {
+                    <div class="row text-center">
+                        <h3><strong class="text-muted">No Representations</strong></h3>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="freezeLayer" class="freeze-layer-files" style="display: none"></div>
+
+<div id="file-fullscreen" class="file-window" style="display: none">
+    <div class="file-window-header">
+        <a class="pull-right" onclick="closeFile();">
+            <span class="fa fa-close"></span>
+        </a>
+    </div>
+    <div id="file-window-body" style="background-color: none; height: 95%">
+    </div>
+</div>
+
+<input id="presentationId" value="@Model.Presentation.PresentationId" hidden />
+
+<script type="text/javascript">
+    var presentationId = document.getElementById('presentationId').value;
+
+    function showFile(filePath) {
+        var freezeLayer = document.getElementById("freezeLayer");
+        var fullscreen = document.getElementById("file-fullscreen");
+        var fileWindowBody = $("#file-window-body");
+        fileWindowBody.html(`
+        <embed id="file-embed" src="` + filePath + `"
+        style="width: 100%; height: inherit" type="application/pdf" />
+        `);
+        fullscreen.style.display = "";
+        freezeLayer.style.display = "";
+    };
+
+    function closeFile() {
+        var freezeLayer = document.getElementById("freezeLayer");
+        var fullscreen = document.getElementById("file-fullscreen");
+        fullscreen.style.display = "none";
+        freezeLayer.style.display = "none";
+    };
+
+    function moreFiles(currentPage) {
+        var url = '@Url.Action("PresentationDetailsFilesPartial", "Courses")';
+        $("#all-files-presentation-details").load(url, { presentationId: presentationId, currentPage: currentPage });
+    };
+
+    function moreRepresentations(currentPage) {
+        var url = '@Url.Action("PresentationDetailsRepresentationsPartial", "Courses")';
+        $("#all-representations-presentation-details").load(url, { presentationId: presentationId, currentPage: currentPage });
+    };
+</script>

@@ -221,8 +221,8 @@
                                 </h5>
                             </div>
                             <div class="col-lg-2 text-center">
-                                @if (Model.UsersOnCourse
-                       .FirstOrDefault(u => u.Id == ViewData["Id"].ToString()) != null)
+                                @if (Model.UsersOnCourse.FirstOrDefault(u => u.Id == ViewData["Id"].ToString()) != null
+                                    || (Model.Course.CreatedBy != null && Model.Course.CreatedBy.Id == ViewData["Id"].ToString()))
                                 {
                                     <a class="btn" style="font-size: 20px;"
                                        href="@Url.Action("PresentationDetails", "Courses",
@@ -234,8 +234,12 @@
                                         <span class="fa fa-info text-info"></span>
                                         <span class="text-muted"> Info</span>
                                     </a>
+                                }
+                                @if (Model.UsersOnCourse.FirstOrDefault(u => u.Id == ViewData["Id"].ToString()) != null)
+                                {
                                     @await Component.InvokeAsync("CourseNewRepresentation",
-                                            new{
+                                            new
+                                                 {
                                                 courseId = Model.Course.CourseId,
                                                 presentationId = p.PresentationId,
                                                 userId = ViewData["Id"]
