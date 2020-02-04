@@ -124,12 +124,14 @@ namespace SirmiumCommercial.Controllers
         public ViewResult Create(string id)
         {
             ViewData["Id"] = id;
-            return View();
+            return View("Create", new CreateNewUser {
+                Roles = roleManager.Roles
+            });
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(string id, CreateModel model)
+        public async Task<IActionResult> Create(string id, CreateNewUser model)
         {
             ViewData["Id"] = id;
             if (ModelState.IsValid)
@@ -149,7 +151,17 @@ namespace SirmiumCommercial.Controllers
                     = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index", id);
+                    AppUser newUser = await userManager.FindByNameAsync(model.UserName);
+                    IdentityRole role = await roleManager.FindByIdAsync(model.UserRoleId);
+                    result = await userManager.AddToRoleAsync(newUser, role.Name);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("Details", new { id, detailsId = newUser.Id });
+                    }
+                    else
+                    {
+                        ResultError(result);
+                    }
                 }
                 else
                 {
@@ -199,7 +211,6 @@ namespace SirmiumCommercial.Controllers
             return View(user);
         }
 
-        [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string id, string deleteId)
         {
@@ -210,7 +221,7 @@ namespace SirmiumCommercial.Controllers
                 IdentityResult result = await userManager.DeleteAsync(user);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index", id);
+                    return RedirectToAction("Index", new { id });
                 }
                 else
                 {
@@ -221,7 +232,7 @@ namespace SirmiumCommercial.Controllers
             {
                 ModelState.AddModelError("", "User Not Found");
             }
-            return View("Index", userManager.Users);
+            return View("Details", new { id, detailsId = deleteId });
         }
 
         [HttpPost]
@@ -348,7 +359,7 @@ namespace SirmiumCommercial.Controllers
                     IdentityResult result = await userManager.AddToRoleAsync(user, role.Name);
                     if (result.Succeeded)
                     {
-                        return RedirectToAction("Details");
+                        return RedirectToAction("Details", new { id = admin.AdminId, detailsId = admin.User.Id });
                     }
                     else
                     {

@@ -8,6 +8,7 @@
 @section Styles {
     <environment names="Development,Staging,Production">
         <link rel="stylesheet" href="~/lib_local/css_local/UserLocal.css" />
+        <link rel="stylesheet" href="~/homer/lib_local/footable/css/footable.core.min.css" />
     </environment>
 }
 
@@ -23,11 +24,16 @@
                 <span class="pe-7s-edit" style="font-size: 25px; color: #000000"></span>
                 <span class="text-muted" style="font-size: 20px;">Filter</span>
             </a>*@
+            <a href="@Url.Action("Create", "Admin", new { id = ViewData["Id"] })"
+               class="pull-right btn">
+                <span class="fa fa-user-plus text-muted" style="font-size: 20px;"></span>
+                <span class="text-muted" style="font-size: 20px;">Add User Manually</span>
+            </a>
             <span>&emsp;</span>
             <a href="@Url.Action("InviteByEmail", "Admin", new { id = ViewData["Id"] })"
                class="pull-right btn">
-                <span class="fa fa-user-plus text-success" style="font-size: 20px;"></span>
-                <span class="text-muted" style="font-size: 20px;">Invite by email</span>
+                <span class="far fa-paper-plane text-success" style="font-size: 20px;"></span>
+                <span class="text-muted" style="font-size: 20px;">Invite By Email</span>
             </a>
         </div>@**
         <div class="collapse " id="collapseExample">

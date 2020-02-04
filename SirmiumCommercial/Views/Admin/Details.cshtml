@@ -17,9 +17,8 @@
             <span class="fa fa-user text-info"></span>
             <strong class="text-muted">@Model.User.UserName Details:</strong>
             <span>&emsp;</span>
-            <a class="btn m-t-sm pull-right" asp-action="Delete"
-               asp-controller="Admin" asp-route-deleteId="@Model.User.Id"
-               asp-route-id="@ViewData["Id"]">
+            <a class="btn m-t-sm pull-right"
+               href="@Url.Action("Delete", "Admin", new { id = ViewData["Id"].ToString(), deleteId = Model.User.Id})">
                 <span class="fa fa-user-times text-danger" style="font-size: 20px;"></span>
                 <span class="text-muted" style="font-size: 20px;">Delete User</span>
             </a>
@@ -74,7 +73,7 @@
                                 <form asp-action="ChangeStatust" asp-route-id="@ViewData["Id"]"
                                       asp-route-changeId="@Model.User.Id" method="post">
                                     @if (Model.User.Status == "Active")
-                                    {
+                       {
                                         <td class="text-success">@Model.User.Status</td>
                                         <td class="text-center">
                                             <button class="btn" type="submit">
@@ -101,6 +100,7 @@
                                 <td colspan="2" id="roleForm" class="row" hidden>
                                     <form asp-action="EditRole" method="post">
                                         <input asp-for="@Model.User.Id" type="hidden" />
+                                        <input asp-for="@Model.AdminId" value="@ViewData["Id"].ToString()" hidden />
                                         <div class="form-group col-sm-8">
                                             <select asp-for="@Model.Role.Id" class="form-control">
                                                 <option value="">Set</option>
