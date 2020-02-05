@@ -34,6 +34,11 @@
                 <span class="text-muted" style="font-size: 20px;">Filter</span>
             </a>
             @await Component.InvokeAsync("GroupsAdmin", new { userId = ViewData["Id"] })
+            <span>&emsp;</span>
+            <div class="pull-right" style="padding-top: 6px;">
+                <input type="text" placeholder="&#xF002; Search" onkeyup="searchGroups();"
+                       class="form-control" style="font-family:Arial, FontAwesome" id="group-search">
+            </div>
         </div>
         <div class="collapse " id="collapseExample">
             <div class="well well-lg row m-l-xs m-r-xs">
@@ -45,13 +50,14 @@
 
 @foreach (Group group in Model)
 {
-    <div class="row m-l-md m-r-md">
+    <div class="row m-l-md m-r-md group-panel">
         <div class="hpanel m-b-xs">
             <div class="panel-body" style="padding-bottom: 10px">
                 <div class="col-sm-6">
                     <img class="img-circle" style="width: 100px; height: 100px"
                          src="@groupPhoto(group.GroupPhotoPath)" />
                     <span style="font-size: 25px; color: #000000;">@group.Name</span>
+                    <input class="group-name" value="@group.Name" hidden />
                 </div>
                 <div class="col-sm-3">
                     <h5 class="text-muted">Created by:</h5>
@@ -62,6 +68,10 @@
                                     new { id = ViewData["Id"], userId = group.CreatedBy.Id })">
                             @firstLastNameExists(group.CreatedBy)
                         </a>
+                    </h4>
+                    <h5 class="text-muted">Date Added:</h5>
+                    <h4 class="text-info font-bold">
+                        @group.CreatedAt.ToString("dd.MM.yyyy.")
                     </h4>
                 </div>
                 <div class="col-sm-2">
@@ -88,9 +98,30 @@
     </div>
 }
 
-@*foreach (Group group in Model)
-{
-    <h4>id: @group.GroupId</h4>
-    <h4>Created by: @group.CreatedBy.UserName</h4>
-    <h2>Name: @group.Name</h2>
-}*@
+<input id="total-groups" value="@Model.Count()" hidden />
+
+<script type="text/javascript">
+
+    var totalGroups = document.getElementById('total-groups').value;
+    var groupPanel = document.getElementsByClassName('group-panel');
+    var groupName = document.getElementsByClassName('group-name');
+
+    function searchGroups() {
+        console.log("Radi 1");
+        var keyWord = document.getElementById('group-search').value.toUpperCase();
+
+        for (var i = 0; i < totalGroups; i++) {
+        console.log("Radi 2");
+            if (keyWord == "") {
+                groupPanel[i].style.display = "";
+            }
+            else if (groupName[i].value.toUpperCase().indexOf(keyWord) > -1) {
+                groupPanel[i].style.display = "";
+            }
+            else {
+                groupPanel[i].style.display = "none";
+            }
+        }
+    };
+
+</script>

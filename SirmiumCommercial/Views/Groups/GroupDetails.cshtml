@@ -227,6 +227,14 @@
                                 @Model.firstLastNameExists(Model.Group.CreatedBy)
                             </a>
                         </h4>
+                        <h5 class="text-muted">Date Added:</h5>
+                        <h4 class="text-info font-bold">
+                            @Model.Group.CreatedAt.ToString("dd.MM.yyyy.")
+                        </h4>
+                        <h5 class="text-muted">Date Modified:</h5>
+                        <h4 class="text-info font-bold">
+                            @Model.Group.UpdatedAt.ToString("dd.MM.yyyy.")
+                        </h4>
                     </div>
                     <div class="col-lg-7">
                         <div class="panel-body m-t-xs" style="padding-top:0px">
