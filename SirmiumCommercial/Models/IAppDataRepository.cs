@@ -108,6 +108,8 @@ namespace SirmiumCommercial.Models
 
         void AddUserToGroupChat(int chatId, string userId);
 
+        void GroupAddUserToChat(int chatId, int groupId);
+
         void RemoveUserFromGroupChat(int chatId, string userId);
 
         void NewChatMessage(ChatMessage msg, Chat chat);
@@ -132,9 +134,11 @@ namespace SirmiumCommercial.Models
 
         //------ Notifications -----
         void NewNotification(string userId, string subject, string For,
-            int forId);
+            int forId, string forUserId = null);
 
         void NewNotificationCardView(int notificationCarId, string userId);
+
+        void DeleteNotification(int notificationId);
 
         //------ Groups ---------
         int SaveGroup(Group group);

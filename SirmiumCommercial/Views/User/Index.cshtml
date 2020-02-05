@@ -24,7 +24,7 @@
     </environment>
 }
 
-<div class="normalheader p-sm">
+<div class="normalheader" style="padding: 15px 15px 2px 15px;">
     <div class="hpanel">
         <div class="panel-body" style="font-size: 30px;">
             <span class="fa fa-home"></span>
@@ -200,6 +200,10 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="row" style="padding: 2px 15px 15px 15px;">
+    @await Component.InvokeAsync("UserHomeStatistics", new { id = ViewData["Id"] })
 </div>
 
 <!--Main-->

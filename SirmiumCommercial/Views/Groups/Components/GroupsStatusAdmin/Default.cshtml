@@ -1,0 +1,45 @@
+﻿@model bool
+
+@if (Model == true){
+    <div class="col-sm-3">
+        <h4 class="font-bold">Status:</h4>
+        <ul style="list-style-type: square; font-size: 20px; font-weight: 500">
+            <li>
+                <a href="@Url.Action("Groups", "Groups",
+                                        new {
+                                            id = ViewData["Id"],
+                                            status = "All"
+                                        })">
+                    <span class="text-muted
+                                        @Html.SelectedGroupStatus(groupStatus: "All")">
+                        All
+                    </span>
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("Groups", "Groups",
+                                    new {
+                                            id = ViewData["Id"],
+                                            status =  "Public"
+                                    })">
+                    <span class="text-muted
+                                         @Html.SelectedGroupStatus(groupStatus: "Public")">
+                        Public
+                    </span>
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("Groups", "Groups",
+                                    new {
+                                            id = ViewData["Id"],
+                                            status = "Private"
+                                    })">
+                    <span class="text-muted
+                                        @Html.SelectedGroupStatus(groupStatus: "Private")">
+                        Private
+                    </span>
+                </a>
+            </li>
+        </ul>
+    </div>
+}

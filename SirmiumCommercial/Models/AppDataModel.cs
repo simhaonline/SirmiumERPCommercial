@@ -46,6 +46,13 @@ namespace SirmiumCommercial.Models
         public string GroupPhotoPath { get; set; }
         public AppUser CreatedBy { get; set; }
         public string CompanyName { get; set; }
+
+        //Status: Public or Private
+        public string Status { get; set; }
+
+        //GroupChatId != 0 if chat exists
+        public int GroupChatId { get; set; }
+
         public ICollection<GroupUsers> Users { get; set; }
             = new List<GroupUsers>();
         public ICollection<GroupCourses> Courses { get; set; }
@@ -305,6 +312,9 @@ namespace SirmiumCommercial.Models
         public string Title { get; set; }
         public string ChatPhotoPath { get; set; }
 
+        //Status = Private or Public
+        public string Status { get; set; }
+
         public ICollection<GroupChatUsers> Users { get; set; }
             = new List<GroupChatUsers>();
 
@@ -376,6 +386,9 @@ namespace SirmiumCommercial.Models
         //Video, Course, Representation
         public string For { get; set; }
         public int ForId { get; set; }
+
+        //for User
+        public string ForUserId { get; set; }
 
         //------? TODO ?----------
         //CurrentDate - NotificationDateAdded > 1 year => delete Notification ?????

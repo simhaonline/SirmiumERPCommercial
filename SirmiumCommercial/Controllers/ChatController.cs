@@ -70,7 +70,7 @@ namespace SirmiumCommercial.Controllers
                 }
             }
 
-            foreach (GroupChat groupChat in repository.GroupChats)
+            foreach (GroupChat groupChat in repository.GroupChats.Where(g => g.Status == "Public"))
             {
                 if (repository.GroupChatUsers.FirstOrDefault(g => g.GroupChatId == groupChat.ChatId
                             && g.UserId == user.Id) != null)

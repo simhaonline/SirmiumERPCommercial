@@ -641,13 +641,27 @@ namespace SirmiumCommercial.Models
                 GroupChatId = chatId,
                 UserId = userId
             };
-            GroupChat chat = context.GroupChats
-                .FirstOrDefault(c => c.ChatId == chatId);
 
-            context.Attach(chat);
             dbEntry.CreatedAt = DateTime.Now;
             dbEntry.UpdatedAt = DateTime.Now;
             context.GroupChatUsers.Add(dbEntry);
+            context.SaveChanges();
+        }
+
+        public void GroupAddUserToChat(int chatId, int groupId)
+        {
+            foreach(GroupUsers gUser in context.GroupUsers.Where(g => g.GroupId == groupId))
+            {
+                GroupChatUsers dbEntry = new GroupChatUsers
+                {
+                    GroupChatId = chatId,
+                    UserId = gUser.AppUserId
+                };
+
+                dbEntry.CreatedAt = DateTime.Now;
+                dbEntry.UpdatedAt = DateTime.Now;
+                context.GroupChatUsers.Add(dbEntry);
+            }
             context.SaveChanges();
         }
 
@@ -845,7 +859,7 @@ namespace SirmiumCommercial.Models
 
         //notifications
         public void NewNotification (string userId, string subject, string For,
-            int forId)
+            int forId, string forUserId = null)
         {
             Notification notification = context.Notifications
                 .FirstOrDefault(n => n.Subject == subject && n.For == For
@@ -1019,6 +1033,34 @@ namespace SirmiumCommercial.Models
                         context.SaveChanges();
                     }
                 }
+                else if (notification.Subject == "AddUserToGroup")
+                {
+                    Group group = context.Groups.FirstOrDefault(g => g.GroupId == notification.ForId);
+
+                    newNotificationCard.Msg =
+                        $"{userName} added you to group '{group.Name}'";
+
+                    context.Attach(notification);
+                    context.NotificationCards.Add(newNotificationCard);
+                    notification.NotificationCards.Add(newNotificationCard);
+                    //set datetime of last notification
+                    notification.NotificationDateAdded = DateTime.Now;
+                    context.SaveChanges();
+                }
+                else if (notification.Subject == "NewGroupUser")
+                {
+                    Group group = context.Groups.FirstOrDefault(g => g.GroupId == notification.ForId);
+
+                    newNotificationCard.Msg =
+                        $"{userName} added you to group '{group.Name}'";
+
+                    context.Attach(notification);
+                    context.NotificationCards.Add(newNotificationCard);
+                    notification.NotificationCards.Add(newNotificationCard);
+                    //set datetime of last notification
+                    notification.NotificationDateAdded = DateTime.Now;
+                    context.SaveChanges();
+                }
 
                 notification.UpdatedAt = DateTime.Now;
                 context.SaveChanges();
@@ -1030,6 +1072,7 @@ namespace SirmiumCommercial.Models
                     Subject = subject,
                     For = For,
                     ForId = forId,
+                    ForUserId = forUserId,
                     NotificationDateAdded = DateTime.Now,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now
@@ -1058,6 +1101,24 @@ namespace SirmiumCommercial.Models
             card.UpdatedAt = DateTime.Now;
             card.NotificationViews.Add(view);
             context.SaveChanges();
+        }
+
+        public void DeleteNotification(int notificationId)
+        {
+            Notification dbEntry = context.Notifications.FirstOrDefault(n => n.NotificationId == notificationId);
+
+            //delete notification cards
+            foreach(NotificationCard card in dbEntry.NotificationCards)
+            {
+                //delete card view
+                foreach(NotificationViews view in card.NotificationViews)
+                {
+                    context.NotificationViews.Remove(view);
+                }
+                context.NotificationCards.Remove(card);
+            }
+
+            context.Notifications.Remove(dbEntry);
         }
 
         //groups
@@ -1146,13 +1207,13 @@ namespace SirmiumCommercial.Models
                 //delete all users from group
                 foreach(GroupUsers user in dbEntry.Users)
                 {
-                    RemoveUserFromGroup(dbEntry.GroupId, user.AppUserId);
+                    context.GroupUsers.Remove(user);
                 }
 
                 //delete all courses from group
                 foreach (GroupCourses course in dbEntry.Courses)
                 {
-                    RemoveCourseFromGroup(dbEntry.GroupId, course.CourseId);
+                    context.GroupCourses.Remove(course);
                 }
 
                 //delete group

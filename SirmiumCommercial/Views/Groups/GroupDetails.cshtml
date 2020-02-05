@@ -96,10 +96,77 @@
                                         </a>
                                     </td>
                                 </tr>
+                                <tr>
+                                    @if (Model.Group.GroupChatId == 0)
+                                    {
+                                        @if (Model.Group.Status == "Public")
+                                        {
+                                            <td>
+                                                <a href="@Url.Action("GroupChangeStatus", "Groups",
+                                                    new { id = ViewData["Id"].ToString(), groupId = Model.Group.GroupId })"
+                                                   class="btn btn-outline btn-danger2 m-t-md">
+                                                    Hide <br /> <i class="far fa-eye-slash"></i>
+                                                </a>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <a href="@Url.Action("GroupChangeStatus", "Groups",
+                                                    new { id = ViewData["Id"].ToString(), groupId = Model.Group.GroupId })"
+                                                   class="btn btn-outline btn-success m-t-md">
+                                                    Share <br /> <i class="far fa-eye"></i>
+                                                </a>
+                                            </td>
+
+                                        }
+                                        <td>
+                                            <a href="@Url.Action("GroupNewChat", "Groups",
+                                                    new { id = ViewData["Id"].ToString(), groupId = Model.Group.GroupId })"
+                                               class="btn btn-outline btn-primary m-t-md">
+                                                Create Chat <br /> <i class="pe pe-7s-chat"></i>
+                                            </a>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        @if (Model.Group.Status == "Public")
+                                        {
+                                            <td colspan="2">
+                                                <a href="@Url.Action("GroupChangeStatus", "Groups",
+                                                    new { id = ViewData["Id"].ToString(), groupId = Model.Group.GroupId })"
+                                                   class="btn btn-outline btn-danger2 m-t-md">
+                                                    Hide <br /> <i class="far fa-eye-slash"></i>
+                                                </a>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td colspan="2">
+                                                <a href="@Url.Action("GroupChangeStatus", "Groups",
+                                                        new { id = ViewData["Id"].ToString(), groupId = Model.Group.GroupId })"
+                                                   class="btn btn-outline btn-success m-t-md">
+                                                    Share <br /> <i class="far fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        }
+                                    }
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
+            }
+            @if (Model.Group.GroupChatId != 0)
+            {
+                <a class="btn pull-right" style="font-size: 25px;"
+                   href="@Url.Action("GroupChat", "Chat", new {
+                        id = ViewData["Id"].ToString(),
+                        groupChatId = Model.Group.GroupChatId
+                    })">
+                    <span class="text-primary pe pe-7s-chat"></span>
+                    <span class="text-muted">Chat</span>
+                </a>
             }
         </div>
     </div>
@@ -123,7 +190,7 @@
                 <div class="row">
                     <div class="col-lg-2 text-center">
                         @if (Model.Group.CreatedBy.Id == ViewData["Id"].ToString())
-                        {
+                                            {
                             <div class="dropdown">
                                 <a class="dropdown-toggle" href="#" data-toggle="dropdown">
                                     <img class="img-circle" style="width: 120px; height: 120px"

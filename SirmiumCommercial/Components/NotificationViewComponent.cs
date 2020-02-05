@@ -211,6 +211,58 @@ namespace SirmiumCommercial.Components
                         }
                     }
                 }
+                if (notification.For == "Group")
+                {
+                    if(notification.Subject == "NewGroupUser" && notification.ForUserId != null)
+                    {
+                        if (notification.ForUserId == userId)
+                        {
+                            NotificationCard notificationCard = notification.NotificationCards
+                                .LastOrDefault(n => n.CreatedBy != userId);
+
+                            if (notificationCard != null)
+                            {
+                                NotificationViewModel nModel = new NotificationViewModel
+                                {
+                                    NotificationCard = notificationCard,
+                                    Views = notificationCard.NotificationViews.AsQueryable(),
+                                    UserProfilePhoto = userManager.Users
+                                            .FirstOrDefault(u => u.Id == notificationCard.CreatedBy)
+                                            .ProfilePhotoUrl,
+                                    For = "Group",
+                                    ForId = notification.ForId
+                                };
+
+                                notifications.Add(nModel);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if(repository.GroupUsers.Any(g => g.GroupId == notification.ForId
+                            && g.AppUserId == userId))
+                        {
+                            NotificationCard notificationCard = notification.NotificationCards
+                                        .LastOrDefault(n => n.CreatedBy != userId);
+
+                            if (notificationCard != null)
+                            {
+                                NotificationViewModel nModel = new NotificationViewModel
+                                {
+                                    NotificationCard = notificationCard,
+                                    Views = notificationCard.NotificationViews.AsQueryable(),
+                                    UserProfilePhoto = userManager.Users
+                                            .FirstOrDefault(u => u.Id == notificationCard.CreatedBy)
+                                            .ProfilePhotoUrl,
+                                    For = "Group",
+                                    ForId = notification.ForId
+                                };
+
+                                notifications.Add(nModel);
+                            }
+                        }
+                    }
+                }
             }
             return View(notifications.AsQueryable());
         }

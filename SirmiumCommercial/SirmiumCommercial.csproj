@@ -47,6 +47,9 @@
     <Content Update="Views\Courses\CourseDetailsComments.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Groups\Components\GroupsStatusAdmin\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Groups\Components\GroupsAdmin\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

@@ -37,6 +37,7 @@
         </div>
         <div class="collapse " id="collapseExample">
             <div class="well well-lg row m-l-xs m-r-xs">
+                @await Component.InvokeAsync("GroupsStatusAdmin", new { userId = ViewData["Id"] })
             </div>
         </div>
     </div>
@@ -66,6 +67,17 @@
                 <div class="col-sm-2">
                 </div>
                 <div class="col-sm-1 text-center">
+                    @if (group.Status == "Public")
+                    {
+                        <span class="fa fa-circle text-success" style="font-size: 15px;"></span>
+                        <span class="text-muted" style="font-size: 15px;"> Public</span>
+                    }
+                    else
+                    {
+                        <span class="fa fa-circle text-danger" style="font-size: 15px;"></span>
+                        <span class="text-muted" style="font-size: 15px;"> Private</span>
+                    }
+                    <br />
                     <a href="@Url.Action("GroupDetails", "Groups", new { id = ViewData["Id"],
                             groupId = group.GroupId})" class="btn">
                         <span class="fa fa-info text-info" style="font-size: 30px"></span>

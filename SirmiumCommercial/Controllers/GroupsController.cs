@@ -26,13 +26,29 @@ namespace SirmiumCommercial.Controllers
             hostingEnvironment = hosting;
         }
 
-        public async Task<ViewResult> Groups(string id)
+        public async Task<ViewResult> Groups(string id, string status = "Public")
         {
             ViewData["Id"] = id;
+            ViewData["GroupStatus"] = status;
 
             AppUser user = await userManager.FindByIdAsync(id);
 
-            return View(repository.Groups.Where(g => g.CompanyName == user.CompanyName));
+            if(status == "Private")
+            {
+                return View(repository.Groups.Where(g => g.CompanyName == user.CompanyName
+                    && g.CreatedBy.Id == user.Id && g.Status == "Private" ));
+            }
+            else if(status == "All")
+            {
+                return View(repository.Groups.Where(g => 
+                    (g.CompanyName == user.CompanyName && g.Status == "Public") ||
+                    (g.CreatedBy.Id == user.Id && g.Status == "Private")));
+            }
+            else
+            {
+                return View(repository.Groups.Where(g => g.CompanyName == user.CompanyName
+                     && g.Status == "Public"));
+            }
         }
 
         public IActionResult GroupDetails(string id, int groupId)
@@ -44,6 +60,12 @@ namespace SirmiumCommercial.Controllers
 
             if(group != null)
             {
+                //NoPermission
+                if(repository.GroupUsers.Any(g => g.GroupId == groupId && g.AppUserId == id) == false)
+                {
+                    return RedirectToAction("GroupNoPermission", new { id, groupId });
+                }
+
                 //users 
                 List<AppUser> users = new List<AppUser>();
                 foreach(GroupUsers groupUser in repository.GroupUsers
@@ -91,8 +113,29 @@ namespace SirmiumCommercial.Controllers
             }
             else
             {
-                return RedirectToAction("Error", "GroupNotFound");
+                return RedirectToAction("GroupNoPermission", new { id, groupId });
             }
+        }
+
+        public ViewResult GroupNoPermission(string id, int groupId)
+        {
+            ViewData["Id"] = id;
+
+            Group group = repository.Groups.FirstOrDefault(g => g.GroupId == groupId);
+            string msg = "";
+
+            if (group != null)
+            {
+                msg = "You do not have permission to access this group!";
+            }
+            else
+            {
+                msg = "Sorry, this group not exist!";
+            }
+
+            ViewData["GroupError"] = msg;
+
+            return View("GroupNoPermission");
         }
 
         public ViewResult NewGroup(string id)
@@ -109,12 +152,15 @@ namespace SirmiumCommercial.Controllers
             AppUser user = await userManager.FindByIdAsync(model.CreatedById);
             if (user != null)
             {
+                string status = (model.Status == true) ? "Public" : "Private";
+
                 Group newGroup = new Group
                 {
                     Name = model.Name,
                     Description = model.Description,
                     CreatedBy = user,
-                    CompanyName = user.CompanyName
+                    CompanyName = user.CompanyName,
+                    Status = status
                 };
 
                 int groupId = repository.SaveGroup(newGroup);
@@ -124,6 +170,26 @@ namespace SirmiumCommercial.Controllers
                 if (model.ProfilePhoto != null)
                 {
                     AddGroupPhoto(groupId, model.ProfilePhoto);
+                }
+
+                //create chat
+                if (model.CreateChat == true)
+                {
+                    GroupChat groupChat = new GroupChat
+                    {
+                        Title = model.Name,
+                        Status = status,
+                        CreatedBy = user.Id,
+                        ChatPhotoPath = "Groups/" + repository.Groups
+                            .FirstOrDefault(g => g.GroupId == newGroup.GroupId).GroupPhotoPath
+                    };
+                    repository.EditGroupChat(groupChat);
+
+                    //add admin to chat
+                    repository.AddUserToGroupChat(groupChat.ChatId, user.Id);
+
+                    newGroup.GroupChatId = groupChat.ChatId;
+                    repository.SaveGroup(newGroup);
                 }
 
                 return RedirectToAction("NewGroupStep2", new { id = model.CreatedById, groupId });
@@ -202,6 +268,12 @@ namespace SirmiumCommercial.Controllers
 
                             repository.AddUserToGroup(newUserId, group.GroupId);
 
+                            //group chat exists
+                            if(group.GroupChatId != 0)
+                            {
+                                repository.AddUserToGroupChat(group.GroupChatId, newUserId);
+                            }
+
                             userIdList = userIdList.Replace(newUserId + ";", "");
                         }
                     }
@@ -275,6 +347,33 @@ namespace SirmiumCommercial.Controllers
                         }
                     }
                 }
+
+                //send msg 
+                if(group.GroupChatId != 0)
+                {
+                    GroupChat groupChat = repository.GroupChats
+                        .FirstOrDefault(g => g.ChatId == group.GroupChatId);
+
+                    string userName = (user.FirstName == null && user.LastName == null) ?
+                        user.UserName : user.FirstName + user.LastName;
+                    string content = $"{userName} created a group chat";
+                    GroupChatMessage newMsg = new GroupChatMessage
+                    {
+                        GroupChatId = group.GroupChatId,
+                        UserId = user.Id,
+                        MessageContent = content,
+                        MessageType = "SystemMsg"
+                    };
+
+                    repository.NewGroupChatMessage(newMsg, groupChat);
+                }
+
+                //new notification
+                if(group.Status == "Public")
+                {
+                    repository.NewNotification(user.Id, "AddUserToGroup", "Group", group.GroupId);
+                }
+
                 return RedirectToAction("GroupDetails", new
                 {
                     id = group.CreatedBy.Id,
@@ -288,9 +387,30 @@ namespace SirmiumCommercial.Controllers
         public async Task<IActionResult> DeleteGroup (string id, int groupId)
         {
             AppUser user = await userManager.FindByIdAsync(id);
+            Group group = repository.Groups.FirstOrDefault(g => g.GroupId == groupId);
 
             if (user != null)
             {
+                //delete group chat if exists
+                if(group.GroupChatId != 0)
+                {
+                    repository.DeleteGroupChat(group.GroupChatId);
+                }
+
+                //delete notifications
+                foreach (Notification notification in repository.Notifications
+                    .Where(n => n.For == "Group" && n.ForId == groupId))
+                {
+                    repository.DeleteNotification(notification.NotificationId);
+                }
+
+                //delete photo and group directory
+                if(group.GroupPhotoPath != null)
+                {
+                    string dirPath = Path.Combine(hostingEnvironment.WebRootPath, $@"UsersData\Groups\{group.GroupId}");
+                    System.IO.Directory.Delete(dirPath, true);
+                }
+
                 repository.DeleteGroup(groupId);
 
                 return RedirectToAction("Groups", new { id });
@@ -305,10 +425,31 @@ namespace SirmiumCommercial.Controllers
             string userId)
         {
             AppUser user = await userManager.FindByIdAsync(adminId);
+            Group group = repository.Groups.FirstOrDefault(g => g.GroupId == groupId); 
 
             if (user != null)
             {
                 repository.RemoveUserFromGroup(groupId, userId);
+
+                //remove user from chat
+                if(group.GroupChatId != 0)
+                {
+                    if(repository.GroupChatUsers
+                        .FirstOrDefault(g => g.GroupChatId == group.GroupChatId && g.UserId == userId) != null)
+                    {
+                        repository.RemoveUserFromGroupChat(group.GroupChatId, userId);
+                    }
+                }
+
+                //remove notification for user
+                Notification notification = repository.Notifications
+                    .FirstOrDefault(n => n.For == "Group" && n.ForId == groupId
+                                    && n.Subject == "NewGroupUser" && n.ForUserId == userId);
+                if(notification != null)
+                {
+                    repository.DeleteNotification(notification.NotificationId);
+                }
+
                 return RedirectToAction("GroupDetails", new { id = adminId, groupId });
             }
             else
@@ -356,6 +497,8 @@ namespace SirmiumCommercial.Controllers
             //group
             Group group = repository.Groups
                 .FirstOrDefault(g => g.GroupId == model.GroupId);
+            //Created by
+            AppUser user = userManager.Users.FirstOrDefault(u => u.Id == group.CreatedBy.Id);
 
             if (model.UsersIdString != null)
             {
@@ -369,6 +512,33 @@ namespace SirmiumCommercial.Controllers
                         string newUserId = userIdList.Substring(0, index);
 
                         repository.AddUserToGroup(newUserId, group.GroupId);
+                        //notification
+                        if (group.Status == "Public")
+                        {
+                            repository.NewNotification(group.CreatedBy.Id, "AddUserToGroup", "Group", group.GroupId, newUserId);
+                        }
+                        //group chat exists
+                        if (group.GroupChatId != 0)
+                        {
+                            repository.AddUserToGroupChat(group.GroupChatId, newUserId);
+
+                            GroupChat groupChat = repository.GroupChats
+                                .FirstOrDefault(g => g.ChatId == group.GroupChatId);
+                            AppUser addedUser = userManager.Users.FirstOrDefault(u => u.Id == newUserId);
+
+                            string userName = (user.FirstName == null && user.LastName == null) ?
+                                user.UserName : user.FirstName + user.LastName;
+                            string content = $"{userName} added {addedUser}";
+                            GroupChatMessage newMsg = new GroupChatMessage
+                            {
+                                GroupChatId = group.GroupChatId,
+                                UserId = user.Id,
+                                MessageContent = content,
+                                MessageType = "SystemMsg"
+                            };
+
+                            repository.NewGroupChatMessage(newMsg, groupChat);
+                        }
 
                         userIdList = userIdList.Replace(newUserId + ";", "");
                     }
@@ -435,9 +605,94 @@ namespace SirmiumCommercial.Controllers
 
         public IActionResult AbortNewGroup(string userId, int groupId)
         {
+            Group group = repository.Groups.FirstOrDefault(g => g.GroupId == groupId);
+
+            //delete chat if exists
+            if(group.GroupChatId != 0)
+            {
+                repository.DeleteGroupChat(group.GroupChatId);
+            }
+
             repository.DeleteGroup(groupId);
 
             return RedirectToAction("Groups", new { id = userId });
+        }
+
+        public IActionResult GroupNewChat (string id, int groupId)
+        {
+            Group group = repository.Groups.FirstOrDefault(g => g.GroupId == groupId);
+            AppUser user = userManager.Users.FirstOrDefault(u => u.Id == id);
+            int chatId = group.GroupChatId;
+
+            if (group.GroupChatId == 0)
+            {
+                GroupChat groupChat = new GroupChat
+                {
+                    Title = group.Name,
+                    Status = group.Status,
+                    CreatedBy = user.Id,
+                    ChatPhotoPath = "Groups/" + group.GroupPhotoPath
+                };
+                repository.EditGroupChat(groupChat);
+
+                chatId = groupChat.ChatId;
+
+                //add users to chat
+                repository.GroupAddUserToChat(chatId, groupId);
+
+                group.GroupChatId = groupChat.ChatId;
+                repository.SaveGroup(group);
+
+                //new msg
+                GroupChat chat = repository.GroupChats
+                        .FirstOrDefault(g => g.ChatId == group.GroupChatId);
+
+                string userName = (user.FirstName == null && user.LastName == null) ?
+                    user.UserName : user.FirstName + user.LastName;
+                string content = $"{userName} created a group chat";
+                GroupChatMessage newMsg = new GroupChatMessage
+                {
+                    GroupChatId = chatId,
+                    UserId = user.Id,
+                    MessageContent = content,
+                    MessageType = "SystemMsg"
+                };
+
+                repository.NewGroupChatMessage(newMsg, chat);
+
+            }
+
+            return RedirectToAction("GroupChat", "Chat", new { id, groupChatId = chatId });
+        }
+
+        public IActionResult GroupChangeStatus (string id, int groupId)
+        {
+            Group group = repository.Groups.FirstOrDefault(g => g.GroupId == groupId);
+            string newStatus = "Private";
+
+            if(group.Status == "Private")
+            {
+                newStatus = "Public";
+
+                //add notification if not exists
+                if(repository.Notifications.Any(n => n.For == "Group" && n.ForId == groupId
+                    && n.Subject == "AddUserToGroup") == false)
+                {
+                    repository.NewNotification(id, "AddUserToGroup", "Group", group.GroupId);
+                }
+            }
+
+            group.Status = newStatus;
+            repository.SaveGroup(group);
+
+            if(group.GroupChatId != 0)
+            {
+                GroupChat chat = repository.GroupChats.FirstOrDefault(c => c.ChatId == group.GroupChatId);
+                chat.Status = newStatus;
+                repository.EditGroupChat(chat);
+            }
+
+            return RedirectToAction("GroupDetails", new { id, groupId });
         }
     }
 }

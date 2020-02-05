@@ -16,6 +16,8 @@ namespace SirmiumCommercial.Models.ViewModels
         public string Name { get; set; }
         public string Description { get; set; }
         public IFormFile ProfilePhoto { get; set; }
+        public bool CreateChat { get; set; }
+        public bool Status { get; set; }
     }
 
     public class GroupUploadPhotoViewModel

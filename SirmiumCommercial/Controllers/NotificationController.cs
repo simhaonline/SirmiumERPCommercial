@@ -56,6 +56,22 @@ namespace SirmiumCommercial.Controllers
                     new { id, courseId = ForId });
             }
 
+            else if (For == "Group")
+            {
+                NotificationCard card = repository.NotificationCards
+                       .FirstOrDefault(c => c.NotificationCardId == notificationCardId);
+                if (card.NotificationViews.FirstOrDefault(v => v.UserId == id) == null)
+                {
+                    repository.NewNotificationCardView(notificationCardId, id);
+                }
+
+                return RedirectToAction("GroupDetails", "Groups", new
+                {
+                    id,
+                    groupId = ForId
+                });
+            }
+
             return RedirectToAction("Error", "Error",
                     new { id, errMsg = "" });
         }

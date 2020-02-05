@@ -65,6 +65,19 @@ namespace SirmiumCommercial.Helpers
             return courseStatus == currentStatus ? cssClass : String.Empty;
         }
 
+        public static string SelectedGroupStatus(this IHtmlHelper html, string groupStatus = "Public",
+            string cssClass = null)
+        {
+            if (String.IsNullOrEmpty(cssClass))
+            {
+                cssClass = " text-bold text-primary";
+            }
+            string currentStatus = (string)html.ViewContext.ViewData["GroupStatus"];
+
+
+            return groupStatus == currentStatus ? cssClass : String.Empty;
+        }
+
         public static string SelectedSortManage (this IHtmlHelper html, string sort = "Date Added",
             string order = "desc", string cssClass = null)
         {
